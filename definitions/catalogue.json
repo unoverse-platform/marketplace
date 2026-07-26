@@ -1,5 +1,5 @@
 {
-  "release": "0.1.1",
+  "release": "0.1.5",
   "items": {
     "component/barchart": "bb6fd70274d71914",
     "component/barlist": "e7bb744d033e520f",
@@ -44,10 +44,30 @@
     "block/core": "9f8978c3d618e7ad",
     "block/formatting": "2b3932ab61a488ea",
     "styles": "af9a4c43912c40c8",
-    "node/openai/OpenAI": "7bf08fa838770ac5",
-    "node/openai/OpenAIAgentManifest": "27157c5ca579d20e",
-    "node/openai/OpenAIEmbeddingService": "0d8a69d9bad83271",
-    "node/openai/OpenAIStream": "c51130f64738b075",
-    "node/openai/OpenAIStructuredOutput": "81c5322573171106"
+    "node/airtable/AirtableExists": "9d00e35f3feab861",
+    "node/airtable/AirtableFetch": "0c846e7a4ce908e6",
+    "node/airtable/AirtableInsert": "022886bfc18bd59d",
+    "node/gtm/ApolloCompany": "d45aa7c87555d604",
+    "node/gtm/ApolloCompanyEnrich": "455224f33c076bc9",
+    "node/gtm/ApolloPeople": "48d376e3fa3e4399",
+    "node/gtm/ApolloPeopleEnrich": "e4944a8c8f5f0b19",
+    "node/gtm/HunterDiscover": "96ea5c58bf90b1ae",
+    "node/gtm/HunterDomainSearch": "b97720e946d7751d",
+    "node/gtm/HunterEmailFinder": "a76ece91e527881e",
+    "node/gtm/HunterEmailVerifier": "60fa6b485ad90e62",
+    "node/gtm/HunterEnrich": "36506e5e080361a4",
+    "node/hubspot/HubspotMCP": "a18d93c2663bdc35",
+    "node/openai/OpenAI": "d1540a64fc828819",
+    "node/openai/OpenAIAgent": "c3e7907601ddc3ba",
+    "node/openai/OpenAIEmbeddingService": "fa6bb23948bc42d8",
+    "node/openai/OpenAIStream": "121b67426044a3e3",
+    "node/openai/OpenAIStructuredOutput": "1fe6039cb9e36d48",
+    "node/salesforce/SalesforceMCP": "a428e04dc49bdb13",
+    "node/search/SearchNews": "5d6295d583629539",
+    "node/search/SearchPlaces": "a2a83199578370f9",
+    "node/search/SearchVideos": "505a6348d02960ce",
+    "node/search/SearchWeb": "f9a18a5d06dc8cb1",
+    "node/slack/SlackMCP": "6ec601f2f454fd60",
+    "node/x-search/XSearch": "9a5ac5279e8aab6b"
   }
 }

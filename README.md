@@ -1,64 +1,45 @@
 # Unoverse Marketplace
 
-Everything an Unoverse universe can **install** rather than author: components, atoms and
-styles, prompt blocks, skills, and declarative node manifests.
+The shared library every Unoverse universe can **install** rather than author:
+components, atoms and styles, prompt blocks, skills, and declarative nodes.
 
-```bash
-npm install @unoverse-platform/marketplace
+Published as one package at one version, so a universe takes the marketplace whole
+rather than tracking a version per node.
+
+## This package is definitions, not code
+
+Everything here is **data**. A component is a tree of primitives, a node is a
+description of an HTTP call, a prompt block is markdown. None of it executes on its
+own, and installing it outside a universe does nothing at all.
+
+That is deliberate, and it is a security property before it is a design one: data
+cannot execute, so a definition is safe to read, copy, review and share.
+
+It also means this repository is readable as documentation. If you want to know how
+Unoverse models an interface, read `definitions/components/card/card.yaml` rather
+than a guide about it.
+
+## What is inside
+
+```
+definitions/
+  components/   design-system components — a Switch of layouts over named states
+  atoms/        the smallest shared pieces components compose from
+  styles/       the token contract and default theme they render against
+  blocks/       prompt blocks, referenced from any system prompt as {{prompt.<name>}}
+  skills/       agent skills, selected by their whenToUse
+  nodes/        declarative node manifests (node / interface / config / api / test)
 ```
 
-Most people never run that directly. A universe installs it from the marketplace in Studio,
-and picks up updates item by item.
+## Using it
 
-## What's in here
+Install it from the marketplace inside a universe. It is seeded by default, and a
+universe converges to the newest published version at boot.
 
-| Folder | What |
-| --- | --- |
-| `definitions/components` | Components. A component is a definition, not code |
-| `definitions/atoms` | Small shared pieces components compose from |
-| `definitions/styles` | The token foundation: base, semantic, and the default themes |
-| `definitions/skills` | Agent skills |
-| `definitions/blocks` | Prompt blocks, referenced as `{{prompt.<name>}}` |
-| `definitions/nodes` | Declarative node manifests (YAML) |
-| `definitions/catalogue.json` | One fingerprint per item (see below) |
-
-Definitions are **data**. They are YAML, they describe UI and behaviour, and nothing in
-them executes. The renderer that draws them lives in the platform, not here.
-
-## One release, per-item updates
-
-The package carries one version. Individual items are tracked by content **fingerprint**:
-
-```json
-{
-  "release": "0.1.1",
-  "items": {
-    "component/card": "2eaae626c238f067",
-    "skill/complaints-handling": "…",
-    "node/openai/OpenAIStream": "…"
-  }
-}
-```
-
-Your universe stores the fingerprint of each item when it installs it. Anything whose
-fingerprint differs from the catalogue has an update waiting, and you take the ones you
-want. Nothing forces you to move everything at once, and there are no version numbers to
-maintain by hand.
-
-Fingerprints cover **meaning, not formatting**. Every value is parsed and re-serialised
-canonically before hashing, so reindenting a file or changing its quoting does not register
-as a change. Renaming a prop does.
-
-Recipes are deliberately not fingerprinted. Everything else here is a reference your
-universe keeps tracking; a recipe is copied onto a canvas and stops tracking the moment it
-lands, so "updating" one would mean editing a canvas you already own.
-
-## Contributing
-
-This repository is published from the Unoverse platform repo, so pull requests here are
-overwritten on the next release. Issues are welcome, and are the right place to report a
-broken component or propose a new one.
+Nodes in `definitions/nodes/` are interpreted by the platform's manifest executor:
+they name an auth scheme, a transport and a response mapping, and may only call the
+hosts their package declares in `allowedHosts`. There is no code path a manifest can reach.
 
 ## Licence
 
-See [LICENSE](./LICENSE).
+MIT. Read it, learn from it, take the ideas.

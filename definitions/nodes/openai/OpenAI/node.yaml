@@ -10,9 +10,8 @@ kind: PromiseNode
 name: OpenAI
 category: AI
 color: "#2F6F66"
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
 
-description: Generate text using OpenAI's models
+description: One prompt in, one completion out, with no streaming or tools
 
 whenToUse: >-
   Single prompt to single completion, the plain one-shot text generator: summarise,

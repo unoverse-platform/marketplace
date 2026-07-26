@@ -9,51 +9,44 @@ configSchema:
       type: string
       title: Model
       description: Select the OpenAI model to use
-      enum: { $ref: ../../shared/models.yaml#/enum }
-      enumNames: { $ref: ../../shared/models.yaml#/enumNames }
-      default: gpt-5.6-terra
+      enum: { $ref: models#enum }
+      enumNames: { $ref: models#enumNames }
+      default: { $ref: models#default }
       # A retired id falls back to the current best model in its tier, so replacing a
       # model generation cannot break a saved workflow.
       resolve: modelTier
 
-    temperature:
-      type: number
-      title: Temperature
-      description: Controls randomness (0-2)
-      default: 0.7
-      minimum: 0
-      maximum: 2
-
     maxTokens:
       type: number
       title: Max Tokens
-      description: Maximum number of tokens to generate
-      default: 256
+      # 256 was the old default and it was wrong: a summary or a rewrite of anything
+      # real runs past it, and the model stops MID-SENTENCE with no error anywhere.
+      # A truncated answer that looks like a finished one is the worst failure this
+      # node has, so the default has to clear ordinary prose.
+      description: >-
+        Hard ceiling on the reply. The model stops when it hits this, mid-sentence and
+        without an error, so raise it for long output rather than leaving it to trim.
+      default: 1200
       minimum: 1
       maximum: 128000
 
     systemPrompt:
       type: string
       title: System Prompt
+      # UI copy. Short, plain, and about the SETTING. The template grammar and its traps
+      # are not repeated here: the building model reads them from the template-references
+      # skill, which covers every template field on every node.
       description: >-
-        Who the model is and how it should respond. Compose prompt blocks and upstream
-        values, e.g. {{prompt.markdownGuidelines}}.
+        Standing instructions for every run: the model's role, tone and limits. Optional.
+        Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.
       default: ""
       ui:field: template
 
     prompt:
       type: string
       title: Prompt
-      description: The message the model responds to, usually wired in from upstream.
+      description: The request to answer. Usually wired in from an upstream node.
       default: ""
       ui:field: template
 
-    history:
-      type: array
-      title: History
-      description: >-
-        Prior messages for context, as [{ role, content }]. An array field, so its value
-        is a `return ...` expression rather than handlebars.
-      ui:field: template
-
-ui:order: [model, temperature, maxTokens, systemPrompt, prompt, history]
+ui:order: [model, maxTokens, systemPrompt, prompt]

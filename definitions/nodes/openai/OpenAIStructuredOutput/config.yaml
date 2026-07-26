@@ -9,9 +9,9 @@ configSchema:
       type: string
       title: Model
       description: GPT-5.6 model to use for structured extraction
-      enum: { $ref: ../../shared/models.yaml#/enum }
-      enumNames: { $ref: ../../shared/models.yaml#/enumNames }
-      default: gpt-5.6-terra
+      enum: { $ref: models#enum }
+      enumNames: { $ref: models#enumNames }
+      default: { $ref: models#default }
       # A retired id resolves to the current best model in its tier, so replacing a
       # model generation cannot break a saved workflow.
       resolve: modelTier
@@ -19,7 +19,9 @@ configSchema:
     instructions:
       type: string
       title: Instructions
-      description: System instructions for extraction
+      description: >-
+        How to read the content when it is ambiguous, such as which of two addresses to
+        take. The schema already fixes the shape, so this is only about judgement.
       default: Extract structured information from the provided content.
       ui:field: template
 

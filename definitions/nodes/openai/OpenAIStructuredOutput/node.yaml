@@ -8,15 +8,15 @@ kind: PromiseNode
 name: GPT-5 Structured Output
 category: AI
 color: "#2F6F66"
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
 
 description: Extract structured data using the GPT-5 Responses API with a JSON schema
 
+# Wiring moved out of the middle to the end, per doc 14: mechanism last.
 whenToUse: >-
-  Pick when the output must be JSON that strictly matches a schema (wire the schema and
-  content inputs), schema-enforced extraction and structuring. Reserve it for when strict
-  conformance matters; for free-form prose or multi-turn tool use it is the wrong,
-  over-constrained choice.
+  Pick when the output must be JSON that strictly matches a schema, so downstream nodes can
+  rely on the shape instead of parsing defensively: schema-enforced extraction and
+  structuring. Free-form prose or multi-turn tool use makes it the wrong, over-constrained
+  choice. Wire the schema and the content in as inputs.
 
 capabilities:
   # An extraction is a model call, so it is non-deterministic. Re-running is correct.

@@ -12,9 +12,9 @@ configSchema:
       type: string
       title: Model
       description: Select the GPT-5.6 model variant
-      enum: { $ref: ../../shared/models.yaml#/enum }
-      enumNames: { $ref: ../../shared/models.yaml#/enumNames }
-      default: gpt-5.6-luna
+      enum: { $ref: models#enum }
+      enumNames: { $ref: models#enumNames }
+      default: { $ref: models#default }
       # Executor resolver: a retired id falls back to the current best model in its
       # tier, so replacing a model generation cannot break a saved workflow.
       resolve: modelTier
@@ -45,7 +45,9 @@ configSchema:
     systemPrompt:
       type: string
       title: System Prompt
-      description: Who the model is and how it should respond, its role, tone and rules.
+      description: >-
+        Standing instructions for every run: the model's role, tone and limits. Optional.
+        Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.
       default: ""
       ui:field: template
 
@@ -60,7 +62,7 @@ configSchema:
     prompt:
       type: string
       title: Prompt
-      description: The message the model responds to, usually wired in from an upstream node.
+      description: The request to answer. Usually wired in from an upstream node.
       default: ""
       ui:field: template
 

@@ -1,15 +1,22 @@
 $schema: ../_schema/package.schema.json
 
-# The package envelope. Replaces the `gravity` block in package.json once every
-# node here is a manifest. Until then this package is MIXED: OpenAIStream is a
-# manifest, the other four are still code, and the engine resolves either kind
-# transparently.
+# The package envelope, and now the ONLY envelope: this package is fully
+# declarative. All five nodes are manifests, there is no src/ and no package.json,
+# so nothing here is built, published or imported. The retired TypeScript sits at
+# _legacy/nodes/openai for reference.
+#
+# A code node of the same type always beats a manifest at load, which is what made
+# migrating one node at a time possible. With the code gone there is nothing left
+# to beat these.
 
 name: openai
 displayName: OpenAI
 description: OpenAI integration for Unoverse
 version: 1.2.0
 category: ai
+# First-party. The marketplace shows this on every node the package registers, so
+# "who am I trusting with this credential" is answerable without leaving the screen.
+publisher: unoverse
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
 
 features:
@@ -25,7 +32,7 @@ features:
 # A manifest cannot execute code, but without this it could still say "send this
 # credential to evil.example", which is exfiltration with no code at all. One short
 # reviewable list is what makes a manifest safe to accept from someone else.
-egress:
+allowedHosts:
   - api.openai.com
 
 # Executor capabilities every manifest node here depends on. Deploy REFUSES this

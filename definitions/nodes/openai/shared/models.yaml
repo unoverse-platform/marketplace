@@ -18,25 +18,20 @@ byTier:
 # Balanced middle tier, the sensible default for most work.
 default: gpt-5.6-terra
 
-# The NARRATOR: the model that writes an agent's short, customer-safe "thinking" status
-# line. A separate concern from the model doing the work, and every AgentNode uses one,
-# so it lives here rather than being hardcoded per node.
+# The NARRATOR: the model that writes an agent's short "thinking" status line. A separate
+# concern from the model doing the work, so it is named separately.
 #
-# Deliberately NOT the 5.6 family. 5.6 is luna/sol/terra with no nano tier, and this
-# call exists to reach the user fast, not to be clever. Measured 2026-07-26 on the real
-# API, three runs each, same prompt and schema:
+# Deliberately NOT the 5.6 family: 5.6 is luna/sol/terra with no nano tier, and this call
+# exists to reach the user fast, not to be clever. Measured 2026-07-26, three runs each,
+# same prompt and schema:
 #
 #   gpt-5.4-nano   avg 1137ms   [1470, 905, 1035]
 #   gpt-5.6-luna   avg 2043ms   [1846, 2337, 1945]
 #
-# Luna is ~80% slower and less consistent, for lines that are indistinguishable in
-# quality: there is nothing in one short present-tense sentence for a bigger model to be
-# better at. Both already lose the race against the main model's first token, which is
-# why a canned local line fires at 0ms; the cost of luna is doubling how long the user
-# stares at that canned line before the contextual one replaces it.
-#
-# Revisit when a genuinely faster small model ships, and re-measure rather than assume.
+# Luna is ~80% slower and less consistent for lines that are indistinguishable in quality.
+# Re-measure when a faster small model ships; never assume.
 narrator: gpt-5.4-nano
+
 
 # The picker's options. Listed large first so the strongest reads first.
 enum:

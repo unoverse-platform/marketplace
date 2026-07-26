@@ -10,15 +10,19 @@ kind: CallbackNode
 name: OpenAI Stream
 category: AI
 color: "#2F6F66"
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
 
-description: Generate text using OpenAI's GPT models
+description: Text generation with tokens streamed live as they are produced
 
+# This used to say "the default for one-shot work", which is the OpenAI node's job and
+# said so in nearly the same words, while the two descriptions were near-identical too.
+# Two nodes competing for one task query is exactly how doc 14 says a node gets buried:
+# they rank against each other and the loser never surfaces. This one owns LIVE OUTPUT,
+# the only thing it has that OpenAI does not.
 whenToUse: >-
-  Summarize, extract, answer, or generate text in a single GPT-5 pass with tokens streamed
-  live as they're produced, the default for one-shot work, and for a few bounded tool calls
-  (~10) when MCP provider nodes are attached. Single-pass, not an iterative loop; reach
-  elsewhere when a step genuinely needs many sequential tool calls or multi-turn iteration.
+  Summarize, extract, answer or generate text with the reply arriving word by word as it is
+  written, so a person watches it appear rather than waiting for a finished block. A single
+  pass, plus a few bounded tool calls when MCP provider nodes are attached by service edge;
+  it is not an iterative loop, so many sequential tool calls or multi-turn work needs more.
 
 capabilities:
   # NEVER cacheable: an LLM completion is non-deterministic, so re-running is the
