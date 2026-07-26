@@ -1,0 +1,20 @@
+# Everything that leaves this node, in interface.yaml's connector order. A settling
+# transport has ONE body and no event types, so these rows carry no `match`.
+#
+# The Responses API returns output items; the structured payload is the output_text of
+# the message item, and it arrives as a STRING that has to be parsed. Emitting the raw
+# string would make every downstream node parse it again.
+
+- emit: result
+  value: >-
+    return JSON.parse(
+      response.output
+        .filter(item => item.type === 'message')
+        .flatMap(item => item.content)
+        .filter(part => part.type === 'output_text')
+        .map(part => part.text)
+        .join('')
+    )
+
+- emit: usage
+  value: "return response.usage"

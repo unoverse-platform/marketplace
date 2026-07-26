@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    linkedinHandle: ""
+    domain: close.io
+    company: ""
+    fullName: Steli Efti
+    firstName: ""
+    lastName: ""
+  inputs:
+    signal: {}
+  expect:
+    # A miss is a valid outcome, so this asserts the contract rather than a hit.
+    email: "return typeof output.email === 'string'"
+    score: "return typeof output.score === 'number' && output.score >= 0"

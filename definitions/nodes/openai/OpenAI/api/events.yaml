@@ -1,0 +1,17 @@
+# Everything that leaves this node, one row per output connector, in the SAME ORDER the
+# connectors are declared in interface.yaml. A settling transport has ONE body and no
+# event types, so these rows carry no `match`.
+
+# The Responses API returns output ITEMS, not a `choices[0].message.content`. That was
+# the Chat Completions shape and it is gone along with the messages array.
+- emit: text
+  value: >-
+    return response.output
+      .filter(item => item.type === 'message')
+      .flatMap(item => item.content)
+      .filter(part => part.type === 'output_text')
+      .map(part => part.text)
+      .join('')
+
+- emit: usage
+  value: "return response.usage"

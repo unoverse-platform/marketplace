@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ApolloCompany
+kind: PromiseNode
+name: Apollo Company
+category: Go To Market
+color: "#F5D800"
+description: Search Apollo.io for companies matching keywords, industry, location or size
+whenToUse: >
+  Pick to DISCOVER or build a list of companies matching criteria (keywords, industry,
+  location, size) from Apollo's database, returning firmographics and account data. Use it
+  to find unknown companies by criteria; enriching a domain you already have, or finding
+  people, are different jobs.
+
+capabilities:
+  # Idempotent read against a database that changes slowly.
+  cacheable: true
+
+# One vendor. The package allows Hunter too, for its other five nodes.
+allowedHosts: [api.apollo.io]

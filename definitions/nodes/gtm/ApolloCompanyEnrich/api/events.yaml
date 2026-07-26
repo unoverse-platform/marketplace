@@ -1,0 +1,10 @@
+# A miss returns 200 with no organization, so `found` tests for an id rather than for a
+# key: Apollo sometimes returns a stub object with nothing in it.
+
+- emit: company
+  from: response
+  value: "return response.organization || null"
+
+- emit: found
+  from: response
+  value: "return !!(response.organization && response.organization.id)"

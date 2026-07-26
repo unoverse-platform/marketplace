@@ -1,0 +1,17 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SearchPlaces
+kind: PromiseNode
+name: Search Places
+category: Search
+color: "#34A853"
+logoUrl: https://cdn-icons-png.flaticon.com/512/684/684908.png
+description: Find local businesses and places with ratings via SearchAPI.io (Google Maps)
+whenToUse: >
+  Pick to find local BUSINESSES or PLACES: each result carries address, rating, review
+  count, phone, website and GPS coordinates (Google Maps). Use it when you need structured
+  place or location data; it returns places, not arbitrary web pages, dated articles, or
+  videos.
+
+capabilities:
+  cacheable: true

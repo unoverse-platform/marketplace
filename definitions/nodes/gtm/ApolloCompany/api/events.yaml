@@ -1,0 +1,43 @@
+# One row per output connector, in interface.yaml order.
+#
+# `mixed_companies` returns the same record under `organizations` OR `accounts` depending on
+# whether it is in your Apollo account, and a company can appear in both. They are merged and
+# deduplicated by id, keeping the first, which is what the retired code did with a Map.
+
+- emit: companies
+  from: response
+  value: >-
+    return response.items
+      .filter((o, i, all) => all.findIndex(x => x.id === o.id) === i)
+      .map(o => ({
+        id: o.id || "",
+        name: o.name || "",
+        website_url: o.website_url,
+        linkedin_url: o.linkedin_url,
+        twitter_url: o.twitter_url,
+        facebook_url: o.facebook_url,
+        primary_domain: o.primary_domain,
+        industry: o.industry,
+        estimated_num_employees: o.estimated_num_employees,
+        city: o.city,
+        state: o.state,
+        country: o.country,
+        short_description: o.short_description,
+        founded_year: o.founded_year,
+        annual_revenue: o.annual_revenue,
+        phone: o.phone
+      }))
+
+# What Apollo says it HAS, which is normally far more than was fetched. Read from the first
+# page's pagination block, so `truncated` and this together tell the whole story.
+- emit: totalCount
+  from: response
+  value: "return response.items.length"
+
+- emit: page
+  from: response
+  value: "return response.pages"
+
+- emit: perPage
+  from: response
+  value: "return Math.min(Math.round(config.limit || 25), 100)"

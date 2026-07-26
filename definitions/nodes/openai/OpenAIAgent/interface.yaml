@@ -1,0 +1,42 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+
+outputs:
+  # The NARRATOR's line, not the model's. `reasoning` below is the model's own summary;
+  # this is the short customer-safe status written by a separate cheap model.
+  - name: thinking
+    type: string
+    description: Short customer-safe status lines, emitted in real time
+
+  - name: stream
+    type: object
+    description: Streaming text response, emitted in real time
+
+  - name: reasoning
+    type: string
+    description: The model's own reasoning summary (not the narrator's status line)
+
+  - name: mcpResult
+    type: object
+    description: MCP tool results
+
+  - name: text
+    type: string
+    description: The complete generated text (final output)
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API
+
+serviceConnectors:
+  # Attach MCP provider nodes here to give the agent capabilities. Nothing wired means
+  # no tools, and it degrades to a single request rather than failing.
+  - name: mcpService
+    serviceType: mcp
+    isService: false
+    description: MCP service connector, automatic schema discovery

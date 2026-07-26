@@ -1,0 +1,17 @@
+# Whichever call ran. `combined` returns both halves under `data`; the single-sided endpoints
+# return one. A skipped call leaves no key, so each row falls through to null, which is the
+# honest answer when the identifier for that type was not supplied.
+
+- emit: person
+  from: response
+  value: >-
+    return ((calls.combined || {}).data || {}).person
+      || ((calls.person || {}).data || null)
+      || null
+
+- emit: company
+  from: response
+  value: >-
+    return ((calls.combined || {}).data || {}).company
+      || ((calls.company || {}).data || null)
+      || null

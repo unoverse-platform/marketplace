@@ -1,0 +1,17 @@
+- emit: placeResults
+  from: response
+  # `type` is a single string on some results and a `types` array on others.
+  value: >-
+    return (response.local_results || []).slice(0, config.numResults).map(p => ({
+      title: p.title || "",
+      address: p.address || "",
+      rating: typeof p.rating === "number" ? p.rating : null,
+      reviews: typeof p.reviews === "number" ? p.reviews : null,
+      type: p.type || (Array.isArray(p.types) ? p.types[0] : "") || "",
+      phone: p.phone || "",
+      website: p.website || "",
+      gpsCoordinates: p.gps_coordinates
+        ? { latitude: p.gps_coordinates.latitude, longitude: p.gps_coordinates.longitude }
+        : null,
+      placeId: p.place_id || ""
+    }))

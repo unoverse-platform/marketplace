@@ -1,0 +1,19 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: B2B SaaS companies in London
+    industry: ""
+    country: ""
+    headcount: ""
+    technology: ""
+    keywords: ""
+    companyType: ""
+    similarTo: ""
+    limit: 5
+    offset: 0
+  inputs:
+    signal: {}
+  expect:
+    companies: "return Array.isArray(output.companies)"
+    limit: "return output.limit === 5"

@@ -1,0 +1,10 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    domain: apollo.io
+  inputs:
+    signal: {}
+  expect:
+    found: "return output.found === true"
+    company: "return typeof output.company.name === 'string'"

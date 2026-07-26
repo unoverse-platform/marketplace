@@ -1,0 +1,11 @@
+# The youtube engine takes no `num`: it returns a page and the node trims it, which is what
+# the retired service did too.
+
+- $ref: searchapi#call
+  name: search
+  error: { $ref: searchapi#error }
+  query:
+    engine: youtube
+    q: "{{ config.query }}"
+    gl: "{{ config.country }}"
+    hl: "{{ config.language }}"

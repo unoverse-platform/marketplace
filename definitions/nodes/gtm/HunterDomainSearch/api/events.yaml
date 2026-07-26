@@ -1,0 +1,51 @@
+- emit: emails
+  from: response
+  value: >-
+    return ((response.data || {}).emails || []).map(e => ({
+      value: e.value || "",
+      type: e.type,
+      confidence: e.confidence,
+      first_name: e.first_name,
+      last_name: e.last_name,
+      position: e.position,
+      seniority: e.seniority,
+      department: e.department,
+      linkedin: e.linkedin,
+      twitter: e.twitter,
+      phone_number: e.phone_number,
+      verification: e.verification
+    }))
+
+# The domain's own metadata, minus the email list, which is already its own connector.
+- emit: organization
+  from: response
+  value: >-
+    return {
+      domain: (response.data || {}).domain || "",
+      organization: (response.data || {}).organization || "",
+      industry: (response.data || {}).industry || null,
+      country: (response.data || {}).country || null,
+      state: (response.data || {}).state || null,
+      city: (response.data || {}).city || null,
+      linkedin: (response.data || {}).linkedin || null,
+      twitter: (response.data || {}).twitter || null,
+      facebook: (response.data || {}).facebook || null,
+      disposable: !!(response.data || {}).disposable,
+      webmail: !!(response.data || {}).webmail
+    }
+
+- emit: pattern
+  from: response
+  value: "return (response.data || {}).pattern || ''"
+
+- emit: totalResults
+  from: response
+  value: "return ((response.meta || {}).results) || 0"
+
+- emit: limit
+  from: response
+  value: "return Math.round(config.limit || 10)"
+
+- emit: offset
+  from: response
+  value: "return Math.round(config.offset || 0)"

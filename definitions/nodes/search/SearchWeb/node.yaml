@@ -1,0 +1,17 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SearchWeb
+kind: PromiseNode
+name: Search Web
+category: Search
+color: "#4285F4"
+description: Search the web using SearchAPI.io (Google) for web results and images
+whenToUse: >
+  Pick to find WEB PAGES and images for a keyword query: titles, URLs and snippets from
+  across the open web (Google). Use it for general open-web results, any relevant page; it
+  returns web pages, not specifically dated news, videos, places, or social posts.
+
+capabilities:
+  # Idempotent read: the same query yields the same results, so a prior output may be
+  # reused instead of re-running the search (EXECUTION_EFFICIENCY.md §3.2).
+  cacheable: true

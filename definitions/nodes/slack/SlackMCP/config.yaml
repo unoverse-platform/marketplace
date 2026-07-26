@@ -1,0 +1,16 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    defaultChannel:
+      type: string
+      title: Default Channel
+      description: >-
+        Channel ID used when the workflow triggers this node directly. Not used for MCP tool
+        calls. A channel ID, e.g. C01ABC123, not a name.
+      default: ""
+      "ui:field": template
+
+"ui:order": [defaultChannel]

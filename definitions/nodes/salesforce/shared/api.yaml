@@ -1,0 +1,26 @@
+# The two things every Salesforce call needs: how to authenticate, and where to send it.
+#
+# Referenced by every call in the node, so an API version bump or an auth change is one
+# edit here rather than ten.
+
+# The connected app exchange. The executor mints the token, form-encodes the request,
+# caches it per app until it expires, and refreshes once on a 401. A manifest cannot
+# express any of that, which is why it is a scheme rather than a call.
+auth: &auth
+  scheme: oauth2ClientCredentials
+  tokenUrl: "{{ credentials.salesforceOAuth.host }}/services/oauth2/token"
+  clientId: "{{ credentials.salesforceOAuth.clientId }}"
+  clientSecret: "{{ credentials.salesforceOAuth.clientSecret }}"
+
+# `token.instanceUrl` is what the exchange returned, and the org's data lives THERE rather
+# than at the host you authenticated against. An expression rather than a template, because
+# apiVersion is optional and `{{ }}` resolving to empty would produce `/services/data//`.
+#
+# These are the path prefixes; each call appends its own resource.
+query: &queryUrl >-
+  return token.instanceUrl + '/services/data/'
+    + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/query'
+
+sobjects: &sobjectsUrl >-
+  return token.instanceUrl + '/services/data/'
+    + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/sobjects/'

@@ -1,0 +1,12 @@
+- name: verify
+  method: GET
+  url: https://api.hunter.io/v2/email-verifier
+  auth: { $ref: hunter#queryAuth }
+  query:
+    email: "return String(config.email || '').trim()"
+  transport: json
+  error: { $ref: hunter#error }
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

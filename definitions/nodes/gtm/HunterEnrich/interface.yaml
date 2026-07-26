@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The identifier usually templates from upstream output.
+
+outputs:
+  - name: person
+    type: object
+    description: The person profile, or null when this run enriched a company or found nothing
+  - name: company
+    type: object
+    description: The company profile, or null when this run enriched a person or found nothing
+
+credentials:
+  - name: hunterCredential
+    required: true
+    displayName: Hunter.io

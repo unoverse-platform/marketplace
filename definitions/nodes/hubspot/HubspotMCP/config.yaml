@@ -1,0 +1,17 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    syncUser:
+      type: boolean
+      title: Sync user on trigger
+      description: >-
+        On trigger, drain any insight notes the memory server has queued for this contact
+        and write them to the CRM. Leave off for a plain lookup that just outputs the
+        contact. The identity snapshot is refreshed either way.
+      default: false
+      "ui:widget": toggle
+
+"ui:order": [syncUser]

@@ -1,0 +1,260 @@
+# The MCP methods an agent can call ad-hoc. Transcribed from src/SalesforceMCP/service/.
+#
+# The shape of the surface is deliberate and is the security model: READS are general (any
+# object, via SOQL), WRITES are Leads only with a fixed field list. An agent cannot modify
+# an Account, an Opportunity or a converted Contact, because no method here can.
+#
+# Descriptions are what a model reads when choosing a tool, so they say what comes back and
+# what an empty result means.
+
+query_records:
+  description: >-
+    Run a SOQL query and return the first page of records. Use for any read: contacts,
+    accounts, opportunities, custom objects. Returns has_more and next_records_url when the
+    result was truncated.
+  calls:
+    - name: query
+      method: GET
+      url: { $ref: api#query }
+      auth: { $ref: api#auth }
+      query:
+        q: "{{ params.soql }}"
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      totalSize: response.totalSize,
+      records: response.records || [],
+      has_more: response.done === false,
+      next_records_url: response.nextRecordsUrl || null
+    }
+
+get_record:
+  description: >-
+    Fetch one record by its Salesforce id. Pass a comma-separated `fields` list to bound
+    what comes back; omit it for the default field set.
+  calls:
+    - name: record
+      method: GET
+      url: >-
+        return token.instanceUrl + '/services/data/'
+          + (credentials.salesforceOAuth.apiVersion || 'v52.0')
+          + '/sobjects/' + encodeURIComponent(params.sobject)
+          + '/' + encodeURIComponent(params.recordId)
+      auth: { $ref: api#auth }
+      query:
+        fields: "{{ params.fields }}"
+      transport: json
+  returns: "return { ok: true, record: response }"
+
+create_lead:
+  description: >-
+    Create a Lead. lastName and company are required by Salesforce. Only the standard lead
+    fields can be set; this cannot create any other kind of record.
+  calls:
+    - name: lead
+      method: POST
+      url: >-
+        return token.instanceUrl + '/services/data/'
+          + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/sobjects/Lead/'
+      auth: { $ref: api#auth }
+      # Empty and null are dropped, not sent: a strict tool schema fills unused fields with
+      # null, and Salesforce rejects null on a picklist.
+      body: >-
+        return Object.fromEntries(Object.entries({
+          FirstName: params.firstName,
+          LastName: params.lastName,
+          Company: params.company,
+          Email: params.email,
+          Phone: params.phone,
+          Title: params.title,
+          Website: params.website,
+          LeadSource: params.leadSource,
+          Industry: params.industry,
+          Description: params.description
+        }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+      transport: json
+  returns: "return { ok: !!response.success, id: response.id || null, errors: response.errors || [] }"
+
+update_lead:
+  description: >-
+    Update the Lead matching an email address, the most recent if several. Refuses a
+    converted lead, which is a Contact and read-only here. Returns NOT_FOUND when no lead
+    has that email.
+  calls:
+    - name: found
+      method: GET
+      url: { $ref: api#query }
+      auth: { $ref: api#auth }
+      query:
+        q: >-
+          return "SELECT Id, IsConverted FROM Lead WHERE Email = '"
+            + String(params.email || '').split('\\').join('\\\\').split("'").join("\\'")
+            + "' ORDER BY CreatedDate DESC LIMIT 1"
+      transport: json
+
+    # Only when a lead was found AND it has not converted. Email is the lookup key, so it is
+    # never one of the fields written back.
+    - name: updated
+      when: >-
+        return (calls.found.records || []).filter(r => !r.IsConverted).length > 0
+          && Object.keys(Object.fromEntries(Object.entries({
+              FirstName: params.firstName, LastName: params.lastName, Company: params.company,
+              Phone: params.phone, Title: params.title, Website: params.website,
+              LeadSource: params.leadSource, Industry: params.industry, Description: params.description
+            }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))).length > 0
+      method: PATCH
+      url: >-
+        return token.instanceUrl + '/services/data/'
+          + (credentials.salesforceOAuth.apiVersion || 'v52.0')
+          + '/sobjects/Lead/' + encodeURIComponent(calls.found.records[0].Id)
+      auth: { $ref: api#auth }
+      body: >-
+        return Object.fromEntries(Object.entries({
+          FirstName: params.firstName,
+          LastName: params.lastName,
+          Company: params.company,
+          Phone: params.phone,
+          Title: params.title,
+          Website: params.website,
+          LeadSource: params.leadSource,
+          Industry: params.industry,
+          Description: params.description
+        }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+      transport: json
+  # Each refusal names itself and says what to do instead, because a model reads this.
+  returns: >-
+    return (calls.found.records || []).length === 0
+      ? { ok: false, error: 'NOT_FOUND', hint: 'No lead with that email. Use create_lead first.' }
+      : calls.found.records[0].IsConverted
+        ? { ok: false, error: 'LEAD_CONVERTED', hint: 'This lead was converted to a Contact and cannot be updated through this tool.' }
+        : !calls.updated
+          ? { ok: false, error: 'NO_FIELDS', hint: 'Provide at least one field to change.' }
+          : { ok: true, id: calls.found.records[0].Id }
+
+describe_object:
+  description: >-
+    An object's fields and metadata: name, label, type, whether it is required or
+    updateable, and any picklist values. Use before writing to learn what a field accepts.
+  calls:
+    - name: describe
+      method: GET
+      url: >-
+        return token.instanceUrl + '/services/data/'
+          + (credentials.salesforceOAuth.apiVersion || 'v52.0')
+          + '/sobjects/' + encodeURIComponent(params.sobject) + '/describe/'
+      auth: { $ref: api#auth }
+      transport: json
+  # The full describe payload is enormous. This is the part an agent reasons about.
+  returns: >-
+    return {
+      ok: true,
+      name: response.name,
+      label: response.label,
+      fields: (response.fields || []).map(f => ({
+        name: f.name,
+        label: f.label,
+        type: f.type,
+        required: f.nillable === false && f.defaultedOnCreate === false,
+        updateable: f.updateable,
+        picklistValues: (f.picklistValues || []).map(p => p.value)
+      }))
+    }
+
+list_objects:
+  description: The objects this org has, and whether each is queryable, createable or updateable.
+  calls:
+    - name: objects
+      method: GET
+      url: { $ref: api#sobjects }
+      auth: { $ref: api#auth }
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      sobjects: (response.sobjects || []).map(s => ({
+        name: s.name, label: s.label,
+        queryable: s.queryable, createable: s.createable, updateable: s.updateable
+      }))
+    }
+
+# ── the CRM sync contract (CRM_SYNC.md) ──────────────────────────────────────────
+
+crm_resolve_user:
+  description: >-
+    Resolve a user to their CRM record and bounded identity profile. Pass an email to look
+    that person up; omit it for the currently authenticated user. Matches a Contact first,
+    then an unconverted Lead. An empty result means they are not in the CRM, which is
+    normal: just proceed.
+  calls: { $ref: contact#resolveAndCache }
+  returns: { $ref: contact#result }
+
+crm_get_profile:
+  description: The bounded identity profile for a known record id. Never a full record dump.
+  calls:
+    - name: contact
+      method: GET
+      url: { $ref: api#query }
+      auth: { $ref: api#auth }
+      query:
+        q: >-
+          return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Account.Name FROM Contact WHERE Id = '"
+            + String(params.contactId || '').split('\\').join('\\\\').split("'").join("\\'")
+            + "' LIMIT 1"
+      transport: json
+  returns: >-
+    return [(response.records || []).map(r => ({
+      id: r.Id, name: r.Name || null, firstName: r.FirstName || null, lastName: r.LastName || null,
+      email: r.Email || null, title: r.Title || null, phone: r.Phone || null,
+      company: (r.Account || {}).Name || null
+    }))[0] || null].map(p => ({ ok: !!p, profile: p }))[0]
+
+crm_write_insight:
+  description: >-
+    Append a durable, machine-authored insight about a person to their CRM record, as a
+    completed Task. APPEND-ONLY: it never edits an existing field. Push only high-certainty
+    conclusions.
+  calls:
+    - name: task
+      method: POST
+      url: >-
+        return token.instanceUrl + '/services/data/'
+          + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/sobjects/Task/'
+      auth: { $ref: api#auth }
+      # Subject is capped at 255 by Salesforce, so the full text lives in Description and
+      # the subject is truncated. The stamp is a WIRE MARKER: crm_read_insights matches on
+      # it, so its wording is fixed and must not be tidied.
+      body: >-
+        return {
+          Subject: params.insight.length > 255 ? params.insight.slice(0, 252) + '…' : params.insight,
+          Status: 'Completed',
+          Priority: 'Normal',
+          WhoId: params.contactId,
+          Description: 'Gravity AI — machine-authored, unverified'
+            + (params.certainty ? ' (certainty ' + Math.round(params.certainty * 100) + '%)' : '')
+            + '\n\n' + params.insight
+        }
+      transport: json
+  returns: "return { ok: !!response.success, id: response.id || null }"
+
+crm_read_insights:
+  description: The machine-authored insights previously written about this person, newest first.
+  calls:
+    - name: tasks
+      method: GET
+      url: { $ref: api#query }
+      auth: { $ref: api#auth }
+      query:
+        q: >-
+          return "SELECT Id, Subject, Description, CreatedDate FROM Task WHERE WhoId = '"
+            + String(params.contactId || '').split('\\').join('\\\\').split("'").join("\\'")
+            + "' AND Description LIKE 'Gravity AI%' ORDER BY CreatedDate DESC LIMIT "
+            + Math.min(Math.max(params.limit || 50, 1), 200)
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      insights: (response.records || []).map(t => ({
+        id: t.Id, subject: t.Subject, description: t.Description, createdDate: t.CreatedDate
+      }))
+    }

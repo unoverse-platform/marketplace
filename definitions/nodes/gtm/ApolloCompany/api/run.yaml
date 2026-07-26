@@ -1,0 +1,43 @@
+# One call, walked across pages.
+#
+# Apollo pages by an INTEGER in the request BODY, and signals the end with a short page
+# rather than a missing token, which is why `strategy: page` with `in: body` and a declared
+# `size` exists at all.
+#
+# The body is an expression rather than a static object because an EMPTY filter must be
+# absent: Apollo reads `organization_industries: []` as "match nothing" instead of "no
+# filter", so a blank config field would return zero results rather than being ignored.
+
+- name: search
+  method: POST
+  url: https://api.apollo.io/api/v1/mixed_companies/search
+  auth: { $ref: apollo#auth }
+  headers: { $ref: apollo#headers }
+  body: >-
+    return Object.fromEntries(Object.entries({
+      per_page: Math.min(Math.round(config.limit || 25), 100),
+      q_organization_keyword_tags:
+        String(config.keywords || '').split(',').map(s => s.trim()).filter(Boolean),
+      organization_industries:
+        String(config.industries || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean),
+      organization_names:
+        String(config.organizationNames || '').split(',').map(s => s.trim()).filter(Boolean),
+      organization_domains:
+        String(config.organizationDomains || '').split(',').map(s => s.trim()).filter(Boolean),
+      organization_locations:
+        String(config.organizationLocations || '').split(',').map(s => s.trim()).filter(Boolean),
+      organization_num_employees_ranges:
+        String(config.organizationNumEmployeesRanges || '').split(';').map(s => s.trim()).filter(Boolean)
+    }).filter(e => !Array.isArray(e[1]) || e[1].length > 0))
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+  paginate:
+    strategy: page
+    in: body
+    into: page
+    size: "return Math.min(Math.round(config.limit || 25), 100)"
+    items: "return [].concat(response.organizations || [], response.accounts || [])"
+    max: "return config.limit || 25"

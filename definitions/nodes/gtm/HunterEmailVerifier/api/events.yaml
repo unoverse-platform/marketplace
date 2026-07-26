@@ -1,0 +1,26 @@
+# Hunter wraps everything in `data`. Each row reads through it, so a shape change shows up
+# as an empty field rather than a crash.
+
+- emit: email
+  from: response
+  value: "return (response.data || {}).email || String(config.email || '').trim()"
+
+- emit: status
+  from: response
+  value: "return (response.data || {}).status || 'unknown'"
+
+- emit: result
+  from: response
+  value: "return (response.data || {}).result || ''"
+
+- emit: score
+  from: response
+  value: "return (response.data || {}).score || 0"
+
+- emit: accept_all
+  from: response
+  value: "return !!(response.data || {}).accept_all"
+
+- emit: disposable
+  from: response
+  value: "return !!(response.data || {}).disposable"

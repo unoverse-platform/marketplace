@@ -1,0 +1,25 @@
+# One GET. Only the identifiers actually given are sent, because a blank parameter narrows
+# the match rather than being ignored.
+#
+# `full_name` WINS over first and last: sending all three makes Hunter treat them as
+# competing constraints. The retired code had the same either/or and it is easy to lose.
+
+- name: find
+  method: GET
+  url: https://api.hunter.io/v2/email-finder
+  auth: { $ref: hunter#queryAuth }
+  query:
+    linkedin_handle: { $ref: hunter#linkedinHandle }
+    domain: "return String(config.domain || '').trim()"
+    company: "return String(config.company || '').trim()"
+    full_name: "return String(config.fullName || '').trim()"
+    first_name: >-
+      return String(config.fullName || '').trim() ? '' : String(config.firstName || '').trim()
+    last_name: >-
+      return String(config.fullName || '').trim() ? '' : String(config.lastName || '').trim()
+  transport: json
+  error: { $ref: hunter#error }
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

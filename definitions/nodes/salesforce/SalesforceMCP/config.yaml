@@ -1,0 +1,25 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    syncUser:
+      type: boolean
+      title: Sync user on trigger
+      description: >-
+        On trigger, resolve the signed-in user, refresh their cached profile, and write back
+        any insight Tasks the memory server has queued. Leave off to run a query instead.
+      default: false
+      "ui:widget": toggle
+    defaultQuery:
+      type: string
+      title: Default SOQL Query
+      description: >-
+        SOQL run when the workflow triggers this node directly. Not used for MCP tool calls
+        or when Sync user is on. An upstream { soql } on the input wins over this.
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { syncUser: false }
+
+"ui:order": [syncUser, defaultQuery]

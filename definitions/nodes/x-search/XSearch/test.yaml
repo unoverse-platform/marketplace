@@ -1,0 +1,13 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: AI agents lang:en -is:retweet
+    maxResults: 10
+    tweetFields: created_at,public_metrics,author_id
+  inputs:
+    query: AI agents lang:en -is:retweet
+  expect:
+    tweets: "return output.tweets.length > 0 && typeof output.tweets[0].text === 'string'"
+    resultCount: "return output.resultCount === output.tweets.length"
+    raw: "return JSON.parse(output.raw).data.length === output.resultCount"

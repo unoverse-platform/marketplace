@@ -1,0 +1,19 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HunterEmailVerifier
+kind: PromiseNode
+name: Hunter Email Verifier
+category: Go To Market
+color: "#FF5500"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png
+description: Check whether one email address is real and deliverable
+whenToUse: >
+  Pick to CHECK that a single email address is real and deliverable before sending. Use it
+  to verify an address you already have; discovering an unknown address is a separate,
+  upstream step.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Apollo too, for its other four nodes.
+allowedHosts: [api.hunter.io]

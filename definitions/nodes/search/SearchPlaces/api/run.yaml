@@ -1,0 +1,11 @@
+# `ll` is omitted when blank rather than sent empty: the executor drops a key whose template
+# resolved to nothing, and Maps then infers a region from the query.
+
+- $ref: searchapi#call
+  name: search
+  error: { $ref: searchapi#error }
+  query:
+    engine: google_maps
+    q: "{{ config.query }}"
+    ll: "{{ config.location }}"
+    hl: "{{ config.language }}"

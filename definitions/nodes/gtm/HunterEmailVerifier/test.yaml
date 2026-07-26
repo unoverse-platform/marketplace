@@ -1,0 +1,11 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    email: steli@close.io
+  inputs:
+    signal: {}
+  expect:
+    email: "return output.email.indexOf('@') > 0"
+    status: "return typeof output.status === 'string' && output.status.length > 0"
+    score: "return typeof output.score === 'number'"

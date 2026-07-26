@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SalesforceMCP
+kind: PromiseNode
+name: Salesforce
+category: Go To Market
+color: "#00A1E0"
+# Attached to an agent over a service edge rather than wired in sequence.
+template: service
+description: Query, read, create and update records in a Salesforce org.
+whenToUse: >
+  Pick for customer and CRM data in Salesforce: look up customers, accounts, contacts and
+  opportunities, and capture or update leads. Reads any object, SOQL under the hood; writes
+  are lead-only with a fixed field set, so an agent can never modify other records. Attach
+  it via a service edge to an agent, or trigger it directly with a fixed query.
+
+capabilities:
+  # Not cacheable: CRM records change underneath us, and the write methods have side
+  # effects that reuse would silently skip.
+  cacheable: false

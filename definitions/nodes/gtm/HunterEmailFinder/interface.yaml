@@ -1,0 +1,31 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The identifiers usually template from upstream output.
+
+outputs:
+  - name: email
+    type: string
+    description: The most likely address, or empty when none was found
+  - name: score
+    type: number
+    description: Confidence 0-100
+  - name: position
+    type: string
+    description: The person's job title, when known
+  - name: linkedin_url
+    type: string
+    description: Their LinkedIn profile, when known
+  - name: verification_status
+    type: string
+    description: Hunter's own verification status for the address, when available
+  - name: sources_count
+    type: number
+    description: How many public sources back the address
+
+credentials:
+  - name: hunterCredential
+    required: true
+    displayName: Hunter.io

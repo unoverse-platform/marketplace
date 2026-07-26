@@ -1,0 +1,34 @@
+# One call in the manifest, as many requests as the table needs.
+#
+# Airtable returns up to 100 rows and an `offset` when there are more. `paginate` walks that
+# until the offset is absent or maxRecords is reached, and hands back the accumulation.
+#
+# `fields[]` repeats for each name, which a query object cannot express as one key. It is
+# built as a single pre-joined parameter instead, which the vendor accepts.
+
+- name: page
+  method: GET
+  url: { $ref: table#url }
+  auth: { $ref: table#auth }
+  query:
+    # Omitted when blank: the executor drops a key whose value resolved to nothing, and
+    # Airtable rejects an empty formula rather than ignoring it.
+    filterByFormula: "{{ config.filterFormula }}"
+    view: "{{ config.view }}"
+    # A page is never larger than the vendor's 100, nor than what is still wanted.
+    pageSize: "return String(Math.min(config.maxRecords || 100, 100))"
+    sort[0][field]: "{{ config.sortField }}"
+    sort[0][direction]: "return config.sortField ? (config.sortDirection || 'asc') : ''"
+    fields: >-
+      return String(config.fields || '').split(',').map(f => f.trim()).filter(Boolean).join(',')
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+  paginate:
+    strategy: cursor
+    cursor: "return response.offset"
+    into: offset
+    items: "return response.records"
+    max: "return config.maxRecords || 100"

@@ -1,0 +1,28 @@
+$schema: ../_schema/package.schema.json
+
+# Two vendors, one package: Apollo.io for company and people data, Hunter.io for email.
+# One credential each, one base URL each, no SDKs.
+#
+# The retired TypeScript is at `_legacy/nodes/gtm/`.
+
+name: gtm
+displayName: Go To Market
+description: Company and people discovery, enrichment and email verification
+version: 2.0.0
+category: productivity
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg
+
+features:
+  - Apollo company and people search, with filters
+  - Apollo company and people enrichment
+  - Hunter email discovery, finding and verification
+
+allowedHosts:
+  - api.apollo.io
+  - api.hunter.io
+
+requires:
+  auth: [apiKeyHeader, apiKeyQuery]
+  transport: [json]
+  paginate: [page]
+  executorVersion: ">=1.4.0"

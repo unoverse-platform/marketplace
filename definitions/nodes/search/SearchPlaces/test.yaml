@@ -1,0 +1,12 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: coffee shops in Shoreditch London
+    location: ""
+    numResults: 10
+    language: en
+  inputs:
+    query: coffee shops in Shoreditch London
+  expect:
+    placeResults: "return output.placeResults.length > 0 && typeof output.placeResults[0].title === 'string'"

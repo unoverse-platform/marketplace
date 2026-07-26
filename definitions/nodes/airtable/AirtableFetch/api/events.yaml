@@ -1,0 +1,25 @@
+# One row per output connector, in interface.yaml order.
+#
+# A paginated call's reply is { items, pages, truncated }, so both rows read `items`.
+#
+# Dedup is expressed as "keep the first index for this value", because the sandbox has no
+# assignment and therefore no seen-set. Same result, no mutation.
+
+- emit: records
+  from: response
+  value: >-
+    return response.items
+      .map(r => Object.assign({ id: r.id }, r.fields || {}))
+      .filter((r, i, all) => !config.dedupField
+        || (String(r[config.dedupField] ?? '') !== ''
+            && all.findIndex(x => String(x[config.dedupField] ?? '') === String(r[config.dedupField] ?? '')) === i))
+
+- emit: totalCount
+  from: response
+  value: >-
+    return response.items
+      .map(r => Object.assign({ id: r.id }, r.fields || {}))
+      .filter((r, i, all) => !config.dedupField
+        || (String(r[config.dedupField] ?? '') !== ''
+            && all.findIndex(x => String(x[config.dedupField] ?? '') === String(r[config.dedupField] ?? '')) === i))
+      .length

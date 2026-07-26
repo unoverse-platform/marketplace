@@ -1,0 +1,27 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: >-
+      Trigger. When the graph runs this node it posts a message, taking { channel, text }
+      from here, falling back to the configured default channel.
+
+outputs:
+  - name: output
+    type: object
+    description: The Slack API response for whatever ran
+
+credentials:
+  - name: slackBotToken
+    required: true
+    displayName: Slack
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [send_message, list_channels, search_messages, get_user, read_history, add_reaction]
+    description: >-
+      MCP tools for an agent: send messages, search, list channels, look up users, read
+      history, add reactions.

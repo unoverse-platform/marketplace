@@ -1,0 +1,18 @@
+# Tools are handed to the model NATIVELY over the Responses API. No SDK: the executor
+# sends `tools` + `tool_choice`, reads back { type: function_call, call_id, name,
+# arguments }, runs each through the MCP service, and replies with
+# { type: function_call_output, call_id, output } chained by previous_response_id.
+#
+# Every MCP judgement (what a discovery result unlocks, when a turn ends, how much of a
+# result the model needs, how a component app is invoked) belongs to
+# plugin-base/agent-mcp. The loop owns only the wire format.
+
+# OpenAI's tool protocol, imported whole. Local keys below layer on top.
+$ref: tools
+
+# The dial. 1 answers in a single pass and cannot use a tool at all; higher makes it
+# work through a problem.
+maxTurns: 1
+# The SAME call with the SAME arguments three times is stuck. maxTurns does not catch
+# it: a model calling many DIFFERENT tools forever is not stuck by that rule.
+stuckAfterRepeats: 3

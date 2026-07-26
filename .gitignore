@@ -1,1 +1,2 @@
-definitions/
+node_modules/
+dist/

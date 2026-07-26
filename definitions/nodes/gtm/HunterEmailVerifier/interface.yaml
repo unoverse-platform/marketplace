@@ -1,0 +1,31 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The email usually templates from upstream output.
+
+outputs:
+  - name: email
+    type: string
+    description: The address that was verified
+  - name: status
+    type: string
+    description: valid, invalid, accept_all, webmail, disposable or unknown
+  - name: result
+    type: string
+    description: deliverable, undeliverable or risky
+  - name: score
+    type: number
+    description: Confidence 0-100
+  - name: accept_all
+    type: boolean
+    description: True when the domain accepts every address, which makes the result less certain
+  - name: disposable
+    type: boolean
+    description: True when the address is from a disposable provider
+
+credentials:
+  - name: hunterCredential
+    required: true
+    displayName: Hunter.io

@@ -1,0 +1,30 @@
+# What every Hunter call shares.
+#
+# TWO auth styles, and that is Hunter's doing rather than ours: `/discover` takes the key in
+# an X-API-KEY header, every other endpoint takes it as an `api_key` query parameter. Both
+# are executor capabilities, so each call names the one its endpoint wants.
+
+queryAuth: &queryAuth
+  scheme: apiKeyQuery
+  param: api_key
+  value: "{{ credentials.hunterCredential.apiKey }}"
+
+headerAuth: &headerAuth
+  scheme: apiKeyHeader
+  header: X-API-KEY
+  value: "{{ credentials.hunterCredential.apiKey }}"
+
+# Hunter wraps every payload in `data` and reports failures in `errors`, sometimes with a
+# 200. Without this a quota error would emit an empty result and read as "not found".
+error: &error
+  when: "return !!(response.errors && response.errors.length)"
+  message: "return response.errors.map(e => e.details || e.id).join('; ')"
+
+# A LinkedIn URL to the handle Hunter wants. split/join rather than a regex, because the
+# expression sandbox takes no regex literal: everything after /in/, up to a ? or #, with any
+# trailing slash removed.
+linkedinHandle: &linkedinHandle >-
+  return String(config.linkedinHandle || '').trim()
+    .split('/in/').slice(-1)[0]
+    .split('?')[0].split('#')[0]
+    .split('/').filter(Boolean).slice(-1)[0] || ''

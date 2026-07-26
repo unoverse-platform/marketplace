@@ -1,0 +1,19 @@
+$schema: ../../../_schema/test.schema.json
+
+# Both reveal flags OFF, so the bench cannot spend credits.
+testData:
+  config:
+    email: ""
+    linkedinUrl: https://linkedin.com/in/satyanadella
+    firstName: ""
+    lastName: ""
+    domain: ""
+    organizationName: ""
+    revealPersonalEmails: false
+    revealPhoneNumber: false
+  inputs:
+    signal: {}
+  expect:
+    # A miss is a valid outcome, so this asserts the shape rather than a hit.
+    found: "return typeof output.found === 'boolean'"
+    person: "return output.found ? typeof output.person.id === 'string' : output.person === null"

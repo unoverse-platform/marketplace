@@ -1,0 +1,33 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [query]
+  properties:
+    query:
+      type: string
+      title: Search Query
+      description: What to search for on Maps, e.g. 'coffee shops', 'dentist'
+      default: ""
+      "ui:field": template
+    location:
+      type: string
+      title: Location
+      description: >-
+        Optional coordinate filter, SearchAPI 'll' format e.g. '@40.7009973,-73.994778,12z'.
+        Leave blank to infer from the query.
+      default: ""
+    numResults:
+      type: number
+      title: Number of Results
+      description: Number of place results to return
+      default: 20
+      minimum: 1
+      maximum: 100
+    language:
+      type: string
+      title: Language
+      description: Language code for results, e.g. 'en', 'ar'
+      default: en
+
+"ui:order": [query, location, numResults, language]

@@ -1,0 +1,93 @@
+# The narrator: the `thinking` line, written by a second and much cheaper model in THIS
+# agent's voice. Deliberately not shared, because the copy is tuned for this node.
+#
+# Not to be confused with `reasoning` in events.yaml, which is the MAIN model's own
+# summary. The platform contributes only timing: a local line at 0ms because the round
+# trip has a ~1s floor and the main model's first token beats it, never awaited, fall
+# back on any failure, and drop late lines.
+#
+# Which connector its line lands on is NOT here: that is the `from: narrator` row in
+# events.yaml, like every other thing that leaves this node.
+
+instant:
+  - Let me look into this for you...
+  - Okay, one moment while I check...
+  - Let me see how I can help...
+  - Just a second while I look at this...
+  - Checking the best way to help you...
+
+fallback: Checking the best next step...
+
+request:
+  method: POST
+  url: { $ref: endpoints#responses }
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+  timeoutMs: 8000
+  transport: json
+  body:
+    # NOT the model doing the work: this line has to beat the main stream, so it wants
+    # the fastest small model there is. Named in shared/models.yaml with the timings
+    # behind the choice, so every agent moves together when a faster one ships.
+    model: { $ref: models#narrator }
+    max_output_tokens: 600
+    instructions: |-
+      You are writing the short status line a virtual assistant shows the customer while it prepares its reply — the visible "thinking" line above the answer.
+
+      The line must:
+      - Be one sentence only, 6–12 words.
+      - Sound like the assistant getting on with the task: what it is checking, confirming, or looking into.
+      - Use natural, warm, present-tense assistant voice.
+      - NEVER be commentary about the customer's message itself (never "what X refers to", "the message says", "you mentioned").
+      - NEVER quote or repeat the customer's words.
+      - NEVER repeat abbreviations, acronyms, brand names, or product names from the message.
+      - Avoid assumptions about the customer's goal, preference, eligibility, or situation.
+      - Avoid phrases like "the message is brief", "I asked", "I need to understand", or "before answering".
+      - No private chain-of-thought, no step-by-step reasoning.
+      - Never mention tool, system, or service names.
+      - No label such as "Reasoning summary:".
+
+      Good examples:
+      - Okay, let me check the right support route.
+      - Let me clarify what help you need today.
+      - I'll confirm the relevant options for your request.
+      - Checking the best next step for this query.
+      - Let me review the available support options.
+      - I'll check the right process to follow.
+
+      Bad examples:
+      - Confirming what "hello" refers to for your query.
+      - The message is very brief, so I asked a few questions.
+      - I am reasoning about what the user might want.
+      - The user may be looking for a course or qualification.
+      - I need to infer their goal before answering.
+      - Reasoning summary: I checked the available options.
+    # WHAT THE NARRATOR IS TOLD about this moment. Two moments, two framings, chosen with
+    # an ordinary {{#if}} over the {{event.*}} root, exactly like any other template value
+    # in any other manifest field. Nothing here is special.
+    input: |-
+      {{#if (eq event.kind "turnStart")}}
+      For topical context only (do NOT quote or reference it), the message from the customer was: """{{event.userMessage}}""". Write the status line the assistant shows while preparing its reply.
+      {{else}}
+      The assistant is now looking something up for the customer using an internal capability named "{{event.toolName}}"{{#if event.args}} with input {{toJSON event.args}}{{/if}}. Write the thinking line describing what is being checked or done (never name the capability).
+      {{/if}}
+    text:
+      format:
+        type: json_schema
+        name: thinking
+        strict: true
+        schema:
+          type: object
+          additionalProperties: false
+          required: [line]
+          properties:
+            line: { type: string }
+
+response:
+  line: >-
+    return JSON.parse(
+      response.output.filter(o => o.type === 'message')
+        .flatMap(o => o.content).filter(c => c.type === 'output_text')
+        .map(c => c.text).join('') || '{}'
+    ).line

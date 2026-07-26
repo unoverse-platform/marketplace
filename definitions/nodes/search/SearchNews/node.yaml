@@ -1,0 +1,16 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SearchNews
+kind: PromiseNode
+name: Search News
+category: Search
+color: "#DB4437"
+logoUrl: https://cdn-icons-png.flaticon.com/512/2965/2965879.png
+description: Find recent news articles on a topic via SearchAPI.io (Google News)
+whenToUse: >
+  Pick to find recent, DATED news articles on a topic: each result carries a publication
+  date and source (Google News). Use it specifically when recency and an article's date
+  matter; it returns dated news, not arbitrary web pages, videos, places, or social posts.
+
+capabilities:
+  cacheable: true

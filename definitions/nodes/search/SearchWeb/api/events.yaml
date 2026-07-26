@@ -1,0 +1,25 @@
+# One row per output connector, in interface.yaml order.
+#
+# Both read `calls.<name>`, because the image pass is conditional: when it is skipped there
+# is no key, and `imageResults` is correctly empty rather than undefined.
+
+- emit: webResults
+  from: response
+  value: >-
+    return (((calls.web || {}).organic_results) || []).map(r => ({
+      title: r.title || "",
+      url: r.link || "",
+      source: r.source || "",
+      snippet: r.snippet || ""
+    }))
+
+- emit: imageResults
+  from: response
+  value: >-
+    return (((calls.images || {}).images) || []).slice(0, config.numImages).map(i => ({
+      url: (i.original || {}).link || i.link || "",
+      title: i.title || "",
+      thumbnail: i.thumbnail || "",
+      source_url: (i.source || {}).link || "",
+      source_name: (i.source || {}).name || ""
+    }))

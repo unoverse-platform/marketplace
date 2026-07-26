@@ -1,0 +1,17 @@
+$schema: ../../../_schema/node.schema.json
+
+type: AirtableFetch
+kind: PromiseNode
+name: Airtable Fetch
+category: Storage & Data
+color: "#FCB400"
+description: Read records from an Airtable table, with filters, views, sorting and paging
+whenToUse: >
+  Pick to READ rows out of an Airtable table: filtered, sorted, from a named view, and
+  paged automatically past the first hundred. Returns the records as plain objects with
+  their Airtable id. Use it when the data lives in Airtable rather than a database.
+
+capabilities:
+  # Idempotent read. The table can change underneath, so this is eligible rather than free:
+  # memoization is off engine-wide by default.
+  cacheable: true

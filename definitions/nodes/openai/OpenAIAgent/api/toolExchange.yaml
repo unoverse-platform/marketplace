@@ -1,0 +1,12 @@
+# The tool loop's protocol, described HERE and not in the platform. The runtime only
+# counts turns, spots a stuck loop, and mints what discovery unlocks.
+
+# OpenAI's tool protocol, imported whole. Local keys below layer on top.
+$ref: tools
+
+# The dial. 1 answers in a single pass and cannot use a tool at all; higher makes it
+# work through a problem.
+maxTurns: "{{ config.maxTurns }}"
+# The SAME call with the SAME arguments three times is stuck. maxTurns does not catch
+# it: a model calling many DIFFERENT tools forever is not stuck by that rule.
+stuckAfterRepeats: 3

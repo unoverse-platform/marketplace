@@ -1,0 +1,18 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ApolloCompanyEnrich
+kind: PromiseNode
+name: Apollo Company Enrich
+category: Go To Market
+color: "#F5D800"
+description: Look up a company's full Apollo.io profile from its domain
+whenToUse: >
+  Pick when you ALREADY HAVE a company domain and need its full Apollo profile: industry,
+  revenue, headcount, funding and contact details. Use it to enrich a known domain;
+  discovering companies by criteria, or enriching people, are different jobs.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Hunter too, for its other five nodes.
+allowedHosts: [api.apollo.io]

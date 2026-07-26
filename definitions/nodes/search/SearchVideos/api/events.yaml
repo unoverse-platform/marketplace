@@ -1,0 +1,15 @@
+- emit: videoResults
+  from: response
+  # `extracted_views` is the numeric one; `views` may be a formatted string.
+  value: >-
+    return (response.videos || []).slice(0, config.numResults).map(v => ({
+      title: v.title || "",
+      url: v.link || "",
+      channel: (v.channel || {}).title || "",
+      channelUrl: (v.channel || {}).link || "",
+      views: typeof v.extracted_views === "number" ? v.extracted_views : (v.views || null),
+      length: v.length || "",
+      publishedTime: v.published_time || "",
+      description: v.description || "",
+      thumbnail: (v.thumbnail || {}).static || (v.thumbnail || {}).rich || ""
+    }))

@@ -1,0 +1,23 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: Search query. Overrides the configured one when present.
+    required: false
+
+outputs:
+  - name: tweets
+    type: array
+    description: The posts, as the X API returned them
+  - name: resultCount
+    type: number
+    description: How many posts came back
+  - name: raw
+    type: string
+    description: The whole X API response as JSON, for anything the shaped outputs drop
+
+credentials:
+  - name: xCredential
+    required: true
+    displayName: X API Credentials

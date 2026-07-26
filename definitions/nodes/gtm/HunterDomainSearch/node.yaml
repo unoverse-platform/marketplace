@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HunterDomainSearch
+kind: PromiseNode
+name: Hunter Domain Search
+category: Go To Market
+color: "#FF5500"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png
+description: List every known email address at one domain or company
+whenToUse: >
+  Pick to list EVERY known email address at one domain or company, for exhaustive coverage
+  of a single known domain. Use it when you have a domain and want all its addresses;
+  finding one person's address, verifying deliverability, full profiles, or role-filtered
+  people across companies are different jobs.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Apollo too, for its other four nodes.
+allowedHosts: [api.hunter.io]

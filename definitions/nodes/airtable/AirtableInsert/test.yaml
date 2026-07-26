@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+# WRITES. Point this at a scratch table you do not mind adding a row to, then run it. The
+# fixture is deliberately one row so a mistake costs one row.
+testData:
+  config:
+    baseId: appXXXXXXXXXXXXXX
+    tableId: Scratch
+    records:
+      - Name: Unoverse bench row
+    dedupField: Name
+  inputs:
+    input: {}
+  expect:
+    # Either it wrote the row, or dedup found it from a previous run. Both are correct.
+    inserted: "return output.inserted + output.skipped === 1"
+    errors: "return output.errors.length === 0"

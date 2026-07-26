@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    keywords: AI consultancy
+    industries: ""
+    organizationNames: ""
+    organizationDomains: ""
+    organizationLocations: London
+    organizationNumEmployeesRanges: ""
+    limit: 5
+  inputs:
+    signal: {}
+  expect:
+    companies: "return output.companies.length > 0 && typeof output.companies[0].name === 'string'"
+    perPage: "return output.perPage === 5"

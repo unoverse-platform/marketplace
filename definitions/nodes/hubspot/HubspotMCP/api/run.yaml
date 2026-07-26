@@ -1,0 +1,8 @@
+# The WORKFLOW channel: what this node does when the graph runs it.
+#
+# Four calls: find the contact, fill in its company, then refresh the identity snapshot the
+# memory server reads. See shared/contact.yaml.
+#
+# The signed-in user is resolved from the session. There is no email input and no query, so
+# an upstream node cannot point this at someone else's record.
+$ref: contact#sync

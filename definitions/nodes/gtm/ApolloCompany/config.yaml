@@ -1,0 +1,58 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    keywords:
+      type: string
+      title: Keywords / Description
+      description: >-
+        Comma-separated keywords to match against company profiles, e.g. 'AI consultancy,
+        machine learning, SaaS'
+      default: ""
+      "ui:field": template
+    organizationNames:
+      type: string
+      title: Company Names
+      description: Comma-separated exact company names, e.g. 'Google, Meta'
+      default: ""
+      "ui:field": template
+    organizationDomains:
+      type: string
+      title: Company Domains
+      description: Comma-separated company domains, e.g. 'google.com, meta.com'
+      default: ""
+      "ui:field": template
+    organizationLocations:
+      type: string
+      title: Locations
+      description: Comma-separated HQ locations, e.g. 'London, New York, San Francisco'
+      default: ""
+      "ui:field": template
+    industries:
+      type: string
+      title: Industries
+      description: >-
+        Comma-separated industry names, e.g. 'information technology, financial services'
+      default: ""
+      "ui:field": template
+    organizationNumEmployeesRanges:
+      type: string
+      title: Company Size Ranges
+      description: >-
+        SEMICOLON-separated employee ranges, each min,max. e.g. '1,10;11,50;51,200'. Note the
+        separator differs from the other filters because a range itself contains a comma.
+      default: ""
+      "ui:field": template
+    limit:
+      type: number
+      title: Number of Results
+      description: How many companies to return. Pages are fetched automatically past 100.
+      default: 25
+      minimum: 1
+      maximum: 500
+
+"ui:order":
+  [keywords, industries, organizationNames, organizationDomains, organizationLocations,
+   organizationNumEmployeesRanges, limit]

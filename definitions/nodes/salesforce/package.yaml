@@ -1,0 +1,37 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. package.yaml, nodes/, credentials/ and shared/, nothing else.
+# The retired TypeScript is at `_legacy/nodes/salesforce/`.
+#
+# This is HubSpot's twin and it migrated on the same capabilities, plus one of its own:
+# `oauth2ClientCredentials`. Salesforce does not take an API key. It exchanges a connected
+# app's id and secret for a short-lived token over a form-encoded POST, and the org's data
+# lives at the `instance_url` that exchange returns rather than at the host you
+# authenticated against. All of that is computation over the request, so it is an executor
+# auth scheme and every OAuth2 client-credentials API after this one inherits it.
+
+name: salesforce
+displayName: Salesforce
+description: Salesforce CRM integration for Unoverse
+version: 2.0.0
+category: productivity
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781672225/gravity/icons/Salesforce-dark.svg
+
+features:
+  - SOQL queries and record reads
+  - Lead create and update, a fixed field set
+  - Resolve the signed-in user to a Contact or Lead
+  - Append-only insight Tasks
+
+# Per-org My Domain hosts, plus the two Salesforce login domains a token is minted at.
+# One subdomain level only, which is what the pattern means.
+allowedHosts:
+  - "*.my.salesforce.com"
+  - login.salesforce.com
+  - test.salesforce.com
+
+requires:
+  auth: [oauth2ClientCredentials]
+  transport: [json]
+  state: [merge, drain]
+  executorVersion: ">=1.2.0"

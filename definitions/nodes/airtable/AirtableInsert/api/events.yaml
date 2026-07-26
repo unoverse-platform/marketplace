@@ -1,0 +1,23 @@
+# One row per output connector, in interface.yaml order.
+#
+# A chunked call's reply is { sent, batches, results, errors }, so `inserted` is the two
+# chunked calls' `sent` added together and `errors` is both lists concatenated. A skipped
+# call leaves no key, which is why each is guarded.
+
+- emit: inserted
+  from: response
+  value: >-
+    return ((calls.updates || {}).sent || 0) + ((calls.creates || {}).sent || 0)
+
+- emit: skipped
+  from: response
+  value: { $ref: rows#skipped }
+
+- emit: total
+  from: response
+  value: "return (config.records || []).length"
+
+- emit: errors
+  from: response
+  value: >-
+    return [].concat(((calls.updates || {}).errors || []), ((calls.creates || {}).errors || []))

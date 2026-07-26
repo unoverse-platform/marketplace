@@ -1,0 +1,42 @@
+# The OpenAI Responses tool protocol.
+#
+# Vendor-specific, so it does NOT belong in the platform runtime. Node-agnostic, so it
+# does not belong copied into every node either. It belongs here: shared by every OpenAI
+# node, imported whole.
+#
+#   toolExchange:
+#     $ref: ../../shared/tools.yaml
+#     maxTurns: 5            # local keys layer on top and win
+#
+# When OpenAI changes how a function call is expressed, exactly one file changes.
+# NO SDK. This is the wire format, described as data.
+
+# How ONE tool is offered to the model. `tool` is { name, description, parameters }.
+tool: >-
+  return { type: 'function', name: tool.name, description: tool.description,
+           parameters: tool.parameters }
+toolsInto: tools
+
+# How a call ARRIVES in the stream.
+call:
+  match: response.output_item.done
+  when: "return response.item.type === 'function_call'"
+  id: "return response.item.call_id"
+  name: "return response.item.name"
+  arguments: "return response.item.arguments"
+
+# How ONE result goes BACK. `call` is { id, name, output }.
+result: >-
+  return { type: 'function_call_output', call_id: call.id, output: call.output }
+resultsInto: input
+
+# Always auto: which tool to reach for is carried by the tool DESCRIPTIONS, never by
+# forcing a choice.
+choiceInto: tool_choice
+choice: auto
+
+# How a turn chains to the next without resending the transcript.
+continuity:
+  match: response.completed
+  from: "return response.response.id"
+  into: previous_response_id

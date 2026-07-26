@@ -1,0 +1,51 @@
+# Four calls, each conditional, and the vendor's limits are what make it four rather than
+# one: Airtable takes 10 records per write, so `chunk` repeats the request per slice.
+#
+# `id` is RESERVED by Airtable, so an upstream row carrying its own `id` that is not an
+# Airtable record id has it renamed to `apollo_id` rather than dropped. That mapping came
+# from the retired code and is kept verbatim: changing it would silently lose a column.
+
+# Existing values for the dedup field, paged over the whole table. Only the one field is
+# requested, so this stays cheap even on a large table.
+- name: existing
+  when: "return !!String(config.dedupField || '').trim()"
+  method: GET
+  url: { $ref: table#url }
+  auth: { $ref: table#auth }
+  query:
+    fields: "return config.dedupField === 'id' ? 'apollo_id' : config.dedupField"
+  transport: json
+  paginate:
+    strategy: cursor
+    cursor: "return response.offset"
+    into: offset
+    items: "return response.records"
+
+# Rows that already carry a valid Airtable record id are UPDATES.
+- name: updates
+  when: "return (config.records || []).filter(r => typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec').length > 0"
+
+  method: PATCH
+  url: { $ref: table#url }
+  auth: { $ref: table#auth }
+  chunk:
+    size: 10
+    items: { $ref: rows#isAirtableId }
+  body: >-
+    return { records: batch.map(r => ({
+      id: r.id,
+      fields: Object.fromEntries(Object.entries(r).filter(e => e[0] !== 'id'))
+    })) }
+  transport: json
+
+# Everything else is a CREATE, minus anything the dedup field says is already there.
+- name: creates
+  when: { $ref: rows#toCreateAny }
+  method: POST
+  url: { $ref: table#url }
+  auth: { $ref: table#auth }
+  chunk:
+    size: 10
+    items: { $ref: rows#toCreate }
+  body: "return { records: batch.map(r => ({ fields: r })) }"
+  transport: json

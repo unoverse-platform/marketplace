@@ -1,0 +1,77 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [model, maxTurns]
+
+  properties:
+    model:
+      type: string
+      title: Model
+      enum: { $ref: models#enum }
+      enumNames: { $ref: models#enumNames }
+      default: { $ref: models#default }
+      resolve: modelTier
+
+    # THE DIAL THAT MAKES THIS AN AGENT.
+    #
+    # One turn is one model call. A tool call costs another, because the result has to go
+    # back for the model to use it. So maxTurns: 1 is a one-shot generator that cannot use
+    # tools at all, and anything above it is an agent working through a problem.
+    #
+    # That is the only real difference between this and a streaming text node, which is
+    # why they are one node with a dial rather than two nodes.
+    maxTurns:
+      type: number
+      title: Max Turns
+      description: >-
+        How many times the model may go round the tool loop. 1 answers in a single pass
+        and never calls a tool. 5 to 10 suits an agent that looks things up and acts on
+        what it finds. Higher costs more and takes longer.
+      default: 10
+      minimum: 1
+      maximum: 30
+
+    reasoningEffort:
+      type: string
+      title: Reasoning Effort
+      enum: [none, low, medium, high, xhigh, max]
+      default: medium
+
+    reasoningSummary:
+      type: string
+      title: Reasoning Summary
+      description: Summaries must be requested or the API emits no reasoning events at all.
+      enum: [auto, concise, detailed]
+      default: concise
+
+    verbosity:
+      type: string
+      title: Verbosity
+      enum: [low, medium, high]
+      default: medium
+
+    systemPrompt:
+      type: string
+      title: System Prompt
+      description: >-
+        Standing instructions for the agent: its role, how to work, when to use its tools.
+        Optional. Shared blocks work here, e.g. {{prompt.reactAgent}}.
+      default: ""
+      ui:field: template
+
+    prompt:
+      type: string
+      title: Prompt
+      description: The task to work on. Usually wired in from an upstream node.
+      default: ""
+      ui:field: template
+
+    maxTokens:
+      type: number
+      title: Max Output Tokens
+      default: 4096
+      minimum: 1
+      maximum: 128000
+
+ui:order: [model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens]

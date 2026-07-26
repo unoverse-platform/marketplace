@@ -1,0 +1,53 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [query]
+  properties:
+    query:
+      type: string
+      title: Search Query
+      description: Query to search for
+      default: ""
+      "ui:field": template
+    numResults:
+      type: number
+      title: Number of Results
+      description: Number of web results to return
+      default: 20
+      minimum: 1
+      maximum: 100
+    searchImages:
+      type: boolean
+      title: Search Images
+      description: Whether to also run a dedicated image search
+      default: true
+      "ui:widget": toggle
+    numImages:
+      type: number
+      title: Number of Images
+      description: Number of image results to return
+      default: 10
+      minimum: 0
+      maximum: 50
+      "ui:dependencies": { searchImages: true }
+    safeSearch:
+      type: string
+      title: Safe Search
+      # The vendor's google `safe` param takes ONLY these two. "moderate" was offered here
+      # once and returned HTTP 400 on every search.
+      enum: [active, off]
+      enumNames: [Active, Off]
+      default: active
+    country:
+      type: string
+      title: Country
+      description: Country code for localized results, e.g. 'us', 'uk', 'ae'
+      default: us
+    language:
+      type: string
+      title: Language
+      description: Language code for results, e.g. 'en', 'ar'
+      default: en
+
+"ui:order": [query, numResults, searchImages, numImages, safeSearch, country, language]

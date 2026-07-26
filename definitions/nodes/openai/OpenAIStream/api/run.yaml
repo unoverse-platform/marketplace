@@ -1,0 +1,71 @@
+# The upstream call, and how its response maps onto this node's outputs.
+# This file replaces node/executor.ts (143 lines) and this node's share of the
+# streaming engine. Vendor coupling lives here alone: when OpenAI moves an
+# endpoint or renames an event, exactly one file changes.
+
+- name: generate
+  method: POST
+  url: { $ref: endpoints#responses }
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  body:
+    model: "{{ config.model }}"
+
+    # Responses API input items: a system message then the user message, following
+    # shared/openaiStream/client/openaiClient.ts buildInputItems().
+    #
+    # NO INSTRUCTION TEXT IS HARDCODED HERE. Prompt copy lives in the prompt-block
+    # library (prompts/blocks/**), is authored and toggled in Studio, and is
+    # referenced as {{prompt.<blockName>}}. A node holding a COPY of a block's words
+    # is a fork that silently stops tracking the block.
+    #
+    # config.systemPrompt is a template field, so an author can compose blocks and
+    # upstream values into it directly, e.g.
+    #   You are helping {{signal.inputtrigger1.output.customerName}}.
+    #   {{prompt.markdownGuidelines}}
+    # The node knows nothing about that, which is the point.
+    #
+    # The system message is exactly what the author wrote. This manifest injects no
+    # instruction text of its own.
+    #
+    # config.systemPrompt is a template field, so an author composes prompt blocks and
+    # upstream values into it directly:
+    #   You are helping {{signal.inputtrigger1.output.customerName}}.
+    #   {{prompt.markdownGuidelines}}
+    input:
+      - type: message
+        role: system
+        content: "{{ config.systemPrompt }}"
+
+      - type: message
+        role: user
+        content: "{{ config.prompt }}"
+
+    max_output_tokens: "{{ config.maxTokens }}"
+    stream: true
+
+    reasoning:
+      effort: "{{ config.reasoningEffort }}"
+      summary: "{{ config.reasoningSummary }}"
+
+    text:
+      verbosity: "{{ config.verbosity }}"
+
+  timeoutMs: 300000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # How the reply is framed. A call is one thing: how it is made and how it comes back.
+  transport: sse
+  terminator: "[DONE]"
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return response.type === 'response.failed'"
+    message: "return response.response.error.message"

@@ -1,0 +1,16 @@
+$schema: ../../../_schema/node.schema.json
+
+type: AirtableInsert
+kind: PromiseNode
+name: Airtable Insert
+category: Storage & Data
+color: "#FCB400"
+description: Write records to an Airtable table, batched, updating any that carry a record id
+whenToUse: >
+  Pick to WRITE rows into an Airtable table from upstream data: it batches automatically,
+  updates any record that already carries an Airtable id, and can skip rows whose value is
+  already present. Use it to persist a collection; it writes, it does not read.
+
+capabilities:
+  # NEVER cacheable: reuse would skip the write entirely.
+  cacheable: false

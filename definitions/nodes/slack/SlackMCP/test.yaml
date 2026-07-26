@@ -1,0 +1,12 @@
+$schema: ../../../_schema/test.schema.json
+
+# The workflow channel POSTS A MESSAGE, so this fixture deliberately omits the text: the run
+# exercises composition, credentials and the skip path without writing to a workspace.
+# Set a channel and text to post for real.
+testData:
+  config:
+    defaultChannel: ""
+  inputs:
+    input: {}
+  expect:
+    output: "return output.output.ok === false && /required/.test(output.output.error)"

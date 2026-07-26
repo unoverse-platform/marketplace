@@ -1,0 +1,12 @@
+- emit: newsResults
+  from: response
+  # `source` arrives as a string on some results and as { name, icon } on others.
+  value: >-
+    return (response.organic_results || []).map(r => ({
+      title: r.title || "",
+      url: r.link || "",
+      source: typeof r.source === "string" ? r.source : (r.source || {}).name || "",
+      date: r.date || "",
+      snippet: r.snippet || "",
+      thumbnail: r.thumbnail || ""
+    }))

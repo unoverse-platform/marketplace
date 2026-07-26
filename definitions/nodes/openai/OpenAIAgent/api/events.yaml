@@ -1,0 +1,47 @@
+# EVERYTHING THAT LEAVES THIS NODE, one row per output connector, in the SAME ORDER the
+# connectors are declared in interface.yaml. Read this and you know the node's whole
+# outward behaviour without opening another file. Lint holds the order.
+#
+# `from` says where a row fires:
+#   response   an event on the main SSE stream, matched by type
+#   narrator   a line from the cheap side model
+#   tool       after a tool call RETURNS, with its result
+#   complete   once, at the end
+
+# The customer-safe status line, written FOR the customer by the narrator. Not the
+# model's own thinking, which is `reasoning` below and is not safe to show.
+- emit: thinking
+  from: narrator
+  value: "return narrator.line"
+
+# Accumulated, not the fragment: a consumer wants the answer so far, not one word. And
+# throttled, or a long answer becomes hundreds of events. Nothing held back is lost; it
+# is flushed when the run ends.
+- emit: stream
+  from: response
+  match: response.output_text.delta
+  value: "return response.delta"
+  accumulate: true
+  throttleMs: 200
+
+# The MODEL's own reasoning summary. Only produced when reasoningEffort is above none
+# AND a reasoningSummary is requested; the API sends nothing otherwise.
+- emit: reasoning
+  from: response
+  match: response.reasoning_summary_text.delta
+  value: "return response.delta"
+  accumulate: true
+  throttleChars: 150
+
+# The tool RESULT. It is never in the HTTP stream: our tool loop produced it, which is
+# why this cannot be a `from: response` row. Emitting the tool CALL here instead was a
+# real bug, since it fired before the tool had run and carried the model's raw arguments.
+- emit: mcpResult
+  from: tool
+  value: "return { name: call.name, result: call.output }"
+
+# The settled answer: the last accumulated value the stream reached. `at(-1)` and
+  # not `pop()`: the expression sandbox allows no mutating method, by design.
+- emit: text
+  from: complete
+  value: "return events.filter(e => e.emit === 'stream').map(e => e.value).at(-1) ?? ''"

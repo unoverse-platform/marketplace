@@ -1,0 +1,8 @@
+# OpenAI's endpoints. Written once here rather than seven times across the nodes.
+#
+# No chat/completions: every node uses the Responses API. `messages` is the legacy shape.
+#
+#   url: { $ref: ../../shared/endpoints.yaml#/responses }
+
+responses: https://api.openai.com/v1/responses
+embeddings: https://api.openai.com/v1/embeddings

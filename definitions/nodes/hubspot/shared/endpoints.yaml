@@ -1,0 +1,10 @@
+# HubSpot CRM v3. The legacy .ssi bundle this node descends from used the deprecated
+# v1 endpoints; those were deliberately not ported and are not listed here.
+#
+# One place for every URL, so an API version bump is one file.
+
+base: https://api.hubapi.com
+
+contactSearch: https://api.hubapi.com/crm/v3/objects/contacts/search
+notes: https://api.hubapi.com/crm/v3/objects/notes
+notesBatch: https://api.hubapi.com/crm/v3/objects/notes/batch/create

@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HunterDiscover
+kind: PromiseNode
+name: Hunter Discover
+category: Go To Market
+color: "#FF5500"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png
+description: Build a target-company list from criteria or a natural-language query
+whenToUse: >
+  Pick to BUILD a target-company list from criteria (industry, tech stack, size, location)
+  or a natural-language query, the starting point for prospecting, with tech-stack and
+  lookalike filters. Use it to discover unknown companies by criteria; if you already have a
+  domain you do not need a discovery step.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Apollo too, for its other four nodes.
+allowedHosts: [api.hunter.io]

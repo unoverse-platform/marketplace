@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Trigger. The records usually template from an upstream node's output.
+
+outputs:
+  - name: inserted
+    type: number
+    description: Records accepted, across creates and updates
+  - name: skipped
+    type: number
+    description: Records dropped because the dedup field's value was already present
+  - name: total
+    type: number
+    description: Records offered
+  - name: errors
+    type: array
+    description: One entry per failed batch. Empty means every batch landed.
+
+credentials:
+  - name: airtableCredential
+    required: true
+    displayName: Airtable

@@ -1,0 +1,15 @@
+- emit: companies
+  from: response
+  value: "return response.data || []"
+
+- emit: totalResults
+  from: response
+  value: "return (response.data || []).length"
+
+- emit: limit
+  from: response
+  value: "return Math.min(Math.max(1, Math.round(config.limit || 25)), 100)"
+
+- emit: offset
+  from: response
+  value: "return Math.max(0, Math.round(config.offset || 0))"

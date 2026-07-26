@@ -1,0 +1,52 @@
+# The row-splitting expressions, defined ONCE and $ref'd wherever they are needed.
+#
+# `AirtableInsert` needs "which rows are updates" and "which rows are creates" in three
+# places each: the call's `when`, its `chunk.items`, and the skipped count in events. The
+# sandbox has no assignment, so there is no way to bind an intermediate value inside an
+# expression. A shared fragment is how one definition serves all three, and it is why these
+# live here rather than being pasted six times.
+
+# An Airtable record id is "rec" plus 14 characters. A row carrying one is an UPDATE.
+isAirtableId: &isAirtableId >-
+  return (config.records || []).filter(r =>
+    typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec')
+
+# Everything else is a CREATE. `id` is RESERVED by Airtable, so a row carrying its own
+# non-Airtable `id` has it renamed to `apollo_id` rather than dropped: the retired code did
+# this, and changing it would silently lose a column.
+#
+# Then anything the dedup field says is already in the table is removed. `calls.existing` is
+# the paged read; when dedup is off that call is skipped and there is no key, so the filter
+# passes everything through.
+toCreate: &toCreate >-
+  return (config.records || [])
+    .filter(r => !(typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec'))
+    .map(r => Object.fromEntries(Object.entries(r).map(e => [e[0] === 'id' ? 'apollo_id' : e[0], e[1]])))
+    .filter(r => {
+      return !String(config.dedupField || '').trim()
+        || !((calls.existing || {}).items || [])
+             .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
+             .filter(Boolean)
+             .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? ''));
+    })
+
+# Offered minus kept: how many the dedup field dropped.
+skipped: &skipped >-
+  return (config.records || [])
+    .filter(r => !(typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec'))
+    .length
+  - (calls.creates ? calls.creates.sent : 0)
+
+# The same set, as a boolean, for the call's `when`. Defined next to it so the two cannot
+# drift: a `when` that disagreed with `items` would either skip a needed write or send an
+# empty one.
+toCreateAny: &toCreateAny >-
+  return (config.records || [])
+    .filter(r => !(typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec'))
+    .filter(r => {
+      return !String(config.dedupField || '').trim()
+        || !((calls.existing || {}).items || [])
+             .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
+             .filter(Boolean)
+             .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? ''));
+    }).length > 0

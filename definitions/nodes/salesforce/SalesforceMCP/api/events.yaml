@@ -1,0 +1,18 @@
+# One row per output connector, in interface.yaml order. One connector, one row.
+#
+# The node does one of two jobs depending on `syncUser`, so the row picks: the resolved
+# contact profile when syncing, otherwise the query result.
+
+- emit: output
+  from: response
+  value: >-
+    return config.syncUser === true
+      ? { ok: true,
+          found: (((calls.contact || {}).records || []).length
+                + ((calls.lead || {}).records || []).length) > 0,
+          hydrated: (calls.hydrate || []).length }
+      : { ok: true,
+          totalSize: (calls.query || {}).totalSize,
+          records: ((calls.query || {}).records) || [],
+          has_more: (calls.query || {}).done === false,
+          next_records_url: (calls.query || {}).nextRecordsUrl || null }

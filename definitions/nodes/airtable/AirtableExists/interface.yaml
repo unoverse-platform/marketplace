@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Trigger. The field and value usually template from upstream output.
+
+outputs:
+  - name: exists
+    type: boolean
+    description: Whether a matching record was found
+  - name: recordId
+    type: string
+    description: The matching record's Airtable id, or null when there was no match
+
+credentials:
+  - name: airtableCredential
+    required: true
+    displayName: Airtable

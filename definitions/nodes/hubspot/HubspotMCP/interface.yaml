@@ -1,0 +1,31 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: >-
+      Trigger to fire the node. Carries no lookup data: the user is resolved from the
+      session, not from this input.
+
+outputs:
+  - name: output
+    type: object
+    description: >-
+      The signed-in user's bounded contact profile { ok, found, contact }. `contact` is
+      null when the user is not in the CRM, which is a normal result and not an error.
+
+credentials:
+  - name: hubspotPrivateApp
+    required: true
+    displayName: HubSpot
+
+# This node PROVIDES tools to an attached agent (isService: true), the opposite of
+# OpenAIStream's mcp connector, which consumes them.
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [get_contact, write_contact_meta]
+    description: >-
+      MCP tools for an agent: get_contact (read the signed-in user's, or a passed email's,
+      contact) and write_contact_meta (append a durable insight note to the contact).

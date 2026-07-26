@@ -1,0 +1,41 @@
+# THREE endpoints, one node, chosen by `type`. Each call is gated so exactly one runs, which
+# is why this is three entries rather than one call with a templated path: the query
+# parameters differ per endpoint too, and a templated path would still need the branch.
+#
+# Person enrichment prefers a LinkedIn handle over an email when both are given, matching
+# the retired code.
+
+- name: company
+  when: "return config.type === 'company' && !!String(config.domain || '').trim()"
+  method: GET
+  url: https://api.hunter.io/v2/companies/find
+  auth: { $ref: hunter#queryAuth }
+  query:
+    domain: "return String(config.domain || '').trim()"
+  transport: json
+  error: { $ref: hunter#error }
+
+- name: person
+  when: >-
+    return config.type === 'person'
+      && !!(String(config.linkedinHandle || '').trim() || String(config.email || '').trim())
+  method: GET
+  url: https://api.hunter.io/v2/people/find
+  auth: { $ref: hunter#queryAuth }
+  query:
+    linkedin_handle: { $ref: hunter#linkedinHandle }
+    email: >-
+      return String(config.linkedinHandle || '').trim() ? '' : String(config.email || '').trim()
+  transport: json
+  error: { $ref: hunter#error }
+
+- name: combined
+  when: >-
+    return (config.type || 'combined') === 'combined' && !!String(config.email || '').trim()
+  method: GET
+  url: https://api.hunter.io/v2/combined/find
+  auth: { $ref: hunter#queryAuth }
+  query:
+    email: "return String(config.email || '').trim()"
+  transport: json
+  error: { $ref: hunter#error }

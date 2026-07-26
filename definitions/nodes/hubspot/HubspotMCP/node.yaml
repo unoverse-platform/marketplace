@@ -1,0 +1,27 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HubspotMCP
+# Every call settles, and a chain of settling calls settles too. Nothing here streams
+# and there is no CONTINUE port, so this is a PromiseNode.
+kind: PromiseNode
+name: HubSpot
+category: Go To Market
+color: "#FF7A59"
+# Drawn as a service node: it is ATTACHED to an agent over a service edge, not wired in
+# sequence, so the compact card is the honest shape.
+template: service
+description: >-
+  Resolve the signed-in user to their HubSpot contact and output that profile; an
+  attached agent can also read it and push insight notes back.
+whenToUse: >
+  Pick to ground a conversation in the signed-in customer. It resolves the logged-in user
+  (by their authenticated email) to their HubSpot contact and emits that identity profile,
+  so downstream steps start already knowing who they are talking to. Wire it inline
+  (trigger to contact profile out) to use the lookup as a step, or attach it via a service
+  edge to an agent, which can also append a durable insight note to the contact. The user
+  is read from the session, never from the input.
+
+capabilities:
+  # NOT cacheable. A CRM record changes underneath us, and write_contact_meta has a side
+  # effect that reuse would silently skip. isTrigger is omitted, since false says nothing.
+  cacheable: false

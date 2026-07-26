@@ -1,0 +1,18 @@
+$schema: ../../../_schema/node.schema.json
+
+type: XSearch
+kind: PromiseNode
+name: X Search
+category: Search
+color: "#000000"
+description: Search recent X (Twitter) posts and return structured tweet data
+whenToUse: >
+  Search recent X (Twitter) posts by keyword, hashtag, user or language and get structured
+  tweet data with engagement metrics; supports X query operators (from:, #hashtag, lang:,
+  -is:retweet). It returns native posts with per-post engagement metrics, not crawled web
+  pages and not scraped arbitrary sites.
+
+capabilities:
+  # Recent-search results move as people post, but the same query within a run is the same
+  # answer and the call has no side effect.
+  cacheable: true

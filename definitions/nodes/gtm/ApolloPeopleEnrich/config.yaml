@@ -1,0 +1,55 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    email:
+      type: string
+      title: Email
+      description: Email address of the person. The strongest identifier.
+      default: ""
+      "ui:field": template
+    linkedinUrl:
+      type: string
+      title: LinkedIn URL
+      description: LinkedIn profile URL, e.g. 'https://linkedin.com/in/johndoe'
+      default: ""
+      "ui:field": template
+    firstName:
+      type: string
+      title: First Name
+      default: ""
+      "ui:field": template
+    lastName:
+      type: string
+      title: Last Name
+      default: ""
+      "ui:field": template
+    domain:
+      type: string
+      title: Company Domain
+      description: Domain of the person's company, e.g. 'google.com'
+      default: ""
+      "ui:field": template
+    organizationName:
+      type: string
+      title: Company Name
+      default: ""
+      "ui:field": template
+    revealPersonalEmails:
+      type: boolean
+      title: Reveal Personal Emails
+      description: Request personal email addresses. CONSUMES CREDITS.
+      default: false
+      "ui:widget": toggle
+    revealPhoneNumber:
+      type: boolean
+      title: Reveal Phone Number
+      description: Request a phone number. CONSUMES CREDITS.
+      default: false
+      "ui:widget": toggle
+
+"ui:order":
+  [email, linkedinUrl, firstName, lastName, domain, organizationName,
+   revealPersonalEmails, revealPhoneNumber]

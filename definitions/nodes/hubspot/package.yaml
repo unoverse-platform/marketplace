@@ -1,0 +1,47 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. This package is `package.yaml`, `nodes/`, `credentials/` and
+# `shared/`, and nothing else: no src/, no package.json, no build, no npm publish.
+# The retired TypeScript is at `_legacy/nodes/hubspot/`, whose README maps each file to
+# what replaced it.
+#
+# Retiring the code is what SWITCHED IT ON. A code node of the same type beats a
+# manifest at load, so while src/index.ts still called api.registerNode the manifests
+# were parsed and skipped. `@unoverse-platform/hubspot` is also uninstalled from the
+# plugins volume, and plugins/startup.ts skips an npm copy whenever a folder of that
+# name exists here, so a published copy in some universe cannot climb back in.
+#
+# `config.syncUser` is BACK. It was lost when the code was retired, because it reached
+# Redis rather than an HTTP host; the executor now names `state` operations, so the
+# snapshot and the hydrate outbox are expressed here like everything else.
+#
+# Still NOT restored: the dictionary attribute pull, which scored dictionary entries
+# against HubSpot's property catalog. That is computation rather than description, and it
+# belongs in the executor as a named capability or nowhere. See
+# _legacy/nodes/hubspot/README.md.
+
+name: hubspot
+displayName: HubSpot
+description: HubSpot CRM integration for Unoverse
+version: 2.0.0
+category: productivity
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1784461921/gravity/icons/Hubspot.svg
+
+features:
+  - Resolve the signed-in user to their CRM contact
+  - Append machine-authored insight notes to a contact
+
+# The ONLY hosts this package's nodes may call. The executor refuses anything else.
+#
+# A manifest cannot execute code, but without this it could still say "send this
+# credential to evil.example", which is exfiltration with no code at all.
+allowedHosts:
+  - api.hubapi.com
+
+# Executor capabilities every manifest node here depends on. Deploy REFUSES this
+# package if the target universe's executor cannot satisfy them.
+requires:
+  auth: [bearer]
+  transport: [json]
+  state: [merge, drain]
+  executorVersion: ">=1.1.0"

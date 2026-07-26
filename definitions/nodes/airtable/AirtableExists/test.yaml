@@ -1,0 +1,14 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs a real base. A MISS is a valid result, so this asserts the shape rather than a hit.
+testData:
+  config:
+    baseId: appXXXXXXXXXXXXXX
+    tableId: Companies
+    field: Name
+    value: A Company That Does Not Exist
+  inputs:
+    input: {}
+  expect:
+    exists: "return typeof output.exists === 'boolean'"
+    recordId: "return output.exists ? typeof output.recordId === 'string' : output.recordId === null"

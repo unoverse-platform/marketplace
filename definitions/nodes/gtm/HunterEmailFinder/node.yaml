@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HunterEmailFinder
+kind: PromiseNode
+name: Hunter Email Finder
+category: Go To Market
+color: "#FF5500"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png
+description: Find one person's work email from their LinkedIn or their name and company
+whenToUse: >
+  Pick when you have a person's LinkedIn profile (handle or URL) or their name plus a
+  company or domain, and need ONLY their work email and a confidence score. Use it to find
+  one specific person's address; listing every address at a domain, verifying
+  deliverability, or a full profile are different jobs.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Apollo too, for its other four nodes.
+allowedHosts: [api.hunter.io]

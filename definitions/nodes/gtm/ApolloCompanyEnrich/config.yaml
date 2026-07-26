@@ -1,0 +1,14 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [domain]
+  properties:
+    domain:
+      type: string
+      title: Company Domain
+      description: Domain of the company to enrich, e.g. 'google.com'
+      default: ""
+      "ui:field": template
+
+"ui:order": [domain]

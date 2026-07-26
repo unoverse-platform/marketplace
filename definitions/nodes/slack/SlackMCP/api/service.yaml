@@ -1,0 +1,138 @@
+# The MCP methods an agent can call. Transcribed from src/SlackMCP/service/index.ts, with the
+# descriptions from service/mcpSchema.ts, which are what a model reads when choosing a tool.
+#
+# Every method is one call to https://<host>/api/<slack method>. The host is optional on the
+# credential and defaults to slack.com, with any scheme or path a person pasted stripped off.
+#
+# Slack answers 200 with `ok: false` for nearly every failure, including a bad token and a
+# missing scope, so every call declares the shared `error` block. Without it each method would
+# look like it succeeded and hand back nothing.
+
+send_message:
+  description: >-
+    Send a message to a Slack channel or thread. Use the channel ID, not the name. To reply in
+    a thread, pass thread_ts.
+  calls:
+    - name: post
+      method: POST
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/chat.postMessage'"
+      auth: { $ref: api#auth }
+      body: >-
+        return Object.fromEntries(Object.entries({
+          channel: params.channel,
+          text: params.text,
+          thread_ts: params.thread_ts
+        }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+      transport: json
+      error: { $ref: api#error }
+  returns: "return { ok: true, ts: response.ts, channel: response.channel }"
+
+list_channels:
+  description: >-
+    List public channels in the workspace, with name, id, topic and member count. Pass the
+    cursor from a previous response to page.
+  calls:
+    - name: channels
+      method: GET
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/conversations.list'"
+      auth: { $ref: api#auth }
+      query:
+        types: public_channel
+        exclude_archived: "true"
+        limit: "return String(Math.min(params.limit || 100, 200))"
+        cursor: "{{ params.cursor }}"
+      transport: json
+      error: { $ref: api#error }
+  returns: >-
+    return {
+      ok: true,
+      channels: (response.channels || []).map(ch => ({
+        id: ch.id,
+        name: ch.name,
+        topic: (ch.topic || {}).value || '',
+        purpose: (ch.purpose || {}).value || '',
+        num_members: ch.num_members
+      })),
+      has_more: !!((response.response_metadata || {}).next_cursor),
+      next_cursor: (response.response_metadata || {}).next_cursor || null
+    }
+
+search_messages:
+  description: >-
+    Search messages matching a query. Supports Slack search syntax such as in:#channel and
+    from:@user. Returns messages with channel context and timestamps.
+  calls:
+    - name: search
+      method: GET
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/search.messages'"
+      auth: { $ref: api#auth }
+      query:
+        query: "{{ params.query }}"
+        count: "return String(Math.min(params.count || 20, 100))"
+      transport: json
+      error: { $ref: api#error }
+  returns: "return response"
+
+get_user:
+  description: >-
+    Look up a user by email, or by user id when no email is given. Returns their Slack
+    profile.
+  calls:
+    - name: byEmail
+      method: GET
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/users.lookupByEmail'"
+      auth: { $ref: api#auth }
+      when: "return !!params.email"
+      query:
+        email: "{{ params.email }}"
+      transport: json
+      error: { $ref: api#error }
+    - name: byId
+      method: GET
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/users.info'"
+      auth: { $ref: api#auth }
+      when: "return !params.email && !!params.user_id"
+      query:
+        user: "{{ params.user_id }}"
+      transport: json
+      error: { $ref: api#error }
+  # Whichever lookup ran. Neither means the caller passed nothing to look up, and that is a
+  # structured refusal rather than a throw: an agent can correct itself from this.
+  returns: >-
+    return calls.byEmail || calls.byId
+      || { ok: false, error: 'either user_id or email is required' }
+
+read_history:
+  description: >-
+    Read recent messages from a channel, newest first. Bound the window with oldest and latest
+    timestamps.
+  calls:
+    - name: history
+      method: GET
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/conversations.history'"
+      auth: { $ref: api#auth }
+      query:
+        channel: "{{ params.channel }}"
+        limit: "return String(Math.min(params.limit || 25, 100))"
+        oldest: "{{ params.oldest }}"
+        latest: "{{ params.latest }}"
+      transport: json
+      error: { $ref: api#error }
+  returns: "return response"
+
+add_reaction:
+  description: Add an emoji reaction to a message, identified by its channel and timestamp.
+  calls:
+    - name: react
+      method: POST
+      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/reactions.add'"
+      auth: { $ref: api#auth }
+      body: >-
+        return {
+          channel: params.channel,
+          timestamp: params.timestamp,
+          name: String(params.name).split(':').join('')
+        }
+      transport: json
+      error: { $ref: api#error }
+  returns: "return { ok: true }"

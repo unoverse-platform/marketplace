@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. Filters may template from upstream output.
+
+outputs:
+  - name: companies
+    type: array
+    description: Matched companies with profile, industry and contact details
+  - name: totalCount
+    type: number
+    description: Total matching records in Apollo, which may exceed what was fetched
+  - name: page
+    type: number
+    description: How many pages were walked
+  - name: perPage
+    type: number
+    description: Page size used
+
+credentials:
+  - name: apolloCredential
+    required: true
+    displayName: Apollo.io

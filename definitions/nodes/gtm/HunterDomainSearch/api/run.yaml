@@ -1,0 +1,23 @@
+# One page, with the caller choosing limit and offset. Not a walk: a large domain can hold
+# thousands of addresses and each one costs credits, so paging is the operator's decision
+# rather than something the node does on its own. The retired code made the same choice.
+
+- name: search
+  method: GET
+  url: https://api.hunter.io/v2/domain-search
+  auth: { $ref: hunter#queryAuth }
+  query:
+    domain: "return String(config.domain || '').trim()"
+    company: "return String(config.company || '').trim()"
+    type: "return String(config.type || '').trim()"
+    department: "return String(config.department || '').trim()"
+    seniority: "return String(config.seniority || '').trim()"
+    required_field: "return String(config.requiredField || '').trim()"
+    limit: "return String(Math.round(config.limit || 10))"
+    offset: "return String(Math.round(config.offset || 0))"
+  transport: json
+  error: { $ref: hunter#error }
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

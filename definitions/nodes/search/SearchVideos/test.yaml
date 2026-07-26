@@ -1,0 +1,12 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: server driven ui
+    numResults: 10
+    country: us
+    language: en
+  inputs:
+    query: server driven ui
+  expect:
+    videoResults: "return output.videoResults.length > 0 && typeof output.videoResults[0].url === 'string'"

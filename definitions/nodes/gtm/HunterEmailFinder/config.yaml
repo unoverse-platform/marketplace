@@ -1,0 +1,42 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    linkedinHandle:
+      type: string
+      title: LinkedIn Handle or URL
+      description: A handle, or a full profile URL. The URL is reduced to the handle for you.
+      default: ""
+      "ui:field": template
+    domain:
+      type: string
+      title: Domain
+      description: The person's company domain, e.g. 'google.com'
+      default: ""
+      "ui:field": template
+    company:
+      type: string
+      title: Company
+      description: The company name, when you do not have the domain
+      default: ""
+      "ui:field": template
+    fullName:
+      type: string
+      title: Full Name
+      description: Takes precedence over first and last name when set
+      default: ""
+      "ui:field": template
+    firstName:
+      type: string
+      title: First Name
+      default: ""
+      "ui:field": template
+    lastName:
+      type: string
+      title: Last Name
+      default: ""
+      "ui:field": template
+
+"ui:order": [linkedinHandle, domain, company, fullName, firstName, lastName]

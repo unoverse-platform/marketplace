@@ -1,0 +1,21 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ApolloPeopleEnrich
+kind: PromiseNode
+name: Apollo People Enrich
+category: Go To Market
+color: "#F5D800"
+description: Look up one known person's full Apollo.io profile
+whenToUse: >
+  Pick when you have an identifier for ONE KNOWN person (email, LinkedIn URL, or name plus
+  company) and need their full Apollo profile: employment history and contact details. Use
+  it to enrich one already-identified person; discovering unknown people, or only finding
+  and verifying an email address, are different jobs.
+
+capabilities:
+  # NOT cacheable: revealing a personal email or a phone number SPENDS Apollo credits, so a
+  # cached hit would hide a cost the operator is paying for.
+  cacheable: false
+
+# One vendor. The package allows Hunter too, for its other five nodes.
+allowedHosts: [api.apollo.io]

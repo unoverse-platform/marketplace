@@ -1,0 +1,9 @@
+# One row per output connector, in interface.yaml order. This node has one connector,
+# so the whole of its outward behaviour is this single row.
+#
+# `from: response` fires once over the settled reply of the LAST step, with every step
+# reachable as calls.<name>, which is what the projection below reads.
+
+- emit: output
+  from: response
+  value: { $ref: contact#result }

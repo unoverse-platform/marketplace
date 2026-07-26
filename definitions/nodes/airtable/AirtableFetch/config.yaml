@@ -1,0 +1,62 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [baseId, tableId]
+  properties:
+    baseId:
+      type: string
+      title: Base ID
+      description: Airtable Base ID, starts with 'app'
+      default: ""
+      "ui:field": template
+    tableId:
+      type: string
+      title: Table Name or ID
+      description: Table name, e.g. 'Companies', or table ID starting with 'tbl'
+      default: ""
+      "ui:field": template
+    filterFormula:
+      type: string
+      title: Filter Formula (optional)
+      description: An Airtable formula, e.g. NOT({Status}='Done')
+      default: ""
+      "ui:field": template
+    fields:
+      type: string
+      title: Fields (optional)
+      description: Comma-separated field names to return. Blank returns all fields.
+      default: ""
+      "ui:field": template
+    view:
+      type: string
+      title: View (optional)
+      description: Name or ID of a view, which applies its own filters and sorts
+      default: ""
+      "ui:field": template
+    sortField:
+      type: string
+      title: Sort Field (optional)
+      description: Field name to sort by
+      default: ""
+      "ui:field": template
+    sortDirection:
+      type: string
+      title: Sort Direction
+      enum: [asc, desc]
+      default: asc
+      "ui:dependencies": { sortField: true }
+    maxRecords:
+      type: number
+      title: Max Records
+      description: Stop after this many. Pages are fetched automatically until reached.
+      default: 100
+      minimum: 1
+      maximum: 5000
+    dedupField:
+      type: string
+      title: Dedup Field (optional)
+      description: Keep only the first record for each distinct value of this field
+      default: ""
+
+"ui:order": [baseId, tableId, filterFormula, fields, view, sortField, sortDirection, maxRecords, dedupField]

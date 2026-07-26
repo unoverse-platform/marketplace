@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HunterEnrich
+kind: PromiseNode
+name: Hunter Enrich
+category: Go To Market
+color: "#FF5500"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png
+description: Enrich a person or a company from an email, a LinkedIn profile or a domain
+whenToUse: >
+  Enrich a PERSON or a COMPANY from an email, a LinkedIn profile (handle or URL), or a
+  domain, returning the full profile: job, employment, location, socials and company
+  metrics. Use it for full enrichment; finding or verifying a single address, or listing a
+  domain's emails, are different jobs.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Apollo too, for its other four nodes.
+allowedHosts: [api.hunter.io]

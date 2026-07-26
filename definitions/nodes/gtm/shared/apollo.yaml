@@ -1,0 +1,23 @@
+# What every Apollo call shares.
+#
+# The key travels in the `x-api-key` HEADER, which is `apiKeyHeader`, an executor
+# capability. `Cache-Control: no-cache` is sent because the retired client sent it: Apollo
+# is documented as caching search responses, and dropping the header would silently change
+# which results come back.
+
+auth: &auth
+  scheme: apiKeyHeader
+  header: x-api-key
+  value: "{{ credentials.apolloCredential.apiKey }}"
+
+headers: &headers
+  Cache-Control: no-cache
+
+# NOTE for the bodies below: every filter is a comma-separated config field turned into the
+# array Apollo wants, with
+#
+#   String(config.x || '').split(',').map(s => s.trim()).filter(Boolean)
+#
+# and an EMPTY array is left out of the body rather than sent, because Apollo reads an empty
+# filter as "match nothing" rather than as "no filter". That is why each body is built by an
+# expression that assembles only the keys that have values, instead of a static object.

@@ -1,0 +1,45 @@
+# The Responses API, like every other node in this package. NO SDK.
+#
+# No `messages` array and no `history`: that is the Chat Completions shape. The Responses
+# API takes `instructions` plus a single `input`, and prior turns chain by
+# `previous_response_id` rather than by resending a transcript.
+#
+# No temperature either. The model list is the current 5.6 family, which accepts only the
+# default, so there is nothing to configure.
+#
+# A CALL is one thing: how it is made AND how its reply is framed, which is why
+# transport and error live here rather than in a file of their own.
+#
+# A LIST of one. Every node declares its calls the same way whether it makes one or
+# three, so a node that grows a second call does not change shape, and you never have to
+# know which form a package used before you can read it.
+
+- name: generate
+  method: POST
+  url: { $ref: endpoints#responses }
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  body:
+    model: "{{ config.model }}"
+    input: "{{ config.prompt }}"
+    instructions: "{{ config.systemPrompt }}"
+    max_output_tokens: "{{ config.maxTokens }}"
+
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # How the reply is framed. Settles once.
+  transport: json
+
+  # A 200 carrying an error body must not read as success. `!!response.error` and not
+  # `!== undefined`: the Responses API sends `error: null` on success.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message"

@@ -1,0 +1,16 @@
+# One row per output connector, in interface.yaml order.
+#
+# A query that matched nothing returns no `data` key at all, which is a valid empty result
+# rather than an error, so every row tolerates its absence.
+
+- emit: tweets
+  from: response
+  value: "return response.data || []"
+
+- emit: resultCount
+  from: response
+  value: "return (response.data || []).length"
+
+- emit: raw
+  from: response
+  value: "return JSON.stringify(response)"

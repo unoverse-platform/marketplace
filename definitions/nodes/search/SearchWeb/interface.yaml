@@ -1,0 +1,20 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: Search query
+    required: false
+
+outputs:
+  - name: webResults
+    type: array
+    description: Web search results (title, url, source, snippet)
+  - name: imageResults
+    type: array
+    description: Image results (url, title, thumbnail, source). Empty when image search is off.
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

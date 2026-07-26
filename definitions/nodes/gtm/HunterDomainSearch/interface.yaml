@@ -1,0 +1,31 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The domain usually templates from upstream output.
+
+outputs:
+  - name: emails
+    type: array
+    description: Found addresses with owner name, position, seniority and confidence
+  - name: organization
+    type: object
+    description: Company metadata for the domain (name, industry, location, socials)
+  - name: pattern
+    type: string
+    description: The detected address pattern, e.g. '{first}.{last}'
+  - name: totalResults
+    type: number
+    description: How many addresses Hunter holds for this domain, which may exceed the page
+  - name: limit
+    type: number
+    description: Page size used
+  - name: offset
+    type: number
+    description: Offset used
+
+credentials:
+  - name: hunterCredential
+    required: true
+    displayName: Hunter.io

@@ -1,0 +1,16 @@
+# What every Slack call shares.
+#
+# The host is optional on the credential and defaults to slack.com, and any scheme or
+# trailing slash a person pasted is stripped. An expression rather than a template, because
+# a blank `{{ }}` would produce `https:///api/...`.
+
+auth: &auth
+  scheme: bearer
+  token: "{{ credentials.slackBotToken.token }}"
+
+# Slack answers 200 with `ok: false` and an `error` code for almost every failure, including
+# a bad token and a missing scope. Without this every method would look like it succeeded and
+# hand back an empty result.
+error: &error
+  when: "return response.ok === false"
+  message: "return response.error || 'slack rejected the request'"

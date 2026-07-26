@@ -1,0 +1,29 @@
+# The ONE call every node in this package makes.
+#
+# Same url, same auth, switched by `engine`. A node $refs this and layers its own `query`
+# keys on top, which is what a $ref with siblings does: imported first, local wins.
+#
+# The key travels as a query parameter because that is what the vendor takes. `apiKeyQuery`
+# is an executor capability, so no node handles a secret itself.
+
+call: &call
+  method: GET
+  url: https://www.searchapi.io/api/v1/search
+  auth:
+    scheme: apiKeyQuery
+    param: api_key
+    value: "{{ credentials.searchapiCredential.apiKey }}"
+  headers:
+    Accept: application/json
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# A 200 is not always a success here: the vendor reports a bad parameter or an exhausted
+# quota in the body. Without this a failed search emits empty results and reads as "nothing
+# found", which is the wrong answer rather than an error.
+error: &error
+  when: "return !!response.error"
+  message: "return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)"

@@ -1,0 +1,33 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [baseId, tableId, records]
+  properties:
+    baseId:
+      type: string
+      title: Base ID
+      default: ""
+      "ui:field": template
+    tableId:
+      type: string
+      title: Table Name or ID
+      default: ""
+      "ui:field": template
+    records:
+      type: array
+      title: Records
+      description: >-
+        The rows to write. An expression, usually reading an upstream node's output. A row
+        carrying a valid Airtable id is UPDATED rather than created.
+      default: ""
+      "ui:field": template
+    dedupField:
+      type: string
+      title: Dedup Field (optional)
+      description: >-
+        Skip a new row when this field's value already exists in the table. Existing values
+        are read first, paging the whole table.
+      default: ""
+
+"ui:order": [baseId, tableId, records, dedupField]

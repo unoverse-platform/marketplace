@@ -1,0 +1,27 @@
+# One call. The upstream `query` input wins over the configured one, which is what the
+# retired executor did and what the input's description promises.
+
+- name: search
+  method: GET
+  url: https://api.x.com/2/tweets/search/recent
+  auth:
+    scheme: bearer
+    token: "{{ credentials.xCredential.bearerToken }}"
+  query:
+    query: >-
+      return typeof signal.query === 'string' && signal.query.trim()
+        ? signal.query.trim()
+        : config.query
+    # Clamped to the vendor's 1..100 rather than trusted: a saved workflow can hold
+    # anything, and X rejects the request rather than clamping it for you.
+    max_results: "return String(Math.min(Math.max(config.maxResults || 10, 1), 100))"
+    tweet.fields: "return config.tweetFields || 'created_at,public_metrics,author_id'"
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+  # X reports a bad operator or an exhausted quota in the body with a 200 in some cases.
+  error:
+    when: "return !!response.errors && !response.data"
+    message: "return response.errors.map(e => e.detail || e.title || e.message).join('; ')"

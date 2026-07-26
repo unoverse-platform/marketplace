@@ -1,0 +1,32 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. Three nodes, one base URL, one token.
+#
+# This package forced TWO executor capabilities, both loops a manifest cannot write itself:
+# `paginate` for reading past the first page, and `chunk` for writing a collection when the
+# vendor caps a batch at ten. Every list-returning and collection-writing node after this
+# one inherits both.
+#
+# The retired TypeScript is at `_legacy/nodes/airtable/`.
+
+name: airtable
+displayName: Airtable
+description: Read, check and write Airtable records
+version: 2.0.0
+category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png
+
+features:
+  - Fetch records with filters, views and sorting, paginated
+  - Check whether a value already exists
+  - Insert and update records, batched and deduplicated
+
+allowedHosts:
+  - api.airtable.com
+
+requires:
+  auth: [bearer]
+  transport: [json]
+  paginate: [cursor]
+  chunk: true
+  executorVersion: ">=1.3.0"

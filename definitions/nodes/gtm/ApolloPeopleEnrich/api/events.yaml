@@ -1,0 +1,7 @@
+- emit: person
+  from: response
+  value: "return response.person || null"
+
+- emit: found
+  from: response
+  value: "return !!(response.person && response.person.id)"

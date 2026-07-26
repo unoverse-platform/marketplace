@@ -1,0 +1,72 @@
+# The SERVICE channel: the two tools an attached agent gets.
+#
+# Deliberately tiny. Read the signed-in user, and append a note about them. No search, no
+# other objects, no contact CRUD. Both resolve the authenticated user server-side, so a
+# model cannot widen its own reach by choosing different arguments.
+#
+# These descriptions are what the model reads when deciding whether to call a tool, so
+# they say what comes back and what "empty" means, not just what the tool does.
+
+get_contact:
+  description: >-
+    Get a user's CRM contact, their bounded identity profile (name, email, title,
+    company). Pass an email to look that person up; omit it to read the currently
+    authenticated user, which is the default. Returns an empty result if the user is not
+    in the CRM (for example, not signed in). That is normal, just proceed.
+  calls: { $ref: contact#resolveAndCache }
+  returns: { $ref: contact#result }
+
+write_contact_meta:
+  description: >-
+    Append a durable, machine-authored insight about the signed-in user to their CRM
+    contact as a timeline note. APPEND-ONLY: it never edits any existing field. Resolves
+    the authenticated user automatically, so just pass the insight. Push only
+    high-certainty conclusions.
+  calls:
+    # Find the contact first. The search only, not the whole resolve chain: a note is
+    # attached by id, so following company associations would be two wasted calls.
+    - { $ref: contact#search }
+
+    - name: note
+      # No contact means nothing to attach to. Skipping leaves no calls.note, which is
+      # what `returns` below tests to answer NO_CONTACT rather than claiming success.
+      when: "return (((calls.search || {}).results) || []).length > 0"
+      method: POST
+      url: { $ref: endpoints#notes }
+      auth:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      # The stamp is a WIRE MARKER, not prose: notes are read back by matching this
+      # prefix, so its wording is fixed and must not be tidied.
+      #
+      # hs_timestamp as epoch millis, which HubSpot accepts and the sandbox can produce.
+      # `new Date()` is unavailable there by design, and rightly so.
+      #
+      # associationTypeId 202 is HubSpot's own Note-to-Contact type.
+      body: >-
+        return {
+          properties: {
+            hs_note_body: 'Gravity AI — machine-authored, unverified'
+              + (params.certainty ? ' (certainty ' + Math.round(params.certainty * 100) + '%)' : '')
+              + '\n\n' + params.insight,
+            hs_timestamp: Date.now()
+          },
+          associations: [{
+            to: { id: (((calls.search || {}).results) || [])[0].id },
+            types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }]
+          }]
+        }
+      transport: json
+
+  # Three outcomes, and they are different problems: the note landed, there is no contact to
+  # attach it to, or nobody was named in the first place. The last one is what happens with
+  # no signed-in session, and reporting it as NO_CONTACT would send someone looking in the
+  # CRM for a person who was never asked for.
+  returns: >-
+    return calls.note
+      ? { ok: !!calls.note.id, id: calls.note.id || null }
+      : !calls.search
+        ? { ok: false, error: 'NO_USER',
+            hint: 'No email to resolve. In production this defaults to the authenticated user; in a debug run, pass the contact email explicitly.' }
+        : { ok: false, error: 'NO_CONTACT',
+            hint: 'No CRM contact for the signed-in user, so there is nothing to attach the note to.' }

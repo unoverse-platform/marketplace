@@ -1,0 +1,13 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    type: company
+    email: ""
+    linkedinHandle: ""
+    domain: close.io
+  inputs:
+    signal: {}
+  expect:
+    company: "return output.company !== null && typeof output.company === 'object'"
+    person: "return output.person === null"

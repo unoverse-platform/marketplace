@@ -1,0 +1,14 @@
+# One GET. The domain is a query parameter, so it is percent-encoded by the executor.
+
+- name: enrich
+  method: GET
+  url: https://api.apollo.io/api/v1/organizations/enrich
+  auth: { $ref: apollo#auth }
+  headers: { $ref: apollo#headers }
+  query:
+    domain: "return String(config.domain || '').trim()"
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

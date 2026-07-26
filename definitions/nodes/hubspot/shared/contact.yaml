@@ -1,0 +1,180 @@
+# Resolving the signed-in person to a HubSpot contact, refreshing the snapshot the memory
+# server reads, and the bounded profile that comes back.
+#
+# Every call is a named top-level key with a YAML anchor, and the lists below compose them.
+# That is what lets `write_contact_meta` reuse the search alone without also following
+# company associations it has no use for, while the two read paths share every call.
+
+# ── the calls ────────────────────────────────────────────────────────────────────
+
+# The email is the join key, and it comes from the SESSION, not the wire. A caller may name
+# one (an agent asking about a colleague), and with no caller `params` is empty, so the
+# workflow channel always resolves the signed-in user and cannot be steered onto someone
+# else's record by an upstream node.
+search: &search
+  name: search
+  # NO EMAIL, NO CALL. The retired code returned a structured "nothing to resolve" result
+  # here rather than calling HubSpot, and dropping that guard sent a filter with no value,
+  # which HubSpot rejects as invalid JSON. That is the wrong error in the wrong place: the
+  # node cannot resolve a person nobody named, and it should say so itself.
+  #
+  # It happens for real: the node tester has no signed-in session, so `user.email` is empty
+  # unless a caller passes one.
+  when: "return !!(params.email || user.email)"
+  method: POST
+  url: { $ref: endpoints#contactSearch }
+  auth:
+    scheme: bearer
+    token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+  body: >-
+    return {
+      filterGroups: [{ filters: [{
+        propertyName: 'email',
+        operator: 'EQ',
+        value: params.email || user.email
+      }] }],
+      properties: ['firstname', 'lastname', 'email', 'phone', 'jobtitle', 'company', 'lifecyclestage'],
+      limit: 1
+    }
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# A contact's company usually lives on an ASSOCIATED Company record rather than in the
+# contact's own `company` text property, so this runs only when that property came back
+# blank. A skipped call leaves no key, which is what the next one's `when` tests.
+association: &association
+  name: association
+  when: "return (((calls.search || {}).results) || []).filter(c => !c.properties.company).length > 0"
+  method: GET
+  url: "https://api.hubapi.com/crm/v3/objects/contacts/{{ calls.search.results.[0].id }}/associations/companies"
+  auth:
+    scheme: bearer
+    token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+  query:
+    limit: "1"
+  transport: json
+
+# v3 associations name the related record `toObjectId` for some object pairs and `id` for
+# others, which is why the retired code wrote `toObjectId ?? id`. An expression url can say
+# it; a Handlebars one could not, and an earlier draft moved the whole thing to v4 just to
+# dodge that. The node should not bend around a limitation of the executor.
+company: &company
+  name: company
+  when: "return ((calls.association || {}).results || []).length > 0"
+  method: GET
+  url: >-
+    return 'https://api.hubapi.com/crm/v3/objects/companies/'
+      + (calls.association.results[0].toObjectId || calls.association.results[0].id)
+  auth:
+    scheme: bearer
+    token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+  query:
+    properties: name
+  transport: json
+
+# The identity snapshot the memory server reads, at `crm:{userId}:{workflowId}`. The
+# retired executor wrote this on EVERY path, so the dashboard stayed warm for free.
+#
+# MERGE, not replace: the memory server writes its own fields into the same key, and a
+# wholesale write would drop them. Skipped outside a workflow (the bench, an ad-hoc call),
+# where there is no scope to key on.
+cache: &cache
+  name: cache
+  state: merge
+  # Needs a workflow to key on AND a search that actually ran: caching "no contact" when
+  # nobody was even named would write a cold miss over a warm snapshot.
+  when: "return !!scope.userId && !!scope.workflowId && !!calls.search"
+  key: "crm:{{ scope.userId }}:{{ scope.workflowId }}"
+  value: >-
+    return { contact: (((calls.search || {}).results) || []).map(c => ({
+      id: c.id,
+      name: [c.properties.firstname, c.properties.lastname].filter(Boolean).join(' ') || null,
+      email: c.properties.email || null,
+      company: c.properties.company || ((calls.company || {}).properties || {}).name || null,
+      lifecycleStage: c.properties.lifecyclestage || null
+    }))[0] || null }
+
+# Hydrate, the other direction: the memory server appends a high-certainty deduction to
+# this queue, and the connector drains it into the CRM on the next conversation.
+#
+# Items are POPPED, so dedup is inherent and a re-run cannot duplicate a note. The cost of
+# that is real and worth naming: if the batch write below fails, the drained items are
+# already off the queue and are lost. The retired code had the same shape one item at a
+# time, so this trades a smaller blast radius for 1 call instead of 25.
+hydrate: &hydrate
+  name: hydrate
+  state: drain
+  when: "return config.syncUser === true && (((calls.search || {}).results) || []).length > 0"
+  key: "crm:hydrate:{{ scope.userId }}:{{ scope.workflowId }}"
+  max: 25
+
+# One BATCH create rather than a call per item. A manifest cannot loop a collection into N
+# requests, and it does not need to: the vendor takes an array, so the whole drain lands in
+# a single call built by one expression.
+hydrateNotes: &hydrateNotes
+  name: hydrateNotes
+  when: "return (calls.hydrate || []).length > 0"
+  method: POST
+  url: { $ref: endpoints#notesBatch }
+  auth:
+    scheme: bearer
+    token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+  body: >-
+    return { inputs: calls.hydrate.filter(i => i && i.claim).map(i => ({
+      properties: {
+        hs_note_body: 'Gravity AI — machine-authored, unverified'
+          + (i.certainty ? ' (certainty ' + Math.round(i.certainty * 100) + '%)' : '')
+          + '\n\n' + i.claim,
+        hs_timestamp: Date.now()
+      },
+      associations: [{
+        to: { id: (((calls.search || {}).results) || [])[0].id },
+        types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }]
+      }]
+    })) }
+  transport: json
+
+# ── the sequences ────────────────────────────────────────────────────────────────
+
+# Find the person and fill in their company. Used where the caller only wants the answer.
+resolve: [*search, *association, *company]
+
+# The same, then refresh the snapshot. This is what both READ paths use, because the old
+# executor cached on every one of them.
+resolveAndCache: [*search, *association, *company, *cache]
+
+# The full workflow-channel sequence. With `syncUser` off it behaves exactly like
+# resolveAndCache, because every state call and the hydrate write are gated on the toggle.
+sync: [*search, *association, *company, *cache, *hydrate, *hydrateNotes]
+
+# ── what a caller gets back ──────────────────────────────────────────────────────
+#
+# A FIXED allowlist of properties, never a full record dump.
+#
+# Wrapped in a one-element array and mapped rather than naming the profile twice: the
+# sandbox has no assignment by design, and the alternative is evaluating the whole
+# projection once for `found` and again for `contact`.
+#
+# A miss is `found: false`, never an error. A person who is not in the CRM is the normal
+# case, and an agent that treats it as a failure stops the conversation dead.
+#
+# `kind` is derived here rather than stored, so it cannot go stale against lifecyclestage.
+result: >-
+  return !calls.search
+    ? { ok: false, found: false, contact: null,
+        error: 'No email to resolve. In production this defaults to the authenticated user; in a debug run, pass the contact email explicitly.' }
+    : [(((calls.search || {}).results) || []).map(c => ({
+    id: c.id,
+    name: [c.properties.firstname, c.properties.lastname].filter(Boolean).join(' ') || null,
+    firstName: c.properties.firstname || null,
+    lastName: c.properties.lastname || null,
+    email: c.properties.email || null,
+    phone: c.properties.phone || null,
+    title: c.properties.jobtitle || null,
+    company: c.properties.company || ((calls.company || {}).properties || {}).name || null,
+    lifecycleStage: c.properties.lifecyclestage || null,
+    kind: c.properties.lifecyclestage === 'customer' ? 'customer' : 'lead'
+  }))[0] || null].map(p => ({ ok: true, found: !!p, contact: p }))[0]

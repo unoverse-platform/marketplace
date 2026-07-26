@@ -1,0 +1,15 @@
+$schema: ../../../_schema/node.schema.json
+
+type: AirtableExists
+kind: PromiseNode
+name: Airtable Exists
+category: Storage & Data
+color: "#FCB400"
+description: Check whether a record with a given field value already exists in a table
+whenToUse: >
+  Pick to answer "is this already in Airtable?" before writing: it looks for one record
+  whose field equals a value and returns a boolean plus the record id. Use it as a guard on
+  a branch; it checks one value rather than fetching rows.
+
+capabilities:
+  cacheable: true

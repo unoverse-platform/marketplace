@@ -1,0 +1,71 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    query:
+      type: string
+      title: Query
+      description: >-
+        A natural-language description of the companies you want. When set it REPLACES every
+        filter below, which is Hunter's own rule rather than ours.
+      default: ""
+      "ui:field": template
+    industry:
+      type: string
+      title: Industry
+      description: Comma-separated industries
+      default: ""
+      "ui:field": template
+    country:
+      type: string
+      title: Country
+      description: Comma-separated two-letter country codes, e.g. 'GB, US'
+      default: ""
+      "ui:field": template
+    headcount:
+      type: string
+      title: Headcount
+      description: Comma-separated size bands, e.g. '1-10, 11-50'
+      default: ""
+      "ui:field": template
+    technology:
+      type: string
+      title: Technology
+      description: Comma-separated technologies the company uses
+      default: ""
+      "ui:field": template
+    keywords:
+      type: string
+      title: Keywords
+      description: Comma-separated keywords to match
+      default: ""
+      "ui:field": template
+    companyType:
+      type: string
+      title: Company Type
+      description: Comma-separated types, e.g. 'privately held, public company'
+      default: ""
+      "ui:field": template
+    similarTo:
+      type: string
+      title: Similar To
+      description: A domain to find lookalikes of
+      default: ""
+      "ui:field": template
+    limit:
+      type: number
+      title: Limit
+      default: 25
+      minimum: 1
+      maximum: 100
+    offset:
+      type: number
+      title: Offset
+      default: 0
+      minimum: 0
+
+"ui:order":
+  [query, industry, country, headcount, technology, keywords, companyType, similarTo,
+   limit, offset]

@@ -1,0 +1,23 @@
+- emit: email
+  from: response
+  value: "return (response.data || {}).email || ''"
+
+- emit: score
+  from: response
+  value: "return (response.data || {}).score || 0"
+
+- emit: position
+  from: response
+  value: "return (response.data || {}).position || ''"
+
+- emit: linkedin_url
+  from: response
+  value: "return (response.data || {}).linkedin_url || ''"
+
+- emit: verification_status
+  from: response
+  value: "return ((response.data || {}).verification || {}).status || ''"
+
+- emit: sources_count
+  from: response
+  value: "return ((response.data || {}).sources || []).length"

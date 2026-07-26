@@ -1,0 +1,19 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ApolloPeople
+kind: PromiseNode
+name: Apollo People
+category: Go To Market
+color: "#F5D800"
+description: Search Apollo.io for people by title, seniority, department or company
+whenToUse: >
+  Pick to DISCOVER lists of people by title, seniority, department or company filters,
+  returning each with email, LinkedIn and phone in one call. Use it to find unknown people
+  by role across companies; enriching one already-known person, or finding companies, are
+  different jobs.
+
+capabilities:
+  cacheable: true
+
+# One vendor. The package allows Hunter too, for its other five nodes.
+allowedHosts: [api.apollo.io]

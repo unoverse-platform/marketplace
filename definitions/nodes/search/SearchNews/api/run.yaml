@@ -1,0 +1,11 @@
+# One call. The engine is what makes this node different from its three siblings.
+
+- $ref: searchapi#call
+  name: search
+  error: { $ref: searchapi#error }
+  query:
+    engine: google_news
+    q: "{{ config.query }}"
+    num: "{{ config.numResults }}"
+    gl: "{{ config.country }}"
+    hl: "{{ config.language }}"

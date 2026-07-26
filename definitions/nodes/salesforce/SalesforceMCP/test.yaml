@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+# The READ path, because it is the one that proves the OAuth exchange, the instance_url and
+# the SOQL all work. The write methods are deliberately not the fixture: they would leave a
+# real Lead and a real Task behind, and a bench that litters is one nobody runs twice.
+testData:
+  config:
+    syncUser: false
+    defaultQuery: SELECT Id, Name FROM Account LIMIT 3
+
+  inputs:
+    input: {}
+
+  expect:
+    # Any org answers this. Asserting a row count would tie the fixture to one org's data.
+    output: >-
+      return output.output.ok === true && Array.isArray(output.output.records)

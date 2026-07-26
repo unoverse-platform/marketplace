@@ -1,0 +1,59 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    personTitles:
+      type: string
+      title: Person Titles
+      description: Comma-separated job titles, e.g. 'CEO, CTO, VP Engineering'
+      default: ""
+      "ui:field": template
+    organizationNames:
+      type: string
+      title: Organisation Names
+      description: Comma-separated company names, e.g. 'Google, Meta'
+      default: ""
+      "ui:field": template
+    organizationDomains:
+      type: string
+      title: Organisation Domains
+      description: Comma-separated company domains, e.g. 'google.com, meta.com'
+      default: ""
+      "ui:field": template
+    personLocations:
+      type: string
+      title: Person Locations
+      description: Comma-separated locations, e.g. 'New York, London'
+      default: ""
+      "ui:field": template
+    personSeniorities:
+      type: string
+      title: Seniority Levels
+      description: Comma-separated seniorities, e.g. 'senior, manager, director, vp, c_suite'
+      default: ""
+      "ui:field": template
+    personDepartments:
+      type: string
+      title: Departments
+      description: Comma-separated departments, e.g. 'engineering, sales, marketing'
+      default: ""
+      "ui:field": template
+    perPage:
+      type: number
+      title: Results Per Page
+      default: 25
+      minimum: 1
+      maximum: 100
+    page:
+      type: number
+      title: Page
+      description: Which page to fetch. Apollo allows 500 pages, 50,000 records.
+      default: 1
+      minimum: 1
+      maximum: 500
+
+"ui:order":
+  [personTitles, personSeniorities, personDepartments, personLocations,
+   organizationNames, organizationDomains, perPage, page]

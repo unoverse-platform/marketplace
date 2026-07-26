@@ -1,0 +1,27 @@
+$schema: ../../../_schema/test.schema.json
+
+# This node has no options, so the fixture is really about WHO is asking: the whole node
+# is a function of the signed-in person's email.
+#
+# The workflow channel and `get_contact` run the SAME chain (shared/contact.yaml), so
+# exercising one exercises both. `write_contact_meta` is deliberately not the fixture: it
+# writes a real note to a real CRM record, and a bench that leaves litter behind stops
+# being something anyone runs twice.
+testData:
+  config: {}
+
+  inputs:
+    input: {}
+
+  # Stands in for the session. Change this to an email that exists in the HubSpot
+  # portal your Service Key points at, or the run correctly reports found: false.
+  user:
+    email: gavinapayne@gmail.com
+
+  expect:
+    # A miss is a RESULT, not a failure, so the run is only wrong if the call itself did
+    # not complete. Asserting found: true would tie the fixture to one portal's data.
+    output: >-
+      return output.output.ok === true
+        && (output.output.contact === null
+            || typeof output.output.contact.email === 'string')

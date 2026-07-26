@@ -1,0 +1,36 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [type]
+  properties:
+    type:
+      type: string
+      title: Enrichment Type
+      description: >-
+        combined returns both from an email. person takes an email or a LinkedIn profile.
+        company takes a domain.
+      enum: [combined, person, company]
+      enumNames: [Combined, Person, Company]
+      default: combined
+    email:
+      type: string
+      title: Email
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { type: [combined, person] }
+    linkedinHandle:
+      type: string
+      title: LinkedIn Handle or URL
+      description: A handle, or a full profile URL. The URL is reduced to the handle for you.
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { type: [person] }
+    domain:
+      type: string
+      title: Domain
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { type: [company] }
+
+"ui:order": [type, email, linkedinHandle, domain]

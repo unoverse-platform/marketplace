@@ -1,0 +1,27 @@
+# One POST. Only the identifiers that were actually given are sent: a blank field would
+# narrow the match to "first_name is empty" rather than being ignored.
+#
+# The two reveal flags are sent only when true, matching the retired code, because sending
+# `false` explicitly is not the same as omitting them on some Apollo plans.
+
+- name: match
+  method: POST
+  url: https://api.apollo.io/api/v1/people/match
+  auth: { $ref: apollo#auth }
+  headers: { $ref: apollo#headers }
+  body: >-
+    return Object.fromEntries(Object.entries({
+      first_name: String(config.firstName || '').trim(),
+      last_name: String(config.lastName || '').trim(),
+      email: String(config.email || '').trim(),
+      domain: String(config.domain || '').trim(),
+      linkedin_url: String(config.linkedinUrl || '').trim(),
+      organization_name: String(config.organizationName || '').trim(),
+      reveal_personal_emails: config.revealPersonalEmails === true ? true : '',
+      reveal_phone_number: config.revealPhoneNumber === true ? true : ''
+    }).filter(e => e[1] !== ''))
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

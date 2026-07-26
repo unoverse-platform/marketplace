@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: Search query, e.g. 'coffee shops'
+    required: false
+
+outputs:
+  - name: placeResults
+    type: array
+    description: Place results (title, address, rating, reviews, type, phone, website, coordinates)
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

@@ -1,0 +1,45 @@
+# The main call: OpenAI's Responses API. NO SDK.
+#
+# The Agents SDK is client-side orchestration over this same endpoint, so what it gives
+# you is a loop, not a capability. Doing the loop from here keeps an agent portable: the
+# platform counts turns and spots a stuck one, and everything about OpenAI's wire format
+# lives in this folder.
+#
+# A CALL is one thing: how it is made AND how its reply is framed. That is why transport,
+# terminator and error live here and not in a file of their own.
+
+- name: generate
+  method: POST
+  url: { $ref: endpoints#responses }
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  body:
+    model: "{{ config.model }}"
+    input: "{{ config.prompt }}"
+    instructions: "{{ config.systemPrompt }}"
+    max_output_tokens: "{{ config.maxTokens }}"
+    stream: true
+    reasoning:
+      effort: "{{ config.reasoningEffort }}"
+      summary: "{{ config.reasoningSummary }}"
+    text:
+      verbosity: "{{ config.verbosity }}"
+
+  timeoutMs: 600000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # How the reply is framed.
+  transport: sse
+  terminator: "[DONE]"
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return response.type === 'response.failed'"
+    message: "return response.response.error.message"

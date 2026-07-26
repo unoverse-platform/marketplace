@@ -1,0 +1,57 @@
+- name: generate
+  method: POST
+  url: { $ref: endpoints#responses }
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  # An EXPRESSION body, because `input` changes SHAPE with the content. Text goes
+  # straight through; an image becomes a two-part array of input_image + input_text;
+  # anything else is stringified. Templates interpolate values, they cannot branch on
+  # structure. Transcribed from src/OpenAIStructuredOutput/service/structuredOutput.ts.
+  #
+  # Note both `content` and `schema` come from `signal`, not `config`: they are WIRED
+  # inputs, which is what lets one node serve every extraction shape.
+  body: >-
+    return {
+      model: config.model,
+      instructions: config.instructions,
+      input: [{
+        role: 'user',
+        content: typeof signal.content === 'string'
+          ? signal.content
+          : (signal.content && signal.content.type === 'image' && signal.content.imageUrl
+              ? [
+                  { type: 'input_image', image_url: signal.content.imageUrl },
+                  { type: 'input_text',
+                    text: 'Analyze this image and extract structured information. Image metadata: '
+                          + JSON.stringify((signal.content && signal.content.metadata) || {}) }
+                ]
+              : JSON.stringify(signal.content))
+      }],
+      text: {
+        format: {
+          type: 'json_schema',
+          name: config.schemaName,
+          strict: true,
+          schema: signal.schema
+        },
+        verbosity: 'low'
+      }
+    }
+
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # How the reply is framed. A call is one thing: how it is made and how it comes back.
+  transport: json
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message"

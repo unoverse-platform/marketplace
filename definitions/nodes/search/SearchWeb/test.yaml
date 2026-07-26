@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: AI regulation
+    numResults: 20
+    numImages: 10
+    searchImages: true
+    safeSearch: active
+    country: us
+    language: en
+  inputs:
+    query: AI regulation
+  expect:
+    webResults: "return output.webResults.length > 0 && typeof output.webResults[0].url === 'string'"
+    # searchImages is ON in this fixture, so an EMPTY array is a failure, not a pass.
+    # `Array.isArray` alone would have gone green with the image call never firing.
+    imageResults: "return output.imageResults.length > 0 && typeof output.imageResults[0].url === 'string'"

@@ -1,0 +1,21 @@
+# One record is enough to answer the question, so maxRecords is 1 and there is no paging.
+#
+# The formula is a string the vendor parses, so the value is escaped. Double quotes are the
+# only delimiter that needs it here, and split/join does it without a regex, which the
+# expression sandbox does not allow.
+
+- name: match
+  method: GET
+  url: { $ref: table#url }
+  auth: { $ref: table#auth }
+  query:
+    filterByFormula: >-
+      return '{' + config.field + '}="'
+        + String(config.value).split('"').join('\\"')
+        + '"'
+    maxRecords: "1"
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

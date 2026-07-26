@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    personTitles: CTO
+    organizationNames: ""
+    organizationDomains: ""
+    personLocations: ""
+    personSeniorities: ""
+    personDepartments: ""
+    perPage: 5
+    page: 1
+  inputs:
+    signal: {}
+  expect:
+    people: "return output.people.length > 0 && typeof output.people[0].title === 'string'"
+    organizations: "return Array.isArray(output.organizations)"
+    perPage: "return output.perPage === 5"

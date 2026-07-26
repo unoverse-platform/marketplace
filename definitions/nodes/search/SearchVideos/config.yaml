@@ -1,0 +1,31 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [query]
+  properties:
+    query:
+      type: string
+      title: Search Query
+      description: Keywords to search YouTube for
+      default: ""
+      "ui:field": template
+    numResults:
+      type: number
+      title: Number of Results
+      description: Number of video results to return
+      default: 20
+      minimum: 1
+      maximum: 100
+    country:
+      type: string
+      title: Country
+      description: Country code for localized results, e.g. 'us', 'uk', 'ae'
+      default: us
+    language:
+      type: string
+      title: Language
+      description: Interface language code, e.g. 'en', 'ar'
+      default: en
+
+"ui:order": [query, numResults, country, language]

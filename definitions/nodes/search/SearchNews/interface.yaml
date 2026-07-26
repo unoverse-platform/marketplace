@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: Search query
+    required: false
+
+outputs:
+  - name: newsResults
+    type: array
+    description: News article results (title, url, source, date, snippet, thumbnail)
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

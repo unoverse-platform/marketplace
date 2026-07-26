@@ -1,0 +1,20 @@
+# Triggered by the graph, this node posts a message. The channel comes from the input or the
+# configured default; the text comes from the input.
+#
+# Skipped when either is missing, so a misconfigured node says so rather than calling Slack
+# with an empty message. The events row below turns the skip into a named error.
+
+- name: post
+  when: >-
+    return !!((signal.input || {}).channel || config.defaultChannel)
+      && !!((signal.input || {}).text || (signal.input || {}).input)
+  method: POST
+  url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/chat.postMessage'"
+  auth: { $ref: api#auth }
+  body: >-
+    return {
+      channel: (signal.input || {}).channel || config.defaultChannel,
+      text: String((signal.input || {}).text || (signal.input || {}).input)
+    }
+  transport: json
+  error: { $ref: api#error }

@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Trigger. Config values may template from upstream output.
+
+outputs:
+  - name: records
+    type: array
+    description: The records, each a plain object of its fields plus its Airtable `id`
+  - name: totalCount
+    type: number
+    description: How many records came back after paging and dedup
+
+credentials:
+  - name: airtableCredential
+    required: true
+    displayName: Airtable

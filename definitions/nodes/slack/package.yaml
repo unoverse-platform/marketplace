@@ -1,0 +1,29 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. One node, six MCP methods, one bearer token, nothing new required.
+# The retired TypeScript is at `_legacy/nodes/slack/`.
+#
+# The credential carries an optional `host`, so the url is templated per workspace. AllowedHosts
+# covers the default plus one subdomain level for an enterprise grid.
+
+name: slack
+displayName: Slack
+description: Slack workspace integration for Unoverse
+version: 2.0.0
+category: communication
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1779530623/gravity/icons/Slack.svg
+
+features:
+  - Send messages, including thread replies
+  - Search messages and read channel history
+  - List channels and look up users
+  - Add reactions
+
+allowedHosts:
+  - slack.com
+  - "*.slack.com"
+
+requires:
+  auth: [bearer]
+  transport: [json]
+  executorVersion: ">=1.0.0"

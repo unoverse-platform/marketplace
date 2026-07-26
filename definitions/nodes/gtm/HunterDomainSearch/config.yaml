@@ -1,0 +1,59 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    domain:
+      type: string
+      title: Domain
+      description: The company domain, e.g. 'google.com'
+      default: ""
+      "ui:field": template
+    company:
+      type: string
+      title: Company
+      description: The company name, when you do not have the domain
+      default: ""
+      "ui:field": template
+    type:
+      type: string
+      title: Email Type
+      description: Restrict to personal or generic addresses
+      enum: ["", personal, generic]
+      enumNames: [Any, Personal, Generic]
+      default: ""
+    department:
+      type: string
+      title: Department
+      description: Restrict to a department, e.g. 'executive, it, sales'
+      default: ""
+      "ui:field": template
+    seniority:
+      type: string
+      title: Seniority
+      description: Restrict to a seniority, e.g. 'junior, senior, executive'
+      default: ""
+      "ui:field": template
+    requiredField:
+      type: string
+      title: Required Field
+      description: Only return addresses that carry this field
+      enum: ["", full_name, position, phone_number]
+      enumNames: [None, Full name, Position, Phone number]
+      default: ""
+    limit:
+      type: number
+      title: Limit
+      description: Addresses per page
+      default: 10
+      minimum: 1
+      maximum: 100
+    offset:
+      type: number
+      title: Offset
+      description: Where to start, for paging through a large domain
+      default: 0
+      minimum: 0
+
+"ui:order": [domain, company, type, department, seniority, requiredField, limit, offset]

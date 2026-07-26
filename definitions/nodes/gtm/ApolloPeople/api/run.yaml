@@ -1,0 +1,34 @@
+# ONE page, not a walk. This node takes `page` as a config field, so the caller chooses
+# which page; ApolloCompany walks pages because it takes a total instead. Two nodes, two
+# deliberately different contracts, and the retired code did the same.
+#
+# Note the key names: domains go in as `q_organization_domains_list` here, and as
+# `organization_domains` in the company search. Apollo's own asymmetry, kept verbatim.
+
+- name: search
+  method: POST
+  url: https://api.apollo.io/api/v1/mixed_people/api_search
+  auth: { $ref: apollo#auth }
+  headers: { $ref: apollo#headers }
+  body: >-
+    return Object.fromEntries(Object.entries({
+      per_page: Math.round(config.perPage || 25),
+      page: Math.round(config.page || 1),
+      person_titles:
+        String(config.personTitles || '').split(',').map(s => s.trim()).filter(Boolean),
+      organization_names:
+        String(config.organizationNames || '').split(',').map(s => s.trim()).filter(Boolean),
+      q_organization_domains_list:
+        String(config.organizationDomains || '').split(',').map(s => s.trim()).filter(Boolean),
+      person_locations:
+        String(config.personLocations || '').split(',').map(s => s.trim()).filter(Boolean),
+      person_seniorities:
+        String(config.personSeniorities || '').split(',').map(s => s.trim()).filter(Boolean),
+      person_departments:
+        String(config.personDepartments || '').split(',').map(s => s.trim()).filter(Boolean)
+    }).filter(e => !Array.isArray(e[1]) || e[1].length > 0))
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

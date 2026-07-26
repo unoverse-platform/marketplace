@@ -1,0 +1,31 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. Four nodes, one endpoint, one key.
+#
+# SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched
+# by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds
+# the call, each node names its engine and shapes its own reply, and the whole client is
+# gone: `auth: apiKeyQuery` was already an executor capability.
+#
+# The retired TypeScript is at `_legacy/nodes/search/`.
+
+name: search
+displayName: Search
+description: Web, news, video and places search via SearchAPI.io
+version: 2.0.0
+category: search
+logoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png
+
+features:
+  - Google web and image results
+  - Google News, dated articles
+  - YouTube video search
+  - Google Maps places with ratings
+
+allowedHosts:
+  - www.searchapi.io
+
+requires:
+  auth: [apiKeyQuery]
+  transport: [json]
+  executorVersion: ">=1.0.0"

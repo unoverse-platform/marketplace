@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: Search query
+    required: false
+
+outputs:
+  - name: videoResults
+    type: array
+    description: YouTube video results (title, url, channel, views, length, thumbnail)
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

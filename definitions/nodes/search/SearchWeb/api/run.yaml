@@ -1,0 +1,26 @@
+# Two calls: the web search, then a dedicated image pass when it is switched on. Two
+# separate engines, which is why this is a list rather than one request.
+
+- $ref: searchapi#call
+  name: web
+  error: { $ref: searchapi#error }
+  query:
+    engine: google
+    q: "{{ config.query }}"
+    num: "{{ config.numResults }}"
+    gl: "{{ config.country }}"
+    hl: "{{ config.language }}"
+    # Anything not "off" is coerced to "active", so a workflow saved with the long-removed
+    # "moderate" keeps working instead of failing every search.
+    safe: "return config.safeSearch === 'off' ? 'off' : 'active'"
+
+- $ref: searchapi#call
+  name: images
+  when: "return config.searchImages === true && config.numImages > 0"
+  error: { $ref: searchapi#error }
+  query:
+    engine: google_images
+    q: "{{ config.query }}"
+    num: "{{ config.numImages }}"
+    safe: "return config.safeSearch === 'off' ? 'off' : 'active'"
+    size: large

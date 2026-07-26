@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    domain: close.io
+    company: ""
+    type: ""
+    department: ""
+    seniority: ""
+    requiredField: ""
+    limit: 5
+    offset: 0
+  inputs:
+    signal: {}
+  expect:
+    emails: "return Array.isArray(output.emails)"
+    organization: "return output.organization.domain === 'close.io'"
+    limit: "return output.limit === 5"

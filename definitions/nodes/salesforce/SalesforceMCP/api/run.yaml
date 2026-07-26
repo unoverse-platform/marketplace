@@ -1,0 +1,35 @@
+# The WORKFLOW channel. The node does ONE of two jobs, chosen by `syncUser`, and every call
+# is gated so the unused branch sends nothing.
+#
+# Sync on:  resolve the person, cache them, drain the insight queue, write the Tasks.
+# Sync off: run the query, from the upstream input if it carried one, else the configured
+#           default.
+
+- { $ref: contact#contact, when: "return config.syncUser === true" }
+- { $ref: contact#lead }
+- { $ref: contact#cache }
+- { $ref: contact#hydrate }
+- { $ref: contact#hydrateTasks }
+
+# Only a NON-EMPTY STRING counts as a query. A wired upstream node often puts an object on
+# `input`, and stringifying that would send "[object Object]" to Salesforce; the retired
+# code had the same guard for the same reason.
+- name: query
+  when: >-
+    return config.syncUser !== true
+      && !!(typeof (signal.input || {}).soql === 'string' && (signal.input || {}).soql.trim()
+            ? (signal.input || {}).soql.trim()
+            : String(config.defaultQuery || '').trim())
+  method: GET
+  url: { $ref: api#query }
+  auth: { $ref: api#auth }
+  query:
+    q: >-
+      return typeof (signal.input || {}).soql === 'string' && (signal.input || {}).soql.trim()
+        ? (signal.input || {}).soql.trim()
+        : String(config.defaultQuery || '').trim()
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

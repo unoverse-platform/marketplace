@@ -1,0 +1,28 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [query]
+  properties:
+    query:
+      type: string
+      title: Search Query
+      description: >-
+        X search query. Supports from:user, #hashtag, -exclude, lang:en and OR without
+        parentheses. Wrap phrases in quotes, e.g. "Miro board" lang:en -is:retweet
+      default: ""
+      "ui:field": template
+    maxResults:
+      type: number
+      title: Max Results
+      description: Number of posts to return
+      default: 10
+      minimum: 1
+      maximum: 100
+    tweetFields:
+      type: string
+      title: Tweet Fields
+      description: Comma-separated X API tweet fields to include
+      default: created_at,public_metrics,author_id
+
+"ui:order": [query, maxResults, tweetFields]

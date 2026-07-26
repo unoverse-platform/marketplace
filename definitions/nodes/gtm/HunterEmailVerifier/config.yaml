@@ -1,0 +1,14 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [email]
+  properties:
+    email:
+      type: string
+      title: Email
+      description: The address to verify
+      default: ""
+      "ui:field": template
+
+"ui:order": [email]

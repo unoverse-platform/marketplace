@@ -1,0 +1,23 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. One node, one endpoint, one bearer token, nothing new required.
+# The retired TypeScript is at `_legacy/nodes/x-search/`.
+
+name: x-search
+displayName: X Search
+description: Search recent X (Twitter) posts
+version: 2.0.0
+category: search
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
+
+features:
+  - Recent post search with X query operators
+  - Per-post engagement metrics
+
+allowedHosts:
+  - api.x.com
+
+requires:
+  auth: [bearer]
+  transport: [json]
+  executorVersion: ">=1.0.0"

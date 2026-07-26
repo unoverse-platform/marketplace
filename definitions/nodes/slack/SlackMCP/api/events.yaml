@@ -1,0 +1,11 @@
+# One row, one connector.
+#
+# When the call was skipped there is no `calls.post`, and that is the misconfiguration case:
+# it reports what is missing rather than emitting an empty success.
+
+- emit: output
+  from: response
+  value: >-
+    return calls.post
+      ? calls.post
+      : { ok: false, error: 'channel and text are required for workflow execution' }

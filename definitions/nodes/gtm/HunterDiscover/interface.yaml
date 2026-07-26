@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. Filters may template from upstream output.
+
+outputs:
+  - name: companies
+    type: array
+    description: Matched companies with domain, organisation and email counts
+  - name: totalResults
+    type: number
+    description: How many companies came back
+  - name: limit
+    type: number
+    description: Page size used
+  - name: offset
+    type: number
+    description: Offset used
+
+credentials:
+  - name: hunterCredential
+    required: true
+    displayName: Hunter.io

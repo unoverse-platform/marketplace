@@ -1,0 +1,16 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SearchVideos
+kind: PromiseNode
+name: Search Videos
+category: Search
+color: "#FF0000"
+logoUrl: https://cdn-icons-png.flaticon.com/512/1384/1384060.png
+description: Search YouTube videos by keyword via SearchAPI.io (youtube)
+whenToUse: >
+  Pick to find YOUTUBE VIDEOS for a keyword: title, channel, views, length and thumbnail per
+  result. Use it when you specifically want video content; it returns videos, not arbitrary
+  web pages, dated articles, or places.
+
+capabilities:
+  cacheable: true

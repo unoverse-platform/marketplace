@@ -1,0 +1,135 @@
+# Resolving the signed-in person, and the bounded profile that comes back.
+#
+# Salesforce needs TWO lookups where HubSpot needed one: a person is a Contact, or if not,
+# an unconverted Lead. A converted lead IS its Contact, so it must not match twice.
+#
+# SOQL is assembled as a string, so every interpolated value is escaped. split/join rather
+# than a regex, because the expression sandbox takes no regex literal.
+
+# ── the calls ────────────────────────────────────────────────────────────────────
+
+contact: &contact
+  name: contact
+  method: GET
+  url: { $ref: api#query }
+  auth: { $ref: api#auth }
+  query:
+    q: >-
+      return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Account.Name FROM Contact WHERE Email = '"
+        + String(params.email || user.email || '').split('\\').join('\\\\').split("'").join("\\'")
+        + "' LIMIT 1"
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# Only when no Contact matched. A skipped call leaves no key, which is what `result` tests.
+lead: &lead
+  name: lead
+  when: "return ((calls.contact || {}).records || []).length === 0"
+  method: GET
+  url: { $ref: api#query }
+  auth: { $ref: api#auth }
+  query:
+    q: >-
+      return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Company FROM Lead WHERE Email = '"
+        + String(params.email || user.email || '').split('\\').join('\\\\').split("'").join("\\'")
+        + "' AND IsConverted = false ORDER BY CreatedDate DESC LIMIT 1"
+  transport: json
+
+# The identity snapshot the memory server reads. MERGE, because it writes its own fields
+# into the same key. Skipped where there is no workflow scope to key on.
+cache: &cache
+  name: cache
+  state: merge
+  when: "return !!scope.userId && !!scope.workflowId"
+  key: "crm:{{ scope.userId }}:{{ scope.workflowId }}"
+  value: >-
+    return { contact: [].concat(
+      ((calls.contact || {}).records || []).map(r => ({
+        id: r.Id, name: r.Name || null, email: r.Email || null,
+        company: (r.Account || {}).Name || null, kind: 'contact'
+      })),
+      ((calls.lead || {}).records || []).map(r => ({
+        id: r.Id, name: r.Name || null, email: r.Email || null,
+        company: r.Company || null, kind: 'lead'
+      }))
+    )[0] || null }
+
+# Hydrate: the memory server queues high-certainty deductions here and the connector writes
+# them back as append-only Tasks. Items are POPPED, so a re-run cannot duplicate them.
+hydrate: &hydrate
+  name: hydrate
+  state: drain
+  when: >-
+    return config.syncUser === true
+      && (((calls.contact || {}).records || []).length > 0
+       || ((calls.lead || {}).records || []).length > 0)
+  key: "crm:hydrate:{{ scope.userId }}:{{ scope.workflowId }}"
+  max: 25
+
+# One composite call rather than a Task create per item. Subject is capped at 255 by
+# Salesforce, so the full text goes in Description and the subject is truncated.
+hydrateTasks: &hydrateTasks
+  name: hydrateTasks
+  when: "return (calls.hydrate || []).length > 0"
+  method: POST
+  url: >-
+    return token.instanceUrl + '/services/data/'
+      + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/composite/sobjects'
+  auth: { $ref: api#auth }
+  body: >-
+    return {
+      allOrNone: false,
+      records: calls.hydrate.filter(i => i && i.claim).map(i => ({
+        attributes: { type: 'Task' },
+        Subject: i.claim.length > 255 ? i.claim.slice(0, 252) + '…' : i.claim,
+        Status: 'Completed',
+        Priority: 'Normal',
+        WhoId: (((calls.contact || {}).records || []).concat(((calls.lead || {}).records || []))[0] || {}).Id,
+        Description: 'Gravity AI — machine-authored, unverified'
+          + (i.certainty ? ' (certainty ' + Math.round(i.certainty * 100) + '%)' : '')
+          + '\n\n' + i.claim
+      }))
+    }
+  transport: json
+
+# ── the sequences ────────────────────────────────────────────────────────────────
+
+resolve: [*contact, *lead]
+resolveAndCache: [*contact, *lead, *cache]
+sync: [*contact, *lead, *cache, *hydrate, *hydrateTasks]
+
+# ── what a caller gets back ──────────────────────────────────────────────────────
+#
+# A FIXED field list, never SELECT *. A Contact wins over a Lead, and `company` comes from
+# the associated Account for a Contact but sits directly on a Lead.
+#
+# A miss is `found: false`, never an error: a person who is not in the CRM is the normal
+# case, and an agent that treats it as a failure stops the conversation dead.
+result: >-
+  return [[].concat(
+    ((calls.contact || {}).records || []).map(r => ({
+      id: r.Id,
+      name: r.Name || null,
+      firstName: r.FirstName || null,
+      lastName: r.LastName || null,
+      email: r.Email || null,
+      title: r.Title || null,
+      phone: r.Phone || null,
+      company: (r.Account || {}).Name || null,
+      kind: 'contact'
+    })),
+    ((calls.lead || {}).records || []).map(r => ({
+      id: r.Id,
+      name: r.Name || null,
+      firstName: r.FirstName || null,
+      lastName: r.LastName || null,
+      email: r.Email || null,
+      title: r.Title || null,
+      phone: r.Phone || null,
+      company: r.Company || null,
+      kind: 'lead'
+    }))
+  )[0] || null].map(p => ({ ok: true, found: !!p, contact: p }))[0]

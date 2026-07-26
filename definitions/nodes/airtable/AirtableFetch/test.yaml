@@ -1,0 +1,19 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs a real base. Point baseId and tableId at one you own before running the bench.
+testData:
+  config:
+    baseId: appXXXXXXXXXXXXXX
+    tableId: Companies
+    filterFormula: ""
+    fields: ""
+    view: ""
+    sortField: ""
+    sortDirection: asc
+    maxRecords: 5
+    dedupField: ""
+  inputs:
+    input: {}
+  expect:
+    records: "return Array.isArray(output.records)"
+    totalCount: "return output.totalCount === output.records.length"

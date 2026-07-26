@@ -1,0 +1,18 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SlackMCP
+kind: PromiseNode
+name: Slack
+category: Communication
+color: "#4A154B"
+# Attached to an agent over a service edge rather than wired in sequence.
+template: service
+description: Send messages, search, and read a Slack workspace
+whenToUse: >
+  Pick to reach a Slack workspace: post a message or thread reply, search messages, read a
+  channel's history, list channels, look up a user, or react to a post. Attach it to an
+  agent so it can talk to a team, or trigger it directly to post to a default channel.
+
+capabilities:
+  # Sending a message is a side effect, so reuse must never stand in for it.
+  cacheable: false

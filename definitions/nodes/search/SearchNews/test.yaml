@@ -1,0 +1,12 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    query: AI regulation
+    numResults: 10
+    country: us
+    language: en
+  inputs:
+    query: AI regulation
+  expect:
+    newsResults: "return output.newsResults.length > 0 && typeof output.newsResults[0].title === 'string'"

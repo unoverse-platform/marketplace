@@ -1,0 +1,12 @@
+# Everything the three nodes share: the auth, and the url for one table.
+#
+# The table part may be a NAME ("Companies") or an id ("tbl..."), so it is percent-encoded.
+# The base id never needs encoding.
+
+auth: &auth
+  scheme: bearer
+  token: "{{ credentials.airtableCredential.personalAccessToken }}"
+
+url: &url >-
+  return 'https://api.airtable.com/v0/' + config.baseId
+    + '/' + encodeURIComponent(config.tableId)

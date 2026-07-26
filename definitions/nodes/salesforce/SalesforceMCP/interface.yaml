@@ -1,0 +1,38 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Trigger input. Optionally { soql } to run a query instead of the configured one.
+
+outputs:
+  - name: output
+    type: object
+    description: >-
+      What the node ran. A query result when Sync user is off, the resolved contact profile
+      when it is on.
+
+credentials:
+  - name: salesforceOAuth
+    required: true
+    displayName: Salesforce
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods:
+      - query_records
+      - get_record
+      - create_lead
+      - update_lead
+      - describe_object
+      - list_objects
+      - crm_resolve_user
+      - crm_get_profile
+      - crm_write_insight
+      - crm_read_insights
+    description: >-
+      MCP tools for an agent: SOQL queries, record reads, lead create and update, object
+      metadata, and the CRM sync contract (resolve the signed-in user, read their profile,
+      append an insight, read insights back).

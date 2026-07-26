@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# No MCP provider is wired on the bench, so this exercises the one-shot path
+# (maxTurns still bounds it; with no tools the loop degrades to a single request).
+# The tool loop itself is proven separately against a stub bridge.
+testData:
+  config:
+    model: gpt-5.6
+    maxTurns: 5
+    reasoningEffort: none
+    reasoningSummary: concise
+    verbosity: low
+    systemPrompt: You are a concise research assistant.
+    prompt: Name the three states of matter, comma separated.
+    maxTokens: 300
+
+  inputs:
+    signal:
+      topic: states of matter
+
+  expect:
+    text: "return output.text.length > 0"

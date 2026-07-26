@@ -1,0 +1,30 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [baseId, tableId, field, value]
+  properties:
+    baseId:
+      type: string
+      title: Base ID
+      default: ""
+      "ui:field": template
+    tableId:
+      type: string
+      title: Table Name or ID
+      default: ""
+      "ui:field": template
+    field:
+      type: string
+      title: Field Name
+      description: The field to match on
+      default: ""
+      "ui:field": template
+    value:
+      type: string
+      title: Value
+      description: The value to look for
+      default: ""
+      "ui:field": template
+
+"ui:order": [baseId, tableId, field, value]

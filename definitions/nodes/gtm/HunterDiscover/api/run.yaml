@@ -1,0 +1,48 @@
+# The one Hunter endpoint that takes the key in a HEADER rather than the query, and the one
+# that POSTs. Both are the vendor's choice, not an inconsistency here.
+#
+# `query` REPLACES the filters when set, which is Hunter's rule: sending both makes the
+# filters silently win and the query do nothing. The body is an expression so that whole
+# branch can be expressed, and so an empty filter is left out rather than sent.
+#
+# Note the shapes: industry, technology, keywords and companyType want { include: [...] },
+# headcount wants a bare array, and country wants a list of { country } objects. That is
+# Hunter's API, transcribed rather than tidied.
+
+- name: discover
+  method: POST
+  url: https://api.hunter.io/v2/discover
+  auth: { $ref: hunter#headerAuth }
+  body: >-
+    return Object.assign(
+      {
+        limit: Math.min(Math.max(1, Math.round(config.limit || 25)), 100),
+        offset: Math.max(0, Math.round(config.offset || 0))
+      },
+      String(config.query || '').trim()
+        ? { query: String(config.query).trim() }
+        : Object.fromEntries(Object.entries({
+            industry: String(config.industry || '').split(',').map(s => s.trim()).filter(Boolean),
+            technology: String(config.technology || '').split(',').map(s => s.trim()).filter(Boolean),
+            keywords: String(config.keywords || '').split(',').map(s => s.trim()).filter(Boolean),
+            company_type: String(config.companyType || '').split(',').map(s => s.trim()).filter(Boolean)
+          }).filter(e => e[1].length > 0).map(e => [e[0], { include: e[1] }])
+          .concat(
+            String(config.headcount || '').split(',').map(s => s.trim()).filter(Boolean).length
+              ? [['headcount', String(config.headcount).split(',').map(s => s.trim()).filter(Boolean)]]
+              : [],
+            String(config.country || '').split(',').map(s => s.trim()).filter(Boolean).length
+              ? [['headquarters_location', { include: String(config.country).split(',')
+                  .map(s => s.trim()).filter(Boolean).map(c => ({ country: c.toUpperCase() })) }]]
+              : [],
+            String(config.similarTo || '').trim()
+              ? [['similar_to', String(config.similarTo).trim()]]
+              : []
+          ))
+    )
+  transport: json
+  error: { $ref: hunter#error }
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
