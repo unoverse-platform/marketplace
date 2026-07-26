@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from src/OpenAIEmbeddingService/node/index.ts.
+#
+# A PURE SERVICE node. It is never triggered by the graph and has no inputs or
+# outputs; other nodes call its methods over a service edge and it hands back a value.
+# That is why api.yaml has `provides` and no `request`/`response`.
+
+type: OpenAIEmbeddingService
+kind: PromiseNode
+
+name: Embedding Service
+category: AI
+color: "#2F6F66"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
+
+description: OpenAI embedding service
+
+whenToUse: >-
+  Turn text into vector embeddings (OpenAI text-embedding-3, small or large, selectable
+  dimensions) so records can be indexed for and retrieved by semantic search, the backend
+  a vector-store consumer calls to embed what it stores or queries. Attach via a service
+  edge to that consumer; it is not a data-flow step.
+
+capabilities:
+  # An embedding IS deterministic for the same text, model and dimensions, and it is a
+  # pure read with no side effect. The one node here that genuinely earns memoization.
+  cacheable: true

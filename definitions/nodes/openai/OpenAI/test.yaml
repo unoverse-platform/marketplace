@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    model: gpt-5.6-terra
+    temperature: 0.7
+    maxTokens: 256
+    systemPrompt: You are a concise assistant.
+    prompt: Write a one-sentence summary of what a workflow engine does.
+
+  inputs:
+    signal:
+      question: What does a workflow engine do?
+
+  expect:
+    text: "return output.text.length > 0"
+    usage: "return output.usage.total_tokens > 0"

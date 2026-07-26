@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+# NO inputs and NO outputs, deliberately. This node is never triggered by the graph.
+# Consumers attach a service edge and call its methods; it answers them and hands back a
+# value. The workflow channel and the service channel do not cross (08-mcp-services.md).
+
+serviceConnectors:
+  - name: embeddingService
+    description: Provides embedding generation services
+    serviceType: embedding
+    isService: true
+    methods:
+      - createEmbedding
+      - createBatchEmbeddings
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API

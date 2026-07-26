@@ -1,0 +1,32 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [model]
+
+  properties:
+    model:
+      type: string
+      title: Model
+      description: GPT-5.6 model to use for structured extraction
+      enum: { $ref: ../../shared/models.yaml#/enum }
+      enumNames: { $ref: ../../shared/models.yaml#/enumNames }
+      default: gpt-5.6-terra
+      # A retired id resolves to the current best model in its tier, so replacing a
+      # model generation cannot break a saved workflow.
+      resolve: modelTier
+
+    instructions:
+      type: string
+      title: Instructions
+      description: System instructions for extraction
+      default: Extract structured information from the provided content.
+      ui:field: template
+
+    schemaName:
+      type: string
+      title: Schema Name
+      description: Name for the JSON schema, surfaced to the model
+      default: extraction
+
+ui:order: [model, instructions, schemaName]

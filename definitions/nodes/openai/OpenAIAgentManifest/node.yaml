@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+# The agent, as a manifest. Responses API + the tool loop. NO SDK.
+#
+# WHY A DISTINCT TYPE, not `OpenAIAgent`. The TypeScript agent is live and in saved
+# workflows, and this is NOT at parity yet (see the gaps in api.yaml). A type is the
+# stable identity a saved graph stores, so taking that name before parity would silently
+# downgrade every canvas using it. It takes the real name the day the gaps close.
+
+type: OpenAIAgentManifest
+kind: CallbackNode
+
+name: OpenAI Agent (manifest)
+category: AI
+color: "#2F6F66"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
+
+description: Multi-turn agent over the OpenAI Responses API with MCP tool orchestration
+
+whenToUse: >-
+  Reach for this when a step needs the model to work through a problem using tools rather
+  than answer in one pass: look something up, act on what it found, then decide what to do
+  next. Attach MCP provider nodes by service edge to give it capabilities. For a single
+  prompt with no tool use, a one-shot generator is cheaper and more predictable.
+
+capabilities:
+  # NEVER cacheable: an agent turn is non-deterministic and reaches the outside world
+  # through its tools. Reusing a prior answer would skip real side effects.
+  cacheable: false

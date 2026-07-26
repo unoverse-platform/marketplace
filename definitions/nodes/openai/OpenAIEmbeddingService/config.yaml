@@ -1,0 +1,38 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [model]
+
+  properties:
+    # Model and dimensions travel as ONE value, "<model>:<dims>", because they are not
+    # independent: text-embedding-3-small cannot do 3072. One picker cannot express an
+    # invalid pair, two could.
+    model:
+      type: string
+      title: Embedding Model
+      description: Select model and dimensions
+      enum:
+        - text-embedding-3-small:512
+        - text-embedding-3-small:1536
+        - text-embedding-3-large:1024
+        - text-embedding-3-large:1536
+        - text-embedding-3-large:3072
+        - text-embedding-ada-002:1536
+      enumNames:
+        - text-embedding-3-small (512D) - Fast
+        - text-embedding-3-small (1536D) - Higher quality
+        - text-embedding-3-large (1024D) - Balanced
+        - text-embedding-3-large (1536D) - Best quality
+        - text-embedding-3-large (3072D) - Maximum
+        - text-embedding-ada-002 (1536D) - Legacy
+      default: text-embedding-3-large:1536
+
+    normalize:
+      type: boolean
+      title: Normalize Embeddings
+      description: Normalize to unit length (recommended for cosine similarity)
+      default: true
+      ui:widget: toggle
+
+ui:order: [model, normalize]

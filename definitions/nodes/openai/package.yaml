@@ -1,0 +1,37 @@
+$schema: ../_schema/package.schema.json
+
+# The package envelope. Replaces the `gravity` block in package.json once every
+# node here is a manifest. Until then this package is MIXED: OpenAIStream is a
+# manifest, the other four are still code, and the engine resolves either kind
+# transparently.
+
+name: openai
+displayName: OpenAI
+description: OpenAI integration for Unoverse
+version: 1.2.0
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
+
+features:
+  - GPT-5.6 models
+  - Streaming responses
+  - Function/tool calling
+  - Text embeddings
+  - Structured JSON output
+  - Vision (image inputs)
+
+# The ONLY hosts this package's nodes may call. The executor refuses anything else.
+#
+# A manifest cannot execute code, but without this it could still say "send this
+# credential to evil.example", which is exfiltration with no code at all. One short
+# reviewable list is what makes a manifest safe to accept from someone else.
+egress:
+  - api.openai.com
+
+# Executor capabilities every manifest node here depends on. Deploy REFUSES this
+# package if the target universe's executor cannot satisfy them, so a manifest can
+# never name a capability that only exists on a newer executor.
+requires:
+  auth: [bearer]
+  transport: [sse, json]
+  executorVersion: ">=1.0.0"

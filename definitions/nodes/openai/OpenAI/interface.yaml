@@ -1,0 +1,21 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+
+outputs:
+  - name: text
+    type: string
+    description: The generated text response
+
+  - name: usage
+    type: object
+    description: Token burn (prompt_tokens, completion_tokens, total_tokens)
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API
+    description: OpenAI API credentials for authentication

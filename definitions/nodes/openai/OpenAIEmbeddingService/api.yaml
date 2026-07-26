@@ -1,0 +1,88 @@
+$schema: ../../../_schema/api.schema.json
+
+# No `request`/`response`: this node has no workflow channel. Only `provides`, the
+# methods a consumer calls over a service edge. Transcribed from
+# src/OpenAIEmbeddingService/service/{createEmbedding,embeddings}.ts.
+#
+# `config.model` carries "<model>:<dims>", so both methods split it. Doing that in the
+# expression rather than adding an executor capability is the right call: it is
+# description of THIS service's config convention, not computation the platform owes
+# every node.
+
+provides:
+  createEmbedding:
+    description: Embed one piece of text and return its vector.
+
+    request:
+      method: POST
+      url: https://api.openai.com/v1/embeddings
+      auth:
+        scheme: bearer
+        token: "{{ credentials.openAICredential.apiKey }}"
+      body: >-
+        return {
+          model: config.model.split(':')[0],
+          input: params.text,
+          dimensions: parseInt(config.model.split(':')[1], 10) || 1536
+        }
+      retry:
+        attempts: 3
+        backoff: exponential
+        on: [429, 500, 502, 503, 504]
+
+    response:
+      transport: json
+      # Unit-normalised unless switched off, because cosine similarity assumes it.
+      # The norm is recomputed per element rather than bound to a name: the sandbox has
+      # no assignment, by design. 1536 floats against an HTTP round trip is free.
+      returns: >-
+        return {
+          embedding: config.normalize === false
+            ? response.data[0].embedding
+            : response.data[0].embedding.map(x =>
+                x / Math.sqrt(response.data[0].embedding.reduce((a, b) => a + b * b, 0))),
+          dimensions: response.data[0].embedding.length,
+          model: response.model
+        }
+      error:
+        when: "return response.error !== undefined"
+        message: "return response.error.message"
+
+  createBatchEmbeddings:
+    description: Embed many texts in one call and return their vectors in order.
+
+    request:
+      method: POST
+      url: https://api.openai.com/v1/embeddings
+      auth:
+        scheme: bearer
+        token: "{{ credentials.openAICredential.apiKey }}"
+      # The endpoint takes an array for `input`, so a batch is one request, not N.
+      body: >-
+        return {
+          model: config.model.split(':')[0],
+          input: params.texts,
+          dimensions: parseInt(config.model.split(':')[1], 10) || 1536
+        }
+      retry:
+        attempts: 3
+        backoff: exponential
+        on: [429, 500, 502, 503, 504]
+
+    response:
+      transport: json
+      # Sorted by index: the API does not guarantee response order matches input order.
+      returns: >-
+        return {
+          embeddings: response.data
+            .slice()
+            .sort((a, b) => a.index - b.index)
+            .map(d => config.normalize === false
+              ? d.embedding
+              : d.embedding.map(x => x / Math.sqrt(d.embedding.reduce((a, b) => a + b * b, 0)))),
+          dimensions: response.data[0].embedding.length,
+          model: response.model
+        }
+      error:
+        when: "return response.error !== undefined"
+        message: "return response.error.message"

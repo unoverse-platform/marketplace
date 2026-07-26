@@ -1,0 +1,41 @@
+$schema: ../../../_schema/interface.schema.json
+
+# What you can wire into this node, and what comes back out.
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+
+outputs:
+  - name: reasoning
+    type: string
+    description: The reasoning/thinking process
+
+  - name: stream
+    type: object
+    description: Streaming LLM text response (emitted in real-time)
+
+  - name: mcpResult
+    type: object
+    description: MCP tool results
+
+  - name: text
+    type: string
+    description: The complete generated text (final output)
+
+credentials:
+  # Declared by the platform in plugin-base, not by this package. See the open
+  # question in DECLARATIVE_NODES.md about where SHARED credential types live.
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API
+    description: OpenAI API credentials for authentication
+
+serviceConnectors:
+  # This node CONSUMES MCP tools granted by an upstream provider. The service channel
+  # and the workflow channel are independent and do not cross.
+  - name: mcpService
+    serviceType: mcp
+    isService: false
+    description: MCP service connector, automatic schema discovery

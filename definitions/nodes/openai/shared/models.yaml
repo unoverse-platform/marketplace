@@ -1,0 +1,50 @@
+# The canonical GPT model list, the SINGLE source every OpenAI node references,
+# organised by TIER. Transcribed from src/shared/models.ts.
+#
+# Models come in three tiers. A new generation is a one-line edit per tier here, and
+# every node plus every saved workflow moves over automatically.
+#
+# The DATA lives here. The FALLBACK LOGIC (resolveModel: a retired id resolves to the
+# current best model in its tier, so replacing a generation cannot break a saved
+# workflow) is computation, not description, so it belongs to the executor. It is
+# declared per config field as `resolver: modelTier`, not written here.
+
+# One current model per tier. Update these three lines when a new generation ships.
+byTier:
+  small: gpt-5.6-luna # cost-optimized, high-volume
+  medium: gpt-5.6-terra # balanced intelligence/cost, the default
+  large: gpt-5.6 # frontier, complex work
+
+# Balanced middle tier, the sensible default for most work.
+default: gpt-5.6-terra
+
+# The NARRATOR: the model that writes an agent's short, customer-safe "thinking" status
+# line. A separate concern from the model doing the work, and every AgentNode uses one,
+# so it lives here rather than being hardcoded per node.
+#
+# Deliberately NOT the 5.6 family. 5.6 is luna/sol/terra with no nano tier, and this
+# call exists to reach the user fast, not to be clever. Measured 2026-07-26 on the real
+# API, three runs each, same prompt and schema:
+#
+#   gpt-5.4-nano   avg 1137ms   [1470, 905, 1035]
+#   gpt-5.6-luna   avg 2043ms   [1846, 2337, 1945]
+#
+# Luna is ~80% slower and less consistent, for lines that are indistinguishable in
+# quality: there is nothing in one short present-tense sentence for a bigger model to be
+# better at. Both already lose the race against the main model's first token, which is
+# why a canned local line fires at 0ms; the cost of luna is doubling how long the user
+# stares at that canned line before the contextual one replaces it.
+#
+# Revisit when a genuinely faster small model ships, and re-measure rather than assume.
+narrator: gpt-5.4-nano
+
+# The picker's options. Listed large first so the strongest reads first.
+enum:
+  - gpt-5.6
+  - gpt-5.6-terra
+  - gpt-5.6-luna
+
+enumNames:
+  - Sol (Frontier, complex work)
+  - Terra (Balanced intelligence/cost)
+  - Luna (Cost-optimized, high-volume)

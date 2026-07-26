@@ -1,0 +1,28 @@
+$schema: ../../../_schema/test.schema.json
+
+# The fixture behind Studio's "Load sample, Run" and `unoverse node test`.
+# Template fields are supplied ALREADY RESOLVED: the bench has no upstream node
+# to resolve them from.
+
+testData:
+  config:
+    model: gpt-5.6
+    reasoningEffort: none
+    reasoningSummary: concise
+    verbosity: medium
+    # A system prompt composing a library block, which is how formatting advice
+    # arrives now that the enableMarkdown toggle is gone.
+    systemPrompt: |-
+      You are a concise assistant.
+
+      {{prompt.markdownGuidelines}}
+    prompt: Explain what server-driven UI is in two short paragraphs.
+    maxTokens: 2048
+
+  inputs:
+    signal:
+      topic: server-driven UI
+
+  expect:
+    text: "return output.text.length > 0"
+    stream: "return output.stream.length > 0"

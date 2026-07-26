@@ -1,0 +1,20 @@
+$schema: ../../../_schema/test.schema.json
+
+# A pure service node has nothing to trigger, so the fixture CALLS it the way a
+# consumer would rather than feeding inputs.
+testData:
+  config:
+    model: text-embedding-3-large:1024
+    normalize: true
+
+  call:
+    method: createEmbedding
+    params:
+      text: A workflow engine coordinates the execution of steps.
+
+  expect:
+    # The dimensions actually requested, not whatever the model defaults to.
+    embedding: "return output.dimensions === 1024 && output.embedding.length === 1024"
+    # Unit length, since normalize is on. Floating point, so within a tolerance.
+    model: >-
+      return Math.abs(Math.sqrt(output.embedding.reduce((a, b) => a + b * b, 0)) - 1) < 0.001

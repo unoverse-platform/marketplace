@@ -1,0 +1,27 @@
+$schema: ../../../_schema/interface.schema.json
+
+# Both of these are WIRED, not configured. The schema usually arrives from an upstream
+# node, which is what makes one node serve every extraction rather than needing one per
+# shape.
+inputs:
+  - name: content
+    type: string
+    description: Content to extract structured data from
+
+  - name: schema
+    type: object
+    description: JSON schema the output must match
+
+outputs:
+  - name: result
+    type: object
+    description: Extracted structured data matching the schema
+
+  - name: usage
+    type: object
+    description: Token usage information
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API

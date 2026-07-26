@@ -1,0 +1,23 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    model: gpt-5.6-terra
+    instructions: Extract the person's contact details from the provided text.
+    schemaName: contact
+
+  inputs:
+    content: "Hi, I'm Jane Doe — you can reach me at jane@example.com or on +1-555-0142."
+    schema:
+      type: object
+      additionalProperties: false
+      required: [name, email, phone]
+      properties:
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+
+  expect:
+    # Proves the schema was actually enforced, not just that something came back.
+    result: "return output.result.email === 'jane@example.com'"
+    usage: "return output.usage.total_tokens > 0"

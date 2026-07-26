@@ -1,0 +1,40 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+
+outputs:
+  # Deliberately NO `thinking`. The TypeScript agent emits a narrator line there, and
+  # narration is not implemented in the manifest runtime yet. Declaring the connector
+  # would draw a handle you could wire to and silently receive nothing, which is worse
+  # than it being absent. It arrives with the narrator.
+  - name: stream
+    type: object
+    description: Streaming text response, emitted in real time
+
+  - name: reasoning
+    type: string
+    description: The model's own reasoning summary (not the narrator's status line)
+
+  - name: mcpResult
+    type: object
+    description: MCP tool results
+
+  - name: text
+    type: string
+    description: The complete generated text (final output)
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API
+
+serviceConnectors:
+  # Attach MCP provider nodes here to give the agent capabilities. Nothing wired means
+  # no tools, and it degrades to a single request rather than failing.
+  - name: mcpService
+    serviceType: mcp
+    isService: false
+    description: MCP service connector, automatic schema discovery

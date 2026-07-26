@@ -1,0 +1,111 @@
+$schema: ../../../_schema/api.schema.json
+
+# The upstream call, and how its response maps onto this node's outputs.
+# This file replaces node/executor.ts (143 lines) and this node's share of the
+# streaming engine. Vendor coupling lives here alone: when OpenAI moves an
+# endpoint or renames an event, exactly one file changes.
+
+request:
+  method: POST
+  url: https://api.openai.com/v1/responses
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  body:
+    model: "{{ config.model }}"
+
+    # Responses API input items: a system message then the user message, following
+    # shared/openaiStream/client/openaiClient.ts buildInputItems().
+    #
+    # NO INSTRUCTION TEXT IS HARDCODED HERE. Prompt copy lives in the prompt-block
+    # library (prompts/blocks/**), is authored and toggled in Studio, and is
+    # referenced as {{prompt.<blockName>}}. A node holding a COPY of a block's words
+    # is a fork that silently stops tracking the block.
+    #
+    # config.systemPrompt is a template field, so an author can compose blocks and
+    # upstream values into it directly, e.g.
+    #   You are helping {{signal.inputtrigger1.output.customerName}}.
+    #   {{prompt.markdownGuidelines}}
+    # The node knows nothing about that, which is the point.
+    #
+    # The system message is exactly what the author wrote. This manifest injects no
+    # instruction text of its own.
+    #
+    # config.systemPrompt is a template field, so an author composes prompt blocks and
+    # upstream values into it directly:
+    #   You are helping {{signal.inputtrigger1.output.customerName}}.
+    #   {{prompt.markdownGuidelines}}
+    input:
+      - type: message
+        role: system
+        content: "{{ config.systemPrompt }}"
+
+      - type: message
+        role: user
+        content: "{{ config.prompt }}"
+
+    max_output_tokens: "{{ config.maxTokens }}"
+    stream: true
+
+    reasoning:
+      effort: "{{ config.reasoningEffort }}"
+      summary: "{{ config.reasoningSummary }}"
+
+    text:
+      verbosity: "{{ config.verbosity }}"
+
+  timeoutMs: 300000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# Tools are handed to the model NATIVELY over the Responses API. No SDK: the executor
+# sends `tools` + `tool_choice`, reads back { type: function_call, call_id, name,
+# arguments }, runs each through the MCP service, and replies with
+# { type: function_call_output, call_id, output } chained by previous_response_id.
+#
+# Every MCP judgement (what a discovery result unlocks, when a turn ends, how much of a
+# result the model needs, how a component app is invoked) belongs to
+# plugin-base/agent-mcp. The loop owns only the wire format.
+toolExchange:
+  shape: openaiFunction
+  # whenToUse promises "a few bounded tool calls (~10)". This is that bound.
+  maxTurns: 10
+  # The SAME call with the SAME arguments three times is stuck. maxTurns does not catch
+  # it: a model calling many DIFFERENT tools forever is not stuck by that rule.
+  stuckAfterRepeats: 3
+
+response:
+  transport: sse
+  terminator: "[DONE]"
+
+  # Each SSE event is matched by type in order, first match wins, and unmatched
+  # events are dropped. That is what keeps a chatty API readable.
+  events:
+    - match: response.output_text.delta
+      emit: stream
+      value: "return response.delta"
+
+    - match: response.reasoning_summary_text.delta
+      emit: reasoning
+      value: "return response.delta"
+
+    - match: response.output_item.done
+      when: "return response.item.type === 'function_call'"
+      emit: mcpResult
+      value: "return response.item"
+
+  # The settled result, emitted once the stream ends. This is the
+  # streaming-to-final-output pattern the executor used to hand-roll in state.
+  finalize:
+    emit: text
+    value: "return events.filter(e => e.emit === 'stream').map(e => e.value).join('')"
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return response.type === 'response.failed'"
+    message: "return response.response.error.message"

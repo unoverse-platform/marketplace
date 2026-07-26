@@ -1,0 +1,59 @@
+$schema: ../../../_schema/api.schema.json
+
+request:
+  method: POST
+  url: https://api.openai.com/v1/chat/completions
+
+  auth:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  # An EXPRESSION rather than an object, because this body's SHAPE is conditional and
+  # templates can only interpolate values, not build structure. Three things need it:
+  #
+  #   1. `messages` includes a system message only when one is set, then spreads any
+  #      history, then the user turn.
+  #   2. The token limit key is max_completion_tokens on GPT-5 and max_tokens
+  #      elsewhere: the KEY name varies, not just the value.
+  #   3. temperature is omitted on GPT-5, which only accepts the default.
+  #
+  # DIVERGENCE FROM THE OLD EXECUTOR, deliberate. queryChatGPT.ts sends
+  # `temperature: config.temperature` unconditionally, and with the stock defaults
+  # (0.7 on gpt-5.6-terra) OpenAI answers 400 "does not support 0.7 with this model".
+  # The shipped node has that bug; this does not.
+  #
+  # Same sandboxed evaluator as the response mapping. No I/O, no globals, data shaping
+  # only. Transcribed from src/OpenAI/service/queryChatGPT.ts buildMessages().
+  body: >-
+    return {
+      model: config.model,
+      messages: []
+        .concat(config.systemPrompt ? [{ role: 'system', content: config.systemPrompt }] : [])
+        .concat(Array.isArray(config.history) ? config.history : [])
+        .concat([{ role: 'user', content: config.prompt }]),
+      ...(config.model.slice(0, 5) === 'gpt-5' || config.temperature === undefined
+            ? {}
+            : { temperature: config.temperature }),
+      ...(config.model.slice(0, 5) === 'gpt-5'
+            ? { max_completion_tokens: config.maxTokens }
+            : { max_tokens: config.maxTokens })
+    }
+
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+response:
+  # Settles once. No events, no finalize.
+  transport: json
+
+  map:
+    text: "return response.choices[0].message.content"
+    usage: "return response.usage"
+
+  error:
+    when: "return response.error !== undefined"
+    message: "return response.error.message"

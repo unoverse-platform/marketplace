@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "id": "smart-agent",
+      "name": "Answer questions about your organisation",
+      "description": "A chat agent that searches your own content for context, then streams its answer back.",
+      "whenToUse": "Answer customer or staff questions about your products, services and policies, grounded in your own content rather than the model's guesswork. Streams the reply as it is written so long answers start appearing immediately, and searches your spatial content on every question so it stays current as that content changes.",
+      "category": "Assistant",
+      "tags": ["Agent", "Spatial search", "Streaming"],
+      "art": { "motif": "orbit", "palette": "violet" },
+      "file": "recipes/smart-agent.json"
+    }
+  ]
+}

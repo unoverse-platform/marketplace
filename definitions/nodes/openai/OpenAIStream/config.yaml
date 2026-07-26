@@ -1,0 +1,82 @@
+$schema: ../../../_schema/config.schema.json
+
+# The settings panel. Transcribed from src/OpenAIStream/node/index.ts configSchema.
+# This is the file with the most churn: new model options land here and nowhere else.
+
+configSchema:
+  type: object
+  required: [model, prompt]
+
+  properties:
+    model:
+      type: string
+      title: Model
+      description: Select the GPT-5.6 model variant
+      enum: { $ref: ../../shared/models.yaml#/enum }
+      enumNames: { $ref: ../../shared/models.yaml#/enumNames }
+      default: gpt-5.6-luna
+      # Executor resolver: a retired id falls back to the current best model in its
+      # tier, so replacing a model generation cannot break a saved workflow.
+      resolve: modelTier
+
+    reasoningEffort:
+      type: string
+      title: Reasoning Effort
+      description: >-
+        Control reasoning depth. GPT-5.6 family: none/low/medium/high/xhigh/max.
+        Older mini/nano models: none becomes minimal, xhigh/max become high automatically.
+      enum: [none, low, medium, high, xhigh, max]
+      default: none
+
+    reasoningSummary:
+      type: string
+      title: Reasoning Summary
+      description: Control reasoning summary visibility.
+      enum: [auto, concise, detailed]
+      default: concise
+
+    verbosity:
+      type: string
+      title: Verbosity
+      description: Control output length
+      enum: [low, medium, high]
+      default: medium
+
+    systemPrompt:
+      type: string
+      title: System Prompt
+      description: Who the model is and how it should respond, its role, tone and rules.
+      default: ""
+      ui:field: template
+
+    # DROPPED IN MIGRATION: enablePreambles and enableMarkdown. Both were booleans
+    # that injected a fixed block of text into the prompt. Preambles are native GPT-5
+    # behaviour with no API parameter, and formatting advice belongs in the prompt
+    # block library where it stays editable: put {{prompt.markdownGuidelines}} in the
+    # System Prompt below. See api.yaml.
+    #
+    # Every remaining field maps to a real Responses API request parameter.
+
+    prompt:
+      type: string
+      title: Prompt
+      description: The message the model responds to, usually wired in from an upstream node.
+      default: ""
+      ui:field: template
+
+    maxTokens:
+      type: number
+      title: Max Output Tokens
+      description: Maximum number of tokens to generate
+      default: 2048
+      minimum: 1
+      maximum: 128000
+
+ui:order:
+  - model
+  - reasoningEffort
+  - reasoningSummary
+  - verbosity
+  - systemPrompt
+  - prompt
+  - maxTokens

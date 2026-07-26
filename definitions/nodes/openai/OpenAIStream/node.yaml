@@ -1,0 +1,26 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from src/OpenAIStream/node/index.ts. See docs/architecture/DECLARATIVE_NODES.md.
+
+type: OpenAIStream
+
+# It streams (api.yaml transport: sse), so lint requires CallbackNode here.
+kind: CallbackNode
+
+name: OpenAI Stream
+category: AI
+color: "#2F6F66"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp
+
+description: Generate text using OpenAI's GPT models
+
+whenToUse: >-
+  Summarize, extract, answer, or generate text in a single GPT-5 pass with tokens streamed
+  live as they're produced, the default for one-shot work, and for a few bounded tool calls
+  (~10) when MCP provider nodes are attached. Single-pass, not an iterative loop; reach
+  elsewhere when a step genuinely needs many sequential tool calls or multi-turn iteration.
+
+capabilities:
+  # NEVER cacheable: an LLM completion is non-deterministic, so re-running is the
+  # correct behaviour and reusing a prior answer would be wrong, not thrifty.
+  cacheable: false
