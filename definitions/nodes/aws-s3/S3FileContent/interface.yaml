@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: >-
+      The file to read, as { key } or a whole file object from S3 Files. Its bucket, size
+      and id are carried through when present.
+    required: false
+
+outputs:
+  - name: file
+    type: object
+    description: key, bucket, size, contentType, lastModified, etag, universalId, downloadUrl
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

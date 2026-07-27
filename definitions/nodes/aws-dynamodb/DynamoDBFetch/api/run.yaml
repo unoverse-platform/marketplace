@@ -1,0 +1,18 @@
+# One signed GetItem. The key is built as PLAIN values; the encoding adds the type tags.
+
+- $ref: dynamodb#call
+  name: item
+  headers:
+    X-Amz-Target: DynamoDB_20120810.GetItem
+    Content-Type: application/x-amz-json-1.0
+
+  body:
+    TableName: "{{ config.tableName }}"
+    # Only the keys actually present go in. Sending a key whose value is undefined is a
+    # validation error from DynamoDB, and a table with no sort key must not receive one.
+    Key: >-
+      return Object.fromEntries([]
+        .concat(config.primaryKey && signal[config.primaryKey] !== undefined
+          ? [[config.primaryKey, signal[config.primaryKey]]] : [])
+        .concat(config.sortKey && signal[config.sortKey] !== undefined
+          ? [[config.sortKey, signal[config.sortKey]]] : []))

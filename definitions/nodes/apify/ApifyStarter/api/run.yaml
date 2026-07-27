@@ -1,0 +1,53 @@
+# Start the run, and OPTIONALLY wait for it.
+#
+# Two calls rather than one, because waiting is a choice: the second is gated on the
+# toggle, and a skipped call leaves no key, so the events table asks `!!calls.finished`
+# rather than checking a sentinel.
+
+# AN ACTOR AND A TASK ARE DIFFERENT ENDPOINTS, told apart by a tilde in the id. That is
+# Apify's own convention (a task id is `username~task-name`), and the retired code branched
+# on exactly this. It is a URL expression rather than two calls because it is one request
+# to one vendor; only the path differs.
+- $ref: apify#call
+  name: start
+  method: POST
+  url: >-
+    return 'https://api.apify.com/v2/'
+      + (String(config.actorId).includes('~') ? 'actor-tasks/' : 'acts/')
+      + config.actorId + '/runs'
+
+  # startUrls is the shape every Apify scraper takes: objects, not bare strings.
+  #
+  # The retired code ALSO spread `actorId` into the actor input on the non-task path, and
+  # that is dropped here deliberately rather than transcribed. The actor id says WHICH
+  # actor to run, which is the route; it is not something to scrape, so it has no business
+  # in the input. The task path never sent it, so the two paths now agree.
+  body:
+    startUrls: >-
+      return (Array.isArray(config.urls)
+        ? config.urls.map(u => String(u)).filter(Boolean)
+        : typeof config.urls === 'string' && config.urls.trim().startsWith('[')
+          ? JSON.parse(config.urls.trim()).map(u => String(u)).filter(Boolean)
+          : typeof config.urls === 'string' && config.urls.trim()
+            ? [config.urls.trim()]
+            : []).map(u => ({ url: u }))
+
+# Only when asked. Apify reports a finished run as SUCCEEDED, and the failure states are
+# several, so the terminal test is "stopped being READY or RUNNING" rather than a list of
+# ways to fail that a new one could be added to.
+- $ref: apify#call
+  name: finished
+  when: "return config.waitForCompletion === true"
+  method: GET
+  url: "return 'https://api.apify.com/v2/actor-runs/' + calls.start.data.id"
+
+  poll:
+    until: "return ['READY', 'RUNNING'].indexOf(response.data.status) === -1"
+    # NO `failed` CLAUSE, deliberately. A run that ends FAILED or ABORTED is not a failure
+    # of THIS node: it finished, it said so, and the caller still wants the run id and the
+    # status back to decide what to do. Throwing here would discard the id and leave the
+    # run unreachable, which is worse than reporting honestly what happened.
+    url: "return 'https://api.apify.com/v2/actor-runs/' + calls.start.data.id"
+    intervalMs: 5000
+    # The panel asks for seconds; the loop counts polls at 5s each.
+    maxAttempts: "return Math.max(1, Math.round((config.maxWaitTime || 300) / 5))"

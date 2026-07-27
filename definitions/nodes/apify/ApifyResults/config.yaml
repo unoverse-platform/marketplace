@@ -1,0 +1,14 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [runId]
+  properties:
+    runId:
+      type: string
+      title: Run ID
+      description: The Apify run to read. Comes from Apify Starter's runId output.
+      default: ""
+      "ui:field": template
+
+"ui:order": [runId]

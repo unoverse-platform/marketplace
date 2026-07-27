@@ -1,0 +1,22 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: URL or array of URLs to extract from
+    required: false
+
+outputs:
+  - name: data
+    type: object
+    description: >-
+      Extracted structured data. One URL returns the extracted object directly; several
+      return an array of { url, data } so each page's result stays labelled.
+  - name: metadata
+    type: object
+    description: Extraction metadata (the urls asked for, and any that failed)
+
+credentials:
+  - name: hyperbrowserCredential
+    required: true
+    displayName: Hyperbrowser API

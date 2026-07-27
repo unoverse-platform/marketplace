@@ -1,0 +1,146 @@
+# The six methods an agent can call.
+#
+# FIRST IMPLEMENTATIONS, not transcriptions: the retired node advertised all six and had no
+# handlers at all. The descriptions matter as much as the calls, because they are what a
+# model reads when deciding which to reach for.
+#
+# Every method takes an optional `table` and falls back to the configured default, so an
+# agent can stay on one table without repeating it and still reach another deliberately.
+#
+# Values are written PLAIN throughout. `encoding: dynamodbJson` on the shared call adds the
+# type tags going out and strips them coming back, so neither an agent nor this file ever
+# writes {"S": ...}.
+
+put:
+  description: >-
+    Write one item. Overwrites any existing item with the same key unless a condition says
+    otherwise. Returns the key that was written.
+  calls:
+    - $ref: dynamodb#call
+      name: written
+      headers:
+        X-Amz-Target: DynamoDB_20120810.PutItem
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        Item: "return params.item || {}"
+        ConditionExpression: "return params.condition || undefined"
+  returns: "return { ok: true, table: params.table || config.defaultTable, item: params.item }"
+
+get:
+  description: >-
+    Read one item by its full key. Pass every key attribute the table has (partition, and
+    sort if there is one). Returns found: false when nothing is stored there, which is an
+    answer rather than an error.
+  calls:
+    - $ref: dynamodb#call
+      name: item
+      headers:
+        X-Amz-Target: DynamoDB_20120810.GetItem
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        Key: "return params.key || {}"
+  returns: "return { ok: true, found: !!response.Item, item: response.Item || null }"
+
+query:
+  description: >-
+    Read items from ONE partition, which is the efficient way to read a range. `keyCondition`
+    is a DynamoDB expression over the key, e.g. "userId = :u AND createdAt > :since", with
+    the values supplied in `values` as { ":u": "user-1", ":since": "2026-01-01" }. To read a
+    secondary index, name it in `index`. Use scan only when you cannot express a partition.
+  calls:
+    - $ref: dynamodb#call
+      name: rows
+      headers:
+        X-Amz-Target: DynamoDB_20120810.Query
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        IndexName: "return params.index || undefined"
+        KeyConditionExpression: "return params.keyCondition"
+        FilterExpression: "return params.filter || undefined"
+        ExpressionAttributeValues: "return params.values || undefined"
+        # Only for names that collide with DynamoDB's reserved words, which is what the
+        # #placeholder syntax in an expression refers to.
+        ExpressionAttributeNames: "return params.names || undefined"
+        # BOUNDED BY DEFAULT. An agent asking a broad question should not pull a whole
+        # partition into a model's context, and 25 is a page a person would read.
+        Limit: "return params.limit || 25"
+  returns: >-
+    return {
+      ok: true,
+      items: response.Items || [],
+      count: (response.Items || []).length,
+      more: !!response.LastEvaluatedKey
+    }
+
+scan:
+  description: >-
+    Read across the WHOLE table, optionally filtered. Slow and expensive on anything large,
+    because it reads every item before filtering. Prefer query whenever the partition is
+    known. Returns at most `limit` items, 25 by default.
+  calls:
+    - $ref: dynamodb#call
+      name: rows
+      headers:
+        X-Amz-Target: DynamoDB_20120810.Scan
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        FilterExpression: "return params.filter || undefined"
+        ExpressionAttributeValues: "return params.values || undefined"
+        ExpressionAttributeNames: "return params.names || undefined"
+        Limit: "return params.limit || 25"
+  returns: >-
+    return {
+      ok: true,
+      items: response.Items || [],
+      count: (response.Items || []).length,
+      more: !!response.LastEvaluatedKey
+    }
+
+delete:
+  description: >-
+    Delete one item by its full key. Succeeds whether or not anything was there, which is
+    DynamoDB's behaviour, so a true result does not prove something existed.
+  calls:
+    - $ref: dynamodb#call
+      name: removed
+      headers:
+        X-Amz-Target: DynamoDB_20120810.DeleteItem
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        Key: "return params.key || {}"
+        ConditionExpression: "return params.condition || undefined"
+        # Ask for what was removed, so the caller can tell a real deletion from a no-op.
+        ReturnValues: ALL_OLD
+  returns: >-
+    return {
+      ok: true,
+      existed: !!response.Attributes,
+      deleted: response.Attributes || null
+    }
+
+update:
+  description: >-
+    Change PART of an item without rewriting it. `updateExpression` is a DynamoDB update
+    expression, e.g. "SET #n = :name, visits = visits + :one", with values in `values` and
+    any reserved-word attribute names in `names` as { "#n": "name" }. Returns the item as it
+    stands after the change.
+  calls:
+    - $ref: dynamodb#call
+      name: updated
+      headers:
+        X-Amz-Target: DynamoDB_20120810.UpdateItem
+        Content-Type: application/x-amz-json-1.0
+      body:
+        TableName: "return params.table || config.defaultTable"
+        Key: "return params.key || {}"
+        UpdateExpression: "return params.updateExpression"
+        ExpressionAttributeValues: "return params.values || undefined"
+        ExpressionAttributeNames: "return params.names || undefined"
+        ConditionExpression: "return params.condition || undefined"
+        ReturnValues: ALL_NEW
+  returns: "return { ok: true, item: response.Attributes || null }"

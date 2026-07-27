@@ -1,0 +1,39 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [tableName, record]
+  properties:
+    tableName:
+      type: string
+      title: Table Name
+      description: The DynamoDB table to write to
+      default: ""
+      "ui:field": template
+    record:
+      type: object
+      title: Record
+      description: The record to write, as a plain object. Type tags are added for you.
+      default: {}
+      "ui:field": template
+    conditionExpression:
+      type: string
+      title: Condition Expression
+      description: >-
+        Optional condition the write must satisfy, e.g. attribute_not_exists(universalId)
+        to refuse an overwrite.
+      default: ""
+    expressionAttributeNames:
+      type: object
+      title: Expression Attribute Names
+      description: Substitution tokens for attribute names used in the condition
+      default: {}
+      "ui:field": code
+    expressionAttributeValues:
+      type: object
+      title: Expression Attribute Values
+      description: Values used in the condition, as plain values
+      default: {}
+      "ui:field": code
+
+"ui:order": [tableName, record, conditionExpression, expressionAttributeNames, expressionAttributeValues]

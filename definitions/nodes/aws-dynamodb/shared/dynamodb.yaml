@@ -1,0 +1,30 @@
+# The one call shape every DynamoDB operation shares.
+#
+# There is no per-operation URL: everything goes to the regional endpoint and the
+# `X-Amz-Target` header picks the operation. A node $refs this and adds that header plus a
+# body, which is why these manifests read like RPC rather than REST.
+
+call: &call
+  method: POST
+  url: "return 'https://dynamodb.' + credentials.awsCredential.region + '.amazonaws.com/'"
+
+  auth:
+    scheme: awsSigV4
+    service: dynamodb
+
+  headers:
+    # AWS's own JSON dialect, NOT application/json. The wrong one is a 400 that complains
+    # about the body rather than the header, which sends you looking in the wrong place.
+    Content-Type: application/x-amz-json-1.0
+
+  transport: json
+  # Plain JSON in the manifest; type tags on the wire. See api.schema.json#encoding.
+  encoding: dynamodbJson
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    # DynamoDB reports throttling as a 400 with a specific error type, not a 429. A blanket
+    # 400 retry would resend genuinely malformed requests forever, so only the server-side
+    # statuses are retried and a throughput problem surfaces instead of being hidden.
+    on: [500, 502, 503, 504]

@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+# Reads back what the DynamoDB (put) fixture writes, so run that one first.
+
+testData:
+  config:
+    tableName: Users
+    primaryKey: universalId
+    sortKey: ""
+  inputs:
+    signal:
+      universalId: user-1001
+  expect:
+    # PLAIN values, not type tags: proving the decode happened is the point of this node's
+    # fixture. `output.name` being the string "Ada Lovelace" and not { S: "Ada Lovelace" }
+    # is the whole difference the encoding makes.
+    output: "return output.found && output.output.name === 'Ada Lovelace'"
+    found: "return output.found === true"

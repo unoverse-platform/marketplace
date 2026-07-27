@@ -1,0 +1,31 @@
+# What both nodes share: how to reach Apify, and how a URL list is read.
+
+call: &call
+  auth:
+    scheme: bearer
+    token: "{{ credentials.apifyCredential.token }}"
+  headers:
+    Accept: application/json
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# THE URL LIST, normalised. The panel's field is a template that usually carries a JSON
+# array as a STRING, and an upstream node may hand over a real array instead.
+#
+# ONE DELIBERATE DIFFERENCE from the retired parseUrls: a string that opens with `[` and
+# fails to parse THROWS rather than being treated as a single URL. The sandbox has no
+# try/catch, and the retired node was inconsistent with itself anyway — its own validation
+# rejected unparseable JSON with "URLs must be a valid JSON array" while the service it
+# called fell back to scraping the broken string. One of those had to go, and the error is
+# the honest one.
+urls: &urls >-
+  return Array.isArray(config.urls)
+    ? config.urls.map(u => String(u)).filter(Boolean)
+    : typeof config.urls === 'string' && config.urls.trim().startsWith('[')
+      ? JSON.parse(config.urls.trim()).map(u => String(u)).filter(Boolean)
+      : typeof config.urls === 'string' && config.urls.trim()
+        ? [config.urls.trim()]
+        : []

@@ -1,0 +1,18 @@
+# One row per output connector, in interface.yaml order.
+#
+# PutItem returns an EMPTY BODY on success, which is why `success` is not read off the
+# reply: reaching here at all means the call did not throw, and a 400 (a failed condition,
+# a bad table) already errors before any row fires.
+
+- emit: success
+  from: response
+  value: "return true"
+
+# The id the record carries, under whichever of the usual names it uses. Reported from what
+# was SENT, since the reply says nothing.
+- emit: itemId
+  from: response
+  value: >-
+    return [(config.record || {}), (signal || {})]
+      .map(r => r.id || r.Id || r.ID || r.universalId)
+      .filter(Boolean)[0] || ''

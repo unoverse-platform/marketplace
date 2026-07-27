@@ -1,0 +1,20 @@
+# One row per output connector, in interface.yaml order.
+#
+# Both rows come from `shared/files.yaml`, which is where the filtering, the id derivation
+# and the link pairing live. They are shared because `presign.for` needs the identical list
+# in the identical order, and a second copy could drift out of step with it.
+
+- emit: files
+  from: response
+  value: { $ref: files#files }
+
+- emit: count
+  from: response
+  value: >-
+    return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+      .filter(o => o.Key && !String(o.Key).endsWith('/'))
+      .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
+      .filter(o => !(config.fileExtensions || []).length
+        || (config.fileExtensions || []).map(e => String(e).toLowerCase())
+             .includes(String(o.Key).split('.').pop().toLowerCase()))
+      .length

@@ -1,0 +1,38 @@
+$schema: ../_schema/package.schema.json
+
+# THE FIRST AWS PACKAGE AS MANIFESTS, and what proves `awsSigV4`.
+#
+# DynamoDB's HTTP API is one endpoint per region, an `X-Amz-Target` header naming the
+# operation, and a JSON body. There is nothing else to it: take the signer and the
+# translator out of @aws-sdk/client-dynamodb and that is what remains. The client, its
+# cache and its four Command classes collapse into one call per node.
+#
+# TWO EXECUTOR CAPABILITIES CARRY IT, both using AWS's own libraries rather than anything
+# written here:
+#   awsSigV4              signs the request (@smithy/signature-v4)
+#   encoding: dynamodbJson  translates values to and from DynamoDB's type tags
+#                         (@aws-sdk/util-dynamodb, the same translator the DocumentClient
+#                         uses). It cannot be an expression: the walk is recursive.
+#
+# The retired TypeScript is at `_legacy/nodes/aws-dynamodb/`.
+
+name: aws-dynamodb
+displayName: AWS DynamoDB
+description: Read and write records in AWS DynamoDB
+version: 2.0.0
+category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/DynamoDB.png
+
+features:
+  - Put a record, read one by key
+  - Query and scan on demand over a service edge
+  - Signed with AWS Signature Version 4, no SDK in the node
+
+# Regional endpoints, one subdomain level: dynamodb.eu-west-1.amazonaws.com.
+allowedHosts:
+  - "**.amazonaws.com"
+
+requires:
+  auth: [awsSigV4]
+  transport: [json]
+  executorVersion: ">=1.2.0"

@@ -1,0 +1,33 @@
+# One row per output connector, in interface.yaml order.
+#
+# `data` is the array of pages here, where Scrape's `data` is one object. That is the
+# vendor's shape, not an inconsistency worth papering over.
+
+- emit: pages
+  from: response
+  value: >-
+    return (Array.isArray(response.data) ? response.data : []).map(p => ({
+      url: p.url || '',
+      markdown: p.markdown || '',
+      links: Array.isArray(p.links) ? p.links : [],
+      metadata: p.metadata || {}
+    }))
+
+# Flattened across every page, which is the useful shape: the per-page links are already
+# on `pages` above, and a consumer wanting "everywhere this site points" should not have
+# to reassemble them.
+- emit: links
+  from: response
+  value: >-
+    return (Array.isArray(response.data) ? response.data : [])
+      .flatMap(p => Array.isArray(p.links) ? p.links : [])
+
+# totalPages is what was actually crawled, NOT config.maxPages: the crawl stops early when
+# a site has fewer pages than the bound, and reporting the bound would misdescribe the run.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      url: config.url,
+      totalPages: (Array.isArray(response.data) ? response.data : []).length
+    }

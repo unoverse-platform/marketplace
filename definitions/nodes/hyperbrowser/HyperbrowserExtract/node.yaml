@@ -1,0 +1,22 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HyperbrowserExtract
+kind: PromiseNode
+
+name: Hyperbrowser Extract
+category: Web Scraping
+color: "#FF6B6B"
+
+description: Extract structured JSON from one or more URLs using a prompt and/or schema
+
+whenToUse: >-
+  Pick when you need TYPED FIELDS pulled out of pages: an object or array matching a schema
+  you describe, read by a model rather than by you. Give it a schema, a prompt, or both. It
+  returns structured data; raw page markdown and multi-page link-following are different
+  jobs with their own nodes.
+
+capabilities:
+  # NOT cacheable. Extraction runs a model over the page, so the same URL and the same
+  # prompt do not reliably give the same object, and a memoized "same answer" would be a
+  # claim the node cannot make.
+  cacheable: false

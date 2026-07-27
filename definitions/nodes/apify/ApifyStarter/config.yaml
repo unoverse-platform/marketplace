@@ -1,0 +1,46 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [actorId, urls]
+  properties:
+    actorId:
+      type: string
+      title: Actor or Task ID
+      description: >-
+        An actor id such as apify/web-scraper, or a saved task id such as
+        username~my-scraper-task. A tilde means it is a task, which is a different endpoint.
+      default: ""
+      placeholder: username~my-scraper-task
+    urls:
+      # Both, because both arrive: a hand-typed JSON array is a string, and an upstream
+      # node's output is a real array.
+      type: [array, string]
+      title: URLs to Scrape
+      description: >-
+        The URLs to hand to the run, as a JSON array. Use `return signal.<id>.<handle>` to
+        take them from an upstream node.
+      default: "[]"
+      "ui:field": template
+    # THESE TWO USED TO BE A LIE. The retired executor logged "Wait for completion not yet
+    # implemented, returning run ID immediately" and returned anyway, so the toggle sat on
+    # the panel doing nothing. They are kept rather than deleted because saved workflows
+    # already carry them, and they now do what they say: a second call follows the run.
+    waitForCompletion:
+      type: boolean
+      title: Wait for Completion
+      description: >-
+        Hold the node until the run finishes, so downstream steps start on finished data.
+        Off hands back the run id immediately and something later has to check.
+      default: false
+      "ui:widget": toggle
+    maxWaitTime:
+      type: number
+      title: Max Wait Time (seconds)
+      description: How long to wait before giving up on the run
+      default: 300
+      minimum: 5
+      maximum: 3600
+      "ui:dependencies": { waitForCompletion: true }
+
+"ui:order": [actorId, urls, waitForCompletion, maxWaitTime]

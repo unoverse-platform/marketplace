@@ -1,0 +1,38 @@
+# One job, on the LEGACY /crawl endpoint rather than /web/fetch.
+#
+# Not an oversight: fetch reads ONE url, and following links across a site is what /crawl
+# is for. It is also why this node's session controls are the flat `sessionOptions` bag
+# while Scrape's are the fetch shape.
+
+- $ref: hyperbrowser#call
+  name: crawl
+  method: POST
+  url: https://api.hyperbrowser.ai/api/crawl
+
+  body:
+    url: "{{ config.url }}"
+    maxPages: "return config.maxPages || 10"
+    sessionOptions: { $ref: hyperbrowser#sessionOptions }
+    scrapeOptions:
+      formats: [markdown, links]
+      onlyMainContent: "return config.onlyMainContent !== false"
+    # Comma-separated in the panel because a person types them that way, an array on the
+    # wire because that is what the vendor takes. Omitted entirely when blank: an empty
+    # includePatterns array means "include nothing", which would crawl one page.
+    includePatterns: >-
+      return (config.includePatterns || '').split(',').map(p => p.trim()).filter(Boolean).length
+        ? (config.includePatterns || '').split(',').map(p => p.trim()).filter(Boolean)
+        : undefined
+    excludePatterns: >-
+      return (config.excludePatterns || '').split(',').map(p => p.trim()).filter(Boolean).length
+        ? (config.excludePatterns || '').split(',').map(p => p.trim()).filter(Boolean)
+        : undefined
+
+  poll:
+    $ref: hyperbrowser#finish
+    url: "return 'https://api.hyperbrowser.ai/api/crawl/' + response.jobId"
+    # A crawl is many page fetches, so it runs far longer than a single scrape. The retired
+    # client used one 90-poll bound for every resource, which at 2s is three minutes — not
+    # enough for a 500-page crawl, and the failure looked like a timeout rather than a
+    # bound set for a different job.
+    maxAttempts: 300

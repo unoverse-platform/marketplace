@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: DynamoDB
+kind: PromiseNode
+
+name: DynamoDB
+category: Storage & Data
+color: "#4B61D1"
+
+description: Write a record to an AWS DynamoDB table
+
+whenToUse: >-
+  Pick to put ONE record into a DynamoDB table as a step in a flow. Reading a record back,
+  and exposing the full operation set to an attached agent, are different jobs with their
+  own nodes.
+
+capabilities:
+  # NEVER cacheable: it writes. Reusing a prior output would skip the write entirely while
+  # reporting that it happened.
+  cacheable: false

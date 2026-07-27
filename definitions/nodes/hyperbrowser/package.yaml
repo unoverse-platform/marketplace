@@ -1,0 +1,43 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. Three nodes, one vendor, one key.
+#
+# SPLIT OUT OF `crawl`, which held these three alongside two Apify nodes. That package was
+# one only in the sense that both vendors do "web scraping"; they share no endpoint, no
+# credential and no shape. ApifyResults is a stateful iterator driven by a `continue`
+# back-edge, which is computation and stays TypeScript, so keeping one package would have
+# meant a package half in each world. Two vendors, two packages.
+#
+# This is the first package to use `poll`. Hyperbrowser jobs are asynchronous: POST to
+# start, then GET the job until it says completed. That loop is why these nodes could not
+# be manifests before, and it is now an executor capability every long-running node
+# inherits rather than a client this package owns.
+#
+# The retired TypeScript is at `_legacy/nodes/crawl/`.
+
+name: hyperbrowser
+displayName: Hyperbrowser
+description: Scrape, crawl and extract from the web with a stealth headless browser
+version: 1.0.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg
+
+features:
+  - Scrape one page to markdown, HTML and links
+  - Crawl a site from a seed URL across many pages
+  - Extract typed JSON from pages by prompt or schema
+  - Stealth fingerprinting, CAPTCHA solving and country-located sessions
+
+allowedHosts:
+  - api.hyperbrowser.ai
+
+requires:
+  auth: [apiKeyHeader]
+  transport: [json]
+  # Every node here waits on a job, and Extract also fans out one request per url. Both are
+  # new capabilities, so this package will not deploy to an executor that predates them —
+  # which is the point: without `poll` a node settles on the job RECEIPT and emits it as
+  # the answer, with nothing anywhere reporting a problem.
+  poll: true
+  chunk: true
+  executorVersion: ">=1.1.0"

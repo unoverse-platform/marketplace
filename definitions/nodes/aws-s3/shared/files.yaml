@@ -1,0 +1,51 @@
+# THE FILTERED FILE LIST, derived once and shared by everything that needs it.
+#
+# Two places need the same list in the SAME ORDER: the presign entry mints a link per key,
+# and the output pairs each link back to its file by index. Deriving it twice would be two
+# expressions free to drift, and a drift here attaches the wrong link to a file — an error
+# that looks exactly like an answer.
+#
+# WHAT THE FILTERS ARE FOR. S3 has no real directories: a folder made in the console is a
+# zero-byte object whose key ends in "/", and a later ingest step would try to fetch it as a
+# document. Both filters are transcribed from the retired node for that reason.
+
+objects: &objects >-
+  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+    .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
+    .filter(o => !(config.fileExtensions || []).length
+      || (config.fileExtensions || []).map(e => String(e).toLowerCase())
+           .includes(String(o.Key).split('.').pop().toLowerCase()))
+
+# Just the keys, for `presign.for`. Same filters, same order.
+keys: &keys >-
+  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+    .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
+    .filter(o => !(config.fileExtensions || []).length
+      || (config.fileExtensions || []).map(e => String(e).toLowerCase())
+           .includes(String(o.Key).split('.').pop().toLowerCase()))
+    .map(o => String(o.Key))
+
+# The output shape, links folded in by index.
+#
+# universalId is transcribed exactly from the retired executor: sha256 of
+# `key|size|lastModified`, first 12 chars. It includes SIZE AND DATE deliberately, so an
+# object replaced at the same key gets a NEW id and is not mistaken for the old one. Copying
+# the formula rather than inventing one keeps ids stable across the migration, which matters
+# because other tables join on them.
+files: &files >-
+  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+    .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
+    .filter(o => !(config.fileExtensions || []).length
+      || (config.fileExtensions || []).map(e => String(e).toLowerCase())
+           .includes(String(o.Key).split('.').pop().toLowerCase()))
+    .map((o, i) => Object.assign({
+      key: String(o.Key),
+      size: Number(o.Size) || 0,
+      lastModified: String(o.LastModified || ''),
+      etag: String(o.ETag || '').split('"').join(''),
+      bucket: config.bucket,
+      universalId: sha256(String(o.Key) + '|' + (Number(o.Size) || 0) + '|' + String(o.LastModified || '')).substring(0, 12)
+    }, (calls.links || [])[i] ? { presignedUrl: (calls.links || [])[i] } : {}))

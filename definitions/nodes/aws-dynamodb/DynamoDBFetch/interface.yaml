@@ -1,0 +1,20 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Carries the key values, read under the field names named in config
+    required: false
+
+outputs:
+  - name: output
+    type: object
+    description: The record, or null when nothing exists at that key
+  - name: found
+    type: boolean
+    description: Whether an item existed at that key
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

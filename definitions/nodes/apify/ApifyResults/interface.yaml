@@ -1,0 +1,26 @@
+$schema: ../../../_schema/interface.schema.json
+
+# NO `continue` INPUT, and no item/index/hasMore outputs. Those belonged to the iterator
+# this node no longer is; see node.yaml for why. A canvas that wants one item at a time
+# wires Loop Start to `items`, which is the platform's own mechanism.
+
+inputs:
+  - name: signal
+    type: string
+    description: The Apify run id to read results from
+    required: false
+
+outputs:
+  - name: items
+    type: array
+    description: >-
+      Every item in the run's dataset, each with a universalId derived from its url and a
+      contentId derived from its content.
+  - name: total
+    type: number
+    description: How many items the run produced
+
+credentials:
+  - name: apifyCredential
+    required: true
+    displayName: Apify API

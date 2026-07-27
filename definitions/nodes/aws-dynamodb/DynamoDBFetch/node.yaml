@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: DynamoDBFetch
+kind: PromiseNode
+
+name: DynamoDB Fetch
+category: Storage & Data
+color: "#4B61D1"
+
+description: Fetch a record from an AWS DynamoDB table by key
+
+whenToUse: >-
+  Pick to read ONE DynamoDB record by its primary key, with an optional sort key. It emits
+  the item and a found flag, so a miss is an answer rather than an error. Writing a record,
+  and querying a range of them, are different jobs.
+
+capabilities:
+  # NOT cacheable. An item is exactly the kind of thing that changes underneath a workflow,
+  # and a keyed read is cheap, so reuse buys little and can be wrong.
+  cacheable: false

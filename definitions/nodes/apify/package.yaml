@@ -1,0 +1,51 @@
+$schema: ../_schema/package.schema.json
+
+# FULLY DECLARATIVE. Two nodes, one token.
+#
+# THE LAST HALF OF THE OLD `crawl` PACKAGE. Its three Hyperbrowser nodes became
+# `nodes/hyperbrowser/`; these two are Apify, which shares no endpoint, credential or shape
+# with them and was only ever in the same package because both are "web scraping".
+#
+# I RECORDED THIS PACKAGE AS UNMIGRATABLE ONCE, and that was wrong twice over. The claim was
+# that ApifyResults is a stateful iterator, so computation. Reading it properly:
+#
+#   1. The iterator is DEAD. It emits one item per `continue` signal and declares that input
+#      via `getTriggerInputs()`, a hook that exists in NO base class any more — not in
+#      plugin-base, not in the engine's CallbackNode. Only two nodes in the tree override
+#      it and nothing calls it. So the node fetches the list, emits item[0], and waits for a
+#      signal that is never routed.
+#
+#   2. Iterating is not this node's job. LoopStart/LoopEnd own it, in the marketplace
+#      `flow` package, and LOOP_NODES_SPEC.md names the self-continuing CallbackNode as the
+#      exact design they replaced. So ApifyResults returns the whole list and a canvas that
+#      wants one at a time wires a loop, which is the platform's answer rather than this
+#      node's re-invention of it.
+#
+# The real gaps were two small capabilities, both now built: `offset` pagination, and
+# `sha256` in the expression sandbox for the content ids.
+#
+# The retired TypeScript is at `_legacy/nodes/crawl/`.
+
+name: apify
+displayName: Apify
+description: Run Apify actors and tasks, and read their results
+version: 1.0.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/apify.svg
+
+features:
+  - Start an actor or a saved task from a list of URLs
+  - Read a finished run's dataset, following every page
+  - Stable universal and content ids for dedup
+
+allowedHosts:
+  - api.apify.com
+
+requires:
+  auth: [bearer]
+  transport: [json]
+  # The dataset endpoint counts ROWS, not pages, so the walk steps by the page size.
+  paginate: [offset]
+  # ApifyStarter follows the run when asked to wait for it.
+  poll: true
+  executorVersion: ">=1.1.0"

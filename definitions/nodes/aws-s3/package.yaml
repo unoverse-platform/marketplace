@@ -1,0 +1,35 @@
+$schema: ../_schema/package.schema.json
+
+# S3 AS MANIFESTS. The same signer as DynamoDB, plus the two things S3 needs that a JSON
+# API does not:
+#
+#   transport: xml   S3's list endpoints never moved to JSON
+#   presign          links that carry their own authority, so something with no credentials
+#                    can fetch the object
+#
+# ⚠️ PARTIAL, and deliberately so. S3Upload is not here: it PUTs raw bytes, usually fetched
+# from a source URL first, and a binary request body is a capability this executor does not
+# have yet. ElevenLabs needs the same thing, so it is worth building once for both rather
+# than twice badly. S3Upload stays TypeScript until then.
+#
+# The retired TypeScript for the two migrated nodes is at `_legacy/nodes/aws-s3/`.
+
+name: aws-s3
+displayName: AWS S3
+description: List and read objects in AWS S3, with shareable links
+version: 2.0.0
+category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/S3.png
+
+features:
+  - List a bucket or prefix, filtered by extension
+  - Read one object's metadata
+  - Presigned links, so a downstream step needs no credentials
+
+allowedHosts:
+  - "**.amazonaws.com"
+
+requires:
+  auth: [awsSigV4]
+  transport: [xml, headers]
+  executorVersion: ">=1.3.0"

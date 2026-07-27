@@ -1,0 +1,28 @@
+# ONE CALL, which is also a JOB.
+#
+# POST starts the fetch and MAY finish inline; when it does not, `poll` follows the jobId
+# until it does. The reply this call settles on is the final status payload either way, so
+# the events table below reads one shape and never has to know which path it took.
+
+- $ref: hyperbrowser#call
+  name: fetch
+  method: POST
+  url: https://api.hyperbrowser.ai/api/web/fetch
+
+  body:
+    url: "{{ config.url }}"
+    stealth: { $ref: hyperbrowser#fetchStealth }
+    browser: { $ref: hyperbrowser#fetchBrowser }
+    outputs:
+      formats: [markdown, html, links]
+      # "Main content only" maps to Fetch's sanitizer, which strips nav/footer/boilerplate.
+      # Off means return the whole page.
+      sanitize: "return config.onlyMainContent === false ? 'none' : 'basic'"
+    # Only sent when asked for: an empty navigation block is not the same as no block.
+    navigation: "return config.waitFor ? { waitFor: config.waitFor } : undefined"
+
+  poll:
+    $ref: hyperbrowser#finish
+    # The status URL is the start URL plus the job id, and it resolves against the START
+    # reply, which is the only place that id exists.
+    url: "return 'https://api.hyperbrowser.ai/api/web/fetch/' + response.jobId"

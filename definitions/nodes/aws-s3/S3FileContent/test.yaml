@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+# NEEDS A REAL BUCKET AND KEY.
+
+testData:
+  config:
+    bucket: REPLACE_WITH_A_REAL_BUCKET
+    key: REPLACE_WITH_A_REAL_KEY
+    downloadUrlExpiry: 86400
+  inputs:
+    signal: {}
+  expect:
+    file: >-
+      return output.file.size > 0
+        && typeof output.file.contentType === 'string'
+        && output.file.downloadUrl.includes('X-Amz-Signature=')
+        && output.file.universalId.length === 12

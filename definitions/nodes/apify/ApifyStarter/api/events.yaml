@@ -1,0 +1,19 @@
+# One row per output connector, in interface.yaml order.
+#
+# Both read `calls.start`, not `response`. When the wait is switched OFF the second call is
+# skipped and the node settles on the first; when it is ON it settles on the second, whose
+# body is a different shape. Naming the call keeps one expression true either way, which is
+# the whole reason a call has a name.
+
+- emit: runId
+  from: response
+  value: "return ((calls.start || {}).data || {}).id || ''"
+
+# The LATEST status: whatever the wait ended on, or the start status when nothing waited.
+# Reporting the start status after waiting would say RUNNING about a run that had finished.
+- emit: status
+  from: response
+  value: >-
+    return calls.finished
+      ? ((calls.finished.data || {}).status || '')
+      : ((calls.start.data || {}).status || '')

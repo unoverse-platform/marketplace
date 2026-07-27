@@ -1,0 +1,25 @@
+$schema: ../../../_schema/node.schema.json
+
+type: S3FileContent
+kind: PromiseNode
+
+name: S3 File Content
+category: Storage & Data
+color: "#569A31"
+
+description: Read one S3 object's details and mint a link to fetch it
+
+whenToUse: >-
+  Pick when you have a specific object and need a way to get at it: its size and type, plus
+  a time-limited link a later step can fetch without AWS credentials. Finding out what is in
+  a bucket is a different job.
+
+# NOT AT PARITY, and the difference is deliberate. The retired node DOWNLOADED the whole
+# object into memory to report its size, then discarded the bytes because passing them on
+# "caused subscription issues". This asks S3 for the metadata instead (a HEAD), which
+# returns the same size and content type without moving the file at all. For a large object
+# that is the difference between a few hundred bytes and the whole thing.
+
+capabilities:
+  # NOT cacheable: the link carries an expiry, so a reused output hands back a dying link.
+  cacheable: false

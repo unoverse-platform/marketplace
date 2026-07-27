@@ -1,0 +1,22 @@
+$schema: ../../../_schema/node.schema.json
+
+type: HyperbrowserCrawl
+kind: PromiseNode
+
+name: Hyperbrowser Crawl
+category: Web Scraping
+color: "#FF6B6B"
+
+description: Crawl a site from a seed URL across many pages, returning per-page markdown and links
+
+whenToUse: >-
+  Pick to FOLLOW LINKS from a seed URL across many pages of one site, bounded by a page
+  limit and optional include or exclude patterns. It walks a site; reading one known page,
+  pulling typed fields against a schema, and running a bulk offloaded actor are different
+  jobs with their own nodes.
+
+capabilities:
+  # NOT cacheable, unlike Scrape. A crawl's answer is "what this site links to now", which
+  # is the thing that changes, and one crawl can be hundreds of page fetches — a stale
+  # reuse here is both wrong and expensive to have been right about.
+  cacheable: false

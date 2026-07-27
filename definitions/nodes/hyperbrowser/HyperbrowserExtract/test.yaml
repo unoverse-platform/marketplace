@@ -1,0 +1,36 @@
+$schema: ../../../_schema/test.schema.json
+
+# TWO URLS, deliberately, because this fixture is the only thing that runs the fan-out for
+# real. One url takes a single request and proves almost nothing new; two exercises the
+# whole of what made this node a manifest — chunk walking the list, poll waiting on each
+# job independently, and the results coming back paired to the right page.
+#
+# The SINGLE-url branch (where `data` is the extracted object itself rather than a labelled
+# array) is the older contract and is asserted the only way a one-fixture file can: the
+# shape check below would pass just as happily on one result, so `requested` pins the count
+# and the labelling pins the branch.
+
+testData:
+  config:
+    urls: [https://example.com, https://iana.org/domains/example]
+    prompt: Extract the page title and a one-sentence summary of the content
+    schema:
+      type: object
+      properties:
+        title: { type: string }
+        summary: { type: string }
+    useStealth: true
+  inputs:
+    signal: https://example.com
+  expect:
+    # LABELLED and IN ORDER. The url on each entry must be the one that produced it, which
+    # is the thing positional results exist for: compacting away a failure would shift the
+    # second page's data onto the first page's url and still look like a valid answer.
+    data: >-
+      return Array.isArray(output.data) && output.data.length === 2
+        && output.data[0].url === 'https://example.com'
+        && output.data[1].url === 'https://iana.org/domains/example'
+        && typeof output.data[0].data.title === 'string'
+    metadata: >-
+      return output.metadata.requested === 2 && output.metadata.succeeded === 2
+        && output.metadata.failed.length === 0

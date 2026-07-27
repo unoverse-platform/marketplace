@@ -1,0 +1,21 @@
+# One row per output connector, in interface.yaml order.
+#
+# Every row defaults its own field rather than trusting the vendor to send it. A page with
+# no HTML representation is a real outcome, and `undefined` on a connector reads downstream
+# as a broken node instead of an empty one.
+
+- emit: markdown
+  from: response
+  value: "return (response.data || {}).markdown || ''"
+
+- emit: html
+  from: response
+  value: "return (response.data || {}).html || ''"
+
+- emit: links
+  from: response
+  value: "return Array.isArray((response.data || {}).links) ? response.data.links : []"
+
+- emit: metadata
+  from: response
+  value: "return (response.data || {}).metadata || {}"

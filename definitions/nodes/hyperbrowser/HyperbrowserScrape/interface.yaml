@@ -1,0 +1,26 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: string
+    description: URL to scrape
+    required: false
+
+outputs:
+  - name: markdown
+    type: string
+    description: Page content as markdown
+  - name: html
+    type: string
+    description: Page content as HTML
+  - name: links
+    type: array
+    description: Links found on the page
+  - name: metadata
+    type: object
+    description: Page metadata (title, description, and whatever else the page declared)
+
+credentials:
+  - name: hyperbrowserCredential
+    required: true
+    displayName: Hyperbrowser API

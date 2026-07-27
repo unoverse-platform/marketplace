@@ -1,0 +1,22 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The bucket and prefix come from config.
+    required: false
+
+outputs:
+  - name: files
+    type: array
+    description: >-
+      One entry per file: key, size, lastModified, etag, bucket, a stable universalId, and
+      presignedUrl when links were asked for.
+  - name: count
+    type: number
+    description: How many files matched
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

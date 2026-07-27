@@ -1,0 +1,20 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Record data, used when config.record is left empty
+    required: false
+
+outputs:
+  - name: success
+    type: boolean
+    description: Whether the write was accepted
+  - name: itemId
+    type: string
+    description: The record's own id, when it carries one
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

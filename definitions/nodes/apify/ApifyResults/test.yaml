@@ -1,0 +1,21 @@
+$schema: ../../../_schema/test.schema.json
+
+# NEEDS A REAL RUN ID. Apify runs are per-account, so there is no public fixture to point
+# at; replace runId with one from your own console before running this.
+
+testData:
+  config:
+    runId: REPLACE_WITH_A_REAL_RUN_ID
+  inputs:
+    signal: REPLACE_WITH_A_REAL_RUN_ID
+  expect:
+    # The ids are the reason this node is more than a fetch, so they are what is asserted.
+    # Checked by LENGTH and alphabet rather than a regex: the expression sandbox rejects a
+    # regex literal on purpose, so an assertion cannot smuggle one in either.
+    items: >-
+      return Array.isArray(output.items) && output.items.length > 0
+        && output.items.filter(i => i.url).every(i =>
+             typeof i.universalId === 'string' && i.universalId.length === 12
+             && i.universalId.split('').every(c => '0123456789abcdef'.includes(c)))
+        && output.items.every(i => i.crawl === undefined)
+    total: "return output.total === output.items.length"

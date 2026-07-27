@@ -1,0 +1,15 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    url: https://example.com
+    onlyMainContent: true
+    useStealth: true
+  inputs:
+    signal: https://example.com
+  expect:
+    # A non-empty string, not just a string: an empty markdown would pass a type check and
+    # is exactly what a job that "completed" with nothing in it returns.
+    markdown: "return typeof output.markdown === 'string' && output.markdown.length > 0"
+    links: "return Array.isArray(output.links)"
+    metadata: "return typeof output.metadata === 'object' && output.metadata !== null"

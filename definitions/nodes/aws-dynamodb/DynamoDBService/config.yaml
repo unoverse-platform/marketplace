@@ -1,0 +1,16 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [defaultTable]
+  properties:
+    defaultTable:
+      type: string
+      title: Default Table
+      description: >-
+        The table every method uses unless the caller names another. Required, so an agent
+        that omits a table still acts somewhere deliberate rather than failing.
+      default: ""
+      "ui:field": template
+
+"ui:order": [defaultTable]

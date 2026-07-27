@@ -1,0 +1,53 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [urls]
+  properties:
+    urls:
+      # ARRAY OR STRING, both, because both genuinely arrive. The retired node declared
+      # `object` and shipped an array in its own test fixture, which nothing checked; here
+      # the fixture is validated against this schema, so the declaration has to be true.
+      # One typed URL is a string, a list from an upstream node is an array.
+      type: [array, string]
+      title: URLs
+      description: >-
+        URL or array of URLs to extract from. Use `return signal.<id>.<handle>.<field>` to
+        take them from an upstream node.
+      "ui:field": template
+    prompt:
+      type: string
+      title: Extraction Prompt
+      description: Natural-language description of what to extract
+      "ui:field": template
+    schema:
+      type: object
+      title: JSON Schema
+      description: Optional JSON schema describing the shape to extract. Use `return { ... }`
+      "ui:field": template
+    # ── session controls, as /web/fetch takes them ────────────────────────────────
+    useStealth:
+      type: boolean
+      title: Stealth Mode
+      description: Apply anti-bot fingerprinting to look like a real browser
+      default: true
+      "ui:widget": toggle
+    useUltraStealth:
+      type: boolean
+      title: Ultra Stealth
+      description: Maximum anti-detection profile. Slower, so use it only when stealth is blocked
+      default: false
+      "ui:widget": toggle
+    solveCaptchas:
+      type: boolean
+      title: Solve CAPTCHAs
+      description: Automatically solve CAPTCHAs encountered during the session
+      default: false
+      "ui:widget": toggle
+    country:
+      type: string
+      title: Location Country
+      description: ISO country code to load the page from, e.g. US, GB, FR
+      placeholder: US
+
+"ui:order": [urls, prompt, schema, useStealth, useUltraStealth, solveCaptchas, country]

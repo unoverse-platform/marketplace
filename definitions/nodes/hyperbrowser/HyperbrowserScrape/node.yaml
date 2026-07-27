@@ -1,0 +1,23 @@
+$schema: ../../../_schema/node.schema.json
+
+# One page, fetched as a job. A single call that happens to take a while, which is what
+# `poll` is for: the manifest says when it is done, the executor does the waiting.
+
+type: HyperbrowserScrape
+kind: PromiseNode
+
+name: Hyperbrowser Scrape
+category: Web Scraping
+color: "#FF6B6B"
+
+description: Scrape a single URL to markdown, HTML and links with a stealth headless browser
+
+whenToUse: >-
+  Pick to grab the content of ONE known URL as markdown, HTML and links. It reads a single
+  known page; following links across a site, pulling typed fields against a schema, and
+  finding URLs by query are all different jobs with their own nodes.
+
+capabilities:
+  # Idempotent read: the same URL yields the same page, so a prior output may be reused
+  # instead of paying for the browser session again (EXECUTION_EFFICIENCY.md §3.2).
+  cacheable: true

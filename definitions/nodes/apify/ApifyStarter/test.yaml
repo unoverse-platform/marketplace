@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+# STARTS A REAL RUN, which costs Apify credits. waitForCompletion is OFF so the fixture
+# returns as soon as the run is queued rather than paying for a full scrape to finish.
+
+testData:
+  config:
+    actorId: apify/web-scraper
+    urls: ["https://example.com"]
+    waitForCompletion: false
+    maxWaitTime: 300
+  inputs:
+    signal: ["https://example.com"]
+  expect:
+    runId: "return typeof output.runId === 'string' && output.runId.length > 0"
+    # READY or RUNNING is what a just-started run reports. Asserting a non-empty string
+    # would pass on a run that came back FAILED before it began.
+    status: "return ['READY', 'RUNNING'].indexOf(output.status) !== -1"

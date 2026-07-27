@@ -1,0 +1,28 @@
+# List, then mint links for what came back. Two entries, and only the first goes out.
+
+- $ref: s3#call
+  name: list
+  method: GET
+  url: "return 'https://' + config.bucket + '.s3.' + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'"
+  query:
+    list-type: "2"
+    prefix: "{{ config.prefix }}"
+    max-keys: "return String(config.maxKeys || 1000)"
+
+# NO REQUEST. `presign` computes strings from the credentials and the clock, and it sits
+# here rather than in a section of its own because listing a bucket and minting a link per
+# object found is ONE sequence.
+#
+# Skipped entirely when links are off, so a node nobody asked for links from does no signing
+# work at all and the events table asks `calls.links` rather than checking a sentinel.
+- name: links
+  when: "return config.generatePresignedUrls === true"
+  presign:
+    for: { $ref: files#keys }
+    # `item` is one key. Encoded, because an S3 key may legitimately hold a space or a
+    # slash, and an unencoded one produces a link that 403s rather than 404s.
+    url: >-
+      return 'https://' + config.bucket + '.s3.'
+        + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+        + item.split('/').map(s => encodeURIComponent(s)).join('/')
+    expiresIn: "return config.presignedUrlExpiry || 3600"

@@ -1,0 +1,50 @@
+# One row per output connector, in interface.yaml order.
+#
+# THE SANITISE STEP IS TRANSCRIBED, NOT DROPPED, because it is the part of this node that
+# other things depend on:
+#
+#   crawl / metadata.headers  removed. They are large and they are per-fetch noise. The
+#                             retired node stripped them because a full crawl payload
+#                             through the bus caused JSON parsing failures downstream.
+#   universalId               sha256(url), 12 hex. The join key for dedup and ref hydration.
+#   contentId                 sha256 over url + text + the metadata that identifies a page.
+#                             Two fetches of an unchanged page give the same contentId, and
+#                             that is what makes "have I already seen this?" answerable.
+#
+# Both ids need a hash, which is why `sha256` is now in the expression sandbox. It is a
+# pure function of its argument, so it meets the same bar as encodeURIComponent: the
+# alternative was keeping this whole node in TypeScript for one line of arithmetic.
+
+- emit: items
+  from: response
+  value: >-
+    return (((response || {}).items) || []).map(it => Object.assign(
+      Object.fromEntries(Object.entries(it).filter(e => e[0] !== 'crawl' && e[0] !== 'metadata')),
+      it.metadata
+        ? { metadata: Object.fromEntries(Object.entries(it.metadata).filter(e => e[0] !== 'headers')) }
+        : {},
+      it.url ? { universalId: sha256(it.url).substring(0, 12) } : {},
+      [it.url, it.text, (it.metadata || {}).title, (it.metadata || {}).description,
+       (it.metadata || {}).canonicalUrl, (it.metadata || {}).author,
+       (it.metadata || {}).keywords, (it.metadata || {}).languageCode]
+        .concat(Array.isArray((it.metadata || {}).openGraph)
+          ? it.metadata.openGraph.map(og => og.content)
+          : [])
+        .filter(Boolean).length
+        ? { contentId: sha256(
+            [it.url, it.text, (it.metadata || {}).title, (it.metadata || {}).description,
+             (it.metadata || {}).canonicalUrl, (it.metadata || {}).author,
+             (it.metadata || {}).keywords, (it.metadata || {}).languageCode]
+              .concat(Array.isArray((it.metadata || {}).openGraph)
+                ? it.metadata.openGraph.map(og => og.content)
+                : [])
+              .filter(Boolean).join('|')
+          ).substring(0, 12) }
+        : {}
+    ))
+
+# The count of what actually came back, across every page of the walk. Not a config bound
+# and not the first page's length.
+- emit: total
+  from: response
+  value: "return (((response || {}).items) || []).length"

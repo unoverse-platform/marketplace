@@ -1,0 +1,21 @@
+# HEAD for the metadata, then mint the link. Neither moves the file.
+
+- $ref: s3#call
+  name: head
+  method: HEAD
+  url: >-
+    return 'https://' + config.bucket + '.s3.'
+      + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+      + String(config.key || signal.key || '').split('/').map(s => encodeURIComponent(s)).join('/')
+  # A HEAD has no body by definition: the size, type and modified date come back as HEADERS
+  # and nothing else does. `transport: headers` is what makes them reachable.
+  transport: headers
+
+- name: link
+  presign:
+    for: "return [String(config.key || signal.key || '')]"
+    url: >-
+      return 'https://' + config.bucket + '.s3.'
+        + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+        + item.split('/').map(s => encodeURIComponent(s)).join('/')
+    expiresIn: "return config.downloadUrlExpiry || 86400"

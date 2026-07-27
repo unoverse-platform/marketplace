@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+# WRITES A REAL RECORD. Point tableName at a scratch table before running.
+
+testData:
+  config:
+    tableName: Users
+    record:
+      universalId: user-1001
+      name: Ada Lovelace
+      email: ada@example.com
+      createdAt: "2026-06-27T12:00:00Z"
+  inputs:
+    signal: {}
+  expect:
+    success: "return output.success === true"
+    itemId: "return output.itemId === 'user-1001'"

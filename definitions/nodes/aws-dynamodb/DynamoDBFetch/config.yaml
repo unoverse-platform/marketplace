@@ -1,0 +1,28 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [tableName, primaryKey]
+  properties:
+    tableName:
+      type: string
+      title: Table Name
+      description: The DynamoDB table to read from
+      default: ""
+      "ui:field": template
+    # These name FIELDS, not values. The value is read off the incoming signal under that
+    # name, which is how the retired node worked and what saved workflows expect.
+    primaryKey:
+      type: string
+      title: Primary Key Field
+      description: Field name of the partition key, looked up on the incoming signal
+      default: universalId
+      "ui:field": template
+    sortKey:
+      type: string
+      title: Sort Key Field
+      description: Field name of the sort key, if the table has one
+      default: ""
+      "ui:field": template
+
+"ui:order": [tableName, primaryKey, sortKey]

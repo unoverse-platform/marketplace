@@ -1,0 +1,48 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [bucket]
+  properties:
+    bucket:
+      type: string
+      title: S3 Bucket
+      description: The bucket to list
+      default: ""
+      "ui:field": template
+    prefix:
+      type: string
+      title: Prefix
+      description: Only list keys starting with this, e.g. invoices/2026/
+      default: ""
+      "ui:field": template
+    maxKeys:
+      type: number
+      title: Max Files
+      description: Most files to return
+      default: 1000
+      minimum: 1
+      maximum: 1000
+    fileExtensions:
+      type: array
+      title: File Extensions
+      description: Only keep these extensions, e.g. pdf, csv. Empty keeps everything.
+      default: []
+    generatePresignedUrls:
+      type: boolean
+      title: Generate Links
+      description: >-
+        Mint a temporary download link per file, so a later step can fetch it without AWS
+        credentials. Anyone holding a link has the file until it expires.
+      default: false
+      "ui:widget": toggle
+    presignedUrlExpiry:
+      type: number
+      title: Link Lifetime (seconds)
+      description: How long each link stays valid
+      default: 3600
+      minimum: 60
+      maximum: 604800
+      "ui:dependencies": { generatePresignedUrls: true }
+
+"ui:order": [bucket, prefix, maxKeys, fileExtensions, generatePresignedUrls, presignedUrlExpiry]

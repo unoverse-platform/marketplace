@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    url: https://example.com
+    maxPages: 5
+    onlyMainContent: true
+    useStealth: true
+  inputs:
+    signal: https://example.com
+  expect:
+    # At least one page with real content. An empty array would pass Array.isArray and is
+    # exactly what a crawl that completed against a blocked site returns.
+    pages: "return output.pages.length > 0 && typeof output.pages[0].url === 'string' && output.pages[0].markdown.length > 0"
+    links: "return Array.isArray(output.links)"
+    metadata: "return output.metadata.totalPages === output.pages.length"

@@ -1,0 +1,30 @@
+# One row per output connector, in interface.yaml order.
+
+# THE SHAPE DEPENDS ON HOW MANY URLS WERE ASKED FOR, which is the retired node's contract
+# kept exactly: one url hands back the extracted object itself, because wrapping a single
+# result in a one-item array of { url, data } would make every existing consumer unwrap it.
+# Several stay LABELLED, because an unlabelled array is unusable the moment one entry is
+# null, and a null is what a page that failed leaves behind.
+#
+# "How many urls" is `batches`, not a re-derivation of the list: the fan-out is one batch
+# per url, so chunk already counted them, and asking the reply is both shorter and immune
+# to the normaliser and this row disagreeing.
+- emit: data
+  from: response
+  value: >-
+    return ((response || {}).batches || 0) === 1
+      ? (((((response || {}).results) || [])[0] || {}).data || {}).json ?? null
+      : (((response || {}).results) || []).map((r, i) => ({
+          url: ((response || {}).items || [])[i] ?? null,
+          data: (((r || {}).data) || {}).json ?? null
+        }))
+
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      urls: ((response || {}).items) || [],
+      requested: ((response || {}).batches) || 0,
+      succeeded: ((response || {}).sent) || 0,
+      failed: ((response || {}).errors) || []
+    }

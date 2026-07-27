@@ -1,0 +1,37 @@
+# ONE URL PER REQUEST, EACH A JOB. Both loops at once.
+#
+# /web/fetch reads a single url, and this node takes a list, so `chunk` with `size: 1`
+# fans out: one request per url, `batch` holding that url. Each of those requests is also
+# asynchronous, so `poll` waits on it. The two loops are orthogonal and compose — walking
+# a collection and waiting on a request are different axes — which is the only reason this
+# node is a manifest rather than a hand-written Promise.all.
+#
+# The reply is chunk's { sent, batches, results, errors }, with `results` POSITIONAL: entry
+# i is the reply for url i, or null where that url failed. That is what lets the events
+# table pair each extraction back to the page it came from.
+
+- $ref: hyperbrowser#call
+  name: extract
+  method: POST
+  url: https://api.hyperbrowser.ai/api/web/fetch
+
+  chunk:
+    items: { $ref: hyperbrowser#urls }
+    size: 1
+
+  body:
+    url: "return batch[0]"
+    stealth: { $ref: hyperbrowser#fetchStealth }
+    browser: { $ref: hyperbrowser#fetchBrowser }
+    outputs:
+      # The structured-extraction directive rides INSIDE outputs.formats as a json object,
+      # and the result comes back at data.json. The old top-level /api/extract endpoint it
+      # replaced is deprecated.
+      formats: >-
+        return [Object.assign({ type: 'json' },
+          config.schema ? { schema: config.schema } : {},
+          config.prompt ? { prompt: config.prompt } : {})]
+
+  poll:
+    $ref: hyperbrowser#finish
+    url: "return 'https://api.hyperbrowser.ai/api/web/fetch/' + response.jobId"

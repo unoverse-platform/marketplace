@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: S3Files
+kind: PromiseNode
+
+name: S3 Files
+category: Storage & Data
+color: "#569A31"
+
+description: List files in an S3 bucket, optionally with shareable links
+
+whenToUse: >-
+  Pick to find out what is in a bucket or under a prefix: names, sizes and modified dates,
+  filtered by extension. It can also mint a time-limited link per file, so a later step can
+  fetch one without credentials. Reading a single known object is a different job.
+
+capabilities:
+  # NOT cacheable. A bucket listing is a snapshot of something other systems write to, and
+  # the presigned links carry an expiry, so a reused output hands back links already dying.
+  cacheable: false

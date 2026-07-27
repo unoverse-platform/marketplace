@@ -1,0 +1,23 @@
+$schema: ../../../_schema/test.schema.json
+
+# NEEDS A REAL BUCKET. Point it at one you can read before running.
+
+testData:
+  config:
+    bucket: REPLACE_WITH_A_REAL_BUCKET
+    prefix: ""
+    maxKeys: 10
+    fileExtensions: []
+    generatePresignedUrls: true
+    presignedUrlExpiry: 3600
+  inputs:
+    signal: {}
+  expect:
+    # The link is what proves presigning ran, and the signature lives in the QUERY string,
+    # which is the whole difference between a presigned url and an ordinary one.
+    files: >-
+      return output.files.length > 0
+        && output.files.every(f => f.universalId.length === 12)
+        && output.files.every(f => f.presignedUrl.includes('X-Amz-Signature='))
+        && output.files.every(f => !f.key.endsWith('/'))
+    count: "return output.count === output.files.length"

@@ -1,0 +1,29 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [bucket]
+  properties:
+    bucket:
+      type: string
+      title: S3 Bucket
+      description: The bucket the object lives in
+      default: ""
+      "ui:field": template
+    key:
+      type: string
+      title: Key
+      description: The object's key. Leave empty to take it from the incoming signal.
+      default: ""
+      "ui:field": template
+    downloadUrlExpiry:
+      type: number
+      title: Link Lifetime (seconds)
+      description: >-
+        How long the download link stays valid. The retired node always used seven days,
+        which is the maximum AWS allows; a day is usually plenty.
+      default: 86400
+      minimum: 60
+      maximum: 604800
+
+"ui:order": [bucket, key, downloadUrlExpiry]

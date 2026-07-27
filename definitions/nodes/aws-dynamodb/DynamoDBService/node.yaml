@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: DynamoDBService
+kind: PromiseNode
+# Drawn as a service card: it is ATTACHED to an agent over a service edge rather than
+# wired in sequence, so it has no inputs or outputs of its own.
+template: service
+
+name: DynamoDB Service
+category: Storage & Data
+color: "#4B61D1"
+
+description: Give an agent the full DynamoDB operation set on a table
+
+whenToUse: >-
+  Reach for this when an agent needs to look things up and record them as it goes, forming
+  its own reads and writes rather than following one fixed lookup: fetch a record by key,
+  read a range, store or amend one. A single known read or write in a fixed place is
+  cheaper done inline. Attach it to the agent by a service edge.
+
+# NOT AT PARITY WITH WHAT IT REPLACED — IT DOES MORE. The retired TypeScript advertised
+# these six methods on its service connector and implemented NONE of them: the executor
+# initialised a client, returned {}, and there were no handlers anywhere in the package. An
+# agent that called `query` got nothing back, with nothing reporting a problem. These are
+# the first working implementations.
+
+capabilities:
+  cacheable: false

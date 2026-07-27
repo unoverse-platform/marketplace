@@ -1,0 +1,22 @@
+# What both nodes share.
+#
+# S3 addresses a bucket as a SUBDOMAIN (virtual-hosted style), which is the modern form and
+# the one that keeps working as path-style is retired. It also puts the bucket name in the
+# host, so allowedHosts covers it with one subdomain level.
+
+call: &call
+  auth:
+    scheme: awsSigV4
+    service: s3
+  # S3 speaks XML on its list endpoints. Parsed to a plain object, so the events tables read
+  # like every other node's.
+  transport: xml
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [500, 502, 503, 504]
+
+# The bucket's own host. Written once because getting it wrong is a SIGNATURE failure rather
+# than a 404, and that is a much harder error to read back to its cause.
+host: &host >-
+  return config.bucket + '.s3.' + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com'

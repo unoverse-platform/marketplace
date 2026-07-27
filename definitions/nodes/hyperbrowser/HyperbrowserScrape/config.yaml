@@ -1,0 +1,53 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [url]
+  properties:
+    url:
+      type: string
+      title: URL
+      description: The URL to scrape
+      default: ""
+      "ui:field": template
+    onlyMainContent:
+      type: boolean
+      title: Main Content Only
+      description: Strip navigation, footers and boilerplate, keeping the article body
+      default: true
+      "ui:widget": toggle
+    waitFor:
+      type: number
+      title: Wait For (ms)
+      description: Extra time to wait after load for JS-rendered content
+      minimum: 0
+      maximum: 30000
+    # ── session controls, as /web/fetch takes them ────────────────────────────────
+    # Deliberately NOT the same set the Crawl node offers. Fetch has no adblock,
+    # acceptCookies or proxy toggle, and offering them here would put switches on the
+    # panel that the endpoint ignores without complaint.
+    useStealth:
+      type: boolean
+      title: Stealth Mode
+      description: Apply anti-bot fingerprinting to look like a real browser
+      default: true
+      "ui:widget": toggle
+    useUltraStealth:
+      type: boolean
+      title: Ultra Stealth
+      description: Maximum anti-detection profile. Slower, so use it only when stealth is blocked
+      default: false
+      "ui:widget": toggle
+    solveCaptchas:
+      type: boolean
+      title: Solve CAPTCHAs
+      description: Automatically solve CAPTCHAs encountered during the session
+      default: false
+      "ui:widget": toggle
+    country:
+      type: string
+      title: Location Country
+      description: ISO country code to load the page from, e.g. US, GB, FR
+      placeholder: US
+
+"ui:order": [url, onlyMainContent, waitFor, useStealth, useUltraStealth, solveCaptchas, country]

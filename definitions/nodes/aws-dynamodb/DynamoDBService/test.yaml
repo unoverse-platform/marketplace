@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+# A service node is exercised by CALLING a method, not by running the graph.
+# Reads back what the DynamoDB (put) fixture writes, so run that one first.
+
+testData:
+  config:
+    defaultTable: Users
+  call:
+    method: get
+    params:
+      key:
+        universalId: user-1001
+  expect:
+    # Plain values, not type tags: this is what proves the decode ran.
+    result: "return result.ok && result.found && result.item.name === 'Ada Lovelace'"

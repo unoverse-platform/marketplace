@@ -1,0 +1,20 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ApifyStarter
+kind: PromiseNode
+
+name: Apify Starter
+category: Web Scraping
+color: "#00B4A6"
+
+description: Start an Apify actor or task run over a list of URLs
+
+whenToUse: >-
+  Pick to scrape a LARGE LIST of URLs in bulk: the whole list is handed to one Apify run
+  rather than fetched a page per request. It hands back a run id and nothing else, so pair
+  it with Apify Results to read what the run produced.
+
+capabilities:
+  # NEVER cacheable: this STARTS work and bills for it. Reusing a prior output would hand
+  # back an old run id, and the pages it pointed at would silently be the previous run's.
+  cacheable: false

@@ -1,0 +1,12 @@
+# One row per output connector, in interface.yaml order.
+#
+# GetItem answers a MISS with a 200 and no `Item` key, which is the right shape: "nothing
+# is stored there" is an answer, not a failure. Both rows read that same absence.
+
+- emit: output
+  from: response
+  value: "return response.Item || null"
+
+- emit: found
+  from: response
+  value: "return !!response.Item"

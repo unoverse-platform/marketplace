@@ -1,0 +1,88 @@
+# What every node in this package shares: how to reach the vendor, and how a job finishes.
+#
+# The retired package had a `startAndPollJob` client for exactly this. It is gone: the
+# waiting is `poll` in the executor now, and what is left here is the DESCRIPTION of when
+# Hyperbrowser considers a job done, which is the same for all three endpoints.
+
+# The vendor, minus the endpoint. A node $refs this and adds its own url, body and poll.
+call: &call
+  auth:
+    scheme: apiKeyHeader
+    header: x-api-key
+    value: "{{ credentials.hyperbrowserCredential.apiKey }}"
+  headers:
+    Accept: application/json
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# HOW A JOB ENDS, shared by every endpoint here.
+#
+# `until` is tested against the START reply before any polling, and that is not a nicety:
+# the unified /web/fetch endpoint may finish INLINE and hand back the completed result on
+# the POST with no jobId at all. The retired client special-cased that too. Without it the
+# fast path would be the one that breaks.
+#
+# `failed` matters as much as `until`. A job that fails terminally and is only tested for
+# success gets polled until the attempt bound runs out and then reported as a timeout,
+# which sends whoever reads it looking for a slow job rather than a broken one.
+finish: &finish
+  until: "return response.status === 'completed'"
+  failed: "return response.status === 'failed'"
+  message: "return response.error || 'no reason given'"
+  intervalMs: 2000
+  maxAttempts: 90
+
+# THE URL LIST, normalised. Used by Extract in three places (what to fan out over, how to
+# label the results, and what to report), so it lives here rather than being written three
+# times and drifting.
+#
+# A template field can arrive as a real array, as a JSON-encoded array, or as one bare URL,
+# because upstream nodes and hand-typed config both feed it.
+#
+# ONE DELIBERATE DIFFERENCE from the retired normalizeUrls: a string that opens with `[`
+# and fails to parse THROWS here, where the retired code caught it and treated the whole
+# broken string as a single URL. The sandbox has no try/catch, and the old behaviour was
+# not better anyway: it turned an authoring mistake into a scrape of a URL nobody meant.
+urls: &urls >-
+  return Array.isArray(config.urls)
+    ? config.urls.map(u => String(u)).filter(Boolean)
+    : typeof config.urls === 'string' && config.urls.trim().startsWith('[')
+      ? JSON.parse(config.urls.trim()).map(u => String(u)).filter(Boolean)
+      : typeof config.urls === 'string' && config.urls.trim()
+        ? [config.urls.trim()]
+        : []
+
+# ── the session controls, as the two APIs want them ────────────────────────────────
+#
+# Two shapes, because the vendor has two. The legacy job endpoints (crawl) take a flat
+# `sessionOptions` bag of booleans; the modern /web/fetch takes a `stealth` enum and a
+# nested `browser` object and SILENTLY IGNORES the old bag. The retired package had a
+# function per shape (buildSessionOptions / buildFetchOptions) for the same reason.
+#
+# Silently is the operative word: sending the wrong shape does not error, it just gives
+# you a session with none of the protections you asked for.
+
+# /web/fetch — Scrape and Extract.
+fetchStealth: &fetchStealth >-
+  return config.useUltraStealth ? 'ultra' : config.useStealth === false ? 'none' : 'auto'
+
+fetchBrowser: &fetchBrowser >-
+  return Object.assign({},
+    config.solveCaptchas ? { solveCaptchas: true } : {},
+    config.country ? { location: { country: config.country } } : {})
+
+# /crawl — the legacy bag. Defaults transcribed from the retired buildSessionOptions:
+# stealth and the two page-hygiene toggles ON, proxy and captcha solving OFF, and
+# proxyCountry sent ONLY when the proxy is actually in use.
+sessionOptions: &sessionOptions >-
+  return Object.assign({
+    useStealth: config.useStealth !== false,
+    useUltraStealth: config.useUltraStealth === true,
+    useProxy: config.useProxy === true,
+    solveCaptchas: config.solveCaptchas === true,
+    adblock: config.adblock !== false,
+    acceptCookies: config.acceptCookies !== false
+  }, (config.useProxy === true && config.proxyCountry) ? { proxyCountry: config.proxyCountry } : {})

@@ -1,0 +1,20 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Array of URLs to scrape
+    required: false
+
+outputs:
+  - name: runId
+    type: string
+    description: The id of the started Apify run, to feed Apify Results
+  - name: status
+    type: string
+    description: The run's status as Apify reported it at start
+
+credentials:
+  - name: apifyCredential
+    required: true
+    displayName: Apify API

@@ -1,0 +1,23 @@
+# One row per output connector.
+#
+# Everything comes from the HEAD's headers plus what the incoming signal already knew. The
+# retired node got `size` by downloading the entire object and measuring it, then threw the
+# bytes away; content-length says the same thing without moving the file.
+#
+# The signal's own fields are carried through where S3 cannot supply them: a universalId
+# minted by S3 Files upstream is the join key other tables use, so losing it here would
+# break the link between this file and everything already recorded about it.
+
+- emit: file
+  from: response
+  value: >-
+    return {
+      key: String(config.key || signal.key || ''),
+      bucket: config.bucket,
+      size: Number(response['content-length']) || 0,
+      contentType: response['content-type'] || 'application/octet-stream',
+      lastModified: response['last-modified'] || signal.lastModified || '',
+      etag: String(response.etag || signal.etag || '').split('"').join(''),
+      universalId: signal.universalId || sha256(config.bucket + '/' + String(config.key || signal.key || '')).substring(0, 12),
+      downloadUrl: (calls.link || [])[0] || ''
+    }

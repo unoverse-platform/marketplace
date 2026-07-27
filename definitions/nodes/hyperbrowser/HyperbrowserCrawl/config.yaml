@@ -1,0 +1,95 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [url]
+  properties:
+    url:
+      type: string
+      title: Seed URL
+      description: The URL to start crawling from
+      default: ""
+      "ui:field": template
+    maxPages:
+      type: number
+      title: Max Pages
+      description: Maximum number of pages to crawl
+      default: 10
+      minimum: 1
+      maximum: 500
+    onlyMainContent:
+      type: boolean
+      title: Main Content Only
+      description: Strip navigation, footers and boilerplate from each page
+      default: true
+      "ui:widget": toggle
+    includePatterns:
+      type: string
+      title: Include Patterns
+      description: Comma-separated URL glob patterns to include, e.g. /blog/*, /docs/*
+      placeholder: /blog/*, /docs/*
+    excludePatterns:
+      type: string
+      title: Exclude Patterns
+      description: Comma-separated URL glob patterns to skip, e.g. /login*, *.pdf
+      placeholder: /login*, *.pdf
+    # ── session controls, as the legacy /crawl endpoint takes them ────────────────
+    # A LARGER set than Scrape offers, because this endpoint honours the full bag.
+    useStealth:
+      type: boolean
+      title: Stealth Mode
+      description: Apply anti-bot fingerprinting to look like a real browser
+      default: true
+      "ui:widget": toggle
+    useUltraStealth:
+      type: boolean
+      title: Ultra Stealth
+      description: Maximum anti-detection profile. Slower, so use it only when stealth is blocked
+      default: false
+      "ui:widget": toggle
+    useProxy:
+      type: boolean
+      title: Use Proxy
+      description: Route the session through Hyperbrowser residential proxies
+      default: false
+      "ui:widget": toggle
+    proxyCountry:
+      type: string
+      title: Proxy Country
+      description: ISO country code for the proxy exit, e.g. US, GB, FR
+      placeholder: US
+      "ui:dependencies": { useProxy: true }
+    solveCaptchas:
+      type: boolean
+      title: Solve CAPTCHAs
+      description: Automatically solve CAPTCHAs encountered during the session
+      default: false
+      "ui:widget": toggle
+    adblock:
+      type: boolean
+      title: Block Ads
+      description: Block advertisements and trackers while loading pages
+      default: true
+      "ui:widget": toggle
+    acceptCookies:
+      type: boolean
+      title: Accept Cookies
+      description: Auto-dismiss cookie-consent banners
+      default: true
+      "ui:widget": toggle
+
+"ui:order":
+  [
+    url,
+    maxPages,
+    onlyMainContent,
+    includePatterns,
+    excludePatterns,
+    useStealth,
+    useUltraStealth,
+    useProxy,
+    proxyCountry,
+    solveCaptchas,
+    adblock,
+    acceptCookies,
+  ]

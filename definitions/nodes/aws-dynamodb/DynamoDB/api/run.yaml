@@ -1,0 +1,21 @@
+# One signed PutItem. The record is written as PLAIN JSON here; `encoding: dynamodbJson`
+# on the shared call adds the type tags, so nothing in this file spells out {"S": ...}.
+
+- $ref: dynamodb#call
+  name: put
+  headers:
+    X-Amz-Target: DynamoDB_20120810.PutItem
+    Content-Type: application/x-amz-json-1.0
+
+  body:
+    TableName: "{{ config.tableName }}"
+    # The signal is the fallback, so an upstream node can supply the record without the
+    # panel repeating it. Config wins when it is set, which is what an explicit setting means.
+    Item: "return (config.record && Object.keys(config.record).length) ? config.record : (signal || {})"
+    ConditionExpression: "{{ config.conditionExpression }}"
+    ExpressionAttributeNames: >-
+      return Object.keys(config.expressionAttributeNames || {}).length
+        ? config.expressionAttributeNames : undefined
+    ExpressionAttributeValues: >-
+      return Object.keys(config.expressionAttributeValues || {}).length
+        ? config.expressionAttributeValues : undefined

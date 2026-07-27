@@ -1,0 +1,23 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: string
+    description: Seed URL to start crawling from
+    required: false
+
+outputs:
+  - name: pages
+    type: array
+    description: Crawled pages, each with url, markdown, links and metadata
+  - name: links
+    type: array
+    description: Every link found across the crawled pages
+  - name: metadata
+    type: object
+    description: Crawl statistics (seed url, total pages)
+
+credentials:
+  - name: hyperbrowserCredential
+    required: true
+    displayName: Hyperbrowser API

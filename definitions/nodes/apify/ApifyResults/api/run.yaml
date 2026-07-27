@@ -1,0 +1,37 @@
+# TWO CALLS, because a run does not hold its own data.
+#
+# The run record names a dataset, and the dataset holds the items, so reading a run is a
+# lookup and then a walk. This is the case the whole `run` list exists for: the second
+# URL is built from the first reply.
+
+- $ref: apify#call
+  name: run
+  method: GET
+  url: "return 'https://api.apify.com/v2/actor-runs/' + config.runId"
+
+  # A run with no dataset is a real state (an actor that produced nothing), and it is worth
+  # catching HERE rather than letting the next URL be built with `undefined` in it.
+  error:
+    when: "return !((response.data || {}).defaultDatasetId)"
+    message: >-
+      return 'this run has no dataset to read (status '
+        + ((response.data || {}).status || 'unknown') + ')'
+
+# OFFSET PAGINATION. Apify's dataset endpoint counts ROWS, so the walk steps by the page
+# size rather than by 1, which is why `offset` is its own strategy and not `page`.
+#
+# 1000 is Apify's own maximum per request, and it is the STEP as well as the size.
+- $ref: apify#call
+  name: items
+  method: GET
+  url: "return 'https://api.apify.com/v2/datasets/' + calls.run.data.defaultDatasetId + '/items'"
+
+  paginate:
+    strategy: offset
+    into: offset
+    size: 1000
+    # This endpoint returns a BARE ARRAY, not an object with a rows key.
+    items: "return Array.isArray(response) ? response : []"
+
+  query:
+    limit: "1000"
