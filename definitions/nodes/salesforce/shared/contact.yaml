@@ -12,7 +12,7 @@ contact: &contact
   name: contact
   method: GET
   url: { $ref: api#query }
-  auth: { $ref: api#auth }
+  credential: { $ref: api#credential }
   query:
     q: >-
       return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Account.Name FROM Contact WHERE Email = '"
@@ -30,7 +30,7 @@ lead: &lead
   when: "return ((calls.contact || {}).records || []).length === 0"
   method: GET
   url: { $ref: api#query }
-  auth: { $ref: api#auth }
+  credential: { $ref: api#credential }
   query:
     q: >-
       return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Company FROM Lead WHERE Email = '"
@@ -78,7 +78,7 @@ hydrateTasks: &hydrateTasks
   url: >-
     return token.instanceUrl + '/services/data/'
       + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/composite/sobjects'
-  auth: { $ref: api#auth }
+  credential: { $ref: api#credential }
   body: >-
     return {
       allOrNone: false,

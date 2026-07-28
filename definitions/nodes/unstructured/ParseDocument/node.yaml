@@ -1,0 +1,33 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ParseDocument
+kind: PromiseNode
+
+name: Parse Document
+category: Documents
+color: "#09B29C"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Read any document into plain text and structured elements. PDF, Word, slides, spreadsheets, images.
+
+# Outcome first, then disqualify by PROPERTY. Doc 14: never name another node — a cross-reference dates
+# the moment a node is added or renamed, and ranking surfaces the alternative on its own.
+whenToUse: >-
+  Read an existing document into text an Agent can work with: a PDF, Word file, slides, spreadsheet,
+  scanned page or a photo of one. It handles digital text and OCR alike, and returns the document broken
+  into titles, paragraphs and tables as well as one plain string. It only READS a file that already
+  exists, so it cannot author or revise one.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Parsing IS deterministic for a given file, but the input is usually a URL whose contents can change,
+  # and a stale transcript of the wrong document is worse than parsing twice.
+  cacheable: false

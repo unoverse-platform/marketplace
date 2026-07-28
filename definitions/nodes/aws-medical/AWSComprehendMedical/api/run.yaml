@@ -1,0 +1,24 @@
+# Two operations, each skipped unless the analysis type asked for it. BOTH runs both, and
+# `calls.entities` / `calls.phi` simply do not exist for the one that was skipped, which is
+# what the events table reads rather than a sentinel.
+#
+# Two calls rather than one because Comprehend Medical has no combined operation: entities
+# and PHI are separate models behind separate targets over the same endpoint.
+
+- $ref: comprehendmedical#call
+  name: entities
+  when: "return config.analysisType === 'ENTITIES' || config.analysisType === 'BOTH'"
+  headers:
+    X-Amz-Target: ComprehendMedical_20181030.DetectEntitiesV2
+    Content-Type: application/x-amz-json-1.1
+  body:
+    Text: "{{ config.text }}"
+
+- $ref: comprehendmedical#call
+  name: phi
+  when: "return config.analysisType === 'PHI' || config.analysisType === 'BOTH'"
+  headers:
+    X-Amz-Target: ComprehendMedical_20181030.DetectPHI
+    Content-Type: application/x-amz-json-1.1
+  body:
+    Text: "{{ config.text }}"

@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: GoogleSheet
+# A PromiseNode now, where the code version was a CallbackNode. That is the whole of this migration:
+# see interface.yaml for what changed on the wire and why.
+kind: PromiseNode
+
+name: Google Sheet
+category: Storage & Data
+color: "#34A853"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1753618586/gravity/icons/googleSheetIcon.png
+
+description: Read rows from a public Google Sheets spreadsheet
+
+whenToUse: >-
+  Pick to read rows from a public GOOGLE SHEET. It returns every row in one go, so pair it with Loop
+  Start and Loop End when each row needs to flow through its own workflow steps. It reads a Google
+  Sheet specifically, not an app-owned database table.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # A sheet is edited by people, so the same request legitimately answers differently an hour later.
+  cacheable: false

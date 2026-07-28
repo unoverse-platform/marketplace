@@ -1,0 +1,16 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: file
+    type: object
+    description: One asset from Cloudinary Files ({ public_id, resource_type, universalId })
+    required: false
+
+outputs:
+  - name: fileContent
+    type: object
+    description: public_id, url, secure_url, downloadUrl, format, width, height, bytes, universalId, transformation
+
+credentials:
+  - name: cloudinaryCredential
+    required: true

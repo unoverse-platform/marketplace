@@ -1,0 +1,55 @@
+# Two methods, one endpoint.
+#
+# The batch one is a real capability rather than a convenience: Bedrock's InvokeModel takes
+# ONE text per request, so embedding fifty chunks is fifty requests. `chunk` with size 1
+# fans them out, and its positional `results` is what lets each vector be paired back to the
+# text that produced it.
+
+createEmbedding:
+  description: >-
+    Turn one piece of text into a vector. Returns the vector and its length. The length must
+    match whatever store it is going into, or the store will reject it.
+  calls:
+    - $ref: bedrock#call
+      name: embed
+      url: >-
+        return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
+          + '.amazonaws.com/model/' + encodeURIComponent(config.model || 'amazon.titan-embed-text-v2:0') + '/invoke'
+      body:
+        inputText: "return params.text"
+        dimensions: >-
+          return (config.model === 'amazon.titan-embed-text-v1') ? undefined : (config.dimensions || 1024)
+        normalize: "return (config.model === 'amazon.titan-embed-text-v1') ? undefined : true"
+  returns: >-
+    return {
+      ok: true,
+      embedding: Array.isArray(response.embedding) ? response.embedding : [],
+      dimensions: (Array.isArray(response.embedding) ? response.embedding : []).length
+    }
+
+createBatchEmbeddings:
+  description: >-
+    Turn several texts into vectors in one call. Pass `texts` as an array; the vectors come
+    back in the SAME ORDER, with null where one failed, so each can be paired to its text.
+  calls:
+    - $ref: bedrock#call
+      name: embeds
+      url: >-
+        return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
+          + '.amazonaws.com/model/' + encodeURIComponent(config.model || 'amazon.titan-embed-text-v2:0') + '/invoke'
+      # One request per text: Bedrock embeds a single input at a time.
+      chunk:
+        items: "return Array.isArray(params.texts) ? params.texts : []"
+        size: 1
+      body:
+        inputText: "return batch[0]"
+        dimensions: >-
+          return (config.model === 'amazon.titan-embed-text-v1') ? undefined : (config.dimensions || 1024)
+        normalize: "return (config.model === 'amazon.titan-embed-text-v1') ? undefined : true"
+  returns: >-
+    return {
+      ok: (response.errors || []).length === 0,
+      embeddings: (response.results || []).map(r => (r && Array.isArray(r.embedding)) ? r.embedding : null),
+      texts: response.items || [],
+      failed: response.errors || []
+    }

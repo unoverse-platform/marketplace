@@ -1,0 +1,55 @@
+$schema: ../_schema/package.schema.json
+
+# INGEST, migrating one node at a time.
+#
+# Abyssale is the first. The other three are still TypeScript and each is blocked on something
+# different, which is worth writing down because the package name suggests otherwise — "ingest REST
+# nodes" was on the backlog as ready, and reading them proved it wrong:
+#
+#   PlaidTransactions  MIGRATED 2026-07-28 needing NO new capability, which is not what this note said a
+#                      day earlier. All three of its supposed blockers dissolved once the vendor API was
+#                      read rather than the old code.
+#   GoogleSheet        MIGRATED as a REWRITE: it was a Sheets client AND a loop in one node, holding rows
+#                      in actor state. It returns every row now and LoopStart/LoopEnd iterate.
+#   DocumentParser     RETIRED and REPLACED by unstructured/ParseDocument. It parsed pdf/docx in process
+#                      with `pdf-parse` and `mammoth`, which no manifest can express — and did not need
+#                      to, once one HTTP call covered the same job and twenty more formats.
+#   Document           RETIRED with no replacement: it existed to feed DocumentParser, and every metadata
+#                      field it emitted came from its own input.
+#   SpatialIngest      MIGRATED 2026-07-28 by DELETING the pipeline rather than describing it. It had
+#                      reimplemented the content engine — 373 lines, 220 of them a drifted COPY of the
+#                      engine's extraction prompts and schemas, with its own embedding call and its own
+#                      write to the dictionary. The engine's MANUAL connector was written for this node
+#                      and never used. Now it hands raw text over and the engine does the rest.
+
+name: ingest
+displayName: Ingest
+description: Content ingestion, template rendering and data import
+version: 2.0.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Render branded images and PDFs from Abyssale templates
+  - Fetch realistic test bank transactions from Plaid Sandbox
+  - Read rows from a public Google Sheet
+
+allowedHosts:
+  - api.abyssale.com
+  # Plaid picks its host from the credential's environment, so all three are declared. A sandbox key
+  # cannot reach production and vice versa, so listing them is not a widening.
+  - sheets.googleapis.com
+  - sandbox.plaid.com
+  - development.plaid.com
+  - production.plaid.com
+
+requires:
+  executorVersion: ">=1.5.0"
+  # apiKeyHeader for Abyssale (x-api-key), apiKeyQuery for Google Sheets (?key=). Plaid needs
+  # neither: it authenticates in the request BODY, so it declares no scheme at all.
+  credential: [apiKeyHeader, apiKeyQuery]
+  transport: [json]
+  # Abyssale generation is asynchronous: POST to start, then ask the generation request until it is
+  # finalized. Without `poll` the node would settle on the RECEIPT — a request id — and emit that as
+  # the finished asset, with nothing reporting a problem.
+  poll: true

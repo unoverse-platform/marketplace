@@ -1,0 +1,21 @@
+- emit: url
+  value: "return response.url || ''"
+
+- emit: secureUrl
+  value: "return response.secure_url || response.url || ''"
+
+- emit: publicId
+  value: "return response.public_id || ''"
+
+- emit: format
+  value: "return response.format || ''"
+
+- emit: metadata
+  value: >-
+    return {
+      width: response.width,
+      height: response.height,
+      bytes: response.bytes,
+      createdAt: response.created_at,
+      tags: response.tags || []
+    }

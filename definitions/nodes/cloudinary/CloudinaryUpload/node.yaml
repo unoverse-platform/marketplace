@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: CloudinaryUpload
+kind: PromiseNode
+
+name: Cloudinary Upload
+category: Media & Design
+color: "#3448C5"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png
+
+description: Upload an image or video to Cloudinary and get back a hosted URL.
+
+whenToUse: >-
+  Put a generated or fetched file into Cloudinary and get a durable hosted URL back. Reach for it whenever
+  something downstream needs a LINK rather than bytes: base64 does not survive a chat message, an email or
+  a browser page well, and a Cloudinary URL does.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: uploading twice creates two assets, and a reused answer would point at the older one.
+  cacheable: false

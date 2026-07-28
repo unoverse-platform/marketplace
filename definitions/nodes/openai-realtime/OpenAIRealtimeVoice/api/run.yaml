@@ -1,0 +1,91 @@
+# ONE duplex session. Not a request: this stays open for the length of the call, and the node's
+# run IS the call.
+#
+# The bearer token goes on the HANDSHAKE, which is why `auth` reads exactly as it does on an
+# HTTP call — the executor resolves it through the same code rather than a second copy.
+
+- name: session
+  transport: ws
+  url: "return 'wss://api.openai.com/v1/realtime?model=' + config.model"
+  credential:
+    scheme: bearer
+    token: "{{ credentials.openaiCredential.apiKey }}"
+
+  # THE HANDSHAKE. A list because it is a list for other vendors: Nova needs an ordered
+  # sequence here. OpenAI needs exactly one message, so this is a list of one.
+  open:
+    - type: session.update
+      session:
+        type: realtime
+        model: "{{ config.model }}"
+        # AUDIO ONLY. Asking for text as well makes the model write instead of speak on some
+        # turns, which on a voice call reads as the assistant going silent.
+        output_modalities: [audio]
+        instructions: "{{ config.systemPrompt }}"
+        max_output_tokens: "return config.maxResponseOutputTokens || 4096"
+        audio:
+          input:
+            # 24 kHz both ways. The client captures at 16 kHz and the executor resamples, which
+            # is named in api/audio.yaml rather than done here, because interpolation is not
+            # something an expression can express.
+            format: { type: audio/pcm, rate: 24000 }
+            noise_reduction: { type: near_field }
+            transcription: { model: gpt-4o-mini-transcribe }
+            # `null` DISABLES turn detection, and that is the vendor's own spelling for it, not
+            # an accident of the template. With it null the model never decides the person has
+            # finished, so nothing is ever answered unless something else commits the buffer.
+            turn_detection: >-
+              return config.turnDetection === 'disabled' ? null
+                : config.turnDetection === 'server_vad'
+                  ? { type: 'server_vad', create_response: true, interrupt_response: true,
+                      silence_duration_ms: 700, prefix_padding_ms: 300, threshold: 0.7 }
+                  : { type: 'semantic_vad', create_response: true, interrupt_response: true,
+                      eagerness: 'high' }
+          output:
+            format: { type: audio/pcm, rate: 24000 }
+            voice: "{{ config.voice }}"
+
+        # TOOLS ARE DECLARED ONCE, HERE, because a realtime session has no per-request moment to
+        # offer them the way an HTTP turn does. The executor discovers them from the wired MCP
+        # provider before the handshake goes out and puts them in the ordinary consumer root, so
+        # this reads `services.mcpService.tools` like any other consumer rather than re-deriving
+        # the vendor envelope. That envelope lives once, in shared/tools.yaml.
+        #
+        # Empty when nothing is wired — the normal case — and the node degrades to a plain voice
+        # call rather than failing.
+        tools: "return services.mcpService.tools || []"
+        tool_choice: "return (services.mcpService.tools || []).length ? 'auto' : 'none'"
+
+    # HISTORY, replayed before the call starts. One entry resolving to an ARRAY of messages, so a
+    # variable number of turns is expressible; an empty history resolves to [] and sends nothing.
+    #
+    # The roles use DIFFERENT content types, which is the vendor's rule and easy to get wrong: a
+    # user message carries `input_text`, an assistant message carries `text`.
+    - >-
+      return (config.conversationHistory || []).map(m => ({
+        type: 'conversation.item.create',
+        item: {
+          type: 'message',
+          role: m.role === 'assistant' ? 'assistant' : 'user',
+          content: [{ type: m.role === 'assistant' ? 'text' : 'input_text', text: String(m.content ?? '') }]
+        }
+      }))
+
+    # THE OPENING PROMPT. Two messages: the user message, then `response.create` to make the model
+    # answer it immediately. Without the second the item sits in the conversation and the model
+    # never speaks, which is the whole point of this field.
+    #
+    # Resolves to [] when empty, so a call with no opening prompt simply waits for the person.
+    - >-
+      return String(config.initialRequest || '').trim()
+        ? [
+            { type: 'conversation.item.create',
+              item: { type: 'message', role: 'user',
+                      content: [{ type: 'input_text', text: String(config.initialRequest) }] } },
+            { type: 'response.create' }
+          ]
+        : []
+
+  # No `close` list: OpenAI ends a realtime session cleanly on socket close, and sending
+  # anything first would be inventing a message the vendor does not document. Nova is the
+  # vendor that needs one, which is why the key exists at all.

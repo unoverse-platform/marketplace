@@ -9,7 +9,7 @@
 call: &call
   method: GET
   url: https://www.searchapi.io/api/v1/search
-  auth:
+  credential:
     scheme: apiKeyQuery
     param: api_key
     value: "{{ credentials.searchapiCredential.apiKey }}"

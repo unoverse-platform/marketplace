@@ -1,0 +1,12 @@
+- emit: text
+  value: "return response.text || ''"
+
+- emit: metadata
+  # `words` carries the per-word timings, which is the whole reason to use this over a plain transcript —
+  # a caption track or a seek-to-word UI is built from it. Defaulted to [] so a consumer can always map.
+  value: >-
+    return {
+      languageCode: response.language_code,
+      languageProbability: response.language_probability,
+      words: Array.isArray(response.words) ? response.words : []
+    }

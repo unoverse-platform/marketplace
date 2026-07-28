@@ -1,0 +1,90 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [bucket, key, sourceType]
+  properties:
+    bucket:
+      type: string
+      title: S3 Bucket
+      description: The bucket to write the object into
+      default: ""
+      "ui:field": template
+    key:
+      type: string
+      title: S3 Key
+      description: The path to write it at, including the file name and extension
+      default: ""
+      "ui:field": template
+    sourceType:
+      type: string
+      title: Source Type
+      description: Whether to pull the bytes from a url or take base64 already in hand
+      enum: [url, base64]
+      enumNames: [URL, Base64 Data]
+      default: base64
+    sourceUrl:
+      type: string
+      title: Source URL
+      description: The url to pull the file from
+      default: ""
+      "ui:field": template
+      "ui:dependencies":
+        sourceType: url
+    base64Data:
+      type: string
+      title: Base64 Data
+      description: The file as base64. A data URL prefix is stripped, and its type used.
+      default: ""
+      "ui:field": template
+      "ui:dependencies":
+        sourceType: base64
+    contentType:
+      type: string
+      title: Content Type
+      description: >-
+        Overrides what the source said the file is. Leave empty to take it from the url's
+        reply or the data URL's own prefix.
+      default: ""
+      "ui:field": template
+    downloadUrlExpiry:
+      type: number
+      title: Link Lifetime (seconds)
+      description: >-
+        How long the download link stays valid. The retired node always used seven days,
+        which is the maximum AWS allows; a day is usually plenty, and the link IS the
+        credential.
+      default: 86400
+      minimum: 60
+      maximum: 604800
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [bucket, key, sourceType, sourceUrl, base64Data, contentType, downloadUrlExpiry, authRequired, authRole]

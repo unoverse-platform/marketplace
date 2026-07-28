@@ -1,0 +1,45 @@
+# THE DELIVERY URL IS BUILT HERE, which is what the SDK's `cloudinary.url()` did. It is plain string
+# assembly — https://res.cloudinary.com/<cloud>/<type>/upload/<transformation>/<public_id> — so it belongs
+# in the manifest rather than needing a capability.
+#
+# THE TRANSFORMATION STRING IS TRANSCRIBED, including the comma rule: `format` becomes `f_<format>` and is
+# APPENDED to any transformation already given, comma-separated, rather than replacing it. Getting that
+# backwards would silently drop a resize whenever a format was also set.
+#
+# With no transformation the asset's OWN urls are returned untouched — the service's behaviour, and the
+# reason this is not always a constructed URL.
+
+- emit: fileContent
+  value: |
+    return (() => {
+      const f = config.file || {};
+      const t = String(config.transformation || '').trim();
+      const fmt = String(config.format || '').trim();
+      const transformation = fmt ? (t ? t + ',f_' + fmt : 'f_' + fmt) : t;
+
+      const built = transformation
+        ? 'res.cloudinary.com/' + credentials.cloudinaryCredential.cloud_name
+            + '/' + (f.resource_type || 'image') + '/upload/' + transformation + '/' + response.public_id
+        : '';
+
+      const url = built ? 'http://' + built : response.url;
+      const secure = built ? 'https://' + built : response.secure_url;
+
+      return {
+        public_id: response.public_id,
+        url: url,
+        secure_url: secure,
+        // The service pointed downloads at the secure url in both branches.
+        downloadUrl: secure,
+        format: fmt || response.format,
+        width: response.width,
+        height: response.height,
+        bytes: response.bytes,
+        resource_type: response.resource_type,
+        created_at: response.created_at,
+        // Carried THROUGH from the input, not recomputed: it identifies the row this asset came from, and
+        // re-deriving it here could disagree with what Cloudinary Files emitted.
+        universalId: f.universalId,
+        transformation: transformation || undefined
+      };
+    })();

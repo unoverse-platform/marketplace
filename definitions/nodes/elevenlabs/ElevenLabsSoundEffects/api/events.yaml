@@ -1,0 +1,8 @@
+- emit: audio
+  value: { $ref: audio#out }
+
+- emit: metadata
+  # `durationSeconds` echoes what was ASKED FOR, not what came back: the endpoint returns audio and no
+  # metadata, so the alternative is decoding the mp3 to measure it. The service did the same.
+  value: >-
+    return { format: 'mp3', durationSeconds: config.durationSeconds, prompt: config.text }

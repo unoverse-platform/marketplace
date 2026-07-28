@@ -1,0 +1,7 @@
+# The realtime tool protocol, described HERE and not in the platform: the runtime only discovers the
+# tools, runs them, and puts the result back on the wire.
+#
+# Imported WHOLE from the package's shared/ — one file changes when OpenAI changes the wire format.
+# No local keys layer on top, because the two dials an HTTP agent sets (`maxTurns`,
+# `stuckAfterRepeats`) count TURNS, and a socket has none: the conversation never ended.
+$ref: tools

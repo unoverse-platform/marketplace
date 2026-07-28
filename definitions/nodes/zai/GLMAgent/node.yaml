@@ -1,0 +1,32 @@
+$schema: ../../../_schema/node.schema.json
+
+type: GLMAgent
+# A CallbackNode because it STREAMS: the last call's transport is sse, and a tool exchange runs many
+# turns. Both are derived and verified by lint, not taken on trust.
+kind: CallbackNode
+
+name: GLM Agent
+category: AI
+color: "#014f56"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1782027963/gravity/icons/z.svg
+
+description: Multi-turn GLM-5.2 (Z.AI) agent with MCP tool calling, reasoning, and streaming
+
+whenToUse: >-
+  Run a multi-turn agent on Z.AI's GLM-5.2 that calls tools, reasons, and streams its answer. Pick it
+  specifically when you want the GLM model family — large context, strong coding and agentic
+  reasoning. It consumes tools from MCP provider nodes attached via service edges.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # An agent is never cacheable: it calls tools whose answers change, and the same prompt legitimately
+  # takes a different path on every run.
+  cacheable: false

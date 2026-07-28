@@ -5,7 +5,7 @@
 - name: search
   method: GET
   url: https://api.hunter.io/v2/domain-search
-  auth: { $ref: hunter#queryAuth }
+  credential: { $ref: hunter#queryCredential }
   query:
     domain: "return String(config.domain || '').trim()"
     company: "return String(config.company || '').trim()"

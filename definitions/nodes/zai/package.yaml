@@ -1,0 +1,31 @@
+$schema: ../_schema/package.schema.json
+
+# ZAI, fully declarative.
+#
+# GLM is OpenAI-COMPATIBLE, which is true of the vendor and was not true of our tool loop until
+# 2026-07-28. `toolExchange` had been written against OpenAI's RESPONSES API, and Chat Completions
+# differs in two structural ways that no amount of manifest could paper over:
+#
+#   tool calls arrive as FRAGMENTS, keyed by index, `arguments` concatenated across events
+#   there is no chain id, so the entire `messages` array is resent every turn
+#
+# Both are now executor capabilities (`call.each`/`call.index` and `transcript`), so this package needed
+# no vendor-specific code — and neither will the next OpenAI-compatible vendor, which is most of them.
+
+name: zai
+displayName: Z.AI
+description: GLM models from Z.AI, with MCP tool calling and streaming
+version: 2.0.0
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1782027963/gravity/icons/z.svg
+
+features:
+  - Multi-turn GLM agent with MCP tool calling, reasoning and streaming
+
+allowedHosts:
+  - api.z.ai
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [bearer]
+  transport: [sse]

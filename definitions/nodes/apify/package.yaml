@@ -31,7 +31,7 @@ displayName: Apify
 description: Run Apify actors and tasks, and read their results
 version: 1.0.0
 category: ingest
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/apify.svg
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png
 
 features:
   - Start an actor or a saved task from a list of URLs
@@ -42,7 +42,7 @@ allowedHosts:
   - api.apify.com
 
 requires:
-  auth: [bearer]
+  credential: [bearer]
   transport: [json]
   # The dataset endpoint counts ROWS, not pages, so the walk steps by the page size.
   paginate: [offset]

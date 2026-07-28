@@ -1,0 +1,44 @@
+$schema: ../../../../_schema/audio.schema.json
+
+# THE AUDIO LANE. The platform's socket to the browser, not the vendor's.
+#
+# It exists for ONE reason: MCP cannot carry binary audio. Everything else this node produces is in
+# events.yaml and reaches the client over MCP streaming. Nothing non-audio belongs here.
+#
+# Every key NAMES computation the executor does. The resampling, the coalescing and the barge-in discard
+# are identical for every vendor, which is exactly why they are not written out here.
+#
+# IDENTICAL TO THE OPENAI VOICE NODE'S, because xAI uses the same realtime event names. That is worth
+# stating rather than leaving as a coincidence: if xAI ever renames one of these, this file changes and
+# no other node is touched.
+
+in:
+  # Grok wants 24 kHz; the browser captures 16 kHz. Getting this wrong is not an error anywhere — the
+  # model simply hears a chipmunk, and it reads as poor accuracy.
+  resampleTo: 24000
+  message:
+    type: input_audio_buffer.append
+    audio: "{{ audio.base64 }}"
+
+out:
+  match: response.output_audio.delta
+  value: "return response.delta"
+  # Flushes what is buffered and THEN signals the end. The order is the executor's guarantee: a frame
+  # sent after the end-of-utterance lands on a player that has already stopped.
+  done: response.output_audio.done
+  # BARGE-IN. Buffered audio is DISCARDED rather than flushed, because the person is already talking
+  # over the sentence it belongs to.
+  interruptOn: input_audio_buffer.speech_started
+
+control:
+  # The person pressing hang up. Without this the call only ends when the vendor times out. `stop` is
+  # the code version's own second name for it.
+  endOn: [END_CALL, stop]
+
+  # THE VENDOR'S VOICE-ACTIVITY DETECTION, forwarded so the client can show that it is listening.
+  #
+  # `userSpeaking` names the SAME event as `out.interruptOn`, which is deliberate rather than duplicated:
+  # one tells the client the person started talking, the other throws away the assistant audio they
+  # talked over. Two jobs that happen to share a trigger.
+  userSpeaking: input_audio_buffer.speech_started
+  userStopped: input_audio_buffer.speech_stopped

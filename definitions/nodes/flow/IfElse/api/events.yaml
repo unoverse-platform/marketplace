@@ -1,0 +1,16 @@
+# NO CALLS. This node reaches no host: it decides which output dot the payload lands on, and
+# `events` is the whole of it.
+#
+# ROUTING IS `when`. Exactly one of these rows fires, so exactly one edge carries data and only
+# that branch runs downstream — which is what makes this a fork rather than a broadcast.
+#
+# `response` is the INCOMING SIGNAL here rather than a reply, because there is no reply. The
+# payload passes through untouched, exactly as the retired node did.
+
+- emit: "true"
+  when: "return !!config.condition"
+  value: "return response"
+
+- emit: "false"
+  when: "return !config.condition"
+  value: "return response"

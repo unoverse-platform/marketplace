@@ -9,7 +9,7 @@
   when: "return config.type === 'company' && !!String(config.domain || '').trim()"
   method: GET
   url: https://api.hunter.io/v2/companies/find
-  auth: { $ref: hunter#queryAuth }
+  credential: { $ref: hunter#queryCredential }
   query:
     domain: "return String(config.domain || '').trim()"
   transport: json
@@ -21,7 +21,7 @@
       && !!(String(config.linkedinHandle || '').trim() || String(config.email || '').trim())
   method: GET
   url: https://api.hunter.io/v2/people/find
-  auth: { $ref: hunter#queryAuth }
+  credential: { $ref: hunter#queryCredential }
   query:
     linkedin_handle: { $ref: hunter#linkedinHandle }
     email: >-
@@ -34,7 +34,7 @@
     return (config.type || 'combined') === 'combined' && !!String(config.email || '').trim()
   method: GET
   url: https://api.hunter.io/v2/combined/find
-  auth: { $ref: hunter#queryAuth }
+  credential: { $ref: hunter#queryCredential }
   query:
     email: "return String(config.email || '').trim()"
   transport: json

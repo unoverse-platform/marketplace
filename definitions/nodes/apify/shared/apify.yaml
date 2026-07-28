@@ -1,7 +1,7 @@
 # What both nodes share: how to reach Apify, and how a URL list is read.
 
 call: &call
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.apifyCredential.token }}"
   headers:

@@ -17,6 +17,15 @@ whenToUse: >-
   known page; following links across a site, pulling typed fields against a schema, and
   finding URLs by query are all different jobs with their own nodes.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # Idempotent read: the same URL yields the same page, so a prior output may be reused
   # instead of paying for the browser session again (EXECUTION_EFFICIENCY.md §3.2).

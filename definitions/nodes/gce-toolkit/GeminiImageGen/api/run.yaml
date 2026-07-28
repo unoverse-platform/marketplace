@@ -1,0 +1,85 @@
+# Fetch the reference photo (sometimes), then generate.
+#
+# The first call is skipped when no reference url is set, so the common case is one request.
+
+# NO AUTH, which is why `*` is in allowedHosts. The url is one a person supplies and cannot be
+# declared in advance; this call carries no credential, so there is nothing to leak, and https
+# is still required.
+#
+# DELIBERATELY NOT FATAL. The retired service caught a failed reference fetch and carried on
+# without the photo, on the reasoning that a generated image is better than no image. `error`
+# is therefore absent here: a 404 leaves `calls.reference` unset and every expression below
+# already treats that as "no photo was given".
+- name: reference
+  when: "return !!String(config.referenceImageUrl || '').trim()"
+  method: GET
+  url: "{{ config.referenceImageUrl }}"
+  # { base64, contentType, bytes }, which is exactly the shape an inline image part needs.
+  transport: binary
+  timeoutMs: 60000
+
+- name: generate
+  method: POST
+  url: >-
+    return 'https://generativelanguage.googleapis.com/v1beta/models/'
+      + config.model + ':generateContent'
+  credential:
+    scheme: apiKeyHeader
+    header: x-goog-api-key
+    value: "{{ credentials.geminiCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  # Image generation is slow, and the pro model more so. The retired node inherited the SDK's
+  # default; this states one rather than leaving it to whatever the platform's happens to be.
+  timeoutMs: 300000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    contents:
+      - role: user
+        # The photo FIRST, then the text. Order matters to the model: the instruction that
+        # follows an image is read as being about that image.
+        #
+        # `prompt.geminiLikenessPreface` is reached as an expression root rather than as
+        # {{prompt.…}}, because handlebars cannot be spliced into the middle of an expression.
+        # Same block either way.
+        parts: >-
+          return [].concat(calls.reference
+              ? [{ inline_data: {
+                    mime_type: calls.reference.contentType || 'image/jpeg',
+                    data: calls.reference.base64
+                  } }]
+              : [])
+            .concat([{ text: (calls.reference ? prompt.geminiLikenessPreface + '\n\n' : '')
+              + String(config.prompt || '') }])
+
+    # Only sent when there IS a photo, because it is entirely about how to treat one.
+    # `undefined` drops the key when the body is serialised, which is what "not sent" means
+    # here; null would be sent and rejected.
+    systemInstruction: >-
+      return calls.reference
+        ? { parts: [{ text: prompt.geminiLikenessSystem }] }
+        : undefined
+
+    generationConfig:
+      # BOTH modalities, not just IMAGE. These models answer with a parts list that mixes
+      # inline image data and text, and asking for image alone makes the text response
+      # unavailable rather than merely unused.
+      responseModalities: [IMAGE, TEXT]
+
+  error:
+    # Gemini reports a refused prompt as a 200 with candidates present and no image part in
+    # them, so status alone cannot tell success from a safety block. `finishReason` is where it
+    # says so, and without this the node would emit an empty images array and look like it
+    # worked.
+    when: >-
+      return !((((((response.candidates || [])[0] || {}).content || {}).parts) || [])
+        .filter(p => p.inlineData || p.inline_data).length)
+    message: >-
+      return 'Gemini returned no image. finishReason: '
+        + String(((response.candidates || [])[0] || {}).finishReason || 'unknown')
+        + (response.promptFeedback ? ' promptFeedback: ' + JSON.stringify(response.promptFeedback) : '')

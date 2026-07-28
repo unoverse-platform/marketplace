@@ -1,0 +1,46 @@
+# THE ONE MULTIPART CALL in the package, and the reason `encoding: multipart` was built: this endpoint
+# takes the audio as a FORM PART, which no JSON body can express.
+#
+# TWO WAYS TO SUPPLY AUDIO, and the form field differs for each — transcribed from the service:
+#   base64  a FILE part. `{ base64, mimeType, filename }` is the shape the executor turns back into
+#           bytes, the same shape `transport: binary` produces, so audio from another node flows straight in
+#   a URL   a plain TEXT field, `source_url`, and the vendor fetches it itself
+#
+# The URL WINS when both are set, matching the service's if/else. Each field is an expression returning
+# undefined when it does not apply, so exactly one of them appears in the form — `resolveBody` drops the
+# other, and sending both would be ambiguous.
+#
+# NO Content-Type IS DECLARED. The boundary is fetch's to generate, and a multipart header without one is
+# a body the vendor cannot split.
+
+- name: transcribe
+  method: POST
+  url: https://api.elevenlabs.io/v1/speech-to-text
+  credential: { $ref: credential }
+  encoding: multipart
+
+  body:
+    model_id: "{{ config.modelId }}"
+    source_url: "return String(config.audioUrl || '').trim() || undefined"
+    file: >-
+      return String(config.audioUrl || '').trim() ? undefined
+        : (config.audioBase64
+            ? { base64: config.audioBase64, mimeType: config.mimeType || 'audio/mpeg', filename: 'audio' }
+            : undefined)
+    language_code: "{{ config.languageCode }}"
+    # Sent only when true, and as the STRING "true": a form carries text, and the service set it that way.
+    diarize: "return config.diarize ? 'true' : undefined"
+    tag_audio_events: "return config.tagAudioEvents ? 'true' : undefined"
+
+  timeoutMs: 300000
+  # JSON back, not audio — the only node here that reads a document rather than bytes.
+  transport: json
+
+  # NEITHER SOURCE SET is the one error worth naming ourselves. Without this the vendor answers a 400
+  # about a missing file, which does not tell an author that the field they left blank was `audioUrl`.
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: >-
+      return (response.detail && (response.detail.message || JSON.stringify(response.detail)))
+        || response.error
+        || 'Transcription failed. Provide audioUrl or audioBase64.'

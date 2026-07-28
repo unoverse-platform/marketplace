@@ -1,0 +1,35 @@
+# TWO ENTRIES FOR THE TWO WAYS THIS NODE IS REACHED, told apart by `when`, and exactly one runs.
+#
+#   resumed  LoopEnd routed a `continue` signal back here. It has ALREADY moved the index, so this
+#            only reads and emits — one home for item emission, no chance of the two disagreeing.
+#   opened   the ordinary trigger. Record the array and hand back its first item.
+#
+# ORDER MATTERS, because the LAST entry is the one whose reply settles the node. `resumed` leads and
+# `opened` settles, so on a first pass `resumed` is skipped and `opened` answers; on a resume
+# `opened` is skipped and the node settles on the last entry that DID run, which is `resumed`. Both
+# paths therefore settle on a { item, index, total } payload and one events table serves both.
+#
+# `key` is THIS node's own id: the loop belongs to the LoopStart that opened it, and LoopEnd names
+# the same id from its config. The execution is supplied by the executor, so a loop can never
+# address another run's state.
+#
+# The `continue` test is transcribed from the retired executor, including reading the port rather
+# than its contents: a signal arrives nested by source node and output handle, so `signal.continue`
+# is a populated object on a resume and absent otherwise. What is IN it does not matter — its
+# presence is the whole message.
+
+- name: resumed
+  when: "return signal.continue !== undefined && signal.continue !== null"
+  loop: read
+  key: "{{ scope.nodeId }}"
+
+- name: opened
+  when: "return signal.continue === undefined || signal.continue === null"
+  loop: open
+  key: "{{ scope.nodeId }}"
+  # The executor normalises this: it peels the { source: { handle: data } } envelope a wired input
+  # arrives in, and wraps a non-array so "loop over one thing" means one pass rather than none. That
+  # unwrap is executor work because the envelope is the PLATFORM's, not anyone's data — and because
+  # in an expression it would mean repeating this line five times inside a nested ternary, the
+  # sandbox having no way to bind an intermediate.
+  value: "return config.items || signal.items || []"

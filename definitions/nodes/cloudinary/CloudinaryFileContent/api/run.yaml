@@ -1,0 +1,20 @@
+# ONE GET to the ADMIN API for the asset's details. Basic Auth, like the rest of the package.
+#
+# THE PUBLIC ID IS IN THE PATH and may contain slashes — a folder is part of the id — so it is NOT
+# encoded: `encodeURIComponent` would turn `folder/name` into `folder%2Fname`, which the Admin API reads as
+# a single literal id and answers 404 for. That is the opposite of the Google Sheets range, where encoding
+# was required, and the difference is worth stating because both are ids in a path.
+
+- name: resource
+  method: GET
+  url: >-
+    return 'https://api.cloudinary.com/v1_1/'
+      + credentials.cloudinaryCredential.cloud_name
+      + '/resources/' + ((config.file || {}).resource_type || 'image')
+      + '/upload/' + ((config.file || {}).public_id || '')
+  credential: { $ref: credential }
+  transport: json
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message || 'Cloudinary asset lookup failed'"

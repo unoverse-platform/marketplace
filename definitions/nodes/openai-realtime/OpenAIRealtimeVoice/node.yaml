@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: OpenAIRealtimeVoice
+kind: CallbackNode
+
+name: OpenAI Realtime Voice
+category: Voice
+color: "#10A37F"
+
+description: Live two-way voice conversation with OpenAI's realtime models
+
+whenToUse: >-
+  Pick when someone should TALK to the workflow and be spoken back to, in real time, with the
+  model hearing them mid-sentence and able to be interrupted. Holds one continuous conversation
+  for as long as the call lasts and emits both sides as transcripts while it runs. Reading a
+  script aloud, and transcribing a recording that already exists, are different jobs, because
+  neither needs a live listener.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable, and not even coherently so: there is no single request to reuse. A cached
+  # conversation is a contradiction.
+  cacheable: false

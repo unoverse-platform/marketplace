@@ -1,0 +1,61 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Data from previous nodes, referenceable in the system prompt
+    required: false
+
+outputs:
+  # THE RETIRED NODE'S NAMES, restored. I had renamed these wholesale, which orphaned every edge in
+  # a saved workflow and every field the voice template reads — the node ran and nothing downstream
+  # ever heard from it. An output name IS the contract: it is what someone typed into a template.
+  #
+  # `conversation` is deliberately NOT restored. The retired node DECLARED it and never emitted to
+  # it once, so it was a dot that could not carry anything; lint refuses an output with no row, and
+  # reinstating a dead connector to preserve a dead edge is not compatibility.
+  - name: text
+    type: object
+    description: "{ query, response } for the last completed turn: what the person said and what the model answered"
+  - name: mcpResult
+    type: object
+    description: The result of each tool the model called, as { name, args, output }
+  - name: progress
+    type: string
+    description: A running Q/A log of the conversation, in the retired node's format
+  - name: sessionReady
+    type: boolean
+    description: True once the vendor has accepted the session configuration
+  - name: userTranscript
+    type: string
+    description: What the person said, as the model transcribed it
+  - name: assistantTranscript
+    type: string
+    description: What the model said, accumulated as it speaks
+
+credentials:
+  # `openaiCredential`, the RETIRED NODE'S NAME, kept deliberately.
+  #
+  # I first "converged" this on the platform's `openAICredential`, since realtime was the only
+  # package ever to use the lower-case spelling. That broke the node outright: a node receives
+  # only its OWN declared credentials, and this node's saved config attaches the credential by the
+  # old type name, so the bag handed over contained `openaiCredential` while the manifest asked for
+  # `openAICredential`. The bearer token resolved to empty and every call failed.
+  #
+  # A credential name is part of the stored contract, exactly like an output name. Renaming one is
+  # a migration with a data change behind it, not a tidy-up.
+  - name: openaiCredential
+    required: true
+    displayName: OpenAI
+
+serviceConnectors:
+  # CONSUMES tools, it does not offer them. `isService: false` is what makes this the consumer
+  # end, so the canvas draws a serviceConsumer handle and any node providing `mcp` can be wired
+  # into it.
+  #
+  # The service channel and the workflow channel do not cross: tools arrive here, while the
+  # transcripts leave on the output connectors.
+  - name: mcpService
+    serviceType: mcp
+    isService: false
+    description: MCP tools the model may call mid-conversation, with automatic schema discovery

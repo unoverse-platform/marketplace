@@ -1,0 +1,27 @@
+$schema: ../../../_schema/test.schema.json
+
+# No reference photo, so this runs the one-call path. Asserts the SHAPE and that real bytes came
+# back: base64 of any actual image is thousands of characters, so a length floor catches an
+# empty or placeholder part without pinning anything about what was drawn.
+
+testData:
+  config:
+    model: gemini-2.5-flash-image
+    prompt: >-
+      A serene mountain landscape at sunrise, photorealistic, golden-hour lighting, mist
+      rolling over pine forests, wide-angle composition
+    fileName: generated_image
+    referenceImageUrl: ""
+  inputs:
+    signal: {}
+  expect:
+    images: >-
+      return output.images.length > 0
+        && output.images[0].data.length > 1000
+        && output.images[0].mimeType.startsWith('image/')
+        && output.images[0].fileName === 'generated_image_0.png'
+    text: "return typeof output.text === 'string'"
+    metadata: >-
+      return output.metadata.imageCount === output.images.length
+        && output.metadata.model === 'gemini-2.5-flash-image'
+        && output.metadata.generatedAt > 0

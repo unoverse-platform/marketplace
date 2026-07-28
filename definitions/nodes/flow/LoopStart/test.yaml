@@ -1,0 +1,24 @@
+$schema: ../../../_schema/test.schema.json
+
+# THE FIRST PASS, with nothing seeded — so this exercises `open`, which is the path that has to
+# normalise the items input and record the loop. No `continue` in the inputs is exactly what tells
+# the node this is a first pass rather than a resume.
+#
+# The bench runs the REAL loops/loop.ts against an in-memory client, so the pass asserted below was
+# computed by the same code a universe runs, not by the bench.
+
+testData:
+  config:
+    items:
+      - alpha
+      - beta
+      - gamma
+  inputs: {}
+  expect:
+    # THE FIRST ITEM, not merely "an item". A loop that opened at the wrong index would still emit
+    # something on every connector and look fine.
+    item: "return output.item === 'alpha'"
+    # ZERO, and asserted with === so a missing value cannot pass: `undefined == 0` is false but a
+    # truthiness check would have let a dropped connector through as falsy.
+    index: "return output.index === 0"
+    total: "return output.total === 3"

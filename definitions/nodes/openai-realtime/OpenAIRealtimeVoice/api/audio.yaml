@@ -1,0 +1,43 @@
+$schema: ../../../../_schema/audio.schema.json
+
+# THE AUDIO LANE. The platform's socket to the browser, not the vendor's.
+#
+# This file exists for ONE reason: MCP cannot carry binary audio. Everything else this node
+# produces is in events.yaml and reaches the client over MCP streaming. Nothing non-audio
+# should ever be added here.
+#
+# Every key below NAMES computation the executor does. Rates, byte budgets and which event
+# means what — the resampling, the coalescing and the barge-in discard are all identical for
+# every vendor, which is exactly why they are not written out here.
+
+in:
+  # OpenAI wants 24 kHz; the browser captures 16 kHz. Getting this wrong is not an error
+  # anywhere: the model simply hears a chipmunk and it reads as poor accuracy.
+  resampleTo: 24000
+  message:
+    type: input_audio_buffer.append
+    audio: "{{ audio.base64 }}"
+
+out:
+  match: response.output_audio.delta
+  value: "return response.delta"
+  # Flushes what is buffered and THEN signals the end. The order is the executor's guarantee:
+  # SPEECH_ENDED marks the end of the utterance and the client finishes playback once its queue
+  # drains, so a frame sent after it lands on a player that has already stopped.
+  done: response.output_audio.done
+  # BARGE-IN. Buffered audio is DISCARDED, not flushed, because the person is already talking
+  # over the sentence it belongs to.
+  interruptOn: input_audio_buffer.speech_started
+
+control:
+  # The person pressing hang up. Without this the call only ends when the vendor times out.
+  endOn: [END_CALL, stop]
+
+  # THE VENDOR'S VOICE-ACTIVITY DETECTION, forwarded exactly as the retired node forwarded it. The
+  # client uses these to show that it is listening.
+  #
+  # `userSpeaking` names the SAME event as `out.interruptOn` above, and that is deliberate rather
+  # than a duplication: one tells the client the person has started talking, the other throws away
+  # the assistant audio they talked over. Two different jobs that happen to share a trigger.
+  userSpeaking: input_audio_buffer.speech_started
+  userStopped: input_audio_buffer.speech_stopped

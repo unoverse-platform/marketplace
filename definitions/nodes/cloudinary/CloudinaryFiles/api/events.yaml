@@ -1,0 +1,46 @@
+# THE UNIVERSAL ID IS TRANSCRIBED from the service: sha256 of `public_id|version|created_at`, first 12
+# hex chars. Downstream dedup and ref hydration JOIN on it, so a different recipe would not error — it
+# would simply stop matching rows minted before today.
+#
+# RANDOM SELECTION uses `toSorted`, not `sort`: the sandbox has no mutating array methods, and `sort` would
+# reorder the response in place. Same shuffle, new array.
+#
+# It only applies when MORE were found than asked for, which is the service's own condition — shuffling a
+# list you are going to return whole just reorders it for no reason.
+
+- emit: files
+  value: |
+    return (() => {
+      const max = config.maxFiles || 100;
+      const all = (response.resources || []).map(r => ({
+        public_id: r.public_id,
+        version: r.version,
+        signature: r.signature,
+        width: r.width,
+        height: r.height,
+        format: r.format,
+        resource_type: r.resource_type,
+        created_at: r.created_at,
+        tags: r.tags,
+        bytes: r.bytes,
+        type: r.type,
+        etag: r.etag,
+        url: r.url,
+        secure_url: r.secure_url,
+        asset_id: r.asset_id,
+        folder: r.folder,
+        universalId: sha256(r.public_id + '|' + r.version + '|' + r.created_at).substring(0, 12)
+      }));
+      return (config.randomSelection && all.length > max)
+        ? all.toSorted(() => 0.5 - Math.random()).slice(0, max)
+        : all;
+    })();
+
+- emit: count
+  # Counts what was RETURNED, not what exists: the service emitted the length of its own result.
+  value: |
+    return (() => {
+      const max = config.maxFiles || 100;
+      const n = (response.resources || []).length;
+      return (config.randomSelection && n > max) ? max : n;
+    })();

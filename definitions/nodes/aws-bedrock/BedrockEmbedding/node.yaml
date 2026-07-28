@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: BedrockEmbedding
+kind: PromiseNode
+
+name: Bedrock Embedding
+category: AI
+color: "#FF9900"
+
+description: Turn text into a vector using AWS Bedrock Titan models
+
+whenToUse: >-
+  Pick to turn a piece of text into the vector a similarity search needs, run on AWS in your
+  own region and account. It embeds one text inline; offering embeddings to an attached
+  agent on demand is a different node.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Cacheable: the same text and model give the same vector, deterministically. This is one
+  # of the few model calls where reuse is genuinely correct rather than merely cheaper.
+  cacheable: true

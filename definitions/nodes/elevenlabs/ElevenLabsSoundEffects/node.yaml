@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ElevenLabsSoundEffects
+kind: PromiseNode
+
+name: ElevenLabs Sound Effects
+category: Media & Design
+color: "#FF69B4"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg
+
+description: Generate a sound effect clip from a text prompt. Outputs base64 MP3.
+
+whenToUse: >-
+  Generate a sound effect from a text prompt: footsteps on gravel, a door creak, rain, a whoosh, an
+  explosion, ambient room tone. It synthesizes the actual audio of an effect from words and never spoken
+  text, so "door slam" becomes the sound rather than a voice reading the phrase.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: generation is non-deterministic, so the same prompt legitimately gives a new clip.
+  cacheable: false

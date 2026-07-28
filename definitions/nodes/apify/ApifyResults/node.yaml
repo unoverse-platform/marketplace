@@ -28,6 +28,15 @@ whenToUse: >-
   it the run id. It returns every item in the run's dataset, following each page, with a
   stable id per item. To handle them one at a time, wire Loop Start to the items.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # A finished run's dataset is immutable, so the same run id genuinely gives the same
   # items and a prior output may be reused (EXECUTION_EFFICIENCY.md §3.2).

@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the text template
+    required: false
+
+outputs:
+  - name: embedding
+    type: array
+    description: The embedding vector
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

@@ -5,7 +5,7 @@
 # is documented as caching search responses, and dropping the header would silently change
 # which results come back.
 
-auth: &auth
+credential: &credential
   scheme: apiKeyHeader
   header: x-api-key
   value: "{{ credentials.apolloCredential.apiKey }}"

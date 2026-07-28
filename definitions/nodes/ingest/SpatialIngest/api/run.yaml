@@ -1,0 +1,61 @@
+# ONE CALL TO THE PLATFORM'S OWN CONTENT ENGINE, which already owns this pipeline.
+#
+# WHAT THIS NODE USED TO DO, and no longer does. The code version ran the whole thing itself: it called
+# the platform's /execute to run OpenAIStructuredOutput, embedded the results against OpenAI directly,
+# built the entries, and POSTed them to /dictionary/upload. 373 lines, 220 of them a COPY of the engine's
+# extraction prompts and schemas, carrying a `TODO: move to shared package so there is one source of
+# truth` — and the two copies had already drifted to different category sets.
+#
+# The engine's MANUAL connector was written FOR this node ("Used by the SpatialIngest workflow node to
+# push raw text through the full content engine pipeline") and was never used. So this is not a redesign,
+# it is finishing what was started: the node collects text and hands it over, and the schema, the prompts,
+# the embedding credential and the database write stay in the one place that owns them.
+#
+# `connector: MANUAL` IS FIXED, not a dropdown. The other connectors fetch from somewhere — Cloudinary,
+# Google Sheets, a scraper — and those are wired as their own nodes on the canvas. This node exists for
+# text a workflow already has.
+#
+# THE HOST IS DERIVED. `scope.platformUrl` is built from UNOVERSE_RUNTIME_PORT, which docker-compose
+# already sets: the node runs INSIDE this service, so it is calling itself and needs no configuration to
+# learn its own address. The code version read UNOVERSE_SERVICE_URL — a variable set nowhere in the repo
+# — behind a hardcoded localhost fallback, so the fallback was the whole behaviour.
+
+- name: ingest
+  method: POST
+  url: "return scope.platformUrl + '/content/ingest'"
+  transport: json
+
+  body:
+    input:
+      connector: MANUAL
+      # The MANUAL connector's own config shape: { text, sourceUrl? }.
+      config:
+        text: "{{ config.rawContent }}"
+        sourceUrl: "{{ config.sourceUrl }}"
+      mainCategory: "{{ config.category }}"
+      # The engine keys everything by workflow, which is how a dictionary stays scoped to its universe.
+      workflowId: "{{ scope.workflowId }}"
+    maxItems: "return config.maxItems || undefined"
+
+  timeoutMs: 60000
+
+  # The job STARTS here and finishes below. A 200 carrying an error body must not read as success.
+  error:
+    when: "return !!response.error"
+    message: "return response.error"
+
+  # THE JOB, WAITED ON. `/content/ingest` returns a receipt — { jobId, status } — and settling on that
+  # would emit "started" as though it meant "stored", so a downstream node would run against a dictionary
+  # that has not been written yet.
+  poll:
+    url: "return scope.platformUrl + '/content/ingestion/' + response.jobId"
+    # Done when it stops moving. The engine reports its stage as it goes (FETCHING, EXTRACTING,
+    # EMBEDDING, SAVING), so the terminal states are named rather than the live ones.
+    until: "return ['COMPLETED', 'FAILED', 'CANCELLED', 'INTERRUPTED'].includes(response.status)"
+    # FAILED IS NOT FINISHED. INTERRUPTED is the engine's own word for "the server restarted mid-run",
+    # which is a real outcome and must not read as success.
+    failed: "return ['FAILED', 'CANCELLED', 'INTERRUPTED'].includes(response.status)"
+    message: "return response.error || ('ingestion ' + response.status)"
+    intervalMs: 2000
+    # ~10 minutes. Extraction and embedding are per-item LLM calls, so a long document is genuinely slow.
+    maxAttempts: 300

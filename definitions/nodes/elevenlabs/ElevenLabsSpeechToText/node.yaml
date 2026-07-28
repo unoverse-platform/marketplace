@@ -1,0 +1,30 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ElevenLabsSpeechToText
+kind: PromiseNode
+
+name: ElevenLabs Speech to Text
+category: Media & Design
+color: "#FF69B4"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg
+
+description: Transcribe audio to text with word-level timings and optional speaker labels.
+
+whenToUse: >-
+  Turn RECORDED AUDIO into text: a meeting, a voice note, an interview, a video's soundtrack. It reads
+  audio and returns words, which is the opposite direction to every other node in this package. Ask for
+  diarization when you need to know who spoke.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Transcription IS deterministic for a given file, but the input is usually a URL whose contents can
+  # change, and a wrong cached transcript is worse than a slow one.
+  cacheable: false

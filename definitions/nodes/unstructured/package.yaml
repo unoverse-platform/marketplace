@@ -1,0 +1,48 @@
+$schema: ../_schema/package.schema.json
+
+# UNSTRUCTURED — one node that reads documents, replacing two that could not be manifests.
+#
+# WHY THIS EXISTS. Two nodes were stuck for the same reason and neither was worth unsticking:
+#
+#   DocumentParser   parsed pdf/docx IN PROCESS with `pdf-parse` and `mammoth`. Turning document bytes
+#                    into text is local computation, so no amount of "describe the call" reaches it.
+#   AmazonTextract   OCR for scanned documents, and blocked on a capability nobody else needed:
+#                    paginating a FINISHED job's results by NextToken, on top of an async poll, S3
+#                    staging and SigV4 signing. One node, four capabilities.
+#
+# Unstructured covers both jobs — `strategy: fast` reads a digital PDF the way pdf-parse did, and
+# `hi_res`/`ocr_only` reads a scanned one the way Textract did — over a SINGLE synchronous POST. So this
+# package is not just a migration of DocumentParser, it is the reason Textract can be retired rather
+# than migrated, and the reason the NextToken pagination never has to be built.
+#
+# ONE CAPABILITY, ALREADY PRESENT: multipart, built for ElevenLabs speech-to-text. Nothing new here.
+
+name: unstructured
+displayName: Unstructured
+description: Parse documents of any format into text and structured elements
+version: 1.0.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Parse PDF, DOCX, PPTX, XLSX, HTML, images and 20+ other formats into text
+  - OCR scanned documents, replacing a dedicated OCR node
+
+allowedHosts:
+  - api.unstructuredapp.io
+  # ANY HOST, for the UNAUTHENTICATED download only. The node reads a document from a url an upstream node
+  # produced — an S3 presigned link, a Cloudinary delivery url — which cannot be declared in advance. That
+  # call sends NO credential, and the executor refuses "*" the moment one does, so the wildcard cannot
+  # leak this package's api key. Same idiom as aws-bedrock's attachment fetches.
+  #
+  # It also covers a credential naming its own Unstructured host: a serverless account gets one, and
+  # self-hosting gets another. That call DOES send a credential, so it is worth knowing the wildcard does
+  # not sanction it — a self-hosted host has to be added here explicitly.
+  - "*"
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [apiKeyHeader]
+  # `binary` for the optional download of a file given by url, `json` for the parse reply.
+  transport: [json, binary]
+  encoding: [multipart]

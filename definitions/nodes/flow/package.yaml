@@ -1,0 +1,60 @@
+$schema: ../_schema/package.schema.json
+
+# FLOW AS MANIFESTS, node by node.
+#
+# The one package that can migrate INCREMENTALLY, because it declares no credentials. The
+# all-or-nothing rule that forced `aws-toolkit` and `cloudinary` to be split came entirely from
+# the credential coexistence check (a node needs `credentials/<name>.yaml` in its own package,
+# but that file alongside a code `registerCredential` is an error). With no credentials there is
+# no conflict, and `src/index.ts` registers each node on its own line — so a node moves by
+# writing its manifest and deleting those two lines.
+#
+# NO allowedHosts, and that is not an omission. Nothing in this package reaches the network at
+# all; an empty list means the executor refuses every host, which is exactly right here.
+#
+# WHAT IS STILL CODE, and why. Not "pure logic" as the architecture doc had it — none of the three
+# is logic at all:
+#
+#   SendObject         publishes to the live session rather than answering the graph
+#   Suggestions        same, over the websocket
+#   UMAP               runs umap-js IN PROCESS. Genuine local compute, reaching no host.
+#
+# AND TWO REMOVALS rather than migrations. Both are gone from the catalog, so a saved workflow naming
+# either now fails to resolve the type:
+#
+#   FieldValidator  its five outputs all derive from one properties-map cascade, and with no way to
+#                   bind an intermediate value that cascade has to be written out again inside every
+#                   expression needing it — `completionPercentage` alone came to four copies. The
+#                   retired executor used helper methods for exactly that reason.
+#   MCP             a generic schema-driven mcpService provider from before real service nodes
+#                   existed. Superseded by UnoverseMCP in the engine and by per-vendor providers
+#                   (HubspotMCP, SalesforceMCP, SlackMCP), so nothing needed it.
+
+name: flow
+displayName: Flow
+description: Control flow, routing and workflow annotation
+version: 2.0.0
+category: flow
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Notes and documentation on the canvas
+  - Branch, relay and read the running workflow's own context
+  - Transform data inline, with optional content ids and run-scoped saved values
+  - Loop over an array, running real workflow steps once per item
+
+requires:
+  executorVersion: ">=1.5.0"
+  # Code's "Save to Context" toggle. Declared even though it cannot silently no-op the way a cache
+  # read can — an executor without `save` throws rather than shrugging — because the reason to
+  # declare is the same either way: the package says which platform capabilities its nodes need, so
+  # installing it against an older executor fails at install rather than at run.
+  state:
+    - save
+  # The LoopStart/LoopEnd pair. More is at stake in declaring these than in most capabilities: an
+  # executor that cannot keep an index does not iterate, so an install that skipped this check would
+  # run a loop body exactly once and report success.
+  loop:
+    - open
+    - read
+    - advance

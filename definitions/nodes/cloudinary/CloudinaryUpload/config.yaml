@@ -1,0 +1,80 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [imageData, folder]
+  properties:
+    imageData:
+      type: string
+      title: File
+      description: >-
+        A URL Cloudinary can fetch, a data URI, or bare base64. Bare base64 is given a
+        data:image/png;base64, prefix automatically, matching the code version.
+      default: ""
+      "ui:field": template
+    folder:
+      type: string
+      title: Folder
+      # REQUIRED, deliberately. Cloudinary will happily accept no folder and drop the asset in the account
+      # ROOT, which is unmanageable the moment a workflow uploads more than a handful — nothing groups,
+      # nothing is findable, and nothing can be deleted in bulk later. The code version allowed it; this
+      # does not, which is the one place this node is deliberately stricter than what it replaces.
+      description: Folder to store the asset in. Every upload belongs in one.
+      default: generated
+    publicId:
+      type: string
+      title: Public ID
+      description: >-
+        Name for the asset. Any file extension is stripped and characters Cloudinary rejects become
+        underscores, so a filename can be passed straight in. Leave blank for a generated id.
+      default: ""
+      "ui:field": template
+    tags:
+      type: string
+      title: Tags
+      description: Comma-separated tags, e.g. "cover,generated"
+      default: ""
+    resourceType:
+      type: string
+      title: Resource Type
+      description: What kind of asset this is. Cloudinary treats each differently.
+      enum: [image, video, raw, auto]
+      enumNames: [Image, Video, Raw, Auto-detect]
+      default: image
+    overwrite:
+      type: boolean
+      title: Overwrite
+      description: Replace an existing asset with the same public id
+      default: false
+      "ui:widget": toggle
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [imageData, folder, publicId, tags, resourceType, overwrite, authRequired, authRole]

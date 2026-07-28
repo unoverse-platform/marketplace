@@ -1,0 +1,37 @@
+$schema: ../../../_schema/test.schema.json
+
+# `code` arrives ALREADY RESOLVED — it is a template field the engine evaluates before the node runs —
+# so a fixture supplies the finished value, not the expression that produced it. This is the retired
+# node's own testData, unchanged, for exactly that reason.
+#
+# `generateIds` is ON here, which the retired fixture had off. With it off the ids row never fires and
+# the fixture proves nothing about the hashes, and the hashes are the only computing this node does.
+#
+# THE IDS ARE ASSERTED BY SHAPE, not by value, and deliberately. The bench supplies fixed run ids so
+# the hashes ARE stable run to run and an exact value could be written down — but pinning one here
+# would assert the bench's ids rather than the algorithm, and it would have to be rewritten the day
+# the bench changed them. The contentId does not depend on the run at all, and its exact value is
+# checked against the retired hashUtils.ts directly rather than through a fixture.
+
+testData:
+  config:
+    code:
+      greeting: hello from Code
+      doubled: 42
+    generateIds: true
+    saveToContext: false
+  inputs:
+    signal:
+      value: 21
+  expect:
+    # THE VALUE PASSES THROUGH AS AN OBJECT. A resolver that stringified it on the way would still
+    # look plausible in a log, so assert the field rather than the whole.
+    output: "return output.output.greeting === 'hello from Code' && output.output.doubled === 42"
+    # Twelve hex characters each, and the two must DIFFER: they hash different strings (the value
+    # alone versus the value keyed by workflow and node), so equal ids would mean one of the two
+    # expressions is hashing the wrong thing.
+    ids: >-
+      return output.ids.contentId.length === 12
+        && output.ids.universalId.length === 12
+        && output.ids.contentId !== output.ids.universalId
+        && output.ids.contentId.split('').every(c => '0123456789abcdef'.includes(c))

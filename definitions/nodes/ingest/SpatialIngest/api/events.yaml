@@ -1,0 +1,17 @@
+# `response` is the FINAL job status, not the receipt — that is what `poll` settles on.
+
+- emit: success
+  value: "return response.status === 'COMPLETED'"
+
+- emit: count
+  # `processedRows` is the engine's own count of rows taken all the way through extract, embed and save,
+  # which is what "how many entries were stored" means. `totalItems` counts what was FETCHED, and for the
+  # MANUAL connector that is always 1 — the single blob of text — so reading it would report 1 forever.
+  value: "return ((response.progress || {}).processedRows) || 0"
+
+- emit: universalIds
+  # EMPTY, and honestly so. The code version minted these ids itself and could therefore list them; the
+  # engine mints them now and its job status reports counts rather than ids. Emitting [] is the truthful
+  # answer until the engine's status carries them — inventing ids here, or re-deriving them from the text,
+  # would produce values that do not match the rows actually written.
+  value: "return []"

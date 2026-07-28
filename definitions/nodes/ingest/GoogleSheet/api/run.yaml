@@ -1,0 +1,40 @@
+# ONE GET. This is the whole of talking to Google Sheets — the code version's 186-line executor was
+# iteration bookkeeping, not API work.
+#
+# `apiKeyQuery`, because Sheets takes the key as `?key=`, not a header. That scheme already existed.
+#
+# THE RANGE IS ENCODED. A1 notation contains `!` and often a sheet name with spaces, and it sits in the
+# PATH — unencoded, "My Sheet!A1:D10" produces a malformed URL that 400s with a message about the
+# range rather than about the encoding. `encodeURIComponent` is in the sandbox for exactly this.
+
+- name: values
+  method: GET
+  url: "return 'https://sheets.googleapis.com/v4/spreadsheets/' + config.spreadsheetId + '/values/' + encodeURIComponent(config.range || 'Sheet1')"
+
+  credential:
+    scheme: apiKeyQuery
+    param: key
+    value: "{{ credentials.googleApiCredential.apiKey }}"
+
+  query:
+    # The code version's own two: rows rather than columns, and raw values rather than the
+    # display-formatted strings, so a number arrives as a number.
+    majorDimension: ROWS
+    valueRenderOption: UNFORMATTED_VALUE
+
+  transport: json
+
+  # Google answers with { error: { code, message, status } }. The message is already specific — "Unable
+  # to parse range", "The caller does not have permission" — so it is surfaced as-is rather than
+  # replaced by a guess, with one addition: a 403 on this endpoint almost always means the sheet is not
+  # shared, which the vendor's wording does not say and the reader needs to hear.
+  error:
+    when: "return !!response.error"
+    message: |
+      return (() => {
+        const e = response.error;
+        const hint = e.code === 403
+          ? ' — check the sheet is shared so anyone with the link can view it, and that the API key has the Sheets API enabled'
+          : '';
+        return e.message + hint;
+      })();

@@ -1,0 +1,30 @@
+$schema: ../../../_schema/test.schema.json
+
+# `elements` arrives ALREADY RESOLVED — it is a template field the engine evaluates before the node
+# runs — so the fixture supplies the finished object rather than the expression that built it.
+#
+# The values here exercise the sanitising the body does: a plain string becomes a text payload, a URL
+# becomes an image layer, and a blank becomes "_" because Abyssale rejects an empty layer.
+#
+# WHAT THIS CANNOT PROVE without a key: whether the template id exists. It reaches the real API, so a
+# run needs INGEST_ABYSSALE_API_KEY (or ABYSSALE_API_KEY) and a template from your own dashboard.
+
+testData:
+  config:
+    templateId: 00000000-0000-0000-0000-000000000000
+    multiPage: false
+    compressionLevel: 80
+    elements:
+      headline: Glass-Box Horizon
+      logo: https://example.com/logo.png
+      subtitle: ""
+  inputs:
+    data:
+      text: Glass-Box Horizon
+  expect:
+    # A REAL URL, not merely a populated object. The unwrap has several fallbacks, and every one of
+    # them can produce an object of undefineds that looks like a result.
+    output: >-
+      return typeof output.output.url === 'string'
+        && output.output.url.startsWith('http')
+        && typeof output.output.fileType === 'string'

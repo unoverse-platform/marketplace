@@ -1,0 +1,44 @@
+$schema: ../_schema/package.schema.json
+
+# ELEVENLABS, fully declarative — all five nodes.
+#
+# ALL FIVE, not four, and that is forced rather than ambitious: they share ONE credential, and
+# declaration is all-or-nothing per package (`registerCredentialType` is first-wins and silent, so a
+# credentials/*.yaml alongside a live registerCredential() means one of them vanishes at random). So
+# SpeechToText could not be left behind — which is why `encoding: multipart` was built first.
+#
+# FOUR SHAPES, ONE PACKAGE:
+#   TTS, Dialogue, Music, SoundEffects   POST JSON, receive raw audio bytes → transport: binary
+#   SpeechToText                         POST a FORM carrying the audio file → encoding: multipart
+#
+# ONE PATH DROPPED, deliberately, and it is worth reading before assuming it was an oversight. The TTS
+# node also carried a MULTI-SPEAKER COMPAT path: it sniffed [DETECTIVE]: labels out of the text, mapped
+# them to hardcoded voice pools, tried /text-to-dialogue, and on failure fell back to one TTS call per
+# segment with the mp3 buffers CONCATENATED. That concatenation is byte work no manifest can describe.
+#
+# It is gone because its reason is gone. The path existed to preserve the MurderMystery app, which is now
+# in _legacy/; `characterId` and `characterGender` appear nowhere in apps/ outside the node's own files;
+# and the service's own header already said "for general multi-speaker work prefer the dedicated
+# ElevenLabs Dialogue node", which is in this package and takes explicit per-line voices. So the
+# capability is not lost, it moved to the node built for it.
+
+name: elevenlabs
+displayName: ElevenLabs
+description: Speech, dialogue, music and sound effects from ElevenLabs
+version: 2.0.0
+category: media
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg
+
+features:
+  - Text to speech, dialogue, music and sound effects
+  - Transcription with word-level timings
+
+allowedHosts:
+  - api.elevenlabs.io
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [apiKeyHeader]
+  # `binary` for the four generators, `json` for transcription's reply.
+  transport: [binary, json]
+  encoding: [multipart]

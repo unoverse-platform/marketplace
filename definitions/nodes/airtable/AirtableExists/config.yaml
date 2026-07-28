@@ -27,4 +27,33 @@ configSchema:
       default: ""
       "ui:field": template
 
-"ui:order": [baseId, tableId, field, value]
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [baseId, tableId, field, value, authRequired, authRole]

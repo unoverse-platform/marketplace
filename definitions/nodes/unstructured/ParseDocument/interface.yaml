@@ -1,0 +1,22 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: file
+    type: object
+    description: "The document: { downloadUrl } or { content } base64, as S3 Files and Cloudinary emit"
+    required: false
+
+outputs:
+  - name: text
+    type: string
+    description: The whole document as plain text, elements joined in reading order
+  - name: elements
+    type: array
+    description: Structured elements — each with type (Title, NarrativeText, Table), text and metadata
+  - name: metadata
+    type: object
+    description: pageCount, elementCount, fileType, tables (as HTML when present)
+
+credentials:
+  - name: unstructuredCredential
+    required: true

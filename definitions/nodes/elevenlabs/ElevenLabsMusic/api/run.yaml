@@ -1,0 +1,27 @@
+# ONE POST returning RAW AUDIO, like the other three generators.
+#
+# THE LENGTH IS IN MILLISECONDS on the wire while the field is in SECONDS, which is the vendor's unit and
+# a trap worth naming: passing seconds straight through asks for a three-second track and gets one.
+# Clamped to the endpoint's 10–300s window, transcribed from the service, and ROUNDED because a
+# fractional millisecond is rejected.
+
+- name: compose
+  method: POST
+  url: https://api.elevenlabs.io/v1/music
+  credential: { $ref: credential }
+
+  body:
+    prompt: "{{ config.prompt }}"
+    model_id: "{{ config.modelId }}"
+    music_length_ms: >-
+      return typeof config.lengthSeconds === 'number'
+        ? Math.round(Math.max(10, Math.min(300, config.lengthSeconds)) * 1000) : undefined
+    force_instrumental: "return config.forceInstrumental ? true : undefined"
+
+  query:
+    # A QUERY param on /v1/music, not a body field — the service says so explicitly.
+    output_format: "{{ config.outputFormat }}"
+
+  # Longer than the others: composing a few minutes of music takes far more than a sound effect.
+  timeoutMs: 300000
+  transport: binary

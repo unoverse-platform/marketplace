@@ -1,0 +1,23 @@
+# THREE ROWS, ONE PAYLOAD. Whichever entry ran — `read` on a resume, `open` on a first pass — the
+# node settles on the same { item, index, total } shape, so one table serves both paths and there is
+# nothing here that has to know which happened.
+#
+# THESE NAMES ARE AN ENGINE CONTRACT. `executingState.ts` lifts item, index and total off a node
+# whose type is "LoopStart" into `activeLoop`, and that is what makes {{ loop.item }} resolve for
+# every node in the loop body. Renaming one would leave the body's templates silently empty rather
+# than erroring.
+#
+# ONE KNOWN DIFFERENCE from the retired node, stated because it is real rather than hidden: the
+# emitter drops null, so an array element that IS null emits nothing on `item` where the retired
+# executor emitted null. `index` is unaffected — 0 is not null. It only bites on a loop over an
+# array of nulls, and fixing it means changing what `deliver` does for every node in the platform,
+# which is not a change to make for this.
+
+- emit: item
+  value: "return response.item"
+
+- emit: index
+  value: "return response.index"
+
+- emit: total
+  value: "return response.total"

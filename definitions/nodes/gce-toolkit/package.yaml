@@ -1,0 +1,39 @@
+$schema: ../_schema/package.schema.json
+
+# GEMINI IMAGE GENERATION AS A MANIFEST. Needed nothing new: an api-key header, a JSON POST,
+# and `transport: binary` for the optional reference photo, which S3Upload had already forced.
+#
+# TWO THINGS CHANGED, both recorded on the node itself:
+#
+#   the instruction text  The retired service held two long instruction strings inline. They
+#                         are prompt BLOCKS now, because a node holding a copy of words that
+#                         also live in a block is a copy that drifts.
+#   generateContent       The retired service used the SDK's generateContentStream and
+#                         accumulated the chunks. This asks the non-streaming endpoint for the
+#                         same thing, so the node still settles once and stays a PromiseNode.
+#
+# The retired TypeScript is at `_legacy/nodes/gce-toolkit/`.
+
+name: gce-toolkit
+displayName: Google Gemini
+description: Generate images with Google Gemini models
+version: 2.0.0
+category: media
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png
+
+features:
+  - Text to image, several images per request
+  - An optional reference photo, used for facial likeness only
+  - The model's own text response alongside the images
+
+allowedHosts:
+  - generativelanguage.googleapis.com
+  # Any host, for the UNAUTHENTICATED reference-photo fetch only. The url is one a person
+  # supplies, so it cannot be declared in advance. That call sends no credential, and the
+  # executor refuses "*" the moment one does.
+  - "*"
+
+requires:
+  credential: [apiKeyHeader]
+  transport: [json, binary]
+  executorVersion: ">=1.4.0"

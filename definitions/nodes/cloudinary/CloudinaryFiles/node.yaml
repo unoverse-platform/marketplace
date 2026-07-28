@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: CloudinaryFiles
+kind: PromiseNode
+
+name: Cloudinary Files
+category: Media & Design
+color: "#3448C5"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png
+
+description: List media already stored in Cloudinary, optionally filtered by folder or tag.
+
+whenToUse: >-
+  Find assets ALREADY in Cloudinary — browse a folder, pull everything with a tag, or take a random
+  selection for a gallery. It reads an existing library rather than creating anything, so pair it with
+  Cloudinary Upload when the asset does not exist yet.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: a library changes as things are uploaded, and random selection is meant to differ.
+  cacheable: false

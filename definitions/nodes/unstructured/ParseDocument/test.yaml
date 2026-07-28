@@ -1,0 +1,28 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running it live needs UNSTRUCTURED_API_KEY. It reaches the real API and bills per page, so the fixture
+# uses a ONE-PAGE public PDF and `strategy: fast` — the cheapest path that still proves the whole chain:
+# the url is downloaded, the bytes become a multipart file part, and elements come back.
+#
+# `fileName` carries the extension deliberately. Unstructured picks its parser from it, so a name without
+# one parses badly and reports no error — the single easiest thing to get wrong about this node.
+
+testData:
+  config:
+    fileUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+    fileName: dummy.pdf
+    strategy: fast
+  inputs:
+    file:
+      downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+  expect:
+    # REAL TEXT, not merely a string. An empty parse returns [] and would still join to "", which is the
+    # failure this has to distinguish from success.
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    # ELEMENTS WITH A TYPE. Unstructured's whole value over a plain text dump is the structure, so an
+    # element missing `type` means the response shape changed.
+    elements: >-
+      return Array.isArray(output.elements)
+        && output.elements.length > 0
+        && typeof output.elements[0].type === 'string'
+    metadata: "return output.metadata.elementCount === output.elements.length"

@@ -41,7 +41,7 @@ allowedHosts:
 # Executor capabilities every manifest node here depends on. Deploy REFUSES this
 # package if the target universe's executor cannot satisfy them.
 requires:
-  auth: [bearer]
+  credential: [bearer]
   transport: [json]
   state: [merge, drain]
   executorVersion: ">=1.1.0"

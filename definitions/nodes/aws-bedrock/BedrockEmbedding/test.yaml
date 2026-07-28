@@ -1,0 +1,14 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    text: The quick brown fox jumps over the lazy dog.
+    model: amazon.titan-embed-text-v2:0
+    dimensions: 1024
+    normalize: true
+  inputs:
+    signal: {}
+  expect:
+    # The LENGTH is the assertion that matters: a vector of the wrong size is rejected by
+    # whatever store it goes into, and "is an array" would pass on an empty one.
+    embedding: "return output.embedding.length === 1024 && typeof output.embedding[0] === 'number'"

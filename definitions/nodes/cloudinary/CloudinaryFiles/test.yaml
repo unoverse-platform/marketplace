@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET. Read-only — it lists and
+# writes nothing.
+
+testData:
+  config:
+    maxFiles: 5
+    resourceType: image
+    randomSelection: false
+  inputs:
+    signal: {}
+  expect:
+    # An ARRAY, and the cap honoured. A listing that ignored max_results would still look like a success.
+    files: "return Array.isArray(output.files) && output.files.length <= 5"
+    count: "return output.count === output.files.length"

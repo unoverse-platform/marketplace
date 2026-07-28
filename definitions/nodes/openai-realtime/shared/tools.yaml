@@ -1,0 +1,48 @@
+# The OpenAI REALTIME tool protocol.
+#
+# Vendor-specific, so it does not belong in the platform runtime. Node-agnostic, so it does not
+# belong copied into a node either. It belongs here, exactly as `openai/shared/tools.yaml` holds the
+# Responses protocol — imported whole:
+#
+#   toolExchange:
+#     $ref: ../../shared/tools.yaml
+#
+# WHY THIS IS NOT `openai/shared/tools.yaml`. Same vendor, different API, and three real differences
+# rather than cosmetic ones:
+#
+#   the call event   Responses says `response.output_item.done` and needs a `when` to tell a function
+#                    call from any other completed item. Realtime has a dedicated
+#                    `response.function_call_arguments.done`, so no `when` is needed.
+#   no toolsInto     Responses puts the tool list in each REQUEST. A realtime session declares it
+#                    ONCE in the handshake, so there is no request field to name; run.yaml reads
+#                    `services.mcpService.tools` into session.update itself.
+#   no continuity    Responses chains turns with previous_response_id. THE SOCKET IS THE CONTINUITY:
+#                    the conversation never ended, so there is nothing to chain.
+#
+# Also absent, and deliberately: `maxTurns` and `stuckAfterRepeats`. Both count turns, and a turn is
+# one model call. Nothing to count here. What bounds a runaway session is the executor's own idle and
+# duration ceiling.
+
+# How ONE tool is offered. `tool` is { name, description, parameters }.
+tool: >-
+  return { type: 'function', name: tool.name, description: tool.description,
+           parameters: tool.parameters }
+
+# How a call ARRIVES. `match` is what makes a stream tractable: events keep coming for the whole
+# conversation, and this says which of them is a tool call rather than a transcript or audio.
+call:
+  match: response.function_call_arguments.done
+  id: "return response.call_id"
+  name: "return response.name"
+  # A JSON STRING, which the executor parses. The trap the schema warns about: passed through
+  # unparsed, the tool receives a string where it expected its parameters.
+  arguments: "return response.arguments"
+
+# How the result goes BACK. TWO messages, because OpenAI separates them: the output joins the
+# conversation, then a response is asked for. Without the second the model holds the result silently.
+result: >-
+  return [
+    { type: 'conversation.item.create',
+      item: { type: 'function_call_output', call_id: call.id, output: call.output } },
+    { type: 'response.create' }
+  ]

@@ -1,0 +1,29 @@
+# ONE ROW. `response` here is the FINAL poll payload, not the start receipt — that is what `poll`
+# settles on, and the whole reason the capability exists.
+#
+# THE UNWRAP IS TRANSCRIBED from the retired node: a finalized request carries `banners[0]`, but some
+# templates answer with the file at the top level instead, so each field falls back the way it always
+# did. Getting this wrong would emit an object of undefineds rather than failing, which is why the
+# fixture asserts a real url.
+#
+# `id` comes from the response rather than the request: by this point the generation request has
+# echoed its own id back, and reading it here keeps the row a pure function of the reply.
+
+- emit: output
+  value: |
+    return (() => {
+      const banner = (response.banners || [])[0] || response;
+      const file = banner.file || response.file || {};
+      const format = banner.format || response.format || {};
+      const template = banner.template || response.template || {};
+      return {
+        url: file.url,
+        cdnUrl: file.cdn_url || file.url,
+        fileType: file.type || 'pdf',
+        filename: file.filename || (response.id || '') + '.pdf',
+        width: format.width || 0,
+        height: format.height || 0,
+        templateId: template.id || config.templateId,
+        templateName: template.name || ''
+      };
+    })();

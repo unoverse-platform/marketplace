@@ -1,0 +1,28 @@
+$schema: ../../../_schema/test.schema.json
+
+# THIS FIXTURE NEEDS THE PLATFORM RUNNING, which makes it the only one in the tree that does. Every other
+# node reaches a vendor over the internet; this one calls the engine on 127.0.0.1:4106, so `unoverse node
+# test SpatialIngest` fails with a connection error unless the service is up.
+#
+# It also WRITES: a successful run stores real entries in the dictionary for `workflowId`. The bench has
+# no run behind it, so scope.workflowId is empty and the engine scopes the rows to "" — which is worth
+# knowing before running it against a database you care about.
+#
+# The text is deliberately two clear, separate needs, so `count` proves the extraction split them rather
+# than storing one blob.
+
+testData:
+  config:
+    rawContent: >-
+      We need a way to track invoices that are overdue by more than 30 days. Separately, the support team
+      needs a single place to see every open ticket for one customer.
+    category: NEED
+    sourceUrl: https://example.com/notes/planning
+  inputs:
+    signal: {}
+  expect:
+    success: "return output.success === true"
+    # MORE THAN ZERO, not an exact number: how many needs an LLM finds in a paragraph is not deterministic,
+    # so asserting 2 would fail on a reasonable day. Zero is the real failure — it means the text went
+    # through and nothing was stored.
+    count: "return output.count > 0"

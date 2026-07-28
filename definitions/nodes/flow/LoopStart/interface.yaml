@@ -1,0 +1,31 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: items
+    type: array
+    description: Array of items to iterate over
+
+  # INTERNAL, and not wired by hand. LoopEnd routes its `continue` output back here by
+  # loopStartNodeId, and on that signal this node emits the item at the index LoopEnd just advanced.
+  # It is a separate connector rather than a flag on `items` because the two arrivals mean different
+  # things: `items` opens a loop, `continue` resumes one.
+  - name: continue
+    type: signal
+    signal: CONTINUE
+    required: false
+    description: "Internal: next-iteration signal from the paired LoopEnd (do not wire manually)"
+
+# THESE THREE NAMES ARE AN ENGINE CONTRACT, not a preference. `executingState.ts` lifts item, index
+# and total off any node whose type is literally "LoopStart" into `activeLoop`, and that is what makes
+# {{ loop.item }} resolve for every node inside the loop body. Renaming one would leave the body's
+# templates silently empty.
+outputs:
+  - name: item
+    type: object
+    description: Current item being processed
+  - name: index
+    type: number
+    description: 0-based index of the current item
+  - name: total
+    type: number
+    description: Total number of items in the array

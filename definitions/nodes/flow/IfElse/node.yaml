@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: IfElse
+kind: PromiseNode
+
+name: If/Else
+category: Flow
+color: "#4A90E2"
+
+description: Evaluate a condition and route to a true or false output
+
+whenToUse: >-
+  Branch the workflow: evaluate a boolean condition and send the same payload down either a true
+  or a false path, so only one downstream branch runs. Reach for it when a step must FORK
+  execution rather than change data, because the upstream payload passes through untouched on
+  whichever single edge is chosen.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Nothing is fetched and nothing has a side effect, but caching is still wrong: the condition is
+  # a template over the incoming data, so the same node legitimately answers differently on every
+  # run. A cached branch would pin the workflow to whichever way it went first.
+  cacheable: false

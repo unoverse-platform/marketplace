@@ -1,0 +1,33 @@
+$schema: ../../../_schema/node.schema.json
+
+type: LoopEnd
+# A PromiseNode, like its partner. It settles once per pass: it moves the index and answers on
+# exactly one of its two dots. Nothing about it is an actor.
+kind: PromiseNode
+
+name: Loop End
+category: Flow
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Closes a LoopStart loop; optionally collects a value each pass, emitting results when done.
+
+whenToUse: >-
+  Close a per-item loop and gather its results: collect a value on each pass and emit
+  { done, collected, total } once the array is exhausted, then carry on with the collected list. It
+  is the required closer for a LoopStart, so set loopStartNodeId to that node's id; it does nothing
+  on its own.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: it MOVES the index. A cached answer would return the same pass forever and the
+  # loop would never finish, which is the worst possible thing to cache.
+  cacheable: false

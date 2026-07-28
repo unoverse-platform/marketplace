@@ -1,0 +1,28 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running this live needs INGEST_GOOGLE_API_KEY (or GOOGLE_API_KEY) and a spreadsheet id of your own,
+# SHARED so anyone with the link can view it — an API key cannot open a private sheet, which is the
+# failure the error message above exists to explain.
+#
+# The id below is a placeholder rather than a real sheet: inventing one that happened to resolve would
+# make this fixture pass for a reason nobody chose.
+
+testData:
+  config:
+    spreadsheetId: 1aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789ABCDEFG
+    range: Sheet1!A1:D10
+    useHeaders: true
+  inputs:
+    signal: {}
+  expect:
+    # AN ARRAY OF OBJECTS, not merely an array. With useHeaders on, getting raw arrays back means the
+    # header branch was skipped — which is exactly what happens if the sheet has only one row, so this
+    # distinguishes "mapped correctly" from "fell through".
+    rows: >-
+      return Array.isArray(output.rows)
+        && output.rows.length > 0
+        && typeof output.rows[0] === 'object'
+        && !Array.isArray(output.rows[0])
+    # The count must AGREE with what came out. A total read off the wrong array would still be a
+    # plausible number.
+    total: "return output.total === output.rows.length"

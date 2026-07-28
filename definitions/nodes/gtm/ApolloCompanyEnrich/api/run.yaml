@@ -3,7 +3,7 @@
 - name: enrich
   method: GET
   url: https://api.apollo.io/api/v1/organizations/enrich
-  auth: { $ref: apollo#auth }
+  credential: { $ref: apollo#credential }
   headers: { $ref: apollo#headers }
   query:
     domain: "return String(config.domain || '').trim()"

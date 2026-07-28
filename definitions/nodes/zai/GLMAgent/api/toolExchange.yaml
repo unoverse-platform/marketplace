@@ -1,0 +1,51 @@
+# THE CHAT COMPLETIONS TOOL PROTOCOL, described here rather than in the platform — a different vendor
+# is a different manifest, not another adapter file in the runtime.
+#
+# It differs from OpenAI's Responses API in two structural ways, and both needed executor capabilities
+# that did not exist before 2026-07-28:
+#
+#   FRAGMENTS      a tool call arrives across MANY events. GLM sends {"qu then ery":"x"}, so reading
+#                  `arguments` off any single event yields unparseable JSON. `each` + `index` merge them
+#                  and CONCATENATE arguments.
+#   NO CHAIN ID    there is no previous_response_id, so `transcript` carries the history instead.
+#
+# NO `match`, deliberately: a Chat Completions chunk has no `type` field at all, so every event is
+# considered and `when` does the filtering.
+
+# How ONE tool is offered. Note the nested `function` object — Responses API puts name at the top level.
+tool: >-
+  return { type: 'function',
+           function: { name: tool.name, description: tool.description, parameters: tool.parameters } }
+toolsInto: tools
+
+call:
+  when: "return Array.isArray((((response.choices || [])[0] || {}).delta || {}).tool_calls)"
+  each: "return (((response.choices || [])[0] || {}).delta || {}).tool_calls || []"
+  # Merged by INDEX, not id: the id arrives on the first fragment only, so a later fragment has nothing
+  # else to join on. Parallel tool calls are why the vendor sends an index at all.
+  index: "return part.index || 0"
+  id: "return part.id"
+  name: "return (part.function || {}).name"
+  arguments: "return (part.function || {}).arguments"
+
+# How ONE result goes back: a `tool` message joined to the call by id.
+result: "return { role: 'tool', tool_call_id: call.id, content: call.output }"
+
+transcript:
+  # The assistant's own words this turn. With preambles on GLM explains itself before calling a tool,
+  # and dropping that would cost the model its reasoning thread on the next turn.
+  text: "return (((response.choices || [])[0] || {}).delta || {}).content"
+  assistant: >-
+    return { role: 'assistant', content: text || null,
+             tool_calls: calls.map(c => ({ id: c.id, type: 'function',
+                                           function: { name: c.name, arguments: c.arguments } })) }
+
+# Always auto: which tool to reach for is carried by the tool DESCRIPTIONS, never by forcing a choice.
+choiceInto: tool_choice
+choice: auto
+
+# The dial. 1 answers in a single pass and cannot use a tool at all.
+maxTurns: "{{ config.maxTurns }}"
+# The SAME call with the SAME arguments three times is stuck. maxTurns does not catch it: a model
+# calling many DIFFERENT tools forever is not stuck by that rule.
+stuckAfterRepeats: 3

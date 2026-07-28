@@ -13,6 +13,15 @@ whenToUse: >
   channel's history, list channels, look up a user, or react to a post. Attach it to an
   agent so it can talk to a team, or trigger it directly to post to a default channel.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # Sending a message is a side effect, so reuse must never stand in for it.
   cacheable: false

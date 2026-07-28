@@ -4,12 +4,12 @@
 # an X-API-KEY header, every other endpoint takes it as an `api_key` query parameter. Both
 # are executor capabilities, so each call names the one its endpoint wants.
 
-queryAuth: &queryAuth
+queryCredential: &queryCredential
   scheme: apiKeyQuery
   param: api_key
   value: "{{ credentials.hunterCredential.apiKey }}"
 
-headerAuth: &headerAuth
+headerCredential: &headerCredential
   scheme: apiKeyHeader
   header: X-API-KEY
   value: "{{ credentials.hunterCredential.apiKey }}"

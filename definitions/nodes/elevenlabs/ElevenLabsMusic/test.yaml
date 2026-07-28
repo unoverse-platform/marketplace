@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs ELEVENLABS_API_KEY. The shortest allowed length is used deliberately: this spends credits and
+# composes in real time, so a 300-second fixture would be a slow test and an expensive one.
+
+testData:
+  config:
+    prompt: slow cinematic piano with strings, hopeful, building
+    lengthSeconds: 10
+    forceInstrumental: true
+  inputs:
+    input: slow cinematic piano with strings, hopeful, building
+  expect:
+    audio: >-
+      return typeof output.audio.data === 'string'
+        && output.audio.data.length > 1000
+        && output.audio.mimeType.startsWith('audio/')
+    metadata: "return output.metadata.lengthSeconds === 10"

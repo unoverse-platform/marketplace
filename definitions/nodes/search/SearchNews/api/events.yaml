@@ -1,12 +1,26 @@
 - emit: newsResults
   from: response
   # `source` arrives as a string on some results and as { name, icon } on others.
+  #
+  # A `data:` THUMBNAIL IS DROPPED, and this is a second line of defence rather than the fix. The fix
+  # is the engine (see api/run.yaml): `google_news_light` returns thumbnail URLs where `google_news`
+  # inlined ~3.5 KB of base64 per result. This rule means that if the engine is ever changed back, or
+  # SearchApi starts inlining on the light engine too, the base64 still cannot reach the workflow
+  # payload, the client or the event log.
+  #
+  # DROPPED RATHER THAN TRUNCATED, deliberately. A cut-off data URI is a CORRUPT image that a renderer
+  # will still try to display and show as a broken tile, which is worse than no image: the field is
+  # already declared as possibly-empty, so absence is a state every consumer handles.
+  #
+  # `slice` keeps `numResults` meaning what it says. The light engine honours `num` today — verified
+  # against the live API, 10 requested and 10 returned — but that parameter is absent from its docs,
+  # so this is what stops an undocumented change turning into a silently different result count.
   value: >-
-    return (response.organic_results || []).map(r => ({
+    return (response.organic_results || []).slice(0, config.numResults || 10).map(r => ({
       title: r.title || "",
       url: r.link || "",
       source: typeof r.source === "string" ? r.source : (r.source || {}).name || "",
       date: r.date || "",
       snippet: r.snippet || "",
-      thumbnail: r.thumbnail || ""
+      thumbnail: (r.thumbnail || "").startsWith("data:") ? "" : r.thumbnail || ""
     }))

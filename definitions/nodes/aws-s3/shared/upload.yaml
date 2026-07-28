@@ -1,0 +1,71 @@
+# WHAT IS BEING UPLOADED, derived here so the request and the output cannot disagree.
+#
+# The bytes go in the PUT body, the content type goes in its header, and both the type and the
+# size go on the output. Deriving them where they are used would put copies in two files, and
+# a drift between those copies uploads one thing while reporting another.
+#
+# `contentType` and the size appear twice WITHIN this file, because a $ref substitutes a whole
+# YAML value and neither can be spliced into the middle of the output expression. Same reason
+# `files.yaml` repeats its filter chain. Keeping the copies in one file is the point: a reader
+# sees them together and can check they agree, which is not true of copies in separate files.
+#
+# WHY THE STRIPPING EXISTS. A base64 field is very often filled from something that produced a
+# DATA URL, "data:image/png;base64,iVBOR...", because that is what a browser file read and most
+# image APIs hand back. Uploading it verbatim writes that literal text into the object, which
+# succeeds, reports a plausible size, and produces a file nothing can open. The retired node
+# stripped the prefix for that reason and this keeps doing it.
+
+# The bytes. On the url path this is `calls.source` WHOLE, because `encoding: binary` accepts
+# either a base64 string or the { base64 } object the binary transport produced. On the base64
+# path it is everything after the last comma, since base64 itself contains none.
+payload: &payload >-
+  return config.sourceType === 'url'
+    ? (calls.source || {})
+    : (String(config.base64Data || '').includes(',')
+        ? String(config.base64Data || '').split(',').at(-1)
+        : String(config.base64Data || ''))
+
+# What the file IS. An explicit setting wins, then whatever the source declared: the url's own
+# reply header, or the data URL's prefix between the colon and the semicolon. The fallback is
+# the one S3 assumes anyway, stated rather than left implicit.
+contentType: &contentType >-
+  return config.contentType
+    || (config.sourceType === 'url'
+          ? ((calls.source || {}).contentType || '')
+          : (String(config.base64Data || '').startsWith('data:')
+              ? String(config.base64Data || '').slice(5).split(';')[0] : ''))
+    || 'application/octet-stream'
+
+# The output shape.
+#
+# `s3Url` is the object's own address and needs credentials to fetch. `downloadUrl` is the
+# presigned one and does not. Both are returned because they answer different questions: where
+# the file lives, and how to hand it to something with no AWS access. The retired node used
+# these two names, so both keep them.
+#
+# The SIZE is only derived here, and it is not the base64 string length: base64 spends 4
+# characters on every 3 bytes and pads the last group with '=', so the raw length would
+# overstate every upload by a third. On the url path the binary transport already counted them.
+output: &output >-
+  return {
+    key: String(config.key || ''),
+    bucket: config.bucket,
+    s3Url: 'https://' + config.bucket + '.s3.'
+      + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+      + String(config.key || '').split('/').map(s => encodeURIComponent(s)).join('/'),
+    downloadUrl: (calls.link || [])[0] || '',
+    size: config.sourceType === 'url'
+      ? (Number((calls.source || {}).bytes) || 0)
+      : Math.max(0, Math.floor(
+          (String(config.base64Data || '').includes(',')
+            ? String(config.base64Data || '').split(',').at(-1)
+            : String(config.base64Data || '')).length / 4 * 3)
+          - (String(config.base64Data || '').endsWith('==') ? 2
+             : String(config.base64Data || '').endsWith('=') ? 1 : 0)),
+    contentType: config.contentType
+      || (config.sourceType === 'url'
+            ? ((calls.source || {}).contentType || '')
+            : (String(config.base64Data || '').startsWith('data:')
+                ? String(config.base64Data || '').slice(5).split(';')[0] : ''))
+      || 'application/octet-stream'
+  }

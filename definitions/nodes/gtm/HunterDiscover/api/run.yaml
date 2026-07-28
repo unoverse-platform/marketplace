@@ -12,7 +12,7 @@
 - name: discover
   method: POST
   url: https://api.hunter.io/v2/discover
-  auth: { $ref: hunter#headerAuth }
+  credential: { $ref: hunter#headerCredential }
   body: >-
     return Object.assign(
       {

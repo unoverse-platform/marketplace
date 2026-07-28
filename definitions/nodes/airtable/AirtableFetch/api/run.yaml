@@ -9,7 +9,7 @@
 - name: page
   method: GET
   url: { $ref: table#url }
-  auth: { $ref: table#auth }
+  credential: { $ref: table#credential }
   query:
     # Omitted when blank: the executor drops a key whose value resolved to nothing, and
     # Airtable rejects an empty formula rather than ignoring it.

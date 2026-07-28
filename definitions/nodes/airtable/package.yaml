@@ -25,7 +25,7 @@ allowedHosts:
   - api.airtable.com
 
 requires:
-  auth: [bearer]
+  credential: [bearer]
   transport: [json]
   paginate: [cursor]
   chunk: true

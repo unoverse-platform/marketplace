@@ -19,7 +19,7 @@ createEmbedding:
     - name: embed
       method: POST
       url: { $ref: endpoints#embeddings }
-      auth:
+      credential:
         scheme: bearer
         token: "{{ credentials.openAICredential.apiKey }}"
       body: >-
@@ -60,7 +60,7 @@ createBatchEmbeddings:
     - name: embed
       method: POST
       url: { $ref: endpoints#embeddings }
-      auth:
+      credential:
         scheme: bearer
         token: "{{ credentials.openAICredential.apiKey }}"
       # The endpoint takes an array for `input`, so a batch is one request, not N.

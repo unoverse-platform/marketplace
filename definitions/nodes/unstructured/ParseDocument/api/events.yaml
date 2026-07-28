@@ -1,0 +1,42 @@
+# One row per output connector, in interface.yaml order.
+#
+# `response` IS THE ELEMENT ARRAY. The partition endpoint returns a bare JSON array, not an object
+# wrapping one, so every row here reads `response` directly rather than a field on it.
+
+- emit: text
+  # THE WHOLE DOCUMENT AS ONE STRING, which is what an Agent prompt actually needs. Joined with blank
+  # lines so paragraphs stay separated — joining with nothing runs the last word of a heading into the
+  # first word of the text under it.
+  value: >-
+    return (response || []).map(e => e.text || '').filter(t => t.trim()).join('\n\n')
+
+- emit: elements
+  # The structure, kept whole. A table's `text_as_html` lives in metadata and is the reason to look here
+  # rather than at `text`, which flattens a table into a line of words.
+  value: >-
+    return (response || []).map(e => ({
+      type: e.type,
+      element_id: e.element_id,
+      text: e.text || '',
+      metadata: e.metadata || {}
+    }))
+
+- emit: metadata
+  # `pageCount` is the HIGHEST page number seen, not a count of elements carrying one: most elements
+  # report a page, so counting them would report the element total instead.
+  value: |
+    return (() => {
+      const els = response || [];
+      const pages = els.map(e => (e.metadata || {}).page_number).filter(p => typeof p === 'number');
+      const tables = els.filter(e => e.type === 'Table')
+                        .map(e => (e.metadata || {}).text_as_html)
+                        .filter(h => h);
+      return {
+        // `reduce`, not `Math.max(...pages)`: the sandbox allows a spread in an array or object literal
+        // but NOT in call arguments, so the spread form throws at run time.
+        pageCount: pages.reduce((hi, p) => p > hi ? p : hi, 0),
+        elementCount: els.length,
+        fileType: ((els[0] || {}).metadata || {}).filetype || '',
+        tables: tables
+      };
+    })();

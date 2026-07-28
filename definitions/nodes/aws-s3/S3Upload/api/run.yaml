@@ -1,0 +1,50 @@
+# Fetch (sometimes), write, then mint the link.
+#
+# The first call is skipped entirely on the base64 path, so a node handed bytes already makes
+# exactly one request. What goes in the body, what type it is and how big it is all come from
+# `shared/upload.yaml`, because the output has to report the same three answers.
+
+# NO AUTH, and that is the whole reason `*` is in allowedHosts. The url is one a person
+# supplies, so it cannot be declared in advance; a call carrying no credential has nothing to
+# leak, and the executor stops matching `*` the moment one is added. https is still required.
+- name: source
+  when: "return config.sourceType === 'url'"
+  method: GET
+  url: "{{ config.sourceUrl }}"
+  # Hands the bytes over as { base64, contentType, bytes }. base64 rather than a Buffer
+  # because what passes between calls travels as JSON, where a Buffer does not survive.
+  transport: binary
+  timeoutMs: 120000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+- $ref: s3#call
+  name: put
+  method: PUT
+  url: >-
+    return 'https://' + config.bucket + '.s3.'
+      + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+      + String(config.key || '').split('/').map(s => encodeURIComponent(s)).join('/')
+  # `encoding: binary` sends the body AS BYTES. Without it the base64 would be
+  # JSON-stringified and the object would hold the quoted base64 text rather than the file.
+  encoding: binary
+  # PutObject answers with an empty body and an ETag header, so there is nothing to parse and
+  # `headers` is the only transport that can see the reply at all.
+  transport: headers
+  headers:
+    Content-Type: { $ref: upload#contentType }
+  body: { $ref: upload#payload }
+
+# NO REQUEST. Computes a link from the credentials and the clock, and sits here rather than in
+# a section of its own because writing an object and handing back a way to fetch it is ONE
+# sequence. `for` is a list of one, since a presign reply is always an array.
+- name: link
+  presign:
+    for: "return [String(config.key || '')]"
+    url: >-
+      return 'https://' + config.bucket + '.s3.'
+        + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+        + item.split('/').map(s => encodeURIComponent(s)).join('/')
+    expiresIn: "return config.downloadUrlExpiry || 86400"

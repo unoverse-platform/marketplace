@@ -1,0 +1,20 @@
+# ONE ENTRY, and it is the only place in the pair that MOVES anything. `advance` collects this
+# pass's value, increments the index, and reports whether there is more — and it does all three in
+# one operation so a crash cannot leave a value collected against an index that never moved.
+#
+# `key` is the PAIRED LoopStart's id, from config. That is what stops two loops on one canvas from
+# advancing each other, and why a mistyped id raises "loop state not found" rather than silently
+# closing the wrong loop. The execution is supplied by the executor, so a loop can never reach
+# another run's state.
+#
+# NOTE WHAT IS NOT HERE: this does not read or emit the next item. LoopStart does, on the `continue`
+# signal below. Item emission having exactly one home is deliberate — if advancing also returned the
+# next item, the same fact would be computed in two places and could disagree by one.
+
+- name: pass
+  loop: advance
+  key: "{{ config.loopStartNodeId }}"
+  # Absent, null or the empty string means collect nothing. Empty string matters because `collect` is
+  # a template field: a config left blank resolves to "" rather than to nothing, and storing that
+  # would put a blank entry in the results on every pass.
+  value: "return config.collect"

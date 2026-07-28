@@ -33,7 +33,7 @@ write_contact_meta:
       when: "return (((calls.search || {}).results) || []).length > 0"
       method: POST
       url: { $ref: endpoints#notes }
-      auth:
+      credential:
         scheme: bearer
         token: "{{ credentials.hubspotPrivateApp.accessToken }}"
       # The stamp is a WIRE MARKER, not prose: notes are read back by matching this

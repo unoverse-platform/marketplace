@@ -1,0 +1,15 @@
+$schema: ../../../_schema/interface.schema.json
+
+# A pure service node: no inputs, no outputs, only methods.
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS
+
+serviceConnectors:
+  - name: embeddingService
+    serviceType: embedding
+    isService: true
+    methods: [createEmbedding, createBatchEmbeddings]
+    description: Turn text into vectors using AWS Bedrock Titan models

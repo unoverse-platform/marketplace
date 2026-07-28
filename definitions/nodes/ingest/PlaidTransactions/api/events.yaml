@@ -1,0 +1,22 @@
+# `response` is the FINAL transactions reply — the one the poll settled on, not the sandbox login.
+#
+# `startDate` and `endDate` are recomputed here rather than read off the reply. Plaid does not echo the
+# range back, and the two rows use the SAME expressions the request body used, so what a workflow reads
+# is exactly what was asked for.
+
+- emit: transactions
+  value: "return response.transactions || []"
+
+- emit: accounts
+  value: "return response.accounts || []"
+
+- emit: totalTransactions
+  # `total_transactions` is how many EXIST, which is not the same as how many came back — `count`
+  # caps the page. The existing node emitted the total, so this does too.
+  value: "return response.total_transactions || 0"
+
+- emit: startDate
+  value: "return Date.iso(Date.now() - (config.daysBack || 30) * 86400000).split('T')[0]"
+
+- emit: endDate
+  value: "return Date.iso().split('T')[0]"

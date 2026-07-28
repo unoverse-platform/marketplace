@@ -1,0 +1,18 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Output from the last node in the loop body. Reaching this node is what ends a pass.
+
+outputs:
+  # THE LOOP-BACK, and it is an ordinary output on an ordinary edge — routed to the paired LoopStart
+  # by loopStartNodeId. That is the whole reason this pair needs no actor: re-triggering is a signal
+  # travelling along the graph, not a node reaching into the engine to re-invoke itself. The retired
+  # single-node Loop did the latter, which is why it was replaced.
+  - name: continue
+    type: signal
+    description: "Internal: next-iteration signal to the paired LoopStart"
+  - name: done
+    type: object
+    description: "Emitted once the array is exhausted: { done, collected, total }"

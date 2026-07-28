@@ -16,7 +16,7 @@ query_records:
     - name: query
       method: GET
       url: { $ref: api#query }
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         q: "{{ params.soql }}"
       transport: json
@@ -41,7 +41,7 @@ get_record:
           + (credentials.salesforceOAuth.apiVersion || 'v52.0')
           + '/sobjects/' + encodeURIComponent(params.sobject)
           + '/' + encodeURIComponent(params.recordId)
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         fields: "{{ params.fields }}"
       transport: json
@@ -57,7 +57,7 @@ create_lead:
       url: >-
         return token.instanceUrl + '/services/data/'
           + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/sobjects/Lead/'
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       # Empty and null are dropped, not sent: a strict tool schema fills unused fields with
       # null, and Salesforce rejects null on a picklist.
       body: >-
@@ -85,7 +85,7 @@ update_lead:
     - name: found
       method: GET
       url: { $ref: api#query }
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         q: >-
           return "SELECT Id, IsConverted FROM Lead WHERE Email = '"
@@ -108,7 +108,7 @@ update_lead:
         return token.instanceUrl + '/services/data/'
           + (credentials.salesforceOAuth.apiVersion || 'v52.0')
           + '/sobjects/Lead/' + encodeURIComponent(calls.found.records[0].Id)
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       body: >-
         return Object.fromEntries(Object.entries({
           FirstName: params.firstName,
@@ -143,7 +143,7 @@ describe_object:
         return token.instanceUrl + '/services/data/'
           + (credentials.salesforceOAuth.apiVersion || 'v52.0')
           + '/sobjects/' + encodeURIComponent(params.sobject) + '/describe/'
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       transport: json
   # The full describe payload is enormous. This is the part an agent reasons about.
   returns: >-
@@ -167,7 +167,7 @@ list_objects:
     - name: objects
       method: GET
       url: { $ref: api#sobjects }
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       transport: json
   returns: >-
     return {
@@ -195,7 +195,7 @@ crm_get_profile:
     - name: contact
       method: GET
       url: { $ref: api#query }
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         q: >-
           return "SELECT Id, Name, FirstName, LastName, Email, Title, Phone, Account.Name FROM Contact WHERE Id = '"
@@ -220,7 +220,7 @@ crm_write_insight:
       url: >-
         return token.instanceUrl + '/services/data/'
           + (credentials.salesforceOAuth.apiVersion || 'v52.0') + '/sobjects/Task/'
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       # Subject is capped at 255 by Salesforce, so the full text lives in Description and
       # the subject is truncated. The stamp is a WIRE MARKER: crm_read_insights matches on
       # it, so its wording is fixed and must not be tidied.
@@ -243,7 +243,7 @@ crm_read_insights:
     - name: tasks
       method: GET
       url: { $ref: api#query }
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         q: >-
           return "SELECT Id, Subject, Description, CreatedDate FROM Task WHERE WhoId = '"

@@ -1,0 +1,12 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Signal to relay to downstream nodes
+    required: false
+
+outputs:
+  - name: signal
+    type: object
+    description: Relayed signal

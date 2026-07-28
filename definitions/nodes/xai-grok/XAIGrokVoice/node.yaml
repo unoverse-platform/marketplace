@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: XAIGrokVoice
+# A CallbackNode because the session STREAMS for the length of the call. Derived from
+# `transport: ws` and verified by lint, not taken on trust.
+kind: CallbackNode
+
+name: xAI Grok Voice
+category: AI
+color: "#000000"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Realtime voice conversation with xAI's Grok
+
+whenToUse: >-
+  Hold a spoken, two-way conversation with Grok in real time: the person talks, Grok answers aloud, and
+  either can interrupt the other. Pick it when the interaction is a VOICE CALL rather than text, and
+  when you want xAI's model. It consumes tools from MCP provider nodes attached via service edges.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # A live conversation is never cacheable: the answer depends on what was just said.
+  cacheable: false

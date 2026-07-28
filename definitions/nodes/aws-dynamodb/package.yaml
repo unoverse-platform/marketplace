@@ -33,6 +33,6 @@ allowedHosts:
   - "**.amazonaws.com"
 
 requires:
-  auth: [awsSigV4]
+  credential: [awsSigV4]
   transport: [json]
   executorVersion: ">=1.2.0"

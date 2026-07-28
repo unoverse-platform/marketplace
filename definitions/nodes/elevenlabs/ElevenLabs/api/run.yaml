@@ -1,0 +1,29 @@
+# ONE POST, the SINGLE-VOICE path — which is what this node is for. The multi-speaker compat path is
+# deliberately not here; package.yaml says why, and ElevenLabs Dialogue supersedes it.
+#
+# THE VOICE IS IN THE PATH, which is why the url is an expression: an unset voiceId must fall back rather
+# than produce `/text-to-speech//` — a URL that 404s about a missing route instead of a missing voice. The
+# fallback is the code version's own default narrator (the first premade male voice, Daniel).
+#
+# STABILITY IS AN ENUM OF THREE on this model, and the service normalised anything else to 0.5 rather than
+# letting the vendor reject it. Transcribed, because a rejected request is a failed node.
+
+- name: speak
+  method: POST
+  url: >-
+    return 'https://api.elevenlabs.io/v1/text-to-speech/'
+      + (config.voiceId || 'onwK4e9ZLuTAKqWW03F9')
+  credential: { $ref: credential }
+
+  body:
+    text: "{{ config.text }}"
+    model_id: "{{ config.modelId }}"
+    voice_settings:
+      stability: >-
+        return [0, 0.5, 1].includes(config.stability) ? config.stability : 0.5
+
+  query:
+    output_format: "{{ config.outputFormat }}"
+
+  timeoutMs: 120000
+  transport: binary

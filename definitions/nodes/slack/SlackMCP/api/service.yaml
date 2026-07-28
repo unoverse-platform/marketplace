@@ -16,7 +16,7 @@ send_message:
     - name: post
       method: POST
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/chat.postMessage'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       body: >-
         return Object.fromEntries(Object.entries({
           channel: params.channel,
@@ -35,7 +35,7 @@ list_channels:
     - name: channels
       method: GET
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/conversations.list'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         types: public_channel
         exclude_archived: "true"
@@ -65,7 +65,7 @@ search_messages:
     - name: search
       method: GET
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/search.messages'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         query: "{{ params.query }}"
         count: "return String(Math.min(params.count || 20, 100))"
@@ -81,7 +81,7 @@ get_user:
     - name: byEmail
       method: GET
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/users.lookupByEmail'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       when: "return !!params.email"
       query:
         email: "{{ params.email }}"
@@ -90,7 +90,7 @@ get_user:
     - name: byId
       method: GET
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/users.info'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       when: "return !params.email && !!params.user_id"
       query:
         user: "{{ params.user_id }}"
@@ -110,7 +110,7 @@ read_history:
     - name: history
       method: GET
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/conversations.history'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       query:
         channel: "{{ params.channel }}"
         limit: "return String(Math.min(params.limit || 25, 100))"
@@ -126,7 +126,7 @@ add_reaction:
     - name: react
       method: POST
       url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/reactions.add'"
-      auth: { $ref: api#auth }
+      credential: { $ref: api#credential }
       body: >-
         return {
           channel: params.channel,

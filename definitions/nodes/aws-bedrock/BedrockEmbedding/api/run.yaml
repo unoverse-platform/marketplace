@@ -1,0 +1,14 @@
+# One signed InvokeModel. The model id is in the PATH, so there is no header naming an
+# operation the way DynamoDB needs one.
+
+- $ref: bedrock#call
+  name: embed
+  url: >-
+    return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
+      + '.amazonaws.com/model/' + encodeURIComponent(config.model) + '/invoke'
+  body:
+    inputText: "{{ config.text }}"
+    # v1 rejects these two outright; v2 takes them. Sent only for the model that has them,
+    # rather than trusting the vendor to ignore what it does not understand.
+    dimensions: "return config.model === 'amazon.titan-embed-text-v1' ? undefined : (config.dimensions || 1024)"
+    normalize: "return config.model === 'amazon.titan-embed-text-v1' ? undefined : (config.normalize !== false)"

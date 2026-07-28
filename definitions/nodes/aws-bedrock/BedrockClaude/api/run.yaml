@@ -1,0 +1,57 @@
+# Fetch the attachments, then ask. Up to three calls, and only the last is Bedrock.
+#
+# THE ATTACHMENT CALLS GO TO AN ARBITRARY HOST, which is the whole reason `transport: binary`
+# exists: the bytes have to come back in a form that survives being put into a JSON body.
+# They are also why this package's allowedHosts is wider than its own vendor — see the note
+# on each call.
+
+- name: image
+  when: "return config.includeImageUrl === true && !!config.imageUrl"
+  method: GET
+  url: "{{ config.imageUrl }}"
+  # The bytes come back as { base64, contentType, bytes }, ready to be embedded below.
+  transport: binary
+
+- name: document
+  when: "return config.includeDocumentUrl === true && !!config.documentUrl"
+  method: GET
+  url: "{{ config.documentUrl }}"
+  transport: binary
+
+- $ref: bedrock#call
+  name: answer
+  url: >-
+    return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
+      + '.amazonaws.com/model/' + encodeURIComponent(config.model) + '/converse'
+
+  # The message content is a LIST whose members depend on what was attached, which is
+  # exactly the case an object body cannot express. Order matters: Bedrock wants the
+  # attachments before the text, so the prompt can refer to them.
+  body: >-
+    return Object.assign({
+      messages: [{
+        role: 'user',
+        content: []
+          .concat(calls.image ? [{ image: {
+            format: String(calls.image.contentType).split('/')[1].split('+')[0],
+            source: { bytes: calls.image.base64 }
+          } }] : [])
+          .concat(calls.document ? [{ document: {
+            format: String(calls.document.contentType).split('/').pop().split('+')[0],
+            name: config.documentName || 'document',
+            source: { bytes: calls.document.base64 }
+          } }] : [])
+          .concat([{ text: config.prompt }])
+      }],
+      inferenceConfig: {
+        temperature: config.temperature,
+        maxTokens: config.maxTokens
+      }
+    },
+    config.systemPrompt ? { system: [{ text: config.systemPrompt }] } : {},
+    (config.enableTools === true && (config.toolSchema || []).length)
+      ? { toolConfig: Object.assign(
+          { tools: Array.isArray(config.toolSchema) ? config.toolSchema : [config.toolSchema] },
+          config.toolChoice === 'any' ? { toolChoice: { any: {} } } : { toolChoice: { auto: {} } }
+        ) }
+      : {})

@@ -1,0 +1,30 @@
+$schema: ../../../_schema/node.schema.json
+
+type: CloudinaryFileContent
+kind: PromiseNode
+
+name: Cloudinary File Content
+category: Media & Design
+color: "#3448C5"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png
+
+description: Read one Cloudinary asset's details, and build a transformed delivery URL for it.
+
+whenToUse: >-
+  Take one asset from Cloudinary Files and get its full details plus a delivery URL, optionally RESIZED or
+  reformatted by a transformation. Use it when you have an asset and need a specific rendition of it; use
+  Cloudinary Files to find assets in the first place.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # An asset's details are stable, but the node is cheap and a stale rendition URL is confusing, so it
+  # stays honest rather than clever.
+  cacheable: false

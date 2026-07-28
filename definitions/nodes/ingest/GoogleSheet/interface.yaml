@@ -1,0 +1,38 @@
+$schema: ../../../_schema/interface.schema.json
+
+# THIS NODE'S SHAPE CHANGED, and it is the one migration here that is a REWRITE rather than a
+# transcription. Stated plainly because a saved workflow will notice.
+#
+# The code version was a CallbackNode that held the fetched rows in ACTOR STATE and emitted ONE ROW per
+# `continue` signal, tracking its own position. So it was two things at once: a Google Sheets client and
+# a loop. Its outputs were `item`, `index`, `total`, `hasMore`.
+#
+# The platform now has the loop as its own pair of nodes. `LoopStart` and `LoopEnd` iterate anything,
+# keeping their index in Redis rather than in an actor, so this node no longer has to — and doing it
+# here meant every row-by-row workflow depended on a private actor nobody else could reuse.
+#
+# So it returns EVERY ROW, once, and iteration is wired: GoogleSheet → LoopStart → … → LoopEnd.
+#
+# `item`, `index` and `hasMore` are GONE. A workflow that wired them was driving the actor and has to
+# be rewired around LoopStart; there is no way to keep those names honest without keeping the actor.
+# `total` is kept, unchanged, because it still means exactly what it did.
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. Nothing is read from it — the sheet is named in config.
+    required: false
+
+outputs:
+  - name: rows
+    type: array
+    description: >-
+      Every row in the range. Objects keyed by the header row when Use Headers is on, otherwise raw
+      arrays of cell values.
+  - name: total
+    type: number
+    description: Number of rows returned
+
+credentials:
+  - name: googleApiCredential
+    required: true

@@ -1,0 +1,25 @@
+# The one call shape every Bedrock node makes.
+#
+# Bedrock is REST, unlike DynamoDB: the model id is in the PATH and the operation is the
+# last segment, so there is no X-Amz-Target header here. `bedrock-runtime` is the signing
+# service name and is NOT the same as the console's "bedrock" — signing against the wrong
+# one is a 403 that says nothing about which name was wrong.
+
+call: &call
+  method: POST
+  credential:
+    scheme: awsSigV4
+    service: bedrock-runtime
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+  transport: json
+  # Bedrock throttles hard under load and answers 429; retrying is the difference between a
+  # workflow that survives a burst and one that fails a step at random.
+  retry:
+    attempts: 4
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+host: &host >-
+  return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com'

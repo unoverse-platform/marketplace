@@ -15,6 +15,15 @@ whenToUse: >-
   returns structured data; raw page markdown and multi-page link-following are different
   jobs with their own nodes.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # NOT cacheable. Extraction runs a model over the page, so the same URL and the same
   # prompt do not reliably give the same object, and a memoized "same answer" would be a

@@ -1,0 +1,34 @@
+$schema: ../../../_schema/test.schema.json
+
+# THIS FIXTURE SEEDS AN OPEN LOOP, because it has to. LoopEnd closes a pass of a loop LoopStart
+# opened, so with nothing in storage its very first act is the "loop state not found" error it exists
+# to raise for a mistyped loopStartNodeId — the bench would report a real safeguard as the node's
+# normal behaviour.
+#
+# The key names the bench's fixed ids (`bench-run`, and the paired id from the config below), which
+# is why those ids are fixed rather than random. `items` is a JSON string because that is how the
+# loop stores it, so this seeds the exact hash the real code writes rather than a convenient shape.
+#
+# MID-LOOP, at index 0 of 3, so `advance` moves to 1, finds 1 < 3, and continues. That is the pass
+# worth asserting: the done path is the easy one, and a loop that never continues is the failure.
+
+testData:
+  state:
+    "loop:bench-run:loopstart1":
+      items: '["alpha","beta","gamma"]'
+      index: "0"
+      total: "3"
+  config:
+    loopStartNodeId: loopstart1
+    collect: kept from this pass
+  inputs:
+    input:
+      body1:
+        output: whatever the loop body produced
+  expect:
+    # ADVANCED BY EXACTLY ONE. Asserting the index is what proves the increment happened in storage
+    # rather than the node merely answering on the right dot.
+    continue: "return output.continue.index === 1 && output.continue.total === 3"
+    # AND THE OTHER DOT IS SILENT. Emitting on both would run the loop body and the downstream branch
+    # together, which reads as working right up until the results are wrong.
+    done: "return output.done === undefined"

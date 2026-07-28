@@ -10,6 +10,27 @@
  */
 
 import { readdirSync, readFileSync, existsSync } from "fs";
+
+/**
+ * WHERE TO START SEARCHING FROM, in both module systems.
+ *
+ * This package compiles to CommonJS, where `__dirname` exists. But the plugin loader prefers a
+ * node package's `src/index.ts` over its `dist/` (so a regenerated component works on restart
+ * with no build), and that source runs as ESM because `apps/unoverse/package.json` declares
+ * `"type": "module"`. There, `__dirname` is not defined, and reading it threw:
+ *
+ *     ⚠ Failed to load @unoverse-platform/marketplace: __dirname is not defined
+ *
+ * The whole package then failed to register, which took the rx COMPONENT NODES with it — the
+ * local-wins disk path this function exists to serve.
+ *
+ * `typeof` rather than a try/catch, because an undeclared identifier is a ReferenceError the
+ * moment it is evaluated. `import.meta.url` is deliberately NOT used: it is a syntax error under
+ * this package's CommonJS target, so it would trade a runtime failure for a build failure.
+ * `process.cwd()` is the honest fallback — the server starts in `apps/unoverse`, so the very
+ * first candidate below (`rx/marketplace/components`) resolves on the first iteration.
+ */
+const MODULE_DIR: string = typeof __dirname !== "undefined" ? __dirname : process.cwd();
 import { parse as parseYaml } from "yaml";
 
 // Definitions are authored as .yaml OR .json (server/src/fsCache.ts is the reference).
@@ -291,7 +312,7 @@ export function findRxComponentsDir(): string | null {
     }
     return null;
   }
-  let dir = __dirname;
+  let dir = MODULE_DIR;
   for (let i = 0; i < 8; i++) {
     // Design-system components now live at rx/marketplace/components (the honest home).
     for (const candidate of [
@@ -306,7 +327,7 @@ export function findRxComponentsDir(): string | null {
   // docs/architecture/RX_ORG_MODEL.md). Ships with the npm package, so a box with NO rx/ on
   // disk (the purged-image future) still registers the marketplace. Only reached after the
   // disk search fails, so a developer's local rx/ still overrides the bundle.
-  dir = __dirname;
+  dir = MODULE_DIR;
   for (let i = 0; i < 8; i++) {
     const bundled = join(dir, "definitions", "components");
     if (existsSync(bundled)) return bundled;

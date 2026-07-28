@@ -31,7 +31,7 @@ allowedHosts:
   - test.salesforce.com
 
 requires:
-  auth: [oauth2ClientCredentials]
+  credential: [oauth2ClientCredentials]
   transport: [json]
   state: [merge, drain]
   executorVersion: ">=1.2.0"

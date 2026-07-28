@@ -1,0 +1,111 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [model, prompt]
+  properties:
+    model:
+      type: string
+      title: Model
+      description: >-
+        Z.AI GLM model. GLM-5.2 gives the deepest agentic reasoning and honours all three Reasoning
+        Effort settings. GLM-5-Turbo is faster and cheaper with 200K context, but reasoning_effort is
+        GLM-5.2+ only, so High and Max behave identically on Turbo.
+      enum: [glm-5.2, glm-5-turbo]
+      enumNames: ["GLM-5.2 (deepest reasoning)", "GLM-5-Turbo (faster/cheaper)"]
+      default: glm-5.2
+    agentName:
+      type: string
+      title: Agent Name
+      description: Name for this agent (for logs and traces)
+      default: GravityAgent
+    maxTurns:
+      type: number
+      title: Max Turns
+      description: Maximum agent loop iterations (tool calls plus responses)
+      default: 15
+      minimum: 1
+      maximum: 50
+    reasoningEffort:
+      type: string
+      title: Reasoning Effort
+      description: >-
+        Depth of GLM-5.2's chain-of-thought. These are the only three settings that change behaviour:
+        High is enhanced reasoning (the default, strong tool-calling at far fewer reasoning tokens), Max
+        is the deepest, and Off disables thinking entirely. GLM collapses its other documented values
+        internally (xhigh to max, low/medium to high, minimal to off), so exposing them would let
+        someone pick Low and still get full High reasoning.
+      enum: [high, max, none]
+      enumNames:
+        - High (enhanced reasoning, default)
+        - Max (deepest reasoning, most tokens)
+        - Off (no thinking, fastest/cheapest)
+      default: high
+    maxTokens:
+      type: number
+      title: Max Output Tokens
+      description: >-
+        Maximum output tokens. CRITICAL with thinking enabled: reasoning counts against this budget and
+        the model only emits a tool call AFTER thinking closes, so set it too low and a long reasoning
+        pass is truncated before any tool call — the agent then silently never calls a tool. GLM's model
+        card recommends 65536 for agentic use.
+      default: 65536
+      minimum: 1
+      maximum: 131072
+    temperature:
+      type: number
+      title: Temperature
+      description: Sampling temperature (GLM-5.2 default 1.0)
+      default: 1.0
+      minimum: 0
+      maximum: 1
+    topP:
+      type: number
+      title: Top P
+      description: Nucleus sampling (GLM-5.2 default 0.95)
+      default: 0.95
+      minimum: 0.01
+      maximum: 1
+    systemPrompt:
+      type: string
+      title: Instructions
+      description: Agent instructions. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.
+      default: ""
+      "ui:field": template
+    prompt:
+      type: string
+      title: Input
+      description: The request to answer. Usually wired in from an upstream node.
+      default: ""
+      "ui:field": template
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [model, agentName, maxTurns, reasoningEffort, maxTokens, temperature, topP, systemPrompt, prompt, authRequired, authRole]

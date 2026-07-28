@@ -1,0 +1,58 @@
+# GLM's chat-completions endpoint. NO SDK.
+#
+# `baseUrl` is an OPTIONAL credential field, so the url falls back where it is built — templated, an
+# unset value would produce "/chat/completions" against no host.
+#
+# THE TRANSCRIPT IS SPREAD INTO `messages`, and that is the whole of Chat Completions continuity: there
+# is no previous_response_id to name, so every turn resends the history. The loop maintains it and
+# hands it over as `transcript`; the SHAPE of a message stays here, because it is the vendor's.
+#
+# Empty on turn one, so a run that never calls a tool sends exactly system + user.
+
+- name: generate
+  method: POST
+  url: "return (credentials.zaiApiKey.baseUrl || 'https://api.z.ai/api/paas/v4') + '/chat/completions'"
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.zaiApiKey.apiKey }}"
+
+  # AN EXPRESSION, not an object, because `messages` has to be assembled: a system message only when
+  # there is a system prompt, then the user's input, then the history.
+  # BUILT WITH `concat`, NOT `push`. The sandbox has no mutating array methods, so `push` would throw at
+  # run time — which the expression guard catches at build time. A system message only exists when there
+  # is a system prompt, so it is a zero-or-one-element array concatenated in rather than pushed.
+  body: |
+    return (() => {
+      const thinking = config.reasoningEffort !== 'none';
+      const head = config.systemPrompt ? [{ role: 'system', content: config.systemPrompt }] : [];
+      const messages = head.concat([{ role: 'user', content: config.prompt }]);
+      return {
+        model: config.model,
+        stream: true,
+        max_tokens: config.maxTokens || 65536,
+        temperature: config.temperature,
+        top_p: config.topP,
+        // GLM ignores reasoning_effort unless thinking is explicitly enabled, and the two disagree
+        // across GLM versions if only one is sent — so both are always set, transcribed from the
+        // code version's comment on exactly this.
+        thinking: { type: thinking ? 'enabled' : 'disabled' },
+        reasoning_effort: config.reasoningEffort,
+        messages: messages.concat(transcript)
+      };
+    })();
+
+  timeoutMs: 600000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504, 520, 522, 524]
+
+  transport: sse
+  terminator: "[DONE]"
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message || 'GLM request failed'"

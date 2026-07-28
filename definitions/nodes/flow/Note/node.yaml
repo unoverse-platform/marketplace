@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Note
+kind: PromiseNode
+
+name: Note
+category: Flow
+color: "#fbbf24"
+
+description: Add notes, documentation and comments to your workflow
+
+whenToUse: >-
+  Add a markdown comment, label or sticky onto the canvas to explain what a workflow does. It is
+  annotation only: it has no inputs or outputs and never runs in the data flow, so it cannot
+  transform anything or show anything to an end user.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Nothing to cache: it never runs.
+  cacheable: false

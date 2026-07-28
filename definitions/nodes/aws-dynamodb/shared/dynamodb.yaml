@@ -8,7 +8,7 @@ call: &call
   method: POST
   url: "return 'https://dynamodb.' + credentials.awsCredential.region + '.amazonaws.com/'"
 
-  auth:
+  credential:
     scheme: awsSigV4
     service: dynamodb
 

@@ -26,6 +26,6 @@ allowedHosts:
   - www.searchapi.io
 
 requires:
-  auth: [apiKeyQuery]
+  credential: [apiKeyQuery]
   transport: [json]
   executorVersion: ">=1.0.0"

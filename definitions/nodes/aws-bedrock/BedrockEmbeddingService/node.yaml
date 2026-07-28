@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: BedrockEmbeddingService
+kind: PromiseNode
+template: service
+
+name: Bedrock Embedding Service
+category: AI
+color: "#FF9900"
+
+description: Offer Titan embeddings to other nodes over a service edge
+
+whenToUse: >-
+  Reach for this when something needs to turn text into vectors as it works, deciding for
+  itself what and when: one piece, or a whole batch in a single pass. Embedding one fixed
+  piece of text at a known point is cheaper done inline. Attach it by a service edge.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

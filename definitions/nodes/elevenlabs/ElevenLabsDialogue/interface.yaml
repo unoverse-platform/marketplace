@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: lines
+    type: array
+    required: true
+    description: "Script lines: [{ text, voiceId } or { text, speaker }]"
+
+outputs:
+  - name: audio
+    type: object
+    description: "Generated audio: { data (base64), mimeType, fileName }"
+  - name: metadata
+    type: object
+    description: format, lineCount, characters
+
+credentials:
+  - name: elevenlabsCredential
+    required: true

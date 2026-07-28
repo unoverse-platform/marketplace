@@ -1,0 +1,21 @@
+$schema: ../../../_schema/test.schema.json
+
+# WHAT THIS FIXTURE CAN AND CANNOT PROVE, stated because the limit is real: the bench has no run
+# behind it, so `scope` is empty and every id is undefined. It proves the node emits the object with
+# the right SHAPE; only a real execution can prove the ids are populated.
+#
+# So it asserts what IS decidable without a run: an object came out, and it is NOT the incoming signal
+# passed through. `trigger` is the only field in the fixture's signal, so its absence is what
+# distinguishes "built the context object" from "forwarded its input".
+
+testData:
+  config: {}
+  inputs:
+    signal:
+      trigger: true
+  expect:
+    # `Object.keys`, not the `in` operator — the sandbox has no `in`.
+    context: >-
+      return typeof output.context === 'object'
+        && !Array.isArray(output.context)
+        && output.context.trigger === undefined

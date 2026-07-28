@@ -22,7 +22,7 @@ allowedHosts:
   - api.hunter.io
 
 requires:
-  auth: [apiKeyHeader, apiKeyQuery]
+  credential: [apiKeyHeader, apiKeyQuery]
   transport: [json]
   paginate: [page]
   executorVersion: ">=1.4.0"

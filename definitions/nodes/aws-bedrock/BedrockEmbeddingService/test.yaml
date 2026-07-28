@@ -1,0 +1,17 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    model: amazon.titan-embed-text-v2:0
+    dimensions: 1024
+  call:
+    method: createBatchEmbeddings
+    params:
+      texts: [first piece of text, second piece of text]
+  expect:
+    # ORDER AND ALIGNMENT are the point of the batch method, so that is what is asserted:
+    # two texts in, two vectors out, each the right length, paired to its input.
+    result: >-
+      return result.ok && result.embeddings.length === 2
+        && result.embeddings.every(e => e && e.length === 1024)
+        && result.texts.length === 2

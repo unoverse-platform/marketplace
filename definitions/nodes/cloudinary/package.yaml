@@ -1,0 +1,38 @@
+$schema: ../_schema/package.schema.json
+
+# CLOUDINARY, fully declarative.
+#
+# It sat on the backlog as "blocked on `encoding: form`", and that turned out to be wrong twice over. The
+# nodes used the Cloudinary SDK, so the blocker was inferred from the SDK's behaviour rather than from the
+# HTTP API — and the HTTP API is kinder than the SDK:
+#
+#   SIGNING IS OPTIONAL. The SDK signs every upload (sorted params + api_secret, SHA-1), which the
+#   expression sandbox cannot do — it has sha256 and no sha1. Cloudinary's docs offer HTTP Basic Auth
+#   instead, explicitly "no signature calculation required", for the Upload API as well as the Admin API.
+#   So `scheme: basic`, which already existed.
+#
+#   THE UPLOAD BODY IS A FORM, and their own curl example uses -F, which is multipart — the capability
+#   built for ElevenLabs speech-to-text a moment earlier. `encoding: form` was never needed.
+#
+# The lesson is the one already recorded in the backlog: judge by the WIRE FORMAT, never by the client
+# library a node happened to use.
+
+name: cloudinary
+displayName: Cloudinary
+description: Upload, list and read media in Cloudinary
+version: 2.0.0
+category: media
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png
+
+features:
+  - Upload images and video from a URL or base64
+  - List and read media already in the account
+
+allowedHosts:
+  - api.cloudinary.com
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [basic]
+  transport: [json]
+  encoding: [multipart]

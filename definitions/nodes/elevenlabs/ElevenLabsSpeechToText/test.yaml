@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs ELEVENLABS_API_KEY and a REACHABLE audio URL — ElevenLabs fetches it server-side, so a localhost
+# path cannot work. The URL below is a placeholder rather than a real file: inventing one that happened to
+# resolve would make this fixture pass for a reason nobody chose.
+#
+# It exercises the URL path. The base64 path is the one that needs multipart's FILE part, and that is
+# covered against a real server in packages/base/tests/manifest-multipart.test.ts — including that the
+# bytes survive the round trip, which no live fixture could assert without a known file.
+
+testData:
+  config:
+    audioUrl: https://example.com/sample.mp3
+    languageCode: en
+    diarize: false
+    tagAudioEvents: false
+  inputs:
+    input: https://example.com/sample.mp3
+  expect:
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    # `words` must be an ARRAY even when empty, because every consumer maps over it.
+    metadata: "return Array.isArray(output.metadata.words)"

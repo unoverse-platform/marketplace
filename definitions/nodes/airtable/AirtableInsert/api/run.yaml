@@ -11,7 +11,7 @@
   when: "return !!String(config.dedupField || '').trim()"
   method: GET
   url: { $ref: table#url }
-  auth: { $ref: table#auth }
+  credential: { $ref: table#credential }
   query:
     fields: "return config.dedupField === 'id' ? 'apollo_id' : config.dedupField"
   transport: json
@@ -27,7 +27,7 @@
 
   method: PATCH
   url: { $ref: table#url }
-  auth: { $ref: table#auth }
+  credential: { $ref: table#credential }
   chunk:
     size: 10
     items: { $ref: rows#isAirtableId }
@@ -43,7 +43,7 @@
   when: { $ref: rows#toCreateAny }
   method: POST
   url: { $ref: table#url }
-  auth: { $ref: table#auth }
+  credential: { $ref: table#credential }
   chunk:
     size: 10
     items: { $ref: rows#toCreate }

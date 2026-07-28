@@ -7,7 +7,7 @@
 - name: match
   method: POST
   url: https://api.apollo.io/api/v1/people/match
-  auth: { $ref: apollo#auth }
+  credential: { $ref: apollo#credential }
   headers: { $ref: apollo#headers }
   body: >-
     return Object.fromEntries(Object.entries({

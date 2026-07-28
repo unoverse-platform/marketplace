@@ -1,0 +1,25 @@
+# One row per output connector.
+#
+# Bedrock's Converse reply puts the answer in output.message.content, which is a LIST of
+# blocks: text blocks and, when the model reached for a tool, a toolUse block. The retired
+# node concatenated every text block, which is right — a long answer can arrive in several.
+
+- emit: output
+  from: response
+  value: >-
+    return Object.assign({
+      text: ((((response.output || {}).message || {}).content) || [])
+        .filter(b => b.text).map(b => b.text).join(''),
+      usage: {
+        inputTokens: (response.usage || {}).inputTokens || 0,
+        outputTokens: (response.usage || {}).outputTokens || 0,
+        totalTokens: (response.usage || {}).totalTokens
+          || (((response.usage || {}).inputTokens || 0) + (((response.usage || {}).outputTokens) || 0))
+      },
+      stopReason: response.stopReason || ''
+    },
+    ((((response.output || {}).message || {}).content) || []).filter(b => b.toolUse).length
+      ? { toolUse: ((((response.output || {}).message || {}).content) || [])
+          .filter(b => b.toolUse)
+          .map(b => ({ toolName: b.toolUse.name, toolInput: b.toolUse.input }))[0] }
+      : {})

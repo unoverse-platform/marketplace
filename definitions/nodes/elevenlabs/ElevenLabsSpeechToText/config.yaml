@@ -1,0 +1,82 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  # NEITHER source is required by the schema, because exactly ONE of them must be set and a schema cannot
+  # say "one of these two". The call's `error` block says it instead, at the only point where both values
+  # are known.
+  required: []
+  properties:
+    audioUrl:
+      type: string
+      title: Audio URL
+      description: >-
+        A URL ElevenLabs can fetch. Use this OR Audio (base64), not both — the URL wins if both are set.
+      default: "{{{input}}}"
+      "ui:field": template
+    audioBase64:
+      type: string
+      title: Audio (base64)
+      description: >-
+        The audio itself, base64 encoded — what an upstream node emits as `audio.data`. Use it when the
+        file is not reachable by URL.
+      default: ""
+      "ui:field": template
+    mimeType:
+      type: string
+      title: MIME Type
+      description: Content type of the base64 audio, e.g. audio/mpeg. Ignored when using a URL.
+      default: audio/mpeg
+    modelId:
+      type: string
+      title: Model
+      description: Override the transcription model. Leave blank for the package default.
+      default: ""
+    languageCode:
+      type: string
+      title: Language
+      description: ISO code, e.g. en. Leave blank to auto-detect.
+      default: ""
+    diarize:
+      type: boolean
+      title: Identify Speakers
+      description: Label which speaker said each word
+      default: false
+      "ui:widget": toggle
+    tagAudioEvents:
+      type: boolean
+      title: Tag Audio Events
+      description: Mark laughter, applause and similar non-speech sounds
+      default: false
+      "ui:widget": toggle
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [audioUrl, audioBase64, mimeType, languageCode, diarize, tagAudioEvents, modelId, authRequired, authRole]

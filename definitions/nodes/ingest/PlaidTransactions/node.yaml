@@ -1,0 +1,38 @@
+$schema: ../../../_schema/node.schema.json
+
+type: PlaidTransactions
+kind: PromiseNode
+
+name: Plaid Transactions
+category: Storage & Data
+color: "#00D09C"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1765729171/gravity/icons/plaid_logo.png
+
+description: Fetch bank transactions from Plaid Sandbox for testing.
+
+whenToUse: >-
+  Pick ONLY when a workflow needs realistic test bank transactions. It hits Plaid Sandbox with test
+  personas and never a live account, so it is a sandbox data source rather than a general store of
+  real records.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable. The existing node had its OWN Redis cache — useCache and cacheTTLMinutes, keyed per
+  # workflow — and both are DROPPED here rather than reimplemented, which is the one deliberate
+  # behaviour change in this migration.
+  #
+  # Two reasons. The data is invented sandbox data, so re-fetching costs nothing anyone is paying for.
+  # And the platform already has node memoization, gated on exactly this flag — a second, node-private
+  # cache with its own TTL semantics is the kind of thing that later disagrees with the first.
+  #
+  # It stays FALSE rather than becoming true because each run mints a NEW sandbox item, so two runs
+  # legitimately return different transactions and a shared answer would be wrong.
+  cacheable: false

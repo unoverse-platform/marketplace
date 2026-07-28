@@ -23,7 +23,7 @@ search: &search
   when: "return !!(params.email || user.email)"
   method: POST
   url: { $ref: endpoints#contactSearch }
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.hubspotPrivateApp.accessToken }}"
   body: >-
@@ -50,7 +50,7 @@ association: &association
   when: "return (((calls.search || {}).results) || []).filter(c => !c.properties.company).length > 0"
   method: GET
   url: "https://api.hubapi.com/crm/v3/objects/contacts/{{ calls.search.results.[0].id }}/associations/companies"
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.hubspotPrivateApp.accessToken }}"
   query:
@@ -68,7 +68,7 @@ company: &company
   url: >-
     return 'https://api.hubapi.com/crm/v3/objects/companies/'
       + (calls.association.results[0].toObjectId || calls.association.results[0].id)
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.hubspotPrivateApp.accessToken }}"
   query:
@@ -119,7 +119,7 @@ hydrateNotes: &hydrateNotes
   when: "return (calls.hydrate || []).length > 0"
   method: POST
   url: { $ref: endpoints#notesBatch }
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.hubspotPrivateApp.accessToken }}"
   body: >-

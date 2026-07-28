@@ -1,0 +1,40 @@
+# ONE ROW PER OUTPUT CONNECTOR, in interface.yaml order.
+#
+# NO `match` ON ANY ROW, and that is forced rather than chosen: a Chat Completions chunk carries no
+# `type` field, so there is nothing to match on. Every row is offered every event and each one's
+# expression returns undefined when the field it wants is absent — the emitter drops undefined, so a
+# reasoning-only chunk emits nothing on `chunk` without needing a condition.
+#
+# THE THROTTLES ARE THE CODE VERSION'S OWN NUMBERS, and they are not interchangeable: reasoning is far
+# denser than the answer (especially at effort "max"), and each emit re-renders the connected display
+# node. Its comment recorded that a 24-char reasoning threshold flooded downstream re-executions and
+# could stall completion — hence 150 there and 24 here.
+
+- emit: progress
+  from: tool
+  # The tool call LOG, written as each tool returns. `from: tool` because our loop produces this, not
+  # the stream — the code version built the same line in its own loop.
+  value: "return 'Calling: ' + call.name + '...\\n'"
+  accumulate: true
+
+- emit: chunk
+  value: "return (((response.choices || [])[0] || {}).delta || {}).content"
+  accumulate: true
+  throttleChars: 24
+
+- emit: reasoning
+  # GLM streams chain-of-thought in `reasoning_content`, a field the Responses API has no equivalent for.
+  value: "return (((response.choices || [])[0] || {}).delta || {}).reasoning_content"
+  accumulate: true
+  throttleChars: 150
+
+- emit: mcpResult
+  from: tool
+  value: "return { name: call.name, arguments: call.args, result: call.output }"
+
+- emit: text
+  from: complete
+  # THE SETTLED ANSWER, assembled from what was streamed rather than from a final event: Chat Completions
+  # sends no "here is the whole thing" message, so the last accumulated `chunk` IS the answer.
+  value: >-
+    return (events.filter(e => e.emit === 'chunk').slice(-1)[0] || {}).value || ''

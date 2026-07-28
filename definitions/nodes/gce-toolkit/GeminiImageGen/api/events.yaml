@@ -1,0 +1,47 @@
+# One row per output connector, in interface.yaml order.
+#
+# All three read the same parts list. Gemini mixes image parts and text parts in one array, so
+# each row filters for the kind it wants rather than assuming a position.
+#
+# `inlineData` OR `inline_data`: the REST reference documents snake_case and the JSON mapping
+# accepts both, so which one comes back is not something a manifest should bet on.
+
+- emit: images
+  from: response
+  value: >-
+    return ((((((calls.generate || {}).candidates || [])[0] || {}).content || {}).parts) || [])
+      .filter(p => p.inlineData || p.inline_data)
+      .map((p, i) => ({
+        data: (p.inlineData || p.inline_data || {}).data || '',
+        mimeType: (p.inlineData || p.inline_data || {}).mimeType
+          || (p.inlineData || p.inline_data || {}).mime_type
+          || 'image/png',
+        fileName: String(config.fileName || 'generated_image') + '_' + i + '.'
+          + String((p.inlineData || p.inline_data || {}).mimeType
+              || (p.inlineData || p.inline_data || {}).mime_type
+              || 'image/png')
+              .split('/').at(-1).split('+')[0]
+      }))
+
+- emit: text
+  from: response
+  value: >-
+    return ((((((calls.generate || {}).candidates || [])[0] || {}).content || {}).parts) || [])
+      .filter(p => typeof p.text === 'string')
+      .map(p => p.text)
+      .join('')
+
+# `generatedAt` is EPOCH MILLISECONDS, where the retired node emitted an ISO string. The
+# sandbox exposes Date.now() and refuses `new`, so there is no way to format a date inside an
+# expression. Renamed from `timestamp` rather than kept with a different type under the same
+# name, because a downstream template doing string work on an ISO date would otherwise break
+# silently on a number.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      model: config.model,
+      imageCount: ((((((calls.generate || {}).candidates || [])[0] || {}).content || {}).parts) || [])
+        .filter(p => p.inlineData || p.inline_data).length,
+      generatedAt: Date.now()
+    }

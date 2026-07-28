@@ -15,11 +15,15 @@
 
 - emit: imageResults
   from: response
+  # A `data:` thumbnail is dropped, matching SearchNews. Measured clean on this engine today (0 of
+  # 100 results base64), so this guards a REGRESSION rather than fixing a live fault: it means an
+  # engine swap cannot put inline base64 onto the wire the way `google_news` did. Dropped rather than
+  # truncated — a cut-off data URI is a corrupt image a renderer still tries to display.
   value: >-
     return (((calls.images || {}).images) || []).slice(0, config.numImages).map(i => ({
       url: (i.original || {}).link || i.link || "",
       title: i.title || "",
-      thumbnail: i.thumbnail || "",
+      thumbnail: (i.thumbnail || "").startsWith("data:") ? "" : i.thumbnail || "",
       source_url: (i.source || {}).link || "",
       source_name: (i.source || {}).name || ""
     }))

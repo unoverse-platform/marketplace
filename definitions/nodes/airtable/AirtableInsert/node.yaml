@@ -11,6 +11,15 @@ whenToUse: >
   updates any record that already carries an Airtable id, and can skip rows whose value is
   already present. Use it to persist a collection; it writes, it does not read.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # NEVER cacheable: reuse would skip the write entirely.
   cacheable: false

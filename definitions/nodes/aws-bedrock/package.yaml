@@ -1,0 +1,34 @@
+$schema: ../_schema/package.schema.json
+
+# BEDROCK AS MANIFESTS, and the cheapest AWS package to convert: both API calls it makes
+# (Converse and InvokeModel) are plain signed JSON POSTs. Everything it needed already
+# existed by the time it was reached — the signer from DynamoDB, and `transport: binary`
+# for the attachments Claude can read.
+#
+# The retired TypeScript is at `_legacy/nodes/aws-bedrock/`.
+
+name: aws-bedrock
+displayName: AWS Bedrock
+description: Claude models and Titan embeddings on AWS Bedrock
+version: 2.0.0
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/bedrock.png
+
+features:
+  - Claude on Bedrock, with images, documents and tools
+  - Titan text embeddings, inline or over a service edge
+
+# Two labels deep at least: bedrock-runtime.eu-west-1.amazonaws.com.
+allowedHosts:
+  - "**.amazonaws.com"
+  # Any host, for the UNAUTHENTICATED attachment fetches only. BedrockClaude reads an image
+  # or document from a url a person supplies, which cannot be declared in advance. Those
+  # calls send no credential, and the executor refuses "*" the moment one does.
+  - "*"
+
+requires:
+  credential: [awsSigV4]
+  transport: [json, binary]
+  # Bedrock embeds ONE text per request, so a batch is a fan-out.
+  chunk: true
+  executorVersion: ">=1.4.0"

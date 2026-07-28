@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# WHAT A FIXTURE CAN PROVE ABOUT A VOICE CALL, which is less than for any other node: there is no
+# microphone on the bench and no browser to send audio to, so the only decidable question is whether the
+# vendor ACCEPTED the handshake.
+#
+# That is worth asserting on its own. A rejected handshake — a bad key, an unknown voice, a malformed
+# session — looks exactly like a quiet call from the outside, which is the failure that cost a day on the
+# OpenAI voice node. `sessionReady` fires on session.updated and is the node's own liveness signal.
+#
+# Running it live needs XAI_API_KEY.
+
+testData:
+  config:
+    systemPrompt: You are a concise assistant. Keep answers to one sentence.
+    initialRequest: Say hello and nothing else.
+    voice: eve
+    turnDetection: server_vad
+  inputs:
+    input: {}
+  expect:
+    sessionReady: "return output.sessionReady === true"

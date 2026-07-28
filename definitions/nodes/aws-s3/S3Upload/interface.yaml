@@ -1,0 +1,21 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  # NAMED `data`, not `signal`, because the retired node named it that and saved workflows
+  # hold edges into a port of that name.
+  - name: data
+    type: object
+    description: >-
+      Carries what to upload. Reference its fields from the Source URL or Base64 Data
+      setting, and from Key when the name comes from upstream.
+    required: false
+
+outputs:
+  - name: output
+    type: object
+    description: key, bucket, s3Url, downloadUrl, size, contentType
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

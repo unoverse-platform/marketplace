@@ -11,6 +11,15 @@ whenToUse: >
   paged automatically past the first hundred. Returns the records as plain objects with
   their Airtable id. Use it when the data lives in Airtable rather than a database.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # Idempotent read. The table can change underneath, so this is eligible rather than free:
   # memoization is off engine-wide by default.

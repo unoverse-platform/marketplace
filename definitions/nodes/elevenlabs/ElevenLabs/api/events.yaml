@@ -1,0 +1,10 @@
+- emit: audio
+  value: { $ref: audio#out }
+
+- emit: metadata
+  # The voice actually used, fallback included, so a reader can tell which voice spoke without knowing
+  # the default. `characters` is the billed unit, and the length of the text is exactly that count.
+  value: >-
+    return { format: 'mp3',
+             voiceId: config.voiceId || 'onwK4e9ZLuTAKqWW03F9',
+             characters: String(config.text || '').length }

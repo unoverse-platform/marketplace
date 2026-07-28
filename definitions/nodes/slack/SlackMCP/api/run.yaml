@@ -10,7 +10,7 @@
       && !!((signal.input || {}).text || (signal.input || {}).input)
   method: POST
   url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/chat.postMessage'"
-  auth: { $ref: api#auth }
+  credential: { $ref: api#credential }
   body: >-
     return {
       channel: (signal.input || {}).channel || config.defaultChannel,

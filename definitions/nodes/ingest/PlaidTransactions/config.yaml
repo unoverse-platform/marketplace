@@ -1,0 +1,72 @@
+$schema: ../../../_schema/config.schema.json
+
+# `useCache` and `cacheTTLMinutes` are GONE — see node.yaml for why. A saved workflow that set them
+# will simply have two fields nothing reads, rather than failing.
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    testUsername:
+      type: string
+      title: Test Username
+      description: >-
+        Plaid Sandbox test username. user_transactions_dynamic gives the most realistic history;
+        the others are fixed personas.
+      default: user_transactions_dynamic
+      enum: [user_transactions_dynamic, user_good, user_ewa_user, user_yuppie, user_small_business]
+    testPassword:
+      type: string
+      title: Test Password
+      description: Plaid Sandbox test password (any value works for most test users)
+      default: pass_good
+    institutionId:
+      type: string
+      title: Institution ID
+      description: "Plaid institution ID. Default: First Platypus Bank (ins_109508), recommended for sandbox"
+      default: ins_109508
+    daysBack:
+      type: number
+      title: Days Back
+      description: Number of days of transaction history to fetch
+      default: 30
+      minimum: 1
+      maximum: 730
+    maxTransactions:
+      type: number
+      title: Max Transactions
+      description: Maximum number of transactions to return
+      default: 100
+      minimum: 1
+      maximum: 500
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [testUsername, testPassword, institutionId, daysBack, maxTransactions, authRequired, authRole]

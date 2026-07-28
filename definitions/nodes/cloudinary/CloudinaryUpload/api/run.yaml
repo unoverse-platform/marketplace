@@ -1,0 +1,56 @@
+# ONE POST to the Upload API, as a FORM — which is what Cloudinary's own curl example sends (`-F`).
+#
+# NO SIGNATURE, and that is the whole reason this node needed no new capability. The SDK it replaces signs
+# every upload (sorted params + api_secret, SHA-1) and the expression sandbox has no sha1. Cloudinary's
+# docs offer Basic Auth instead — "no signature calculation required" — for the Upload API as well as the
+# Admin API, so `scheme: basic` does the job and the signing never has to be described.
+#
+# THE RESOURCE TYPE IS IN THE PATH, so the url is an expression: it defaults rather than producing
+# `/v1_1/cloud//upload`, a URL that 404s about a route instead of about a missing field.
+
+- name: upload
+  method: POST
+  url: >-
+    return 'https://api.cloudinary.com/v1_1/'
+      + credentials.cloudinaryCredential.cloud_name
+      + '/' + (config.resourceType || 'image') + '/upload'
+  credential: { $ref: credential }
+  encoding: multipart
+
+  body:
+    # BARE BASE64 GETS A DATA URI, transcribed from the service: Cloudinary needs to be told what the
+    # bytes are, and a naked base64 string is rejected. A URL or an existing data: URI passes through.
+    file: >-
+      return (() => {
+        const d = String(config.imageData || '');
+        return (d.startsWith('data:') || d.startsWith('http')) ? d : 'data:image/png;base64,' + d;
+      })();
+    folder: "{{ config.folder }}"
+    # THE SANITISER IS TRANSCRIBED, step for step, because Cloudinary rejects an id with an extension or
+    # punctuation and the code version quietly fixed both rather than failing: drop the extension, replace
+    # anything outside [A-Za-z0-9_-/] with an underscore, collapse runs, trim the ends.
+    public_id: >-
+      return String(config.publicId || '').trim()
+        ? String(config.publicId)
+            .replace(/\.[^/.]+$/, '')
+            .replace(/[^a-zA-Z0-9_\-\/]/g, '_')
+            .replace(/_+/g, '_')
+            .replace(/^_|_$/g, '')
+        : undefined
+    # A COMMA LIST BECOMES A TRIMMED ONE. Cloudinary accepts a comma-separated string, so this normalises
+    # spacing rather than converting to an array — the form field is text either way.
+    tags: >-
+      return String(config.tags || '').trim()
+        ? String(config.tags).split(',').map(t => t.trim()).filter(t => t).join(',')
+        : undefined
+    # Sent as the STRING "true"/"false" because a form carries text, and the default matches the service.
+    overwrite: "return config.overwrite ? 'true' : 'false'"
+
+  timeoutMs: 300000
+  transport: json
+
+  # Cloudinary answers 4xx with { error: { message } }, which names the real reason — an invalid public id,
+  # an unsupported format, a quota. Surfaced as-is rather than replaced by a guess.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message || 'Cloudinary upload failed'"

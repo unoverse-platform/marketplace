@@ -14,6 +14,15 @@ whenToUse: >-
   the item and a found flag, so a miss is an answer rather than an error. Writing a record,
   and querying a range of them, are different jobs.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # NOT cacheable. An item is exactly the kind of thing that changes underneath a workflow,
   # and a keyed read is cheap, so reuse buys little and can be wrong.

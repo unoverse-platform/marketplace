@@ -1,0 +1,127 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [model, prompt]
+  properties:
+    model:
+      type: string
+      title: Model
+      description: >-
+        Any Converse-capable Bedrock model id — anthropic.claude-sonnet-5,
+        anthropic.claude-opus-5, openai.gpt-5.6-sol / -terra / -luna, amazon.nova-*.
+        Enable the model for your region in the Bedrock console first.
+      default: anthropic.claude-sonnet-5
+      "ui:field": template
+    prompt:
+      type: string
+      title: Prompt
+      description: What to ask. Supports {{ signal.<id>.<handle>.<field> }}
+      default: ""
+      "ui:field": template
+      "ui:ai": { editable: true }
+    systemPrompt:
+      type: string
+      title: Instructions
+      description: System prompt, setting how the model should behave
+      default: ""
+      "ui:field": template
+      "ui:ai": { editable: true }
+    maxTokens:
+      type: number
+      title: Max Output Tokens
+      default: 4096
+      minimum: 1
+      maximum: 200000
+    temperature:
+      type: number
+      title: Temperature
+      default: 0.7
+      minimum: 0
+      maximum: 1
+      step: 0.1
+    includeImageUrl:
+      type: boolean
+      title: Include an Image
+      description: Fetch an image and let the model see it alongside the prompt
+      default: false
+      "ui:widget": toggle
+    imageUrl:
+      type: string
+      title: Image URL
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { includeImageUrl: true }
+    includeDocumentUrl:
+      type: boolean
+      title: Include a Document
+      description: Fetch a document and let the model read it alongside the prompt
+      default: false
+      "ui:widget": toggle
+    documentUrl:
+      type: string
+      title: Document URL
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { includeDocumentUrl: true }
+    documentName:
+      type: string
+      title: Document Name
+      description: What the model should call the document when referring to it
+      default: document
+      "ui:field": template
+      "ui:dependencies": { includeDocumentUrl: true }
+    enableTools:
+      type: boolean
+      title: Enable Tools
+      description: Offer the model a tool schema, so it can return structured arguments
+      default: false
+      "ui:widget": toggle
+    toolSchema:
+      type: object
+      title: Tool Schema
+      description: The tools to offer, as Bedrock toolSpec entries
+      default: []
+      "ui:field": code
+      "ui:dependencies": { enableTools: true }
+    toolChoice:
+      type: string
+      title: Tool Choice
+      description: Let the model decide, or force it to use one
+      enum: [auto, any]
+      enumNames: [Auto, Require a tool]
+      default: auto
+      "ui:dependencies": { enableTools: true }
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order":
+  [model, prompt, systemPrompt, maxTokens, temperature, includeImageUrl, imageUrl,
+   includeDocumentUrl, documentUrl, documentName, enableTools, toolSchema, toolChoice, authRequired, authRole]

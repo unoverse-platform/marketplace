@@ -1,0 +1,12 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. Nothing is read from it — the ids come from the run itself.
+    required: false
+
+outputs:
+  - name: context
+    type: object
+    description: "{ userId, conversationId, chatId, workflowId, executionId }"

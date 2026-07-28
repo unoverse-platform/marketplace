@@ -1,0 +1,29 @@
+$schema: ../../../_schema/test.schema.json
+
+# The code version's own fixture. Running it live needs ZAI_API_KEY (the credential is named
+# `zaiApiKey`, so the bench looks for ZAI_API_KEY).
+#
+# WHAT IT CANNOT PROVE: the tool loop. With no MCP provider wired the bridge is absent and the node
+# degrades to a single streamed turn, which is the correct degradation and also the only path a bench
+# can reach. The fragment reassembly and transcript growth are covered by
+# packages/base/tests/manifest-toolloop-chat.test.ts against a real server instead.
+
+testData:
+  config:
+    model: glm-5.2
+    agentName: ResearchAssistant
+    maxTurns: 15
+    reasoningEffort: high
+    maxTokens: 65536
+    temperature: 1.0
+    topP: 0.95
+    systemPrompt: You are a concise research assistant. Answer accurately and format the response in Markdown.
+    prompt: Summarize the key trade-offs between server-side and client-side rendering for web apps.
+  inputs:
+    signal:
+      topic: rendering strategies
+      notes: User is building a content-heavy marketing site and cares about SEO and load time.
+  expect:
+    # `chunk` streams, so on the bench it is delivered event by event rather than settling — `text` is
+    # the one that has to hold the finished answer.
+    text: "return typeof output.text === 'string' && output.text.length > 0"

@@ -1,10 +1,34 @@
 # One call. The engine is what makes this node different from its three siblings.
+#
+# `google_news_light`, NOT `google_news`, and the difference is 31x on the wire.
+#
+# `google_news` returns each article's thumbnail as an inline `data:image/jpeg;base64,...` URI. There
+# is no parameter that turns that off — SearchApi's `include_base_images` toggle belongs to the
+# Shopping engine, not this one — so the base64 travelled into the workflow payload, over the
+# WebSocket to the client, and through the XState event log, ~3.5 KB per result. The retired
+# TypeScript node did exactly the same thing (`thumbnail: r.thumbnail || ""`), so this was never a
+# migration regression; it was always wrong.
+#
+# The light engine returns a `https://encrypted-tbn0.gstatic.com/...` URL instead. MEASURED against
+# the live API on 2026-07-27, same query and gl/hl, num=10:
+#
+#                      results   base64 thumbs   thumbnail bytes
+#   google_news             10          10 / 10            35,538
+#   google_news_light       10           0 / 10             1,160
+#
+# Response fields are IDENTICAL (position, title, link, source, date, snippet, thumbnail) and `source`
+# is a plain string on both, so the events table needed no change at all.
+#
+# `num` IS honoured even though the light engine's docs omit it — verified above, 10 requested and 10
+# returned. Kept for that reason, and because dropping it would silently change every saved
+# workflow's result count. If SearchApi ever stops honouring it, the events table's `slice` is what
+# keeps `numResults` meaning what it says.
 
 - $ref: searchapi#call
   name: search
   error: { $ref: searchapi#error }
   query:
-    engine: google_news
+    engine: google_news_light
     q: "{{ config.query }}"
     num: "{{ config.numResults }}"
     gl: "{{ config.country }}"

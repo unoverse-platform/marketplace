@@ -1,0 +1,19 @@
+# ONE ENTRY, AND IT REACHES NO HOST. `state: save` is platform storage, so this node still makes no
+# request — which is the whole point of it, since the value it emits was computed by the engine's
+# template resolver before the node was even entered.
+#
+# GATED, so the entry leaves no trace when the toggle is off: a skipped call records no
+# `calls.saved` key, and the `__saveToContext` flag on the output envelope is derived from exactly
+# that. Both halves of "save to context" therefore turn on and off together, which they must —
+# writing the value without the flag makes it reachable from the NEXT node and not this one.
+#
+# NO `key`, and lint refuses one. The saved-context hash is `saved:<executionId>` with one field per
+# node, and that layout belongs to the engine: its resolver reads the key when building a template
+# scope and the run deletes it at the end. A manifest addressing it by hand would also have the
+# deployment namespace applied to the one key that must not carry it, and the write would land where
+# nothing looks — silently, with the toggle still appearing to work.
+
+- name: saved
+  when: "return !!config.saveToContext"
+  state: save
+  value: "return config.code"

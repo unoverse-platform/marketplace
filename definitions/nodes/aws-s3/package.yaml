@@ -1,35 +1,48 @@
 $schema: ../_schema/package.schema.json
 
-# S3 AS MANIFESTS. The same signer as DynamoDB, plus the two things S3 needs that a JSON
-# API does not:
+# S3 AS MANIFESTS. The same signer as DynamoDB, plus the three things S3 needs that a plain
+# JSON API does not:
 #
-#   transport: xml   S3's list endpoints never moved to JSON
-#   presign          links that carry their own authority, so something with no credentials
-#                    can fetch the object
+#   transport: xml     S3's list endpoints never moved to JSON
+#   transport: headers a HEAD reply IS its headers, which is how size and type arrive
+#   presign            links that carry their own authority, so something with no credentials
+#                      can fetch the object
 #
-# ⚠️ PARTIAL, and deliberately so. S3Upload is not here: it PUTs raw bytes, usually fetched
-# from a source URL first, and a binary request body is a capability this executor does not
-# have yet. ElevenLabs needs the same thing, so it is worth building once for both rather
-# than twice badly. S3Upload stays TypeScript until then.
+# COMPLETE as of 2026-07-27. An earlier note here said S3Upload could not be a manifest
+# because a binary request BODY was missing. That was true when it was written and is not
+# now: `encoding: binary` sends bytes rather than JSON, so S3Upload is the third node here.
 #
-# The retired TypeScript for the two migrated nodes is at `_legacy/nodes/aws-s3/`.
+# The note was also wrong about the consequence. It said S3Upload "stays TypeScript until
+# then", but the TypeScript had already gone to `_legacy/` with the rest of the package, so
+# the node type did not exist at all and any saved workflow using it was broken. Retiring a
+# package is all-or-nothing, and a per-node exception in prose does not create one.
+#
+# The retired TypeScript is at `_legacy/nodes/aws-s3/`.
 
 name: aws-s3
 displayName: AWS S3
-description: List and read objects in AWS S3, with shareable links
-version: 2.0.0
+description: List, read and write objects in AWS S3, with shareable links
+version: 2.1.0
 category: storage
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/S3.png
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png
 
 features:
   - List a bucket or prefix, filtered by extension
   - Read one object's metadata
+  - Write a file from a url or base64
   - Presigned links, so a downstream step needs no credentials
 
 allowedHosts:
   - "**.amazonaws.com"
+  # Any host, for the UNAUTHENTICATED source fetch in S3Upload only. It pulls the file from a
+  # url a person supplies, which cannot be declared in advance. That call sends no credential,
+  # and the executor refuses "*" the moment one does. Non-https is refused regardless.
+  - "*"
 
 requires:
-  auth: [awsSigV4]
-  transport: [xml, headers]
-  executorVersion: ">=1.3.0"
+  credential: [awsSigV4]
+  transport: [xml, headers, binary]
+  # NOTE: `encoding: binary`, which the PUT in S3Upload depends on, has no field in `requires`
+  # to declare it, so it is gated only by executorVersion below. Same gap `aws-dynamodb` has
+  # with `dynamodbJson`.
+  executorVersion: ">=1.4.0"

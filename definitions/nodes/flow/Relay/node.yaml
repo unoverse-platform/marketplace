@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Relay
+kind: PromiseNode
+
+name: Relay
+category: Flow
+color: "#10B981"
+
+description: Instantly forwards any signal without waiting for dependencies
+
+whenToUse: >-
+  Forward a signal downstream immediately without waiting on the normal dependency and join rules: a
+  pass-through wire to fan a signal out, or to break a blocking dependency. It adds no transform,
+  only unwrapping a single upstream output and re-timing the signal, so it exists for control-flow
+  rewiring rather than for changing data.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: it forwards whatever arrived, and what arrives differs every run.
+  cacheable: false

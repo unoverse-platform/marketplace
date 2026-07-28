@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# A duplex node cannot be proved by a fixture the way a request can: there is no single reply,
+# and nobody is talking. This opens the session, asserts the vendor accepted the handshake, and
+# stops. `session.updated` coming back is the one thing a fixture CAN prove without a microphone:
+# that the url, the token and every field in the session block were acceptable.
+#
+# The audio path needs a real call, which is what `unoverse node test` cannot stand in for.
+
+testData:
+  config:
+    model: gpt-realtime-2.1-mini
+    systemPrompt: You are on a test call. Say nothing unless spoken to.
+    voice: alloy
+    turnDetection: semantic_vad
+    initialRequest: "Say the single word: hello"
+    maxResponseOutputTokens: 256
+  inputs:
+    input: {}
+  expect:
+    sessionReady: "return output.sessionReady === true"
+    assistantTranscript: "return output.assistantTranscript.length > 0"

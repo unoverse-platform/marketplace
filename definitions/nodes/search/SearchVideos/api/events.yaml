@@ -11,5 +11,5 @@
       length: v.length || "",
       publishedTime: v.published_time || "",
       description: v.description || "",
-      thumbnail: (v.thumbnail || {}).static || (v.thumbnail || {}).rich || ""
+      thumbnail: (((v.thumbnail || {}).static || (v.thumbnail || {}).rich) || "").startsWith("data:") ? "" : ((v.thumbnail || {}).static || (v.thumbnail || {}).rich || "")
     }))

@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: ElevenLabs
+kind: PromiseNode
+
+name: ElevenLabs TTS
+category: Media & Design
+color: "#FF69B4"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg
+
+description: Speak text aloud in a chosen voice. Outputs base64 MP3.
+
+whenToUse: >-
+  Read TEXT ALOUD in one voice: a narration, an announcement, a spoken reply. It performs words that are
+  already written, so use it when the words exist and only the voice is needed. For several speakers in
+  one clip use ElevenLabs Dialogue; for the sound of a thing rather than speech use Sound Effects.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

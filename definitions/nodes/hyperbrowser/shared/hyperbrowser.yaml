@@ -6,7 +6,7 @@
 
 # The vendor, minus the endpoint. A node $refs this and adds its own url, body and poll.
 call: &call
-  auth:
+  credential:
     scheme: apiKeyHeader
     header: x-api-key
     value: "{{ credentials.hyperbrowserCredential.apiKey }}"

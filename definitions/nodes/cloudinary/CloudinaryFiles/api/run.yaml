@@ -1,0 +1,27 @@
+# ONE GET to the ADMIN API, with Basic Auth — which the Admin API has always accepted, so this node was
+# never really blocked on anything.
+#
+# `prefix` IS THE FOLDER FILTER. Cloudinary has no folder parameter on this endpoint: a folder is just a
+# public-id prefix, which is why the service set `prefix` from `config.folder`. Transcribed rather than
+# renamed, because `folder` would be silently ignored.
+
+- name: resources
+  method: GET
+  url: >-
+    return 'https://api.cloudinary.com/v1_1/'
+      + credentials.cloudinaryCredential.cloud_name
+      + '/resources/' + (config.resourceType || 'image')
+  credential: { $ref: credential }
+
+  query:
+    # `type: upload` excludes fetched and private assets, matching the service.
+    type: upload
+    max_results: "return config.maxFiles || 100"
+    prefix: "{{ config.folder }}"
+    tags: "{{ config.tags }}"
+
+  transport: json
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message || 'Cloudinary listing failed'"

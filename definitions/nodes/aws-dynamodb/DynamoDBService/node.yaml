@@ -18,6 +18,15 @@ whenToUse: >-
   read a range, store or amend one. A single known read or write in a fixed place is
   cheaper done inline. Attach it to the agent by a service edge.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 # NOT AT PARITY WITH WHAT IT REPLACED — IT DOES MORE. The retired TypeScript advertised
 # these six methods on its service connector and implemented NONE of them: the executor
 # initialised a client, returned {}, and there were no handlers anywhere in the package. An

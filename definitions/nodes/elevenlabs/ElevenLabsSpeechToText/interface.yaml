@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: string
+    required: false
+    description: Audio URL to transcribe, when not set in config
+
+outputs:
+  - name: text
+    type: string
+    description: The full transcript
+  - name: metadata
+    type: object
+    description: languageCode, languageProbability, words (with timings)
+
+credentials:
+  - name: elevenlabsCredential
+    required: true

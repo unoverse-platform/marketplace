@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Abyssale
+kind: PromiseNode
+
+name: Abyssale
+category: Media & Design
+color: "#6366F1"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768052235/gravity/icons/abyssale-picto-airtable.png
+
+description: Generate high-quality images and PDFs from Abyssale templates
+
+whenToUse: >-
+  Pick to render branded images or PDFs from pre-built Abyssale TEMPLATES by mapping data to named
+  layers. It is for on-brand assets with a fixed designed layout, not free-form AI-generated imagery
+  and not a document designed from scratch.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: it renders from data that changes every run, and a generated asset URL expires.
+  cacheable: false

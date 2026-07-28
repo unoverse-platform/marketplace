@@ -1,0 +1,37 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+    required: false
+
+# THE NAMES ARE THE CODE VERSION'S, unchanged. A saved workflow references an output by name, so
+# `progress` keeps its name here even though `thinking` would read better — renaming it would silently
+# empty whatever it is wired to.
+outputs:
+  - name: progress
+    type: string
+    description: Tool call log (emitted in real time)
+  - name: chunk
+    type: string
+    description: Streaming LLM text response (emitted in real time)
+  - name: reasoning
+    type: string
+    description: GLM reasoning/thinking stream (separate output)
+  - name: mcpResult
+    type: object
+    description: MCP tool results
+  - name: text
+    type: string
+    description: Final synthesized response
+
+credentials:
+  - name: zaiApiKey
+    required: true
+
+serviceConnectors:
+  - name: mcpService
+    description: MCP service connector — automatic schema discovery
+    serviceType: mcp
+    isService: false

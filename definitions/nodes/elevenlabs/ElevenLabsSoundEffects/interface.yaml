@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: string
+    required: true
+    description: Text prompt describing the sound effect to generate
+
+outputs:
+  - name: audio
+    type: object
+    description: "Generated audio: { data (base64), mimeType, fileName }"
+  - name: metadata
+    type: object
+    description: format, durationSeconds, prompt
+
+credentials:
+  - name: elevenlabsCredential
+    required: true

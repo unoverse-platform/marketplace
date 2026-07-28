@@ -1,0 +1,24 @@
+$schema: ../../../_schema/test.schema.json
+
+# `condition` arrives ALREADY RESOLVED — the engine evaluates the template before the node runs —
+# so a fixture supplies the boolean, not the expression that produced it.
+#
+# Asserting the false branch is EMPTY is the important half: a router that emitted on both dots
+# would look like it worked while running both downstream branches.
+
+testData:
+  config:
+    condition: true
+  inputs:
+    signal:
+      value: 42
+  expect:
+    # THE PAYLOAD PASSES THROUGH UNCHANGED, nesting included. `signal.value` rather than `value`
+    # because the incoming signal is keyed by INPUT PORT NAME — this node's port is `signal`, so
+    # what a row sees is { signal: <payload> }. Confirmed by running it, not assumed: the first
+    # version of this fixture asserted `output['true'].value` and failed, which is how the shape
+    # got pinned down.
+    "true": "return output['true'].signal.value === 42"
+    # The other branch must be SILENT. A router that emitted on both dots would look like it
+    # worked while running both downstream branches.
+    "false": "return output['false'] === undefined"

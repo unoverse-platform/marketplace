@@ -1,0 +1,21 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running it live needs ELEVENLABS_API_KEY. It reaches the real API and spends credits, so the prompt is
+# short and the duration is the minimum that still produces something recognisable.
+
+testData:
+  config:
+    text: heavy wooden door slamming shut in a stone corridor
+    durationSeconds: 3
+    promptInfluence: 0.3
+    loop: false
+  inputs:
+    input: heavy wooden door slamming shut in a stone corridor
+  expect:
+    # BASE64 THAT IS ACTUALLY AUDIO, not merely a non-empty string: a JSON error body would also fill
+    # `data` if the transport were wrong. An mp3 is thousands of bytes, so length is the discriminator.
+    audio: >-
+      return typeof output.audio.data === 'string'
+        && output.audio.data.length > 1000
+        && output.audio.mimeType.startsWith('audio/')
+    metadata: "return output.metadata.format === 'mp3' && output.metadata.prompt.length > 0"

@@ -18,7 +18,7 @@
   method: POST
   url: { $ref: endpoints#responses }
 
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.openAICredential.apiKey }}"
 
@@ -33,7 +33,11 @@
   retry:
     attempts: 3
     backoff: exponential
-    on: [429, 500, 502, 503, 504]
+    # 520/522/524 are CLOUDFLARE EDGE errors, not OpenAI ones: the origin returned something the
+    # edge could not read, never answered, or exceeded the edge timeout. They are transient in exactly
+    # the way 502/503/504 are, and a live run hit a 520 after 154s with no retry because they were
+    # missing here. Added alongside the origin 5xx rather than instead of them.
+    on: [429, 500, 502, 503, 504, 520, 522, 524]
 
   # How the reply is framed. Settles once.
   transport: json

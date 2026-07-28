@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Context
+kind: PromiseNode
+
+name: Context
+category: Flow
+color: "#f59e0b"
+
+description: Extract workflow context (userId, conversationId, chatId, etc.)
+
+whenToUse: >-
+  Read the current run's identity and session fields — userId, conversationId, chatId, workflowId,
+  executionId — to scope, personalise or key a later step. It hands them over as one ready-to-use
+  object rather than making a template dig through the raw execution context.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: these ids identify THIS run, so a reused answer would describe a different one.
+  cacheable: false

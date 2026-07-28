@@ -32,7 +32,7 @@ allowedHosts:
   - api.hyperbrowser.ai
 
 requires:
-  auth: [apiKeyHeader]
+  credential: [apiKeyHeader]
   transport: [json]
   # Every node here waits on a job, and Extract also fans out one request per url. Both are
   # new capabilities, so this package will not deploy to an executor that predates them —

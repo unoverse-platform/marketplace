@@ -1,0 +1,29 @@
+$schema: ../_schema/package.schema.json
+
+# XAI GROK, fully declarative.
+#
+# The node is a REALTIME VOICE session, not a text agent — `wss://api.x.ai/v1/realtime` — so what
+# unblocked it was `transport: ws` and the audio lane, built for openai-realtime. Its protocol is
+# identical to OpenAI's realtime format event for event, which is why shared/tools.yaml reads the same.
+#
+# TWO SOCKETS ARE INVOLVED and only one is here: the vendor socket is this manifest's `run`, while the
+# platform's audio socket to the browser is api/audio.yaml. That second lane exists only because MCP
+# cannot carry binary audio; everything else this node emits reaches the client over MCP streaming.
+
+name: xai-grok
+displayName: xAI Grok
+description: Realtime voice conversations with xAI's Grok
+version: 2.0.0
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Realtime voice conversation with Grok, with MCP tool calling
+
+allowedHosts:
+  - api.x.ai
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [bearer]
+  transport: [ws]

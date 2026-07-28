@@ -1,0 +1,27 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs the three CLOUDINARY_* variables. It reads Cloudinary's own demo asset, so it does not depend on
+# anything in your account — but the ACCOUNT must be able to see it, so this is the one fixture here that
+# may need a public_id of yours instead.
+
+testData:
+  config:
+    file:
+      public_id: sample
+      resource_type: image
+      universalId: abc123def456
+    transformation: w_200,c_fill
+    format: webp
+  inputs:
+    file:
+      public_id: sample
+      resource_type: image
+  expect:
+    # THE TRANSFORMATION MUST BE IN THE URL, and the format appended to it rather than replacing it — that
+    # comma rule is the one detail of this node that is easy to get backwards.
+    fileContent: >-
+      return output.fileContent.secure_url.startsWith('https://res.cloudinary.com/')
+        && output.fileContent.transformation === 'w_200,c_fill,f_webp'
+        && output.fileContent.secure_url.includes('w_200,c_fill,f_webp')
+        && output.fileContent.format === 'webp'
+        && output.fileContent.universalId === 'abc123def456'

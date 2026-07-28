@@ -1,0 +1,28 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data. The file itself is named in config, usually templated from here.
+    required: false
+
+outputs:
+  - name: url
+    type: string
+    description: The asset's http URL
+  - name: secureUrl
+    type: string
+    description: The asset's https URL — prefer this one
+  - name: publicId
+    type: string
+    description: Cloudinary's id for the asset, for later transformation or deletion
+  - name: format
+    type: string
+    description: The stored format, e.g. png
+  - name: metadata
+    type: object
+    description: width, height, bytes, createdAt, tags
+
+credentials:
+  - name: cloudinaryCredential
+    required: true

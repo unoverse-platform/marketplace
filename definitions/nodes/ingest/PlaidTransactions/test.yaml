@@ -1,0 +1,26 @@
+$schema: ../../../_schema/test.schema.json
+
+# The existing node's own fixture. Running it live needs INGEST_PLAID_CLIENT_ID and INGEST_PLAID_SECRET
+# (or PLAID_CLIENT_ID / PLAID_SECRET) — sandbox keys, which is all this node can use.
+#
+# It reaches the real Plaid sandbox, so it exercises the whole chain: invent a login, exchange it, then
+# poll until the freshly created item has history. That last part is the interesting one — a new item
+# nearly always answers PRODUCT_NOT_READY at least once.
+
+testData:
+  config:
+    testUsername: user_transactions_dynamic
+    testPassword: pass_good
+    institutionId: ins_109508
+    daysBack: 30
+    maxTransactions: 100
+  inputs:
+    signal: {}
+  expect:
+    # An ARRAY, and one that actually has something in it: user_transactions_dynamic always returns
+    # history, so an empty array means the poll gave up early rather than that the account is quiet.
+    transactions: "return Array.isArray(output.transactions) && output.transactions.length > 0"
+    accounts: "return Array.isArray(output.accounts) && output.accounts.length > 0"
+    # YYYY-MM-DD, and the range the right way round. A sign error in the arithmetic would still produce
+    # two valid-looking dates.
+    startDate: "return /^\\d{4}-\\d{2}-\\d{2}$/.test(output.startDate) && output.startDate < output.endDate"

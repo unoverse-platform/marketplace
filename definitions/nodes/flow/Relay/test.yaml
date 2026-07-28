@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+# The retired node's own fixture, unchanged, because it documents the nesting: the payload arrives
+# under the input PORT, then the SOURCE NODE, then that source's OUTPUT HANDLE.
+#
+# Asserting `message` at the TOP of the output is the whole point — it proves the envelope was peeled
+# off. A relay that forwarded `{ upstream1: { output: … } }` would look like it worked while handing
+# every downstream node the wrapper instead of the data.
+
+testData:
+  config: {}
+  inputs:
+    signal:
+      upstream1:
+        output:
+          message: relay me
+  expect:
+    signal: "return output.signal.message === 'relay me'"

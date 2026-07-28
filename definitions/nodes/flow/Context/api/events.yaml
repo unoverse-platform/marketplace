@@ -1,0 +1,20 @@
+# NO CALLS. Every field here is already in scope; the node exists to hand them over in one object.
+#
+# `scope` is the platform's own ids, which is exactly what this node was always reading — the retired
+# executor took them off `context.workflow.variables` and `context.executionId` by hand.
+#
+# ONE DELIBERATE DIFFERENCE, and it is a fix rather than a drift. The retired node read userId,
+# conversationId and chatId from `workflow.variables` ONLY. `scope` resolves publishingContext FIRST
+# and falls back to variables, so on a run where the ids arrive on the publishing context and not as
+# variables — a voice call does exactly that — the retired node emitted undefined and this emits the
+# real ids. Strictly more populated, never less.
+
+- emit: context
+  value: >-
+    return {
+      userId: scope.userId,
+      conversationId: scope.conversationId,
+      chatId: scope.chatId,
+      workflowId: scope.workflowId,
+      executionId: scope.executionId
+    }

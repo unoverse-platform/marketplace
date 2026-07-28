@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: string
+    required: true
+    description: The text to speak
+
+outputs:
+  - name: audio
+    type: object
+    description: "Generated audio: { data (base64), mimeType, fileName }"
+  - name: metadata
+    type: object
+    description: format, voiceId, characters
+
+credentials:
+  - name: elevenlabsCredential
+    required: true

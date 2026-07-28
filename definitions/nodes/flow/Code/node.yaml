@@ -1,0 +1,32 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Code
+kind: PromiseNode
+
+name: Code
+category: Flow
+color: "#f59e0b"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png
+
+description: Execute custom code to transform data
+
+whenToUse: >-
+  Transform, reshape, compute or combine data inline with a JS expression: map or filter an array,
+  build an object, derive a value from upstream outputs. Prefer it over routing data through an LLM
+  node just to reformat or merge it, because it is deterministic and free. Toggle generateIds for
+  content hashes, or saveToContext to keep the result reachable from later templates.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: the expression is written over the incoming data, so the same node legitimately
+  # answers differently every run. It is also the node most likely to be edited while a workflow is
+  # being built, and a cached answer would keep serving the previous version of the code.
+  cacheable: false

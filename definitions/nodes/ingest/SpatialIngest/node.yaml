@@ -1,0 +1,30 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SpatialIngest
+kind: PromiseNode
+
+name: Spatial Ingest
+category: Documents
+color: "#7C3AED"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Turn raw text into needs or services in the spatial dictionary.
+
+whenToUse: >-
+  Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a
+  message thread. It reads the text, pulls out the distinct needs or services it describes, embeds each
+  one and stores it. It only WRITES to that map — searching it is a different job — and it takes text
+  that is already in hand rather than fetching from anywhere.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). `required: true`, unlike almost every other
+# node, because this one writes to the PLATFORM's own needs engine rather than to a
+# third-party account the workflow owns. The write is attributed to the caller, and a guest
+# has no identity to attribute it to.
+#
+# No `role` yet: no deployment issues a spatial claim, so naming one would fail every run.
+auth:
+  required: true
+
+capabilities:
+  # NOT cacheable: it WRITES. A reused answer would report a store that never happened.
+  cacheable: false

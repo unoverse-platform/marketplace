@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt and reference url
+    required: false
+
+outputs:
+  - name: images
+    type: array
+    description: >-
+      One entry per image: data (base64), mimeType, fileName. Index first when reading one,
+      e.g. images.0.data
+  - name: text
+    type: string
+    description: Anything the model said alongside the images, often empty
+  - name: metadata
+    type: object
+    description: model, imageCount, generatedAt
+
+credentials:
+  - name: geminiCredential
+    required: true
+    displayName: Google Gemini API

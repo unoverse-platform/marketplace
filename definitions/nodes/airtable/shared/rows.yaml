@@ -22,13 +22,11 @@ toCreate: &toCreate >-
   return (config.records || [])
     .filter(r => !(typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec'))
     .map(r => Object.fromEntries(Object.entries(r).map(e => [e[0] === 'id' ? 'apollo_id' : e[0], e[1]])))
-    .filter(r => {
-      return !String(config.dedupField || '').trim()
-        || !((calls.existing || {}).items || [])
-             .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
-             .filter(Boolean)
-             .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? ''));
-    })
+    .filter(r => !String(config.dedupField || '').trim()
+      || !((calls.existing || {}).items || [])
+           .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
+           .filter(Boolean)
+           .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? '')))
 
 # Offered minus kept: how many the dedup field dropped.
 skipped: &skipped >-
@@ -43,10 +41,9 @@ skipped: &skipped >-
 toCreateAny: &toCreateAny >-
   return (config.records || [])
     .filter(r => !(typeof r.id === 'string' && r.id.length === 17 && r.id.slice(0, 3) === 'rec'))
-    .filter(r => {
-      return !String(config.dedupField || '').trim()
-        || !((calls.existing || {}).items || [])
-             .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
-             .filter(Boolean)
-             .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? ''));
-    }).length > 0
+    .filter(r => !String(config.dedupField || '').trim()
+      || !((calls.existing || {}).items || [])
+           .map(x => String(((x.fields || {})[config.dedupField === 'id' ? 'apollo_id' : config.dedupField]) ?? ''))
+           .filter(Boolean)
+           .includes(String(r[config.dedupField === 'id' ? 'apollo_id' : config.dedupField] ?? '')))
+    .length > 0

@@ -1,0 +1,18 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs ELEVENLABS_API_KEY. Short text, because this bills per character.
+
+testData:
+  config:
+    text: The glass box hums, and the city wakes.
+    stability: 0.5
+  inputs:
+    input: The glass box hums, and the city wakes.
+  expect:
+    audio: >-
+      return typeof output.audio.data === 'string'
+        && output.audio.data.length > 1000
+        && output.audio.mimeType.startsWith('audio/')
+    # The DEFAULT voice must be reported, not an empty string: that fallback lives in two expressions and
+    # this is what catches them disagreeing.
+    metadata: "return output.metadata.voiceId.length > 0 && output.metadata.characters === 39"

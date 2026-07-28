@@ -1,0 +1,113 @@
+# THREE CALLS, and all three exist because this node MANUFACTURES ITS OWN TEST LOGIN.
+#
+# It is a sandbox data source by design, never a live one: it creates a pretend bank connection, turns
+# that into an access token, and reads made-up transactions from it. A real account would need a token
+# that only exists after a person logs into their bank through Plaid's browser popup, which a workflow
+# node cannot do. Two of these three calls are that pretence; only the last one fetches anything.
+#
+# NO `auth` BLOCK ANYWHERE, and that is not an omission. Plaid authenticates in the BODY — every
+# request repeats client_id and secret — so there is no header for a scheme to set.
+#
+# THE URL IS AN EXPRESSION, not a template, because `environment` is an OPTIONAL credential field
+# defaulting to sandbox. Templated as "https://{{ … }}.plaid.com" an unset value yields
+# "https://.plaid.com", which resolves to nothing and fails as a DNS error naming no cause. The
+# fallback has to live where the url is built.
+#
+# NOTHING NEW WAS NEEDED FOR THIS NODE, which was not true a day ago. It looked blocked on three
+# capabilities and needed none of them:
+#
+#   the YYYY-MM-DD date range   `Date.iso` formats a timestamp, so the range is computed inline
+#   the PRODUCT_NOT_READY wait  that IS polling — ask again until ready — see the last call
+#   the Redis cache             dropped; see the note in node.yaml
+
+- name: login
+  method: POST
+  url: "return 'https://' + (credentials.plaidCredential.environment || 'sandbox') + '.plaid.com/sandbox/public_token/create'"
+  transport: json
+  body:
+    client_id: "{{ credentials.plaidCredential.clientId }}"
+    secret: "{{ credentials.plaidCredential.secret }}"
+    # DEFAULTS APPLIED HERE, not left to the schema, because that is where the existing service applied
+    # them — its signature defaulted institutionId, testUsername and testPassword, so an empty config
+    # still produced a working call. As plain `{{ }}` templates an unset value is OMITTED (the resolver
+    # drops a key that resolved to ""), and Plaid REQUIRES institution_id: the request would fail with
+    # a missing-field error that named the config field nobody had to fill in. Making them `required`
+    # instead would break every saved workflow that relied on the old defaults.
+    institution_id: "return config.institutionId || 'ins_109508'"
+    initial_products: ["transactions"]
+    options:
+      override_username: "return config.testUsername || 'user_transactions_dynamic'"
+      override_password: "return config.testPassword || 'pass_good'"
+  # Plaid answers 400 WITH a JSON body naming the reason, so the body is what to read.
+  error:
+    when: "return !!response.error_code"
+    message: "return response.error_message || response.error_code"
+
+- name: access
+  method: POST
+  url: "return 'https://' + (credentials.plaidCredential.environment || 'sandbox') + '.plaid.com/item/public_token/exchange'"
+  transport: json
+  body:
+    client_id: "{{ credentials.plaidCredential.clientId }}"
+    secret: "{{ credentials.plaidCredential.secret }}"
+    # The previous call's reply, by its name. This is the whole reason `run` is an ordered list.
+    public_token: "{{ calls.login.public_token }}"
+  error:
+    when: "return !!response.error_code"
+    message: "return response.error_message || response.error_code"
+
+# THE ONLY CALL THAT FETCHES ANYTHING, and the one that has to wait.
+#
+# Plaid answers `PRODUCT_NOT_READY` when a freshly created item has no transaction history prepared
+# yet — which is every run of this node, because it just invented the item. The existing TypeScript
+# handled that with its own loop: five attempts, two seconds apart.
+#
+# THAT LOOP IS A POLL. "Send it again until the answer is ready" is the same shape as "ask the job
+# until it is finished", so it is declared rather than reimplemented. It needs `poll.method: POST`
+# with `poll.body` — the capability built for AWS Textract — and the status check here happens to be
+# the SAME endpoint with the SAME body, which the generic poll supports without knowing that.
+#
+# `until` is tested against the FIRST reply before any waiting, so a ready item costs no extra call.
+- name: transactions
+  method: POST
+  url: "return 'https://' + (credentials.plaidCredential.environment || 'sandbox') + '.plaid.com/transactions/get'"
+  transport: json
+  body:
+    client_id: "{{ credentials.plaidCredential.clientId }}"
+    secret: "{{ credentials.plaidCredential.secret }}"
+    access_token: "{{ calls.access.access_token }}"
+    # `Date.iso` formats what `Date.now()` could already read. Before it existed the sandbox could do
+    # the arithmetic and had no way to render it, which is what made this node look unmigratable.
+    start_date: "return Date.iso(Date.now() - (config.daysBack || 30) * 86400000).split('T')[0]"
+    end_date: "return Date.iso().split('T')[0]"
+    options:
+      # Same reasoning as the login call: the existing service defaulted this to 100.
+      count: "return config.maxTransactions || 100"
+      offset: 0
+
+  poll:
+    # The same endpoint, re-sent. Not a status URL, because Plaid has none — readiness is reported by
+    # the fetch itself.
+    url: "return 'https://' + (credentials.plaidCredential.environment || 'sandbox') + '.plaid.com/transactions/get'"
+    method: POST
+    # `credentials` and `calls` are BOTH in scope here — a poll expression sees the whole run context
+    # with the start reply layered on as `response` — so the body is rebuilt from the same sources
+    # rather than smuggled through config.
+    body: |
+      return {
+        client_id: credentials.plaidCredential.clientId,
+        secret: credentials.plaidCredential.secret,
+        access_token: calls.access.access_token,
+        start_date: Date.iso(Date.now() - (config.daysBack || 30) * 86400000).split('T')[0],
+        end_date: Date.iso().split('T')[0],
+        options: { count: config.maxTransactions || 100, offset: 0 }
+      };
+    # Ready when Plaid stops saying "not ready".
+    until: "return response.error_code !== 'PRODUCT_NOT_READY'"
+    # Any OTHER error is a real failure, caught rather than waited on: re-sending a bad request just
+    # sends the same bad request again, five times, and then reports a timeout instead of the reason.
+    failed: "return !!response.error_code && response.error_code !== 'PRODUCT_NOT_READY'"
+    message: "return response.error_message || response.error_code"
+    # The existing node's own numbers: 2s apart, 5 attempts.
+    intervalMs: 2000
+    maxAttempts: 5

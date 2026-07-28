@@ -1,0 +1,35 @@
+# ONE POST returning RAW AUDIO for the whole script — which is the point of this endpoint over calling
+# TTS per line: the model performs the turn-taking, so the speakers actually respond to each other.
+#
+# EACH LINE NEEDS A VOICE, and there are two ways to give it one: the line's own `voiceId`, or a `speaker`
+# name looked up in `voiceMap`. Transcribed from the service, including the ORDER — an explicit voiceId
+# wins over the map.
+#
+# A LINE WITH NEITHER IS DROPPED, and that is the one place this differs from the code version, which
+# threw naming the line. A manifest cannot raise a per-item error mid-body, so the choice is between
+# dropping the line and failing the whole call. Dropping keeps the rest of the script usable, and
+# `metadata.lineCount` reports how many actually made it — compare it with your input to see a gap.
+
+- name: perform
+  method: POST
+  url: https://api.elevenlabs.io/v1/text-to-dialogue
+  credential: { $ref: credential }
+
+  body:
+    inputs: |
+      return (() => {
+        const map = config.voiceMap || {};
+        return (config.lines || [])
+          .map(l => ({
+            text: String(l.text ?? '').trim(),
+            voice_id: (l.voiceId && String(l.voiceId).trim()) || (l.speaker ? map[l.speaker] : undefined)
+          }))
+          .filter(l => l.voice_id && l.text);
+      })();
+    model_id: "{{ config.modelId }}"
+    settings:
+      stability: >-
+        return [0, 0.5, 1].includes(config.stability) ? config.stability : 0.5
+
+  timeoutMs: 180000
+  transport: binary

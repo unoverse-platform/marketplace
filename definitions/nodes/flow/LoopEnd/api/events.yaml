@@ -1,0 +1,19 @@
+# EXACTLY ONE ROW FIRES, which is the whole behaviour of this node: either the loop goes round again
+# or it is finished, never both. The two `when`s are exact complements over the same field, so there
+# is no state of the world in which both or neither fires.
+#
+# A node that emitted on BOTH dots would look like it worked while running the loop body and the
+# downstream branch at the same time — the same failure mode IfElse's fixture guards against, and the
+# reason each row's test asserts the other dot is silent.
+
+- emit: continue
+  when: "return !!response.continuing"
+  value: "return { index: response.index, total: response.total }"
+
+- emit: done
+  when: "return !response.continuing"
+  # `collected` is whatever was kept, in pass order, already flattened by the executor. `done: true`
+  # is inside the payload as well as being the connector's name, transcribed from the retired node:
+  # a downstream template reads {{ signal.loopend1.done.done }} and renaming that would break saved
+  # workflows for no gain.
+  value: "return { done: true, collected: response.collected, total: response.total }"

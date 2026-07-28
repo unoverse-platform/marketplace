@@ -4,7 +4,7 @@
 # trailing slash a person pasted is stripped. An expression rather than a template, because
 # a blank `{{ }}` would produce `https:///api/...`.
 
-auth: &auth
+credential: &credential
   scheme: bearer
   token: "{{ credentials.slackBotToken.token }}"
 

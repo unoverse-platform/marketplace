@@ -24,6 +24,15 @@ whenToUse: >-
   Model and dimensions are selectable. Attach via a service edge to that consumer; it is
   not a data-flow step.
 
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
 capabilities:
   # An embedding IS deterministic for the same text, model and dimensions, and it is a
   # pure read with no side effect. The one node here that genuinely earns memoization.

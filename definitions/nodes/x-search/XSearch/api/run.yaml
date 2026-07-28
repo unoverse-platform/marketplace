@@ -4,7 +4,7 @@
 - name: search
   method: GET
   url: https://api.x.com/2/tweets/search/recent
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.xCredential.bearerToken }}"
   query:

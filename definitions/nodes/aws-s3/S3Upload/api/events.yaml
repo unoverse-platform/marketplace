@@ -1,0 +1,8 @@
+# One row per output connector.
+#
+# The whole shape comes from `shared/upload.yaml`, which is where the type and the size are
+# derived, so what is reported cannot disagree with what was sent.
+
+- emit: output
+  from: response
+  value: { $ref: upload#output }

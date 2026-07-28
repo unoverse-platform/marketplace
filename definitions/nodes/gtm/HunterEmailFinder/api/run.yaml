@@ -7,7 +7,7 @@
 - name: find
   method: GET
   url: https://api.hunter.io/v2/email-finder
-  auth: { $ref: hunter#queryAuth }
+  credential: { $ref: hunter#queryCredential }
   query:
     linkedin_handle: { $ref: hunter#linkedinHandle }
     domain: "return String(config.domain || '').trim()"

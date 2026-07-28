@@ -1,0 +1,7 @@
+# xAI's realtime tool protocol, imported whole. Identical to OpenAI's realtime format, which is xAI's
+# choice rather than a shortcut taken here — see shared/tools.yaml.
+$ref: tools
+
+# maxTurns and stuckAfterRepeats are MEANINGLESS on a socket and deliberately absent. A turn budget
+# describes an HTTP loop that sends a request and reads a reply; a realtime session never ends a turn,
+# so a tool result goes back down the same open connection. The duplex path resolves calls inline.

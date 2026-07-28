@@ -7,7 +7,7 @@
 - name: match
   method: GET
   url: { $ref: table#url }
-  auth: { $ref: table#auth }
+  credential: { $ref: table#credential }
   query:
     filterByFormula: >-
       return '{' + config.field + '}="'

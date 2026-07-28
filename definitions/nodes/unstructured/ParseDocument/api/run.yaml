@@ -1,0 +1,84 @@
+# ONE SYNCHRONOUS POST — which is the whole argument for this node over AmazonTextract. Textract starts a
+# job, polls it, then pages its results; this hands over a file and gets elements back.
+#
+# THE PARTITION ENDPOINT, not the Pipeline API. Unstructured recommends Pipeline for production batching
+# and embeddings, and it is the wrong shape here: it means creating a workflow, running a job and polling
+# it, for one file a workflow node already has in hand. Partition is the single-file synchronous call.
+#
+# THE HOST COMES FROM THE CREDENTIAL. Unstructured's docs say to "use the URL that was provided to you
+# when your account was created" — serverless accounts get their own host, and self-hosting gets another.
+# Defaulting silently would send documents somewhere the account never chose. The default below is their
+# published one, and any other host must also be added to package.yaml allowedHosts, which is the
+# boundary doing its job rather than an obstacle.
+
+# THE DOWNLOAD, when a url was given rather than bytes.
+#
+# Unstructured's endpoint takes a FILE PART, not a link, so something has to fetch it — and doing it here
+# means a document already in hand as base64 skips this call entirely (`when` leaves no trace when false).
+#
+# NO `auth`, deliberately and necessarily. The url comes from an upstream node and cannot be declared in
+# advance, which is why package.yaml allows "*" — and the executor only permits that wildcard for a call
+# that sends no credential. Adding auth here would refuse the host rather than leak the key.
+
+- name: download
+  when: "return !!String(config.fileUrl || '').trim() && !config.fileBase64"
+  method: GET
+  url: "{{ config.fileUrl }}"
+  # Bytes back as { base64, contentType }, ready to become the file part below.
+  transport: binary
+  timeoutMs: 120000
+
+- name: partition
+  method: POST
+  url: >-
+    return (credentials.unstructuredCredential.apiUrl || 'https://api.unstructuredapp.io')
+      .replace(/\/+$/, '') + '/general/v0/general'
+
+  credential:
+    scheme: apiKeyHeader
+    header: unstructured-api-key
+    value: "{{ credentials.unstructuredCredential.apiKey }}"
+
+  encoding: multipart
+
+  body:
+    # THE FILE PART. `{ base64, mimeType, filename }` is the shape the executor turns back into bytes —
+    # the same shape `transport: binary` produces, so a document from S3 Files or Cloudinary flows in
+    # without conversion.
+    #
+    # THE FILENAME MATTERS MORE THAN IT LOOKS. Unstructured chooses its parser from the extension, so a
+    # file called `document` with no suffix parses badly and reports no error. That is why `fileName` is a
+    # first-class config field rather than a constant.
+    files: >-
+      return (() => {
+        const b64 = config.fileBase64 || (calls.download || {}).base64;
+        if (!b64) return undefined;
+        return { base64: b64,
+                 mimeType: (calls.download || {}).contentType || 'application/octet-stream',
+                 filename: config.fileName || 'document.pdf' };
+      })();
+
+    strategy: "{{ config.strategy }}"
+    chunking_strategy: "{{ config.chunkingStrategy }}"
+    # A comma list becomes a JSON array, which is what the parameter expects. Absent when blank, so OCR
+    # auto-detects rather than being told to expect nothing.
+    languages: >-
+      return String(config.languages || '').trim()
+        ? JSON.stringify(String(config.languages).split(',').map(l => l.trim()).filter(l => l))
+        : undefined
+    include_page_breaks: "return config.includePageBreaks ? 'true' : undefined"
+    output_format: application/json
+
+  # Parsing a long scanned PDF with hi_res is slow — minutes, not seconds.
+  timeoutMs: 600000
+  transport: json
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  error:
+    when: "return !!response.detail && !Array.isArray(response)"
+    message: >-
+      return typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail)

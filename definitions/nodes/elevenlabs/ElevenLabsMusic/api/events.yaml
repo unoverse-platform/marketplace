@@ -1,0 +1,5 @@
+- emit: audio
+  value: { $ref: audio#out }
+
+- emit: metadata
+  value: "return { format: 'mp3', lengthSeconds: config.lengthSeconds, prompt: config.prompt }"

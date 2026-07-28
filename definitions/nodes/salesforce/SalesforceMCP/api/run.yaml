@@ -22,7 +22,7 @@
             : String(config.defaultQuery || '').trim())
   method: GET
   url: { $ref: api#query }
-  auth: { $ref: api#auth }
+  credential: { $ref: api#credential }
   query:
     q: >-
       return typeof (signal.input || {}).soql === 'string' && (signal.input || {}).soql.trim()

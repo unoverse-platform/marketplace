@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: The payload to route. It passes through unchanged.
+    required: false
+
+outputs:
+  # QUOTED, both of them. Unquoted `true` is a YAML BOOLEAN, so the connector would be named
+  # `true` the value rather than "true" the string, and no edge would ever match it.
+  - name: "true"
+    type: object
+    description: Carries the payload when the condition holds
+  - name: "false"
+    type: object
+    description: Carries the payload when it does not

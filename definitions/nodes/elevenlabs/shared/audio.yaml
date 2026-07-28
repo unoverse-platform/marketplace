@@ -1,0 +1,11 @@
+# THE AUDIO OUTPUT, shared by the four generators.
+#
+# `response` is the BINARY reply handed over as { base64, contentType } — what `transport: binary`
+# produces, and the same shape a `multipart` file part consumes, so bytes have ONE representation
+# everywhere they travel in this platform.
+#
+# Shared because four nodes emit the identical object and a fifth will: the day the shape changes, it
+# changes once.
+
+out: >-
+  return { data: response.base64, mimeType: response.contentType || 'audio/mpeg', fileName: 'audio.mp3' }

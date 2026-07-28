@@ -21,7 +21,7 @@ fallback: Checking the best next step...
 request:
   method: POST
   url: { $ref: endpoints#responses }
-  auth:
+  credential:
     scheme: bearer
     token: "{{ credentials.openAICredential.apiKey }}"
   timeoutMs: 8000

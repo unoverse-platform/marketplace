@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Trigger. The filters come from config.
+    required: false
+
+outputs:
+  - name: files
+    type: array
+    description: Matching assets, each with public_id, urls, dimensions, tags and a universalId
+  - name: count
+    type: number
+    description: How many assets were returned
+
+credentials:
+  - name: cloudinaryCredential
+    required: true

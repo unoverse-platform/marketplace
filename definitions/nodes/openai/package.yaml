@@ -39,6 +39,6 @@ allowedHosts:
 # package if the target universe's executor cannot satisfy them, so a manifest can
 # never name a capability that only exists on a newer executor.
 requires:
-  auth: [bearer]
+  credential: [bearer]
   transport: [sse, json]
   executorVersion: ">=1.0.0"

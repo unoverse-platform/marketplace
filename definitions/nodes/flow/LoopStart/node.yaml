@@ -1,0 +1,39 @@
+$schema: ../../../_schema/node.schema.json
+
+type: LoopStart
+# A PromiseNode WITH A CONTINUE INPUT, which is not a contradiction and used to be refused.
+#
+# It settles once per pass. What re-fires it is a routed `continue` edge from LoopEnd, so each pass
+# is a fresh execution of this node rather than a second emission from one. That is precisely why
+# the index lives in Redis and not in a variable. Declaring CallbackNode instead would give it
+# `initializeState`, the registry would record executionMode "generator", and the engine would drive
+# it as an actor — a different node from the one being replaced.
+kind: PromiseNode
+
+name: Loop Start
+category: Flow
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Iterates an array one item at a time, running the nodes up to its paired LoopEnd per item.
+
+whenToUse: >-
+  Loop over an array, running a branch of nodes once per item: for-each or repeat-per-item
+  processing where each item flows through real workflow steps such as API calls and agents, rather
+  than an in-memory transform. It emits item, index and total on every pass. Always close it with
+  exactly one LoopEnd whose loopStartNodeId points back here; it does nothing useful alone.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable, and this is the strongest case for it in the package: the node's whole purpose is
+  # to answer differently each time it is asked. A cached first pass would pin every iteration to
+  # item zero and the loop would never move.
+  cacheable: false

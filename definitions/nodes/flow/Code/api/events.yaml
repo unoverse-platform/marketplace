@@ -1,0 +1,45 @@
+# NEITHER ROW READS `response`. There is no reply to read: the only entry in `run` is a state write,
+# and the value it stores is the same one emitted here. Everything this node emits comes from
+# `config`, because the engine's template resolver has already done the computing.
+#
+# THE HASHES ARE TRANSCRIBED from the retired node's hashUtils.ts, byte for byte, and they have to
+# be: dedup and ref hydration downstream JOIN on these ids, so a different algorithm would not
+# error, it would simply stop matching rows minted before today.
+#
+#   contentId    sha256 of the value, first 12 hex chars
+#   universalId  sha256 of `<workflowId>-<nodeId>-<value>`, first 12
+#
+# `Object.keys(x).toSorted()` as a JSON.stringify replacer is the canonicalisation, and it is the
+# reason `toSorted` was added to the sandbox. Without it the same object hashes differently depending
+# on the order its keys happened to be built in. `toSorted` and not `sort`, because `sort` reorders
+# its receiver in place and the receiver here is live run data.
+#
+# The `|| 'unknown'` and `|| 'code'` fallbacks are the retired node's, kept so a run missing an id
+# hashes to what it always did rather than to the text "undefined".
+#
+# ONE DELIBERATE DIFFERENCE, and it only touches a case that used to crash. `createContentHash` fed
+# its argument straight to `Object.keys`, which THROWS on null and undefined — so a Code node whose
+# expression evaluated to null failed the workflow outright with a TypeError from inside a hash
+# helper. Here an absent value hashes the empty string, which is what `createUniversalId` already did
+# for the same case. Nothing that previously produced an id produces a different one.
+
+- emit: output
+  value: "return config.code"
+
+- emit: ids
+  when: "return !!config.generateIds"
+  value: |
+    return {
+      universalId: sha256(
+        config.code === undefined || config.code === null
+          ? `${scope.workflowId || 'unknown'}-${scope.nodeId || 'code'}`
+          : `${scope.workflowId || 'unknown'}-${scope.nodeId || 'code'}-${typeof config.code === 'string' ? config.code : JSON.stringify(config.code, Object.keys(config.code).toSorted())}`
+      ).substring(0, 12),
+      contentId: sha256(
+        typeof config.code === 'string'
+          ? config.code
+          : (config.code === undefined || config.code === null
+              ? ''
+              : JSON.stringify(config.code, Object.keys(config.code).toSorted()))
+      ).substring(0, 12)
+    }

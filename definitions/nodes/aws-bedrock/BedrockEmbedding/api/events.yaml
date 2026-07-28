@@ -1,0 +1,3 @@
+- emit: embedding
+  from: response
+  value: "return Array.isArray(response.embedding) ? response.embedding : []"

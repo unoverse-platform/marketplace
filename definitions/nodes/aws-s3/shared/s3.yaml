@@ -5,7 +5,7 @@
 # host, so allowedHosts covers it with one subdomain level.
 
 call: &call
-  auth:
+  credential:
     scheme: awsSigV4
     service: s3
   # S3 speaks XML on its list endpoints. Parsed to a plain object, so the events tables read

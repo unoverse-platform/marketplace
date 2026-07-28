@@ -1,0 +1,18 @@
+- emit: audio
+  value: { $ref: audio#out }
+
+- emit: metadata
+  # `lineCount` counts the lines that WERE PERFORMED, not the lines supplied, so a line dropped for
+  # having no voice shows up as a smaller number than you handed in. That is the only signal a manifest
+  # can give for a per-item problem — see api/run.yaml.
+  value: |
+    return (() => {
+      const map = config.voiceMap || {};
+      const kept = (config.lines || []).filter(l =>
+        ((l.voiceId && String(l.voiceId).trim()) || (l.speaker ? map[l.speaker] : undefined)) && String(l.text ?? '').trim());
+      return {
+        format: 'mp3',
+        lineCount: kept.length,
+        characters: kept.reduce((n, l) => n + String(l.text ?? '').trim().length, 0)
+      };
+    })();

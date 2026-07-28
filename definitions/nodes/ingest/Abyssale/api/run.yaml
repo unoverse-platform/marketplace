@@ -1,0 +1,135 @@
+# ONE CALL, ALWAYS ASYNC — a deliberate simplification of the retired node, not a transcription slip.
+#
+# The retired service tried the SYNC endpoint first and, if the reply said `template_not_static` or
+# "Use the /async endpoint", re-sent the whole thing to the async one. That fallback is decided by the
+# text of an ERROR BODY at run time, which no manifest can express: `when` is evaluated before a call
+# is made, and a failed call throws rather than recording a reply to branch on.
+#
+# It does not need to. The async endpoint accepts EVERY template, static ones included — sync is only
+# a shortcut for the static case. So the node takes one path for everything, which is also one path to
+# read and one to debug. The cost is honest and small: a static template now polls once or twice
+# instead of answering on the POST.
+#
+# `poll` does the waiting. Without it this node would settle on the RECEIPT — a generation request id
+# — and emit that as the finished asset, which is precisely the failure the capability exists to stop.
+
+# PAGE DISCOVERY, and it runs ONLY when it has to: multi-page, with no explicit pageCount.
+#
+# The code version fetched the design and counted its pages, falling back to 1 if that failed. Dropping
+# it meant a 5-page template silently rendered the default 2 — the worst kind of wrong, because the
+# output looks fine and is short.
+#
+# `when` is what keeps this from being a cost on every render: a single image never fetches the design,
+# and neither does a multi-page render that already knows its count.
+#
+# PAGE KEYS COME FROM THE ELEMENTS, not from a `pages` field — Abyssale tags each element with the page
+# it sits on, so the page set is the distinct `page` values. Transcribed from getDesignDetails.
+- name: design
+  when: "return !!config.multiPage && !config.pageCount"
+  method: GET
+  url: "https://api.abyssale.com/designs/{{ config.templateId }}"
+  credential:
+    scheme: apiKeyHeader
+    header: x-api-key
+    value: "{{ credentials.abyssaleCredential.apiKey }}"
+  transport: json
+  # NOT an error worth failing on. The code version caught this and carried on with the default count,
+  # because a design it cannot read is still a template it can try to render.
+  error:
+    when: "return false"
+    message: "return ''"
+
+- name: render
+  method: POST
+  url: "https://api.abyssale.com/async/banner-builder/{{ config.templateId }}/generate"
+
+  credential:
+    scheme: apiKeyHeader
+    header: x-api-key
+    value: "{{ credentials.abyssaleCredential.apiKey }}"
+
+  # BOTH SHAPES FROM ONE EXPRESSION, because the two paths differ only in the body: a single render
+  # sends `elements`, a multi-page PDF sends `pages` with the same elements repeated per page. Two
+  # calls gated on `multiPage` would duplicate the url, the auth and the whole poll block, and the
+  # duplicate is what drifts.
+  #
+  # THE ELEMENT SANITISING IS TRANSCRIBED from the retired `sanitizeElements`, case for case, because
+  # Abyssale rejects a blank layer value and the node has always papered over that with "_":
+  #
+  #   { image_url }        left alone — an image layer already in the right shape
+  #   { payload }          blank payload becomes "_", and a literal \n becomes a real newline
+  #   a URL string         wrapped as { image_url: … } so image layers accept a bare url
+  #   any other string     wrapped as { payload: … }, blank becoming "_"
+  #   anything else        String()-ed into a payload, so a number renders rather than vanishing
+  #
+  # `value.payload !== undefined` rather than `"payload" in value`: the expression sandbox has no
+  # `in` operator, which is a deliberate omission and not something to work around elsewhere.
+  body: |
+    return (() => {
+      const raw = config.elements || {};
+      const blank = (s) => s === '' || String(s).trim() === '';
+      const clean = (v) => {
+        if (v !== null && typeof v === 'object' && v.image_url !== undefined) return v;
+        if (v !== null && typeof v === 'object' && v.payload !== undefined) {
+          const p = blank(v.payload) ? '_' : (typeof v.payload === 'string' ? v.payload.replaceAll('\\n', '\n') : v.payload);
+          return Object.assign({}, v, { payload: p });
+        }
+        if (typeof v === 'string') {
+          if (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('data:')) return { image_url: v };
+          return { payload: blank(v) ? '_' : v.replaceAll('\\n', '\n') };
+        }
+        if (v === null || v === undefined) return undefined;
+        return { payload: String(v) };
+      };
+      // `e => [e[0], clean(e[1])]` rather than `([k, v]) => …`: the sandbox has no destructuring in
+      // an arrow parameter, so the pair is indexed by hand. Same shape, and it fails loudly at build
+      // time rather than at run time if that ever changes.
+      const elements = Object.fromEntries(
+        Object.entries(raw).map(e => [e[0], clean(e[1])]).filter(e => e[1] !== undefined)
+      );
+      if (config.multiPage) {
+        // PER-PAGE CONTENT WINS. If the author supplied { pages: { page_1: {…}, page_2: {…} } } then each
+        // page has its own layers and replicating one set across all of them would throw that away —
+        // which is what this node did until now, nesting the whole structure under a layer called
+        // `pages`. Each page is sanitised on its own, exactly as the code version did.
+        const supplied = raw.pages;
+        if (supplied !== null && supplied !== undefined && typeof supplied === 'object') {
+          return { pages: Object.fromEntries(Object.entries(supplied).map(e => [e[0], Object.fromEntries(
+            Object.entries(e[1] || {}).map(p => [p[0], clean(p[1])]).filter(p => p[1] !== undefined)
+          )])) };
+        }
+        // FLAT ELEMENTS: replicate across every page. The count is the author's if they gave one, else
+        // what the design reported, else 1 — the code version's order, and 1 rather than 2 because a
+        // template whose pages could not be read is likelier to be single-page than to be exactly two.
+        const detected = ((calls.design || {}).elements || [])
+          .map(el => el.page).filter(pg => !!pg);
+        const pages = Object.keys(Object.fromEntries(detected.map(pg => [pg, true])));
+        const n = config.pageCount || pages.length || 1;
+        return { pages: Object.fromEntries(Array.from({ length: n }, (_, i) => ['page_' + (i + 1), elements])) };
+      }
+      // BUILT, not mutated. The sandbox refuses assignment to a property — that is what keeps the
+      // run's own data read-only — so the optional fields are merged in rather than set afterwards.
+      // Each is omitted entirely when unset, which is what Abyssale expects: it rejects a blank
+      // format name where it accepts absence.
+      return Object.assign(
+        { elements },
+        config.formatName ? { template_format_name: config.formatName } : {},
+        config.compressionLevel !== undefined ? { file_compression_level: config.compressionLevel } : {}
+      );
+    })();
+
+  transport: json
+
+  poll:
+    # The request id exists ONLY in the start reply, which is why this resolves against it.
+    url: "return 'https://api.abyssale.com/generation-request/' + response.generation_request_id"
+    # A GET, so no `method` is needed here — starting the job already used this call's own POST.
+    until: "return response.is_finalized === true"
+    # FAILED IS NOT THE SAME AS FINISHED. Abyssale finalizes a request that produced only errors, so
+    # without this the node would return `is_finalized: true` with no banner and the events table
+    # would read a url off nothing. Matches the retired check: finalized, errors present, no banners.
+    failed: "return response.is_finalized === true && (response.errors || []).length > 0 && !(response.banners || []).length"
+    message: "return (response.errors || []).map(e => e.reason).join('; ')"
+    # The retired node's own numbers: 2s apart, 60 attempts, so ~2 minutes before it gives up.
+    intervalMs: 2000
+    maxAttempts: 60

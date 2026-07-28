@@ -1,0 +1,80 @@
+# ONE duplex session. Not a request: this stays open for the length of the call, and the node's run IS
+# the call.
+#
+# The bearer token goes on the HANDSHAKE, resolved by the same auth code an HTTP call uses rather than a
+# second copy of it.
+#
+# THE MODEL IS FIXED, deliberately. xAI's realtime endpoint takes the model in the query string and the
+# code version hardcoded one id; exposing it as config would invite a value the endpoint rejects at
+# handshake time, which fails the whole call rather than one request.
+
+- name: session
+  transport: ws
+  url: "return 'wss://api.x.ai/v1/realtime?model=grok-voice-think-fast-1.0'"
+  credential:
+    scheme: bearer
+    token: "{{ credentials.xaiCredential.apiKey }}"
+
+  # THE HANDSHAKE. A list because it is a list for other vendors — Nova needs an ordered sequence — and
+  # Grok, like OpenAI, needs one message plus the optional replay and opening prompt below.
+  #
+  # FLATTER THAN OPENAI'S: no output_modalities, no transcription model, no noise reduction, no token
+  # ceiling. Transcribed from SessionUpdateBuilder rather than copied from the OpenAI node, because
+  # sending fields a vendor does not document is how a handshake gets rejected.
+  open:
+    - type: session.update
+      session:
+        instructions: "{{ config.systemPrompt }}"
+        voice: "{{ config.voice }}"
+        # `null` DISABLES turn detection, which is the vendor's own spelling and not a template
+        # accident. With it null nothing ever decides the person has finished speaking, so nothing is
+        # answered unless something else commits the buffer.
+        #
+        # The thresholds are the code version's own numbers (0.6 / 300ms / 600ms), which differ from
+        # the OpenAI node's — they are tuned per vendor and are not interchangeable.
+        turn_detection: >-
+          return config.turnDetection === 'manual' ? null
+            : { type: 'server_vad', threshold: 0.6, prefix_padding_ms: 300, silence_duration_ms: 600 }
+        audio:
+          # 24 kHz both ways. The browser captures at 16 kHz and the executor resamples, named in
+          # api/audio.yaml because interpolation is not something an expression can express.
+          input: { format: { type: audio/pcm, rate: 24000 } }
+          output: { format: { type: audio/pcm, rate: 24000 } }
+
+        # TOOLS ARE DECLARED ONCE, HERE, because a realtime session has no per-request moment to offer
+        # them. The executor discovers them from the wired MCP provider before the handshake and puts
+        # them in the ordinary consumer root, so this reads like any other consumer. Empty when nothing
+        # is wired — the normal case — and the call degrades to plain voice.
+        tools: "return services.mcpService.tools || []"
+        tool_choice: "return (services.mcpService.tools || []).length ? 'auto' : 'none'"
+
+    # HISTORY, replayed before the call starts. One entry resolving to an ARRAY, so a variable number of
+    # turns is expressible; an empty history resolves to [] and sends nothing.
+    #
+    # The roles use DIFFERENT content types, which is the vendor's rule and easy to get wrong: a user
+    # message carries `input_text`, an assistant message carries `text`.
+    - >-
+      return (config.conversationHistory || []).map(m => ({
+        type: 'conversation.item.create',
+        item: {
+          type: 'message',
+          role: m.role === 'assistant' ? 'assistant' : 'user',
+          content: [{ type: m.role === 'assistant' ? 'text' : 'input_text', text: String(m.content ?? '') }]
+        }
+      }))
+
+    # THE OPENING PROMPT. Two messages: the user's, then `response.create` so the model answers it at
+    # once. Without the second the item sits in the conversation and Grok never speaks, which defeats
+    # the point of the field. Resolves to [] when empty, so a call with no opening prompt just waits.
+    - >-
+      return String(config.initialRequest || '').trim()
+        ? [
+            { type: 'conversation.item.create',
+              item: { type: 'message', role: 'user',
+                      content: [{ type: 'input_text', text: String(config.initialRequest) }] } },
+            { type: 'response.create' }
+          ]
+        : []
+
+  # No `close` list: xAI ends the session cleanly on socket close, and sending something first would be
+  # inventing a message the vendor does not document.

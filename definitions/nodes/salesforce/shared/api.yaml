@@ -6,7 +6,7 @@
 # The connected app exchange. The executor mints the token, form-encodes the request,
 # caches it per app until it expires, and refreshes once on a 401. A manifest cannot
 # express any of that, which is why it is a scheme rather than a call.
-auth: &auth
+credential: &credential
   scheme: oauth2ClientCredentials
   tokenUrl: "{{ credentials.salesforceOAuth.host }}/services/oauth2/token"
   clientId: "{{ credentials.salesforceOAuth.clientId }}"

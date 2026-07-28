@@ -1,0 +1,49 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: input
+    type: object
+    description: Trigger. Starting the node opens the call.
+    required: false
+
+# THE NAMES ARE THE CODE VERSION'S, unchanged, because a saved workflow references an output by name.
+outputs:
+  - name: text
+    type: object
+    description: "The last completed turn: { query, response }"
+  - name: conversation
+    type: object
+    description: The full conversation as it accumulates
+  - name: mcpResult
+    type: object
+    description: MCP tool results
+  - name: progress
+    type: string
+    description: Q/A log of the call
+
+  # ADDED, not renamed. The code version kept the call's transcripts inside itself and only ever emitted
+  # the assembled `text` and `progress`. A manifest cannot do that: one events row sees ONE event, and
+  # the person's transcript and the model's arrive on different ones — so they have to land on
+  # connectors before anything can compose them.
+  #
+  # Additive, so no saved workflow notices, and useful on their own: a live caption needs the assistant
+  # transcript as it streams, not the finished turn.
+  - name: sessionReady
+    type: boolean
+    description: True once the vendor accepted the handshake
+  - name: userTranscript
+    type: string
+    description: What the person said, per completed utterance
+  - name: assistantTranscript
+    type: string
+    description: What Grok said, accumulated as it speaks
+
+credentials:
+  - name: xaiCredential
+    required: true
+
+serviceConnectors:
+  - name: mcpService
+    description: MCP service connector — automatic schema discovery
+    serviceType: mcp
+    isService: false

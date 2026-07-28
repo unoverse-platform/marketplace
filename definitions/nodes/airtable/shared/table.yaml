@@ -3,7 +3,7 @@
 # The table part may be a NAME ("Companies") or an id ("tbl..."), so it is percent-encoded.
 # The base id never needs encoding.
 
-auth: &auth
+credential: &credential
   scheme: bearer
   token: "{{ credentials.airtableCredential.personalAccessToken }}"
 

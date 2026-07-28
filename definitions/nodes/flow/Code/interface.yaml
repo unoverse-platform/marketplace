@@ -1,0 +1,18 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: >-
+      Upstream data. Nothing is read from it directly: the `code` field's template reaches
+      {{ signal.… }} and the engine resolves it before this node runs, so by the time the node
+      executes the answer is already in config.
+    required: false
+
+outputs:
+  - name: output
+    type: object
+    description: The value the expression produced
+  - name: ids
+    type: object
+    description: "{ universalId, contentId } — only when Generate IDs is on"

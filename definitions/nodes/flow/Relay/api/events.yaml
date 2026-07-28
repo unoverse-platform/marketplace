@@ -1,0 +1,26 @@
+# NO CALLS. This node reaches no host: it forwards a signal, and `events` is the whole of it.
+#
+# THE UNWRAP, transcribed from the retired executor rather than reinvented. An incoming signal is
+# nested twice — by INPUT PORT, then by SOURCE NODE ID, then by that source's OUTPUT HANDLE:
+#
+#     { signal: { upstream1: { output: { message: "relay me" } } } }
+#
+# The retired node peeled that down to the innermost payload so a downstream node received the DATA
+# rather than the envelope, and the three branches below are its three branches:
+#
+#   one source, ONE output handle    forward the inner payload            { message: "relay me" }
+#   one source, SEVERAL handles      forward the source's whole object    { a: …, b: … }
+#   no `signal` port at all          forward the inputs untouched
+#
+# Peeling only a single handle is deliberate: with two handles there is no single payload to choose,
+# so keeping the object is the only answer that loses nothing.
+
+- emit: signal
+  value: >-
+    return !response.signal
+      ? response
+      : (Object.keys(response.signal).length === 0
+          ? {}
+          : (Object.keys(Object.values(response.signal)[0] || {}).length === 1
+              ? Object.values(Object.values(response.signal)[0])[0]
+              : Object.values(response.signal)[0]))

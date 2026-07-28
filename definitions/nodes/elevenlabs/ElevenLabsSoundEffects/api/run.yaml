@@ -1,0 +1,31 @@
+# ONE POST that returns RAW AUDIO. `transport: binary` is what makes that expressible: the reply is mp3
+# bytes, not a JSON document describing them, and the executor hands them over as base64 because base64
+# is how bytes travel between calls — an event bus cannot carry a Buffer.
+#
+# THE CLAMPS ARE TRANSCRIBED from the service and they matter: ElevenLabs rejects a duration outside
+# 0.5–30 and an influence outside 0–1, so the node clamped rather than passing a bad value through. Each
+# is an expression so an UNSET field stays unset — `resolveBody` drops a key that resolved to nothing and
+# the vendor applies its own default, which is exactly what "leave blank for optimal length" means.
+
+- name: generate
+  method: POST
+  url: https://api.elevenlabs.io/v1/sound-generation
+  credential: { $ref: credential }
+
+  body:
+    text: "{{ config.text }}"
+    duration_seconds: >-
+      return typeof config.durationSeconds === 'number'
+        ? Math.max(0.5, Math.min(30, config.durationSeconds)) : undefined
+    prompt_influence: >-
+      return typeof config.promptInfluence === 'number'
+        ? Math.max(0, Math.min(1, config.promptInfluence)) : undefined
+    # Sent only when true, matching the service: to some vendors `loop: false` is not the same as absent.
+    loop: "return config.loop ? true : undefined"
+
+  query:
+    # A QUERY param on this endpoint, not a body field — the service's own note.
+    output_format: "{{ config.outputFormat }}"
+
+  timeoutMs: 120000
+  transport: binary

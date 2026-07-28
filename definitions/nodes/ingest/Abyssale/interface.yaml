@@ -1,0 +1,16 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: data
+    type: object
+    description: Data to populate template elements
+    required: false
+
+outputs:
+  - name: output
+    type: object
+    description: Generated asset with url, cdnUrl, fileType, filename, width, height, templateId, templateName
+
+credentials:
+  - name: abyssaleCredential
+    required: true

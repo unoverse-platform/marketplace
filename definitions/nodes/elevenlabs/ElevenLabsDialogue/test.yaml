@@ -1,0 +1,23 @@
+$schema: ../../../_schema/test.schema.json
+
+# Needs ELEVENLABS_API_KEY. Two short lines with explicit voice ids, so the fixture does not depend on a
+# voiceMap being filled in.
+
+testData:
+  config:
+    lines:
+      - text: Did you see the glass box?
+        voiceId: onwK4e9ZLuTAKqWW03F9
+      - text: I did. It was humming.
+        voiceId: pNInz6obpgDQGcFmaJgB
+    stability: 0.5
+  inputs:
+    lines: []
+  expect:
+    audio: >-
+      return typeof output.audio.data === 'string'
+        && output.audio.data.length > 1000
+        && output.audio.mimeType.startsWith('audio/')
+    # BOTH lines must have survived the voice resolution. A count of 1 would mean one was silently
+    # dropped, which is precisely the failure the count exists to surface.
+    metadata: "return output.metadata.lineCount === 2 && output.metadata.characters > 0"

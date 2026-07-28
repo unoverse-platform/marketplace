@@ -1,0 +1,28 @@
+$schema: ../../../_schema/test.schema.json
+
+# NEEDS A REAL BUCKET YOU CAN WRITE TO. This fixture WRITES an object, unlike the other two
+# in this package, so point it at somewhere disposable.
+#
+# The base64 path with a DATA URL prefix, deliberately: it is the path that carries the trap.
+# The payload is "Hello, S3 world!" as text/plain, 16 bytes, and asserting the size is exactly
+# 16 is what proves the prefix was stripped and the length was converted rather than passed
+# through. A node that uploaded the prefix verbatim would report 45 and still look like it
+# worked.
+
+testData:
+  config:
+    bucket: REPLACE_WITH_A_REAL_BUCKET
+    key: unoverse-tests/s3upload-fixture.txt
+    sourceType: base64
+    base64Data: "data:text/plain;base64,SGVsbG8sIFMzIHdvcmxkIQ=="
+    contentType: ""
+    downloadUrlExpiry: 3600
+  inputs:
+    data: {}
+  expect:
+    output: >-
+      return output.output.size === 16
+        && output.output.contentType === 'text/plain'
+        && output.output.key === 'unoverse-tests/s3upload-fixture.txt'
+        && output.output.downloadUrl.includes('X-Amz-Signature=')
+        && output.output.s3Url.endsWith('/unoverse-tests/s3upload-fixture.txt')

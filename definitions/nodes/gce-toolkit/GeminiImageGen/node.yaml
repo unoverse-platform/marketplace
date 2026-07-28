@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: GeminiImageGen
+kind: PromiseNode
+
+name: Gemini Image Gen
+category: Media & Design
+color: "#4285F4"
+
+description: Generate images using Google's Gemini models
+
+whenToUse: >-
+  Pick to CREATE an image from a description: a picture, illustration, photo or graphic that
+  does not exist yet. Returns the rendered image data itself rather than a description of one,
+  and can take a reference photo to keep a person recognisable across several generations.
+  Editing an image that already exists, and producing a fixed branded template, are different
+  jobs.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable. Generation is non-deterministic, so asking twice is meant to produce two
+  # different images, and reusing the first would be a bug rather than a saving.
+  cacheable: false

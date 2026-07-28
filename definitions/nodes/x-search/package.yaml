@@ -18,6 +18,6 @@ allowedHosts:
   - api.x.com
 
 requires:
-  auth: [bearer]
+  credential: [bearer]
   transport: [json]
   executorVersion: ">=1.0.0"

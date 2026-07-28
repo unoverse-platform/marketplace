@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running it live needs CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET, and it WRITES
+# to your account — the folder below keeps the test assets together so they are easy to find and delete.
+#
+# The source is Cloudinary's own demo image, so the fixture does not depend on a file of yours existing.
+
+testData:
+  config:
+    imageData: https://res.cloudinary.com/demo/image/upload/sample.jpg
+    folder: unoverse-test
+    resourceType: image
+    overwrite: true
+  inputs:
+    signal:
+      url: https://res.cloudinary.com/demo/image/upload/sample.jpg
+  expect:
+    # HTTPS specifically. `secureUrl` falls back to `url` if the vendor omits it, and that fallback is
+    # exactly what would hide an http-only response.
+    secureUrl: "return output.secureUrl.startsWith('https://')"
+    publicId: "return output.publicId.startsWith('unoverse-test/')"
+    metadata: "return output.metadata.bytes > 0 && output.metadata.width > 0"

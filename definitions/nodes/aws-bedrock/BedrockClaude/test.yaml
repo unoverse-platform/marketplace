@@ -1,0 +1,16 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    model: anthropic.claude-3-5-sonnet-20241022-v2:0
+    prompt: Reply with exactly the word READY and nothing else.
+    systemPrompt: You follow instructions precisely.
+    maxTokens: 64
+    temperature: 0
+    includeImageUrl: false
+    includeDocumentUrl: false
+    enableTools: false
+  inputs:
+    signal: {}
+  expect:
+    output: "return output.output.text.trim().length > 0 && output.output.usage.totalTokens > 0"

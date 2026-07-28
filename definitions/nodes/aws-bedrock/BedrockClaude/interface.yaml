@@ -1,0 +1,19 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt templates
+    required: false
+
+outputs:
+  - name: output
+    type: object
+    description: >-
+      { text, toolUse, usage }. `toolUse` is present only when the model chose a tool, and
+      carries its name and arguments.
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data. The text itself is named in config, usually templated from here.
+    required: false
+
+# THE NAMES ARE THE CODE VERSION'S, unchanged, because a saved workflow references an output by name.
+#
+# `universalIds` is the one that changed MEANING rather than name, and it is worth knowing: the code
+# version minted those ids itself, so it could list them. The engine mints them now, and its job status
+# reports counts rather than ids — so this emits [] until the engine returns them. See api/events.yaml.
+outputs:
+  - name: success
+    type: boolean
+    description: Whether the ingestion job completed
+  - name: count
+    type: number
+    description: How many entries were stored
+  - name: universalIds
+    type: array
+    description: Ids of the stored entries, when the engine reports them
+
+credentials: []

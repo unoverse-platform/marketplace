@@ -1,0 +1,33 @@
+$schema: ../../../_schema/node.schema.json
+
+type: BedrockClaude
+kind: PromiseNode
+
+name: Bedrock Chat
+category: AI
+color: "#FF9900"
+
+description: Ask a model on AWS Bedrock (Claude, GPT-5.6, Nova, ...), optionally about an image or document
+
+whenToUse: >-
+  Reach for this when a step needs an LLM to answer in ONE pass and the call must run in
+  YOUR AWS account and region. It speaks Bedrock's Converse API, so the model field takes
+  any Converse-capable Bedrock model id: Anthropic Claude (anthropic.claude-sonnet-5,
+  anthropic.claude-opus-5), OpenAI GPT-5.6 (openai.gpt-5.6-sol, -terra, -luna), Amazon
+  Nova, and the rest of the catalogue. It can read an image or a document alongside the
+  prompt, and can be given a tool schema to return structured arguments instead of prose.
+  Working through a problem across several tool calls is an agent's job, not this one's.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: a model call is non-deterministic, so a reused answer is a different
+  # answer presented as the same one.
+  cacheable: false

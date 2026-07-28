@@ -1,0 +1,100 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [strategy]
+  properties:
+    fileUrl:
+      type: string
+      title: File URL
+      description: >-
+        A URL to fetch the document from. Use this OR File (base64). Usually wired from an upstream node,
+        e.g. return signal.s3files1.files[0].downloadUrl
+      default: ""
+      "ui:field": template
+    fileBase64:
+      type: string
+      title: File (base64)
+      description: The document itself, base64 encoded, when it is not reachable by URL.
+      default: ""
+      "ui:field": template
+    fileName:
+      type: string
+      title: File Name
+      description: >-
+        Name including extension, e.g. report.pdf. Unstructured picks its parser from this, so a wrong or
+        missing extension is the commonest cause of a poor parse.
+      default: document.pdf
+      "ui:field": template
+    strategy:
+      type: string
+      title: Strategy
+      # REQUIRED, because it is the COST dial as much as the quality one: `fast` reads embedded text and
+      # is the cheapest path, while `vlm` runs a vision model over every page and costs an order of
+      # magnitude more. Left unset the vendor picks, which is how a large batch quietly becomes expensive.
+      # It has a default, so requiring it costs an author nothing — it just makes the choice visible.
+      description: >-
+        How hard to work. `fast` reads digital text only and is cheapest. `hi_res` runs layout detection
+        and OCR, which is what a SCANNED document needs. `ocr_only` forces OCR. `vlm` uses a vision model
+        for the hardest layouts. `auto` picks per document.
+      enum: [auto, fast, hi_res, ocr_only, vlm]
+      enumNames:
+        - Auto (pick per document)
+        - Fast (digital text only, cheapest)
+        - Hi-res (layout + OCR, for scans)
+        - OCR only (force OCR)
+        - VLM (vision model, hardest layouts)
+      default: auto
+    chunkingStrategy:
+      type: string
+      title: Chunking
+      description: >-
+        Group elements into larger chunks, which is what a RAG pipeline usually wants. Leave as none to
+        get the raw elements.
+      enum: ["", basic, by_title, by_page, by_similarity]
+      enumNames: [None, Basic, By title, By page, By similarity]
+      default: ""
+    languages:
+      type: string
+      title: Languages
+      description: >-
+        Comma-separated OCR language codes, e.g. eng,fra. Only affects the OCR strategies. Leave blank to
+        auto-detect.
+      default: ""
+    includePageBreaks:
+      type: boolean
+      title: Include Page Breaks
+      description: Mark page boundaries in the output
+      default: false
+      "ui:widget": toggle
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: >-
+        Only a signed-in caller may run this step. Leave off and it runs for whoever the
+        workflow's trigger admitted, which is the usual answer.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: >-
+        A claim the caller's account must carry, as noun:verb (finance:approve,
+        payments:refund). Leave blank to require only that they are signed in.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [fileUrl, fileBase64, fileName, strategy, chunkingStrategy, languages, includePageBreaks, authRequired, authRole]
