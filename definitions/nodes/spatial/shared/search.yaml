@@ -1,0 +1,96 @@
+# Everything the two searches share. They differ by ONE value, `mode`, so the body is written
+# as an object of keys rather than as a single expression: a $ref with siblings merges and
+# local wins, so a method overrides `mode` alone instead of restating thirty lines. Written
+# as one expression it could only be replaced wholesale, and the two would drift.
+
+# THE PLATFORM'S OWN SEARCH, on the loopback runtime. No credential and no forwarded token:
+# the listener is never published or proxied, so a node calling it is already inside the
+# trust boundary (AUTH_REMEDIATION.md, superseded July 2026).
+#
+# `scope.engineUrl` is the ENGINE on :4101, NOT `scope.platformUrl` (the runtime on :4106).
+# Two internal listeners with different routes: search and dictionary reads are the engine's,
+# while /skills below is the runtime's. Choosing wrongly is a bare 404 that reads like a
+# missing route rather than the wrong service. The retired client had the same split hidden in
+# two env vars, WORKFLOW_SERVICE_URL and UNOVERSE_SERVICE_URL, neither set anywhere in this
+# repo — so both fallbacks were the entire behaviour.
+call:
+  name: search
+  method: POST
+  url: "return scope.engineUrl + '/spatial/search'"
+  transport: json
+  body:
+    # OVERRIDDEN per method. Present here so the shape is complete and a method that forgets
+    # to set it fails loudly at the server rather than silently searching one way.
+    mode: "return params.__unset"
+
+    # maxResults, the threshold and the type filters come from the NODE CONFIG, never from
+    # the agent's arguments. That is this node's whole contract: the author decides what a
+    # search may return, the model only decides what to ask for. A model that could widen its
+    # own result set would route around the author.
+    # `?? 10`, not `|| 10`, matching the retired node exactly. They differ on 0, which the
+    # config's minimum of 5 makes unreachable today — but a fallback that fires on a
+    # legitimate value is the same class of silent narrowing as the flags below, and there
+    # is no reason to leave a second one in place.
+    maxResults: "return config.maxResults != null ? Number(config.maxResults) : 10"
+    workflowId: "return scope.workflowId"
+
+    # PASSED THROUGH, NEVER COERCED. Each is `config.x` and nothing more, which is exactly
+    # what the retired node did (`includeMcps: config?.includeMcps`).
+    #
+    # An UNSET flag must arrive as undefined so `resolveBody` drops the key and the SERVER's
+    # own default applies — and those defaults are mostly TRUE (images, needs, services,
+    # skills and mcps; only actions is false). Writing `=== true` turned every unset flag
+    # into an explicit `false`, so a node whose author had not touched the toggles asked for
+    # nothing instead of everything. Valid request, far narrower answer, no error.
+    #
+    # `false` is still SENT: resolveBody drops undefined and "", not false, so a deliberately
+    # disabled type stays disabled.
+    includeImages: "return config.includeImages"
+    includeNeeds: "return config.includeNeeds"
+    includeServices: "return config.includeServices"
+    includeActions: "return config.includeActions"
+    includeSkills: "return config.includeSkills"
+    includeMcps: "return config.includeMcps"
+
+    # A single ask, several angles, or both. `queries` batches ONE embedding call and N
+    # searches into a single round trip, each row tagged with the query it answered.
+    #
+    # Both resolve to undefined when unset, and `resolveBody` DROPS a key that resolves to
+    # nothing — which is what is wanted here: the server distinguishes an absent `queries`
+    # from an empty one.
+    query: "return String(params.query || '').trim() || undefined"
+    queries: "return (Array.isArray(params.queries) && params.queries.length) ? params.queries : undefined"
+
+    # OMITTED when unset so the SERVER's default floor applies. Sending 0 would mean "keep
+    # everything", which is a different instruction from "use the platform default" and was a
+    # real behavioural difference in the retired client.
+    similarityThreshold: >-
+      return (config.similarityThreshold != null && String(config.similarityThreshold) !== '')
+        ? Number(config.similarityThreshold) : undefined
+
+  error:
+    when: "return !response || !Array.isArray(response.results)"
+    message: "return 'spatial/search failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+# THE MODEL-FACING REPLY.
+#
+# THE NODE PROJECTS. Legacy did — `{ ...result, results: projectResultsForModel(result.results) }`
+# — and the agent harness ALSO leans the reply afterwards. Two projections, and that is not an
+# accident to be tidied away: the harness's is a generic floor for any search-shaped tool, and
+# this one is spatial's own contract, which knows `bodyCopy` belongs behind readResult and that
+# a plain need keeps no metadata at all.
+#
+# Removing this on 2026-07-29, on the theory that the harness could own it alone, put the FULL
+# rows into the reply: jsonLd, openGraph, UMAP coordinates, every bodyCopy in full. Roughly
+# 100k tokens per search, and every one of them recorded into node_traces as well. The harness
+# lean is not a replacement for this; it runs after it.
+#
+# THE WHOLE ENVELOPE, not a bare array. `queryPoint` and `count` survive, and the harness reads
+# `parsed.results` — a bare array makes its own projection no-op silently.
+#
+# The row shaping is `helpers.searchRow` in shared/helpers.yaml, where it can be read and
+# diffed as a named function rather than 45 lines inside this scalar.
+#
+# Evaluated AFTER the card lane, which needs the full rows.
+lean: >-
+  return Object.assign({}, response, { results: (response.results || []).map(helpers.searchRow) })

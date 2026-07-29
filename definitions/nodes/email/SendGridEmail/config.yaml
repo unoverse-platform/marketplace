@@ -1,0 +1,145 @@
+$schema: ../../../_schema/config.schema.json
+
+# Transcribed from the retired node's configSchema, minus `provider`.
+#
+# `provider` was an enum with exactly ONE value ("microsoft365"), which is a dropdown that
+# cannot be changed: it described the package rather than the step. The package now names its
+# vendor, so the field has nothing left to say.
+
+configSchema:
+  type: object
+  required: [from, to, subject, body]
+  properties:
+    from:
+      type: string
+      title: From
+      description: >-
+        Sender address. Must be a verified sender or belong to an authenticated domain in
+        your SendGrid account, or the send is rejected.
+      default: ""
+      ui:field: template
+
+    to:
+      type: string
+      title: To
+      description: Recipient address. Separate multiple with commas.
+      default: ""
+      ui:field: template
+
+    subject:
+      type: string
+      title: Subject
+      description: The subject line
+      default: ""
+      ui:field: template
+
+    body:
+      type: string
+      title: Body
+      description: The message itself, as plain text or HTML depending on Body Type
+      default: ""
+      ui:field: template
+
+    bodyType:
+      type: string
+      title: Body Type
+      description: Send the body as plain text, or as HTML with links and formatting
+      default: text
+      enum: [text, html]
+      enumNames: [Plain Text, HTML]
+
+    autoLinkUrls:
+      type: boolean
+      title: Auto-link URLs
+      description: >-
+        In HTML mode, turn bare URLs in the body into clickable links. A body that is already
+        HTML keeps its own line breaks; a plain one has its newlines converted.
+      default: true
+      "ui:widget": toggle
+      "ui:dependencies": { bodyType: html }
+
+    gaMeasurementId:
+      type: string
+      title: GA Measurement ID
+      description: >-
+        Google Analytics id (G-XXXXXXXXXX). Adds a 1x1 pixel to the HTML body so opens are
+        counted. Leave blank for no open tracking.
+      default: ""
+      "ui:dependencies": { bodyType: html }
+
+    utmSource:
+      type: string
+      title: UTM Source
+      description: >-
+        Tags every link in the body, e.g. "newsletter". Leave blank and no UTM parameters are
+        added at all; the other three only apply once this is set.
+      default: ""
+      ui:field: template
+      "ui:dependencies": { bodyType: html }
+
+    utmMedium:
+      type: string
+      title: UTM Medium
+      description: e.g. "email"
+      default: ""
+      ui:field: template
+      "ui:dependencies": { bodyType: html }
+
+    utmCampaign:
+      type: string
+      title: UTM Campaign
+      description: e.g. "april-outreach". Also used as the open-tracking label.
+      default: ""
+      ui:field: template
+      "ui:dependencies": { bodyType: html }
+
+    utmContent:
+      type: string
+      title: UTM Content
+      description: e.g. "cta-button", to tell links apart in an A/B test
+      default: ""
+      ui:field: template
+      "ui:dependencies": { bodyType: html }
+
+    cc:
+      type: string
+      title: CC
+      description: Copied recipients, comma-separated
+      default: ""
+      ui:field: template
+
+    bcc:
+      type: string
+      title: BCC
+      description: Blind-copied recipients, comma-separated
+      default: ""
+      ui:field: template
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order":
+  [from, to, cc, bcc, subject, bodyType, body, autoLinkUrls, utmSource, utmMedium,
+   utmCampaign, utmContent, gaMeasurementId, authRequired, authRole]

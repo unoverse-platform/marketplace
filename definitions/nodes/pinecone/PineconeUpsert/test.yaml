@@ -1,0 +1,28 @@
+# WRITES to a real index. Uses a fixed id so re-running updates the same record instead of
+# filling the index with test rows, which the retired fixture did not do.
+#
+# The batch form is exercised rather than the single-record one, because the batch path is
+# where ndjson framing actually matters: one record produces one line and would pass even if
+# the serializer wrongly emitted a JSON array.
+
+testData:
+  config:
+    indexName: "{{ env.PINECONE_INDEX }}"
+    textField: chunk_text
+    # A LITERAL array, not a "return [...]" expression. A fixture supplies VALUES, in the
+    # shape the config schema declares; an expression here would be checked as a string and
+    # would reach the body resolver unevaluated.
+    records:
+      - _id: unoverse-node-test-1
+        text: The return policy allows refunds within 30 days.
+        metadata: { source: node-test }
+      - _id: unoverse-node-test-2
+        text: Damaged items are replaced free of charge.
+        metadata: { source: node-test }
+  inputs:
+    signal: {}
+  expect:
+    upserted: "return output.upserted === 2"
+    ids: >-
+      return Array.isArray(output.ids) && output.ids.length === 2
+        && output.ids[0] === 'unoverse-node-test-1'

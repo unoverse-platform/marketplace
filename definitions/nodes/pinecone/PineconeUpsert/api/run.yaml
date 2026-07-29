@@ -1,0 +1,68 @@
+# TWO CALLS: learn the index's host, then write to it. Same host lookup as the search node.
+
+- $ref: index#describe
+
+- name: upsert
+  method: POST
+
+  url: >-
+    return 'https://' + calls.describeIndex.host + '/records/namespaces/'
+      + encodeURIComponent(String(config.namespace || '').trim() || '__default__')
+      + '/upsert'
+
+  transport: json
+
+  # NEWLINE-DELIMITED JSON: one record per line, no array, no commas. `JSON.stringify` of
+  # the same array is valid JSON and a 400 here, because Pinecone parses line by line. This
+  # is the reason `encoding: ndjson` exists rather than the body being joined by hand in an
+  # expression: a record whose text contains a newline has to stay on one line, and only the
+  # serializer can guarantee that.
+  encoding: ndjson
+
+  credential: { $ref: index#credential }
+  headers:
+    X-Pinecone-Api-Version: "2025-04"
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # ONE OR MANY, from the same manifest. `records` (an array from an upstream step) wins when
+  # present; otherwise the single text/id/metadata fields build one record. The retired node
+  # had the same two modes, and collapsing them into one shape here means a workflow that
+  # grows from one document to a batch does not change node.
+  body: >-
+    return ((rows) => rows
+      .map((r, i) => Object.assign(
+        {},
+        // Stored metadata first, so a field it happens to contain can never overwrite the
+        // id or the text below. Silent corruption of the embedded field is the worst case
+        // this ordering prevents.
+        (r && typeof r.metadata === 'object' && r.metadata) ? r.metadata : {},
+        {
+          // Pinecone needs a stable id per record. An author-supplied one lets a later run
+          // UPDATE rather than duplicate; without one there is nothing meaningful to derive,
+          // so a positional fallback at least keeps a single batch internally unique.
+          _id: String((r && (r._id || r.id)) || config.vectorId || ('rec-' + (i + 1))),
+          // The field name must match the index's field_map, or Pinecone stores the record
+          // and embeds NOTHING — it is accepted, unsearchable, and reports no error.
+          [String(config.textField || 'chunk_text')]: String((r && (r.text || r.chunk_text)) || '')
+        }
+      ))
+      .filter(r => String(r[String(config.textField || 'chunk_text')] || '').trim().length > 0)
+    )(
+      Array.isArray(config.records) && config.records.length
+        ? config.records
+        : [{ text: config.text, metadata: config.metadata, _id: config.vectorId }]
+    )
+
+  error:
+    # The reply is `{ upsertedCount }`. A zero means every record was filtered out as empty,
+    # which is a silent no-op worth failing on: the workflow ran, wrote nothing, and would
+    # otherwise report success.
+    when: "return !response || Number(response.upsertedCount) === 0"
+    message: >-
+      return 'Pinecone stored no records. Every record had empty text, or the text field name
+      does not match the index (this node sent "'
+      + String(config.textField || 'chunk_text') + '").'

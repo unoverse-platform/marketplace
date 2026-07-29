@@ -1,0 +1,32 @@
+$schema: ../../../_schema/node.schema.json
+
+type: FieldValidator
+kind: PromiseNode
+
+name: Field Validator
+category: Flow
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png
+
+description: Validate data against a schema and output the next missing field
+
+# RETIRED, THEN REVIVED. This node was removed from the catalog when flow migrated, not
+# because nothing needed it but because its five outputs all derive from one properties-map
+# cascade and expressions had no way to bind an intermediate value. Named helpers
+# (shared/helpers.yaml) are exactly that binding, so the node is back — same type, same
+# connectors, so a saved workflow that named it resolves again.
+whenToUse: >-
+  Ask the next question in a form-filling conversation: compare what the guest has already
+  given against a schema and get back the single field to ask for next, with completion state
+  alongside. Deterministic — required fields first, then schema order — so the dialog never
+  relies on a model to decide what to ask. Reach for it when a workflow collects a fixed set
+  of fields turn by turn; it validates presence only, never formats or types.
+
+auth:
+  required: false
+
+capabilities:
+  # Pure computation, but caching is still wrong for the same reason as IfElse: both config
+  # fields are templates over the incoming data, so the same node legitimately answers
+  # differently on every turn of the conversation it drives.
+  cacheable: false

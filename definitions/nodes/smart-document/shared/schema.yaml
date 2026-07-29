@@ -1,0 +1,236 @@
+# TOOL DISCOVERY, as DATA — what an attached agent reads before touching the document.
+#
+# Transcribed from the retired SmartDocumentMCPSchema with ONE deliberate correction: the
+# retired document ADVERTISED TOOLS THAT NEVER EXISTED. getDocumentUnderstanding,
+# getRelevantInsights and logInsight were described in full — the mandatory protocol opened
+# with them — while the executor's KNOWN_METHODS never included them, so an agent following
+# its own instructions got UNKNOWN_METHOD on the second call of every session. This document
+# describes the nine tools that exist, with the output fields the handlers actually return.
+#
+# The wording IS the routing: a model reads these descriptions when choosing a tool, so
+# rephrasing is a behaviour change, never a tidy-up.
+
+document:
+  name: SmartDocument
+  version: "3.0.0"
+  description: Read and edit a long-form markdown document as addressable sections.
+  instructions: |-
+    EDITING PROTOCOL (MANDATORY — do not skip):
+
+    Phase 0 — Build your map (before any edit):
+    1. ALWAYS call outline() first — it is your map (cheap, no bodies).
+    2. Form a clear hypothesis: "Editing section X will achieve Y."
+    3. Only then readSection() what your hypothesis requires.
+
+    Editing:
+    - Use replaceInSection for small targeted edits (< ~20% of the body).
+    - Use updateSection for full rewrites.
+    - Every mutation MUST include expectedHash from your last read.
+    - After success, cache the new hash from the response — never re-read just to get it.
+
+    Error recovery:
+    - STALE_SECTION: use currentHash + currentBody from the error directly. Do NOT call
+      outline() again.
+    - NOT_UNIQUE: widen old_str with more surrounding context.
+    - INVALID_STRUCTURE: demote headings to H3+ inside bodies.
+
+    Do not invent IDs or hashes. Minimize reads. Batch edits when possible.
+  methods:
+    outline:
+      description: >-
+        Return the list of sections with metadata. Call first in any session and whenever
+        you suspect the document changed (e.g. after STALE_DOC). Does not return full
+        bodies.
+      input:
+        type: object
+        properties: {}
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          sections:
+            type: array
+            items:
+              type: object
+              properties:
+                id: { type: string }
+                level: { type: integer, enum: [1, 2] }
+                heading: { type: string }
+                parentId: { type: string }
+                hash: { type: string }
+                wordCount: { type: integer }
+    readSection:
+      description: >-
+        Return the body of one section. Use the hash from outline() or a previous read as
+        expectedHash in edits. Pass includeChildren to inline the children of a parent
+        section.
+      input:
+        type: object
+        properties:
+          id: { type: string, description: "Section id from outline()" }
+          includeChildren: { type: boolean, default: false }
+        required: [id]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          id: { type: string }
+          level: { type: integer }
+          heading: { type: string }
+          body: { type: string }
+          hash: { type: string }
+          children: { type: array }
+    updateSection:
+      description: >-
+        Replace heading and/or body of a section. Use for whole-section rewrites. For small
+        edits on long sections, prefer replaceInSection (cheaper). Body MUST NOT contain H1
+        or H2 headings.
+      input:
+        type: object
+        properties:
+          id: { type: string }
+          expectedHash:
+            type: string
+            description: Current hash of the section (from outline() or readSection())
+          heading: { type: string }
+          body: { type: string }
+          expectedDocVersion:
+            type: integer
+            description: Optional. If provided and stale, returns STALE_DOC.
+        required: [id, expectedHash]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          hash: { type: string }
+          error: { type: string }
+          currentHash: { type: string }
+          currentBody: { type: string }
+          hint: { type: string }
+    appendToSection:
+      description: >-
+        Append text to the end of a section's body. Saves a read-modify-write. Text MUST NOT
+        contain H1 or H2.
+      input:
+        type: object
+        properties:
+          id: { type: string }
+          expectedHash: { type: string }
+          text: { type: string }
+          expectedDocVersion: { type: integer }
+        required: [id, expectedHash, text]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          hash: { type: string }
+          error: { type: string }
+          hint: { type: string }
+    replaceInSection:
+      description: >-
+        Replace an exact substring inside one section's body. old_str must match exactly
+        once; otherwise fails with NOT_FOUND or NOT_UNIQUE. Prefer for changes < ~20% of the
+        body.
+      input:
+        type: object
+        properties:
+          id: { type: string }
+          expectedHash: { type: string }
+          old_str:
+            type: string
+            description: Exact substring to find (must be unique in this section's body)
+          new_str: { type: string }
+          expectedDocVersion: { type: integer }
+        required: [id, expectedHash, old_str, new_str]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          hash: { type: string }
+          error: { type: string }
+          matches: { type: integer }
+          hint: { type: string }
+    insertSection:
+      description: >-
+        Create a new section. If the document is empty or you want to append to the end,
+        omit placement keys. Otherwise provide exactly one of afterId, beforeId, or
+        parentId. Level must be 1 or 2.
+      input:
+        type: object
+        properties:
+          afterId: { type: string }
+          beforeId: { type: string }
+          parentId: { type: string, description: "Nest under this section; the new level must be deeper" }
+          level: { type: integer, enum: [1, 2] }
+          heading: { type: string }
+          body: { type: string, default: "" }
+          expectedDocVersion: { type: integer }
+        required: [level, heading]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          id: { type: string }
+          hash: { type: string }
+          error: { type: string }
+          hint: { type: string }
+    deleteSection:
+      description: >-
+        Delete a section. With cascade=true, removes descendants too; otherwise descendants
+        are re-parented.
+      input:
+        type: object
+        properties:
+          id: { type: string }
+          expectedHash: { type: string }
+          cascade: { type: boolean, default: false }
+          expectedDocVersion: { type: integer }
+        required: [id, expectedHash]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          error: { type: string }
+          hint: { type: string }
+    moveSection:
+      description: >-
+        Move a section to a new position. Provide exactly one of afterId, beforeId, or
+        parentId. Content is unchanged.
+      input:
+        type: object
+        properties:
+          id: { type: string }
+          expectedHash: { type: string }
+          afterId: { type: string }
+          beforeId: { type: string }
+          parentId: { type: string }
+          expectedDocVersion: { type: integer }
+        required: [id, expectedHash]
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          error: { type: string }
+          hint: { type: string }
+    resetDoc:
+      description: >-
+        DESTRUCTIVE. Re-parse initialMarkdown from the node config with fresh IDs,
+        discarding all current content. Only use when the user explicitly asks to start
+        over. Prefer targeted edits.
+      input:
+        type: object
+        properties: {}
+      output:
+        type: object
+        properties:
+          ok: { type: boolean }
+          version: { type: integer }
+          sectionCount: { type: integer }

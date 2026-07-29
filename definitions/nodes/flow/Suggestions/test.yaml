@@ -1,0 +1,23 @@
+$schema: ../../../_schema/test.schema.json
+
+# Config fields are templates, supplied here already resolved. The bench has no live session,
+# so the publish lane no-ops (and says so) — the fixture asserts the CONNECTOR, which carries
+# the identical object.
+#
+# The important assertion is the normalization: config authors `{ question }`, the template's
+# contract is `{ text }`, and the flattening happens in this node so the SDK never has to.
+
+testData:
+  config:
+    faqs:
+      - { id: "1", question: "What can you help with?" }
+    actions: []
+    recommendations:
+      - { id: "r1", text: "Try the onboarding flow", confidence: 0.9 }
+  inputs:
+    signal: {}
+  expect:
+    suggestions: >-
+      return output.suggestions.faqs[0].text === 'What can you help with?'
+        && JSON.stringify(output.suggestions.actions) === '[]'
+        && output.suggestions.recommendations[0].confidence === 0.9

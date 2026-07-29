@@ -1,0 +1,14 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: >-
+      Suggestions data from upstream — any of faqs, actions, recommendations. Keys the signal
+      carries win over the static config values.
+    required: false
+
+outputs:
+  - name: suggestions
+    type: object
+    description: The normalized suggestions object that was published

@@ -9,6 +9,11 @@ $schema: ../../../_schema/node.schema.json
 type: OpenAIEmbeddingService
 kind: PromiseNode
 
+# HOW THE CANVAS DRAWS IT. A pure service node has NO connectors, so the ordinary card draws
+# input and output dots that can never carry anything and invites someone to wire it into the
+# data flow rather than attaching it to a consumer.
+template: service
+
 name: Embedding Service
 category: AI
 color: "#2F6F66"

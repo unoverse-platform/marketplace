@@ -11,11 +11,12 @@ import { cpSync, existsSync, rmSync, mkdirSync, readdirSync, readFileSync, write
 import { join, dirname, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const here = dirname(fileURLToPath(import.meta.url)); // nodes/components/scripts
-const pkg = dirname(here); // nodes/components
-const rx = join(pkg, "..", "..", "rx"); // apps/unoverse/rx
-const prompts = join(pkg, "..", "..", "prompts"); // apps/unoverse/prompts
-const nodesHome = join(pkg, ".."); // apps/unoverse/nodes
+const here = dirname(fileURLToPath(import.meta.url)); // packages/marketplace/scripts
+const pkg = dirname(here); // packages/marketplace
+const home = join(pkg, "..", "..", "apps", "unoverse"); // the content home
+const rx = join(home, "rx");
+const prompts = join(home, "prompts");
+const nodesHome = join(home, "nodes");
 const out = join(pkg, "definitions");
 
 if (!existsSync(rx)) {

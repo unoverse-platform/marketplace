@@ -1,0 +1,16 @@
+# One row per output connector, in interface.yaml's order.
+
+# The request settled, which for this endpoint IS the answer: a 202 means SendGrid has
+# queued the message. There is no delivery confirmation to wait for, and a node that tried
+# to report one would be inventing it.
+- emit: sent
+  value: "return true"
+
+# `x-message-id` is the handle SendGrid's Activity feed is searched by. Lower-cased because
+# the headers transport normalises key case, so this does not depend on how the vendor
+# capitalised it on the day.
+#
+# Falls back to empty rather than undefined: the output is declared a string, and a
+# downstream template rendering the word "undefined" into a log line is worse than a blank.
+- emit: messageId
+  value: "return response['x-message-id'] || ''"

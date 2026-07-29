@@ -1,0 +1,31 @@
+$schema: ../_schema/package.schema.json
+
+# THE LAST HYBRID NODE, as a manifest. What actually needed code was the DOCUMENT ENGINE —
+# sectionizing, hash-checked edits, WATCH/MULTI concurrency, the mutation-re-fires-renderer
+# contract — and that is computation, which belongs to the executor (the awsSigV4 rule).
+# It moved there whole (packages/base/src/manifests/runtime/docstore/, transcribed verbatim)
+# and this package became a description: which tools exist, what they say to a model, and
+# where the markdown lands. Design rationale: _legacy/nodes/smart-document/CLAUDE.md.
+#
+# NO allowedHosts, and that is not an omission: the node reaches no host at all. The
+# document lives in the platform's own Redis, behind `docstore:` calls.
+
+name: smart-document
+displayName: Smart Document
+description: A long markdown document an agent writes and revises section by section
+version: 1.0.0
+# `ai`, transcribed from the retired package.json — the PACKAGE vocabulary has no
+# "documents"; that is the NODE vocabulary, where this node's category is Documents.
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Section-addressed, hash-checked markdown edits — no drift, no full rewrites
+  - Live-renders on every edit through the hybrid re-fire
+  - Survives across runs and chats, isolated per user, workflow and node instance
+
+requires:
+  executorVersion: ">=1.7.0"
+  # The whole package. On an executor without the docstore every tool is missing at once,
+  # and the failure would otherwise surface as a model politely reporting broken tools.
+  docstore: true

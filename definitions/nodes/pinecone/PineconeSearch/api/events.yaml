@@ -1,0 +1,23 @@
+# One row per output connector, in interface.yaml's order.
+#
+# `result.hits` is the integrated-inference shape and it is NOT the shape the old `/query`
+# endpoint returned: that one gave `matches` with `id`/`score`/`metadata`, this one gives
+# `hits` with `_id`/`_score`/`fields`. Flattened here so a downstream template reads
+# `match.id` and `match.text` rather than leading-underscore vendor spelling.
+
+- emit: matches
+  value: >-
+    return (response.result.hits || [])
+      .filter(h => Number(h._score) >= (Number(config.scoreThreshold) || 0))
+      .map(h => Object.assign(
+        { id: h._id, score: Math.round(Number(h._score) * 1000) / 1000 },
+        h.fields || {}
+      ))
+
+# Counted AFTER the threshold, because a caller branching on "did we find anything" means
+# anything that survived filtering. Recomputed rather than read off the first row, since an
+# events row cannot see what a sibling emitted.
+- emit: count
+  value: >-
+    return (response.result.hits || [])
+      .filter(h => Number(h._score) >= (Number(config.scoreThreshold) || 0)).length

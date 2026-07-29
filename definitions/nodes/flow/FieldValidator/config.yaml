@@ -1,0 +1,41 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [requiredSchema, incomingData]
+  properties:
+    requiredSchema:
+      type: object
+      title: Required Schema
+      description: >-
+        The schema defining the fields to collect. Three shapes are accepted: a minted tool
+        schema (inputSchema.json.properties), plain JSON Schema (properties/required), or a
+        bare object whose keys are the field names. Example: return signal.toolSchema
+      default: ""
+      "ui:field": template
+    incomingData:
+      type: object
+      title: Incoming Data
+      description: >-
+        The data gathered so far. A field counts as missing when absent, null or the empty
+        string. Example: return signal.formData
+      default: ""
+      "ui:field": template
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    # Instance config, not the manifest's `auth`: the manifest is the node author's floor,
+    # these are the builder's per box, and the executor takes the stricter of the two.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [requiredSchema, incomingData, authRequired, authRole]

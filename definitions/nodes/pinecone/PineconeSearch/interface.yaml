@@ -1,0 +1,23 @@
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger signal from the upstream node
+
+outputs:
+  # The old node emitted a single `output` array. Split in two here because a downstream
+  # step almost always wants one or the other: the matches to loop over, or the count to
+  # branch on. Reaching for `.length` in a template worked, but "did the search find
+  # anything" is a question worth having an answer to.
+  - name: matches
+    type: array
+    description: Matching records, best first, each with id, score and the requested fields
+
+  - name: count
+    type: number
+    description: How many matches came back, after any score threshold
+
+credentials:
+  - name: pineconeCredential
+    required: true
+    displayName: Pinecone

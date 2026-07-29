@@ -1,0 +1,38 @@
+$schema: ../_schema/package.schema.json
+
+name: email
+displayName: Email
+version: 2.0.0
+description: Send email over HTTP
+
+# THE PROVIDER CHANGED, and that is the whole reason this package could become a manifest.
+#
+# Until 2026-07-29 this was Microsoft 365 over SMTP, via nodemailer. SMTP is a socket
+# protocol with a stateful conversation (EHLO, AUTH, MAIL FROM, RCPT TO, DATA), and no
+# amount of manifest will ever speak it: the format describes REQUESTS, and SMTP is not one.
+# The node was not "not yet migrated", it was unmigratable as written.
+#
+# SendGrid sends the same email as ONE POST with a JSON body, so the node becomes a
+# description of a request and the capability question disappears. That is a real product
+# change (a different vendor, a different account, different deliverability) rather than a
+# refactor, so it is recorded here rather than buried in a diff.
+#
+# The old node is at _legacy/nodes/email. Workflows keep working until they are repointed:
+# the type is deliberately NOT reused (SendEmail → SendGridEmail), because a saved workflow
+# stores the type string and silently swapping the transport under it would change where
+# every existing email came from without anyone choosing that.
+
+category: communication
+
+allowedHosts:
+  # api.sendgrid.com is global; api.eu.sendgrid.com is the EU data residency host. Both are
+  # listed because the choice is an account property, not a per-workflow one, and a node
+  # that could only reach the global host would fail for an EU tenant with a refused-host
+  # error that says nothing about data residency.
+  - api.sendgrid.com
+  - api.eu.sendgrid.com
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [bearer]
+  transport: [json, headers]

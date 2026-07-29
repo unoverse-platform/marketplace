@@ -1,0 +1,43 @@
+$schema: ../_schema/package.schema.json
+
+name: spatial
+displayName: Spatial
+version: 2.0.0
+description: Semantic and spatial search over the platform's own knowledge base
+
+# CALLS THE PLATFORM, NOT A VENDOR, which is what made this the last of the integration
+# packages to migrate and what made two of its problems look bigger than they were.
+#
+# 1. AUTH. The retired node forwarded the caller's JWT as a bearer token, and §9.13 forbids a
+#    manifest from holding one. That looked like a hard block. It was not: the runtime
+#    listener is never published or proxied (AUTH_REMEDIATION.md, superseded July 2026 —
+#    Docker network isolation IS the trust boundary), so a node calling the platform is
+#    already inside it and needs no token. The retired client agreed without anyone noticing:
+#    its `authHeaders` returned {} when there was none.
+#
+# 2. THE HOST. It read WORKFLOW_SERVICE_URL, a variable set NOWHERE in this repo, behind
+#    `|| "http://localhost:4101"` — so the fallback was the entire behaviour, and a
+#    deployment that moved the port would have failed at DNS naming a host nobody configured.
+#    `scope.platformUrl` is derived from the port the runtime is actually listening on.
+#
+# What was genuinely missing was the CONTENT CARD lane, and that is now `renderCards` on a
+# service method.
+
+category: search
+
+allowedHosts:
+  # LOOPBACK ONLY, and deliberately just the numeric form: the allowedHosts pattern rejects a
+  # bare "localhost", and `scope.platformUrl` is built from 127.0.0.1 anyway.
+  #
+  # This package must never reach a third-party host. Everything it knows is the platform's
+  # own knowledge base, so a wildcard here would turn an internal search node into a way to
+  # send that knowledge base somewhere else.
+  - 127.0.0.1
+
+requires:
+  executorVersion: ">=1.7.0"
+  transport: [json]
+  # The card lane: a result row carrying a component renders it on the caller's live screen
+  # the moment it surfaces. Declared because the executor implements it; a package naming it
+  # on an older runtime would silently render nothing.
+  renderCards: true

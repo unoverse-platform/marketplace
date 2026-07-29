@@ -1,0 +1,100 @@
+# FLOW'S NAMED FUNCTIONS. FieldValidator's schema cascade and Suggestions' normalizer,
+# because both nodes' whole job is shaping one object that several expressions then read.
+#
+# FieldValidator exists again BECAUSE of this file: it was retired rather than migrated when
+# every one of its five outputs derived from the same properties-map cascade and, with no way
+# to bind an intermediate value, the cascade had to be written out again inside every
+# expression needing it — completionPercentage alone came to four copies. Named helpers are
+# the capability that reversed that decision: the cascade runs here, once, and each emit row
+# picks one field.
+#
+# A helper sees only its arguments and its siblings: no config, no credentials, no caller
+# scope. Same sandbox as every other expression, no extra authority.
+
+helpers:
+  # WHERE THE FIELDS LIVE, across the three shapes the retired node accepted — transcribed
+  # from its extractSchemaInfo, cases in the same order:
+  #
+  #   1. a minted TOOL schema      { inputSchema: { json: { properties, required } } }
+  #   2. plain JSON Schema         { properties, required }
+  #   3. a bare object             its keys ARE the fields, nothing is required
+  #
+  # All three still arrive in practice, because the schema is whatever the upstream wire
+  # carries: an agent's tool definition, an authored form schema, or a hand-built object.
+  schemaInfo:
+    args: [schema]
+    body: >-
+      return (!schema || typeof schema !== 'object')
+        ? { fieldNames: [], requiredList: [], propertiesMap: {} }
+        : (((schema.inputSchema || {}).json || {}).properties
+            ? { fieldNames: Object.keys(schema.inputSchema.json.properties),
+                requiredList: schema.inputSchema.json.required || [],
+                propertiesMap: schema.inputSchema.json.properties }
+            : (schema.properties
+                ? { fieldNames: Object.keys(schema.properties),
+                    requiredList: schema.required || [],
+                    propertiesMap: schema.properties }
+                : { fieldNames: Object.keys(schema), requiredList: [], propertiesMap: schema }))
+
+  # A field is MISSING when absent, null, or the empty string — the empty string because these
+  # values come off forms and chat slots, where "" is what an unanswered question produces.
+  # No data at all means everything is missing, not an error: the first turn of a slot-filling
+  # conversation legitimately starts from nothing.
+  missingFields:
+    args: [fieldNames, data]
+    body: >-
+      return (!data || typeof data !== 'object')
+        ? fieldNames
+        : fieldNames.filter(f => data[f] == null || data[f] === '')
+
+  # THE SUGGESTIONS OBJECT, normalized at the source — transcribed from the retired
+  # Suggestions executor. The template's contract is `{ text }` (the SDK stores producer data
+  # opaquely and knows no "faq", UNOVERSE_STATE_MODEL §8), while authors write a string,
+  # `{ text }` or `{ question }` — so the flattening happens HERE and the SDK never has to.
+  #
+  # Per-key fallback, signal over config, exactly as the retired node resolved it: a workflow
+  # usually wires the whole object off an upstream extractor, and static config is the
+  # standing default for whichever keys the signal does not carry.
+  #
+  # The retired node's two-level "source node / output handle" probing is deliberately NOT
+  # transcribed: that unwrapped the LEGACY engine's signal envelope, and the manifest executor
+  # binds the payload by input port name instead — there is nothing left to unwrap.
+  suggestionsOf:
+    args: [given, authored]
+    body: >-
+      return ((sig) => ({
+        faqs: ((sig.faqs || authored.faqs) || []).map(f => ({
+          text: typeof f === 'string'
+            ? f
+            : ((f || {}).text != null ? f.text : ((f || {}).question != null ? f.question : ''))
+        })),
+        actions: (sig.actions || authored.actions) || [],
+        recommendations: (sig.recommendations || authored.recommendations) || []
+      }))(given || {})
+
+  # ONE report with everything the node emits. `null` rather than `undefined` for an absent
+  # next field, so the emit rows can test it with a plain comparison.
+  #
+  # NEXT-FIELD PRIORITY is the retired node's: first missing field that the schema marks
+  # required, else first missing field in schema order — `filter(...)[0] || missing[0]`
+  # collapses both cases because an empty filter yields undefined and falls through.
+  fieldReport:
+    args: [schema, data]
+    body: >-
+      return ((info) =>
+        ((missing) =>
+          ((next) => ({
+            nextField: next,
+            nextFieldSchema: (next == null || info.propertiesMap[next] == null)
+              ? null
+              : info.propertiesMap[next],
+            missingFields: missing,
+            isComplete: missing.length === 0,
+            completionPercentage: info.fieldNames.length === 0
+              ? 100
+              : Math.round((info.fieldNames.length - missing.length) / info.fieldNames.length * 100)
+          }))(missing.length === 0
+            ? null
+            : (missing.filter(f => info.requiredList.includes(f))[0] || missing[0]))
+        )(helpers.missingFields(info.fieldNames, data))
+      )(helpers.schemaInfo(schema))

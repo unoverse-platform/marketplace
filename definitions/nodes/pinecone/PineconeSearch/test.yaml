@@ -1,0 +1,22 @@
+# Needs a REAL index created with an embedding model attached. An index holding
+# externally-computed vectors returns a 400 from /records/search, and that is the single
+# most useful thing this fixture can catch: it is the one setup difference between this node
+# and the one it replaces.
+#
+# Asserts SHAPE, never particular records: the index's contents are the tester's, so
+# asserting a title would only prove whose account ran it.
+
+testData:
+  config:
+    indexName: "{{ env.PINECONE_INDEX }}"
+    query: What is the return policy for damaged items?
+    fields: chunk_text
+    topK: 5
+    scoreThreshold: 0
+  inputs:
+    signal: {}
+  expect:
+    # The two-call chain worked: a host was discovered and searched. An empty array is a
+    # legitimate answer here, so the assertion is about the TYPE, not the length.
+    matches: "return Array.isArray(output.matches)"
+    count: "return typeof output.count === 'number' && output.count === output.matches.length"

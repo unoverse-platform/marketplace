@@ -1,0 +1,118 @@
+# SendGrid v3 mail send. ONE request, no job, no polling.
+#
+# Grounded in the vendor's HTTP reference rather than in the retired node: the old one spoke
+# SMTP through nodemailer, so there was no request shape to transcribe. What IS transcribed
+# is every body transform it performed, each marked below against the function it came from.
+
+- name: send
+  method: POST
+
+  # The host is a credential field because EU data residency is an ACCOUNT property, chosen
+  # when the account is created and never changeable. Blank falls back to the global host,
+  # so an existing credential with no host keeps working.
+  url: >-
+    return 'https://' + (credentials.sendgridCredential.host || 'api.sendgrid.com')
+      + '/v3/mail/send'
+
+  # THE REPLY IS HEADERS. A successful send is 202 with a COMPLETELY EMPTY body, and the
+  # message id arrives as `x-message-id`. Read as json this would parse "" and fail, and read
+  # as text it would settle on an empty string with the id unreachable — the node would work
+  # and report nothing, which is exactly the shape of failure that is hardest to notice.
+  transport: headers
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.sendgridCredential.apiKey }}"
+
+  # Transient upstream failures only. A 4xx here is a malformed message or an unverified
+  # sender and retrying sends the same bad request three times.
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    # RECIPIENTS. The config field is one comma-separated string (the retired node handed it
+    # straight to nodemailer, which split it); SendGrid wants an array of objects. Trimmed
+    # and emptied-filtered because "a@b.com, " is what a template with a trailing separator
+    # produces, and SendGrid rejects the whole request for one blank address.
+    personalizations: >-
+      return [Object.assign(
+        { to: String(config.to || '').split(',').map(e => e.trim()).filter(e => e.length > 0)
+                .map(e => ({ email: e })) },
+        String(config.cc || '').trim()
+          ? { cc: String(config.cc).split(',').map(e => e.trim()).filter(e => e.length > 0).map(e => ({ email: e })) }
+          : {},
+        String(config.bcc || '').trim()
+          ? { bcc: String(config.bcc).split(',').map(e => e.trim()).filter(e => e.length > 0).map(e => ({ email: e })) }
+          : {}
+      )]
+
+    # `from` is REQUIRED here, unlike the retired node where it defaulted to the credential's
+    # username. That default only made sense because the credential WAS a mailbox login; a
+    # SendGrid key belongs to an account that can send as any verified sender, so there is no
+    # single sensible default and guessing one would send from the wrong address.
+    from:
+      email: "{{ config.from }}"
+
+    subject: "{{ config.subject }}"
+
+    # THE BODY PIPELINE, transcribed from sendEmailService.ts in its original order:
+    # prepareHtmlBody → injectUtmParams → appendTrackingPixel. Order matters twice over:
+    # auto-linking must run first or there are no href attributes for the UTM pass to rewrite,
+    # and the pixel must come last or its own src would collect UTM parameters.
+    content: >-
+      return ((body, isHtml) => {
+        if (!isHtml) return [{ type: 'text/plain', value: body }];
+
+        // prepareHtmlBody. The lookbehind skips urls already inside an attribute
+        // (href="..."), which would otherwise be nested inside a second anchor.
+        let html = body;
+        if (config.autoLinkUrls !== false) {
+          const linked = html.replace(
+            /(?<!["'=])(https?:\/\/[^\s<>"']+)/g,
+            (u) => '<a href="' + u + '">' + u + '</a>'
+          );
+          // Authored HTML keeps its own line breaks; a plain-text body typed into an HTML
+          // field needs its newlines turned into <br> or the whole mail arrives as one
+          // paragraph. `match` rather than `test`, which the sandbox does not expose.
+          const alreadyHtml = body.match(/<[a-z][\s\S]*>/i) !== null;
+          html = alreadyHtml ? linked : linked.split('\n').join('<br>');
+        }
+
+        // injectUtmParams. Built by hand because `new URLSearchParams` is a constructor and
+        // the sandbox has no `new` at all; the encoding is the same.
+        if (String(config.utmSource || '').trim()) {
+          const pairs = Object.keys({
+            utm_source: config.utmSource,
+            utm_medium: config.utmMedium,
+            utm_campaign: config.utmCampaign,
+            utm_content: config.utmContent
+          }).map(k => ({ k: k, v: ({
+            utm_source: config.utmSource,
+            utm_medium: config.utmMedium,
+            utm_campaign: config.utmCampaign,
+            utm_content: config.utmContent
+          })[k] }))
+            .filter(p => p.v != null && String(p.v).length > 0)
+            .map(p => p.k + '=' + encodeURIComponent(String(p.v)))
+            .join('&');
+          html = html.replace(/href="(https?:\/\/[^"]+)"/g, (m, url) =>
+            'href="' + url + (url.indexOf('?') >= 0 ? '&' : '?') + pairs + '"');
+        }
+
+        // appendTrackingPixel, inside </body> when there is one so it stays inside the
+        // document rather than trailing after it.
+        if (String(config.gaMeasurementId || '').trim()) {
+          const label = config.utmCampaign || config.subject || 'email';
+          const pixel = '<img src="https://www.google-analytics.com/collect?v=1&t=event&tid='
+            + config.gaMeasurementId + '&cid=email&ec=email&ea=open&el='
+            + encodeURIComponent(String(label))
+            + '" width="1" height="1" style="display:none" alt="" />';
+          html = html.match(/<\/body>/i) !== null
+            ? html.replace(/<\/body>/i, pixel + '</body>')
+            : html + pixel;
+        }
+
+        return [{ type: 'text/html', value: html }];
+      })(String(config.body || ''), config.bodyType === 'html')

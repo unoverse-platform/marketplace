@@ -17,10 +17,24 @@
  * taking the rest. See scripts/bundle-defs.mjs for how the catalogue is cut.
  */
 
-import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
-import packageJson from "../package.json";
-import { findRxComponentsDir, loadComponentDefs, synthesize, buildComponentNodeDefinition } from "./lib/meta";
-import { makeUniversalExecutorClass } from "./lib/executor";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/base/pluginBase.js";
+import { createRequire } from "node:module";
+
+/**
+ * Own package.json, read at runtime rather than imported: an ESM JSON import would need
+ * tsc to copy the file under dist/, which it does not. Two candidates because the file
+ * sits at a different depth from source (src/ → ../) and from the build the loader
+ * actually runs (dist/src/ → ../../, the package root).
+ */
+const requireJson = createRequire(import.meta.url);
+let packageJson: { name: string; version?: string; description?: string };
+try {
+  packageJson = requireJson("../../package.json");
+} catch {
+  packageJson = requireJson("../package.json");
+}
+import { findRxComponentsDir, loadComponentDefs, synthesize, buildComponentNodeDefinition } from "./lib/meta.js";
+import { makeUniversalExecutorClass } from "./lib/executor.js";
 
 const plugin = createPlugin({
   name: packageJson.name,
@@ -28,7 +42,7 @@ const plugin = createPlugin({
   description: packageJson.description,
 
   async setup(api: GravityPluginAPI) {
-    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/base/pluginBase.js");
     initializePlatformFromAPI(api);
 
     const rxDir = findRxComponentsDir();

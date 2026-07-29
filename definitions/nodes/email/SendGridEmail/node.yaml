@@ -1,0 +1,47 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from _legacy/nodes/email/src/SendEmail, with SMTP replaced by SendGrid's REST
+# API. Every body transform the old node performed (auto-linking, UTM injection, the open
+# pixel) is reproduced as an expression; see api/run.yaml for each one.
+
+type: SendGridEmail
+
+# NOT the old `SendEmail` type. A saved workflow stores the type string, so reusing it would
+# silently move every existing email from a Microsoft 365 mailbox to a SendGrid account
+# without anyone choosing that, and the first sign would be a deliverability change nobody
+# could trace. A new type makes repointing a decision someone makes on the canvas.
+
+kind: PromiseNode
+
+name: Send Email
+category: Communication
+color: "#1A82E2"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/microsoft365.png
+
+description: Send an email through SendGrid, as plain text or HTML
+
+whenToUse: >-
+  Send an email to a recipient inbox: a notification, report, confirmation or outreach
+  message addressed to an email address. Runs as a pipeline step rather than a tool an agent
+  calls, and reaches a mailbox rather than a chat channel or the client UI, so it is the
+  wrong step when the message should appear in a conversation the user is already in.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+#
+# Deliberately NOT `true`, despite sending mail on the account's behalf. The dangerous
+# property of this node is the SENDER, which is fixed by the credential and the verified
+# sender list, not by who triggered the run. A workflow that should only mail for signed-in
+# people says so with the instance toggle, which is where that decision actually belongs.
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable: sending is the side effect. A cached answer would report a successful
+  # send for a message that was never delivered, which is the worst possible lie for a node
+  # whose entire purpose is that something left the building.
+  cacheable: false

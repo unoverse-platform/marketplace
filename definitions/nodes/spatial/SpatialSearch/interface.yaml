@@ -1,0 +1,22 @@
+# A PURE SERVICE NODE: no inputs, no outputs. The graph never runs it; an agent calls it over
+# a service edge and gets one value back. That is why there is no api/events.yaml here, and
+# why declaring an output would create a dot nothing could ever fire.
+
+inputs: []
+outputs: []
+
+serviceConnectors:
+  - name: knowledgeSearch
+    serviceType: mcp
+    # PROVIDES. The node offers these tools to a consuming agent rather than consuming
+    # anything itself.
+    isService: true
+    description: Semantic and spatial search tools for an agent
+    # `getSchema` is deliberately absent: it is tool DISCOVERY, a meta-method the harness
+    # calls, not one of the tools on offer. Listing it would advertise it to the model.
+    methods:
+      - findIntent
+      - discoverRelated
+      - readResult
+      - readSkill
+      - readSkillFile

@@ -1,0 +1,12 @@
+# THE WHOLE POINT OF THE NODE: the same object the connector carries, merged into the
+# caller's live TEMPLATE STATE over the data plane. The producer names the keys
+# (faqs/actions/recommendations); the SDK merges `data` opaquely and the template's own
+# fragments pick them up — core knows no key names (UNOVERSE_STATE_MODEL §2/§8).
+#
+# `output.suggestions`, not a second expression over the inputs, so the screen and the graph
+# can never drift: what the guest sees IS what the downstream node received.
+#
+# No `when`: the retired node always published, and an EMPTY object is meaningful — it is how
+# a workflow clears stale chips from the previous turn.
+
+data: "return output.suggestions"

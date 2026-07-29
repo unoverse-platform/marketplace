@@ -1,0 +1,32 @@
+# THE HOST LOOKUP, shared because every node in this package needs it and none can skip it.
+#
+# Pinecone's data plane lives on a host that is unique per index and not derivable from the
+# index name: `kb-a1b2c3.svc.aped-4627-b74a.pinecone.io`. The old SDK hid this behind
+# `pinecone.index(name)`, which is why the retired nodes only ever asked for a NAME.
+#
+# Keeping that config field is worth one extra request. The alternative is making an author
+# paste a host they have to go and find, and which changes if the index is recreated.
+
+describe:
+  name: describeIndex
+  method: GET
+  url: "https://api.pinecone.io/indexes/{{ config.indexName }}"
+  transport: json
+  credential: { $ref: index#credential }
+  headers:
+    X-Pinecone-Api-Version: "2025-04"
+  error:
+    # A 404 here means the index does not exist IN THIS KEY'S PROJECT, which is the single
+    # most common setup mistake: the right name in the wrong project. Said plainly, because
+    # the raw reply is a generic not-found that sends people looking at the wrong thing.
+    when: "return !response.host"
+    message: >-
+      return 'Pinecone index "' + config.indexName + '" was not found, or the API key belongs
+      to a different project. Check the index name and that this key is from the same project.'
+
+# apiKeyHeader rather than bearer: Pinecone reads `Api-Key`, and a bearer token is silently
+# ignored rather than rejected, so the failure looks like a permissions problem.
+credential:
+  scheme: apiKeyHeader
+  header: Api-Key
+  value: "{{ credentials.pineconeCredential.apiKey }}"

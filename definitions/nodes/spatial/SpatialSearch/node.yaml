@@ -1,0 +1,58 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from _legacy/nodes/spatial/src/SpatialSearch. Every tool, every instruction
+# string and the model-facing projection are carried over verbatim; see api/service.yaml.
+
+type: SpatialSearch
+
+# THE TYPE IS REUSED, unlike email and pinecone where it deliberately was not. Nothing about
+# the contract changes here: same tools, same arguments, same platform endpoints, same
+# results. The token that used to be forwarded was never read by anything (loopback), so a
+# workflow wired to this node keeps behaving identically. There is nothing for an author to
+# decide, so there is no decision to force on them.
+
+kind: PromiseNode
+
+# HOW THE CANVAS DRAWS IT. Every other service node in the tree says this — HubspotMCP,
+# SalesforceMCP, SlackMCP, DynamoDBService, BedrockEmbeddingService — and the retired node
+# said it too (`template: "service"` in its definition).
+#
+# Omitting it is not cosmetic: a service node has NO connectors, so the ordinary card draws
+# input and output dots that can never carry anything, and invites someone to wire it into
+# the data flow instead of attaching it to an agent. The service card shows the attachment
+# point, which is the only way this node is ever reached.
+
+template: service
+
+name: Spatial Search
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Search the platform knowledge base for the needs, skills, services and content most
+  relevant to a query
+
+whenToUse: >-
+  Give an agent semantic search over the platform's own knowledge base: find the needs,
+  skills, services and content most relevant to a query, and discover what else sits near a
+  topic. Two searches in one, precise intent lookup and spatial discovery. Reach elsewhere
+  when the knowledge lives in an external vector store. Attach by a service edge to the
+  agent; it is not a data-flow step.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13).
+#
+# `required: false`, and that is a considered answer rather than the default one. This node
+# reads the platform's OWN knowledge base, so demanding sign-in here would break every public
+# experience built on it: a guest asking a concierge agent a question is exactly the case it
+# exists for. What a guest may reach is decided at the door by the trigger's publicEntry
+# toggle, which is where an audience decision belongs, and a workflow that should be
+# staff-only says so with the instance toggle on this box.
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable. The index changes as content is ingested, and a service method answering
+  # from a stale cache would tell an agent something is not there when it is. Reuse is also
+  # worth less than it looks: the queries are the user's own words and rarely repeat.
+  cacheable: false

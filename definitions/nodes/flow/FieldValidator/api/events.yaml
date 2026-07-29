@@ -1,0 +1,30 @@
+# NO CALLS. This node reaches no host: both config fields arrive already resolved by the
+# engine's template resolver, and `events` is the whole of it.
+#
+# EVERY ROW ASKS helpers.fieldReport THE SAME QUESTION and picks one field of the answer.
+# Recomputing it per row is deliberate: the report is a pure function of two config values,
+# rows cannot share a binding, and the alternative — one `report` connector carrying the whole
+# object — would change the retired node's five-connector contract that saved workflows wire by.
+#
+# nextField AND nextFieldSchema ARE GATED. The retired executor set them undefined once the
+# data was complete; here the row simply does not fire, which is the same silence expressed
+# the declarative way — the "ask the question" branch runs only while there is a question.
+
+- emit: nextField
+  when: "return helpers.fieldReport(config.requiredSchema, config.incomingData).nextField !== null"
+  value: "return helpers.fieldReport(config.requiredSchema, config.incomingData).nextField"
+
+# Gated on its own value rather than on nextField: a bare-object schema names its fields but
+# defines nothing about them, so there can be a next field with no definition to send.
+- emit: nextFieldSchema
+  when: "return helpers.fieldReport(config.requiredSchema, config.incomingData).nextFieldSchema !== null"
+  value: "return helpers.fieldReport(config.requiredSchema, config.incomingData).nextFieldSchema"
+
+- emit: missingFields
+  value: "return helpers.fieldReport(config.requiredSchema, config.incomingData).missingFields"
+
+- emit: isComplete
+  value: "return helpers.fieldReport(config.requiredSchema, config.incomingData).isComplete"
+
+- emit: completionPercentage
+  value: "return helpers.fieldReport(config.requiredSchema, config.incomingData).completionPercentage"

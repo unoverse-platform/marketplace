@@ -68,17 +68,13 @@ configSchema:
     authRequired:
       type: boolean
       title: Require sign-in
-      description: >-
-        Only a signed-in caller may run this step. Leave off and it runs for whoever the
-        workflow's trigger admitted, which is the usual answer.
+      description: Only signed-in callers can run this step.
       default: false
       "ui:widget": toggle
     authRole:
       type: string
       title: Require role
-      description: >-
-        A claim the caller's account must carry, as noun:verb (finance:approve,
-        payments:refund). Leave blank to require only that they are signed in.
+      description: A claim the caller must carry, like finance:approve.
       default: ""
       "ui:dependencies": { authRequired: true }
 

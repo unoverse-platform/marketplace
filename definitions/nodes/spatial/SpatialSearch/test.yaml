@@ -1,0 +1,32 @@
+# A SERVICE node has no connectors, so the fixture names a METHOD and asserts the value it
+# hands back. `findIntent` because it exercises the whole chain that matters: the loopback
+# url from scope.platformUrl, the config-owned filters, and the lean projection.
+#
+# Runs against the LOCAL platform, so it needs the runtime up. No credential: the search API
+# is reached on loopback, inside the trust boundary.
+
+testData:
+  config:
+    maxResults: 5
+    similarityThreshold: 0
+    includeNeeds: true
+    includeServices: true
+    includeSkills: true
+  call:
+    method: findIntent
+    params:
+      query: What is there to do this weekend?
+  expect:
+    # THE PROJECTION IS THE ASSERTION. An empty result set is a legitimate answer (the index
+    # is the tester's), so this checks the SHAPE every row must have rather than any content:
+    # a handle, and none of the heavy fields the projection exists to strip.
+    #
+    # `embedding` and `umap` leaking through is the exact regression this guards — it is what
+    # sent 100k tokens of vectors into a model's context before the lean pass existed.
+    result: >-
+      return Array.isArray(output)
+        && output.every(r =>
+          typeof r.universal_id === 'string'
+            && r.embedding === undefined
+            && r.umap === undefined
+            && r.metadata?.bodyCopy === undefined)

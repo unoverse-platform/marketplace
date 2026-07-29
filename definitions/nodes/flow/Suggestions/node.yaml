@@ -1,0 +1,26 @@
+$schema: ../../../_schema/node.schema.json
+
+type: Suggestions
+kind: PromiseNode
+
+name: Suggestions
+category: Output
+color: "#8B5CF6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Publish FAQs, actions and recommendations to the live client UI
+
+whenToUse: >-
+  Show the guest clickable follow-up chips: push suggested FAQs, quick actions and
+  recommendations into the live chat UI as the workflow runs. The dedicated path for chat
+  suggestions — the object lands in template state where the template's own fragments pick it
+  up, so a generic data emit will not render as chips. Reach for it whenever a step has
+  computed what the guest might ask or do next.
+
+auth:
+  required: false
+
+capabilities:
+  # A push to a live screen is a side effect, and a cached side effect is one that silently
+  # stops happening: the second run would "succeed" without the guest ever seeing the chips.
+  cacheable: false

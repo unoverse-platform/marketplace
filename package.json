@@ -1,6 +1,6 @@
 {
   "name": "@unoverse-platform/marketplace",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "The Unoverse marketplace: components, atoms and styles, prompt blocks, skills, and declarative nodes. Definitions only, one version, installed per item.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -16,9 +16,9 @@
     "prepack": "node scripts/bundle-defs.mjs && tsc"
   },
   "dependencies": {
-    "@unoverse-platform/plugin-base": "^1.2.1",
     "uuid": "^11.1.0",
-    "yaml": "^2.6.0"
+    "yaml": "^2.6.0",
+    "@unoverse-platform/base": "*"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
@@ -38,7 +38,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unoverse-platform/unoverse.git",
-    "directory": "apps/unoverse/nodes/marketplace"
+    "directory": "packages/marketplace"
   },
   "keywords": [
     "unoverse",
@@ -49,5 +49,6 @@
     "workflow",
     "nodes",
     "agents"
-  ]
+  ],
+  "type": "module"
 }

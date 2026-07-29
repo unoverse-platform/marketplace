@@ -1,0 +1,87 @@
+# THE AGENT HALF of the hybrid: nine tools, each ONE docstore op. The op's arguments are the
+# caller's params passed through untouched — validation, hash checks and error shaping live
+# in the executor's docstore, so `returns` is simply the op's own result.
+#
+# A MUTATING op here re-fires the workflow channel after it returns (the executor detects
+# the op in this very list), which is what keeps a downstream renderer showing the document
+# the agent just edited. Read ops never re-fire — re-rendering on reads flooded the renderer
+# once already.
+
+getSchema:
+  description: Tool discovery for the section-addressed markdown document
+  calls: []
+  returns: { $ref: schema#document }
+
+outline:
+  description: >-
+    Return the list of sections with metadata. Call first in any session and whenever you
+    suspect the document changed. Does not return full bodies.
+  calls:
+    - name: op
+      docstore: outline
+  returns: "return calls.op"
+
+readSection:
+  description: >-
+    Return the body of one section. Use the hash from outline() or a previous read as
+    expectedHash in edits.
+  calls:
+    - name: op
+      docstore: readSection
+  returns: "return calls.op"
+
+updateSection:
+  description: >-
+    Replace heading and/or body of a section. For small edits on long sections, prefer
+    replaceInSection. Body must not contain H1 or H2 headings.
+  calls:
+    - name: op
+      docstore: updateSection
+  returns: "return calls.op"
+
+appendToSection:
+  description: Append text to the end of a section's body. Saves a read-modify-write.
+  calls:
+    - name: op
+      docstore: appendToSection
+  returns: "return calls.op"
+
+replaceInSection:
+  description: >-
+    Replace an exact substring inside one section's body. old_str must match exactly once.
+  calls:
+    - name: op
+      docstore: replaceInSection
+  returns: "return calls.op"
+
+insertSection:
+  description: >-
+    Create a new section, placed by exactly one of afterId, beforeId or parentId (omit all
+    three to append at the end).
+  calls:
+    - name: op
+      docstore: insertSection
+  returns: "return calls.op"
+
+deleteSection:
+  description: Delete a section, cascading to descendants when asked.
+  calls:
+    - name: op
+      docstore: deleteSection
+  returns: "return calls.op"
+
+moveSection:
+  description: Move a section to a new position without touching its content.
+  calls:
+    - name: op
+      docstore: moveSection
+  returns: "return calls.op"
+
+resetDoc:
+  description: >-
+    DESTRUCTIVE. Re-parse the config's initialMarkdown with fresh IDs, discarding all
+    current content.
+  calls:
+    - name: op
+      docstore: resetDoc
+  returns: "return calls.op"

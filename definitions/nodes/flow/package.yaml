@@ -12,23 +12,33 @@ $schema: ../_schema/package.schema.json
 # NO allowedHosts, and that is not an omission. Nothing in this package reaches the network at
 # all; an empty list means the executor refuses every host, which is exactly right here.
 #
-# WHAT IS STILL CODE, and why. Not "pure logic" as the architecture doc had it — none of the three
-# is logic at all:
+# WHAT IS STILL CODE, and why:
 #
-#   SendObject         publishes to the live session rather than answering the graph
-#   Suggestions        same, over the websocket
-#   UMAP               runs umap-js IN PROCESS. Genuine local compute, reaching no host.
+#   UMAP  runs umap-js IN PROCESS. Genuine local compute, reaching no host. Also of doubtful
+#         value as written: it received ONE vector, faked a second by copying it with +0.0001
+#         on every element so umap-js would run, and returned near-meaningless coordinates —
+#         the real reduction lives in services/umap now. A candidate for removal, undecided.
 #
-# AND TWO REMOVALS rather than migrations. Both are gone from the catalog, so a saved workflow naming
-# either now fails to resolve the type:
+#   SendObject  RETIRED to _legacy, user decision 2026-07-29 — it published to the live
+#               session rather than answering the graph, and the `publish` capability that
+#               replaced that lane (see Suggestions) covers the need.
 #
-#   FieldValidator  its five outputs all derive from one properties-map cascade, and with no way to
-#                   bind an intermediate value that cascade has to be written out again inside every
-#                   expression needing it — `completionPercentage` alone came to four copies. The
-#                   retired executor used helper methods for exactly that reason.
+# Suggestions, which used to sit on this list for the same reason as SendObject, is now a
+# manifest: what actually needed code was one push into the caller's template state, and that
+# is the executor's `publish` capability (api/publish.yaml) — declared under `requires` below.
+#
+# AND ONE REMOVAL rather than a migration. Gone from the catalog, so a saved workflow naming
+# it now fails to resolve the type:
+#
 #   MCP             a generic schema-driven mcpService provider from before real service nodes
 #                   existed. Superseded by UnoverseMCP in the engine and by per-vendor providers
 #                   (HubspotMCP, SalesforceMCP, SlackMCP), so nothing needed it.
+#
+# FieldValidator was on this list, removed because its five outputs all derive from one
+# properties-map cascade and expressions had no way to bind an intermediate value — the cascade
+# had to be written out again inside every expression needing it; `completionPercentage` alone
+# came to four copies. Named helpers (shared/helpers.yaml) are exactly that binding, so it is
+# BACK, same type and connectors, and any workflow that named it resolves again.
 
 name: flow
 displayName: Flow
@@ -42,9 +52,13 @@ features:
   - Branch, relay and read the running workflow's own context
   - Transform data inline, with optional content ids and run-scoped saved values
   - Loop over an array, running real workflow steps once per item
+  - Validate collected data against a schema and get the next missing field to ask for
+  - Push suggested FAQs, actions and recommendations to the live chat UI
 
 requires:
-  executorVersion: ">=1.5.0"
+  # 1.7.0 for named helpers (shared/helpers.yaml), which FieldValidator's emit rows call —
+  # the same floor spatial set when helpers landed. Previously 1.5.0.
+  executorVersion: ">=1.7.0"
   # Code's "Save to Context" toggle. Declared even though it cannot silently no-op the way a cache
   # read can — an executor without `save` throws rather than shrugging — because the reason to
   # declare is the same either way: the package says which platform capabilities its nodes need, so
@@ -58,3 +72,7 @@ requires:
     - open
     - read
     - advance
+  # Suggestions' whole job. Declared because on an executor without the publish lane the node
+  # would emit its connector and never reach the screen — "worked" everywhere except the one
+  # place it matters.
+  publish: true

@@ -1,0 +1,30 @@
+$schema: ../../../_schema/test.schema.json
+
+# Both config fields are templates the engine resolves before the node runs, so the fixture
+# supplies the resolved objects. Three fields defined, email and phone required, only name
+# given: next question is email (required beats schema order — name comes first in the schema
+# but is not missing; email is the first missing required field), two missing, one of three
+# present is 33%.
+
+testData:
+  config:
+    requiredSchema:
+      properties:
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+      required: [email, phone]
+    incomingData:
+      name: Ada
+  inputs:
+    signal:
+      name: Ada
+  expect:
+    nextField: "return output.nextField === 'email'"
+    # The definition rides along, so the asking branch can render the right input.
+    nextFieldSchema: "return output.nextFieldSchema.type === 'string'"
+    missingFields: "return JSON.stringify(output.missingFields) === JSON.stringify(['email', 'phone'])"
+    # Emitted as a VALUE, not gated: downstream wires the completion branch off this connector,
+    # and it must carry `false` on every incomplete turn rather than stay silent.
+    isComplete: "return output.isComplete === false"
+    completionPercentage: "return output.completionPercentage === 33"

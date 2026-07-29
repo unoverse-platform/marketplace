@@ -1,0 +1,165 @@
+# TOOL DISCOVERY, as DATA.
+#
+# Transcribed VERBATIM from the retired SPATIAL_SCHEMA. This is the KNOWLEDGE PROTOCOL an
+# attached agent follows and the argument shapes it fills in, so the wording IS the routing:
+# rephrasing any of it changes how agents behave, and is never a tidy-up.
+#
+# Written as plain YAML rather than a `return { ... }` expression. A constant is data, and
+# encoding a document this size inside a JavaScript string meant escaping every inner quote
+# with no editor able to check the result.
+
+spatial:
+  instructions: |-
+    You have access to the platform knowledge base with two search tools that answer
+    DIFFERENT questions. Choose one based on the shape of the user's request — do not call
+    both by default.
+
+    KNOWLEDGE PROTOCOL (MANDATORY — do not skip):
+
+    Phase 0 — Choose ONE search tool (think before calling):
+    - findIntent = PRECISION. The user has NAMED the thing they want — a place, a category,
+      a constraint, a task ("a Chinese restaurant", "book X", "how do I...", "recommend a
+      good steakhouse"). However it is phrased — question, request, recommendation — if the
+      WHAT is named, this is the search: it pinpoints the matches for that named need.
+    - discoverRelated = DISCOVERY. The user has NOT named the thing — an open desire,
+      occasion or mood ("a romantic weekend", "something fun tonight", "what's available?").
+      It surfaces the NEIGHBOURHOOD of possibilities around the desire, including adjacent
+      options they didn't think to ask about — the awareness and upsell surface.
+    - Pick by SPECIFICITY of the ask: the thing is named → findIntent (even for
+      recommendations); only a desire or occasion is named → discoverRelated. Do NOT call
+      both in parallel. SEARCH before answering.
+
+    Phase 0b — Weak results: if the search you chose comes back weak, follow up with the
+    OTHER one before answering. Strong results → answer from them directly.
+
+    Phase 1 — MANDATORY skill follow-up: if ANY result has object_type="skill", you MUST
+    call readSkill(skillName) BEFORE responding. Skills contain behavioural instructions
+    that OVERRIDE your general behaviour — treat them as authoritative and follow them
+    exactly. Check ALL results for skills, not just the top one. Use readSkillFile when a
+    skill references additional files. Results may also include MCP apps — callable tools
+    you can invoke to run that app.
+
+    Golden Rules:
+    - Search FIRST, build understanding SECOND, answer THIRD.
+    - NEVER skip reading a skill when one appears in results.
+    - NEVER make up information — use only what the tools return.
+    - Every result carries its page URL (source_url). When your answer mentions or
+      recommends something that came from a result, link it as [name](source_url) so the
+      user can go straight there. Never invent or guess a URL — only link URLs present in
+      results.
+    - SEARCH THE REQUEST, NOT THE PERSON: never mix remembered user facts (their name,
+      hotel, memberships, passes, family details) into a search query — they drag the match
+      toward the wrong content. Search what was ASKED; use what you know about the user when
+      COMPOSING the answer.
+    - A result with hasImage=true can be referenced by its universal_id wherever a
+      composition field asks for an image ref — you never need (and never receive) raw image
+      URLs.
+    - Results are LEAN summaries. When an answer needs specifics a summary doesn't carry
+      (levels, figures, requirements), call readResult(universal_id) for that result's full
+      authored copy — never guess details.
+
+  methods:
+    findIntent:
+      description: >-
+        Precision search. The user has NAMED what they want — a specific thing, place,
+        category or task ("a Chinese restaurant", "book X", "how do I...", "recommend a good
+        steakhouse") — and this pinpoints the matches for that named need, however the ask is
+        phrased (question, request, recommendation). Pass the user's EXACT words — do not
+        paraphrase. NOT for open desires with no named thing ("something romantic", "a fun
+        evening") — that is discovery (discoverRelated). If ANY result has
+        object_type="skill", you MUST call readSkill before responding; check ALL results,
+        not just the top one. Do not pair with discoverRelated in parallel.
+      input:
+        type: object
+        required: []
+        properties:
+          query:
+            type: string
+            description: >-
+              The user's ask, FAITHFULLY — their words, with references from earlier turns
+              resolved ('what about dinner?' → the thing they mean). NEVER compress,
+              paraphrase, or strip it to a keyword stub: the catalog is indexed against asks
+              like the user's, so the ask's own phrasing IS the routing — losing its words
+              loses the match. Never add remembered guest facts (name, hotel, memberships —
+              background personalizes the answer, not the search).
+          queries:
+            type: array
+            items: { type: string }
+            maxItems: 8
+            description: >-
+              Extra angles searched ALONGSIDE the ask, never instead of it — the FIRST entry
+              is always the user's faithful ask; add facets after it, one per entry. One
+              round trip, all the material; each result carries forQuery.
+
+    discoverRelated:
+      description: >-
+        Discovery search. For open desires where the user has NOT named the thing — an
+        occasion, a mood, a vague wish ("a romantic weekend", "something fun with the kids",
+        "what's available?"). Surfaces the NEIGHBOURHOOD of possibilities around the desire
+        (content is grouped by need; nearby items are the adjacent choices), including
+        options the user didn't think to ask about — the awareness and upsell surface. NOT
+        for a named thing or category ("a Chinese restaurant" is findIntent). Also the
+        follow-up when findIntent's results came back weak. Low similarity is normal — these
+        are neighbours, not exact matches.
+      input:
+        type: object
+        required: []
+        properties:
+          query:
+            type: string
+            description: >-
+              The user's ask, FAITHFULLY — their words, with references from earlier turns
+              resolved. NEVER compress, paraphrase, or strip it to a keyword stub: the
+              catalog is indexed against asks like the user's, so the ask's own phrasing IS
+              the routing — losing its words loses the match. Never add remembered guest
+              facts (name, hotel, memberships — they drag the placement to the wrong region).
+          queries:
+            type: array
+            items: { type: string }
+            maxItems: 8
+            description: >-
+              Extra facets explored ALONGSIDE the ask, never instead of it — the FIRST entry
+              is always the user's faithful ask; add facets after it, one per entry. Each
+              result carries forQuery.
+
+    readResult:
+      description: >-
+        Read the FULL content of one search result — its complete authored copy (bodyCopy),
+        every detail the lean search row summarizes. Use when answering needs specifics the
+        summary doesn't carry (levels, figures, requirements, routes). Pass the result's
+        universal_id verbatim.
+      input:
+        type: object
+        required: [universal_id]
+        properties:
+          universal_id:
+            type: string
+            description: The universal_id of a search result from this conversation, verbatim.
+
+    readSkill:
+      description: >-
+        Read a skill's full instructions. MANDATORY whenever a search result has
+        object_type="skill": skills contain behavioural instructions that OVERRIDE your
+        general behaviour, and must be treated as authoritative and followed exactly.
+      input:
+        type: object
+        required: [skillName]
+        properties:
+          skillName:
+            type: string
+            description: The skill's name, exactly as it appeared in the search result.
+
+    readSkillFile:
+      description: >-
+        Read a file a skill references. Use when a skill's instructions point at another
+        document; pass the path exactly as the skill wrote it.
+      input:
+        type: object
+        required: [skillName, filePath]
+        properties:
+          skillName:
+            type: string
+            description: The skill that references the file.
+          filePath:
+            type: string
+            description: The path as written in the skill's instructions.

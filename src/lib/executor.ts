@@ -18,10 +18,10 @@
  * Every future design-component feature is written HERE once, for all components.
  */
 
-import { PromiseNode, type ValidationResult, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
-import { publishComponent } from "./publishComponent";
-import { awaitSubmission } from "./awaitSubmission";
-import { componentUri, type RuntimeComponentMeta } from "./meta";
+import { PromiseNode, type ValidationResult, type NodeExecutionContext } from "@unoverse-platform/base/pluginBase.js";
+import { publishComponent } from "./publishComponent.js";
+import { awaitSubmission } from "./awaitSubmission.js";
+import { componentUri, type RuntimeComponentMeta } from "./meta.js";
 
 export class DesignComponentExecutor extends PromiseNode {
   // Shared across ALL components — keys are per (execution, node), so one map serves

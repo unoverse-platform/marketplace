@@ -1,0 +1,140 @@
+# HOW ONE ROW IS SHAPED FOR A MODEL, as named functions rather than one long expression.
+#
+# The platform returns FULL rows: embeddings, UMAP coordinates, crawler metadata, raw image
+# urls. A model needs a HANDLE plus the editorial essentials; the rest is context it wades
+# through on every reasoning turn. With ref-hydration it must never see a raw image url at
+# all, since it references a row by universal_id and the server fills in the bytes.
+#
+# These were one 45-line JavaScript blob inside a YAML scalar, and a second near-copy of the
+# same logic in entry.yaml. Both searches and the depth read now call the same three
+# functions, so "which fields does a promoted row keep" has ONE answer in ONE place.
+#
+# A helper sees only its arguments and its siblings: no config, no credentials, no caller
+# scope. Same sandbox as every other expression, no extra authority.
+
+helpers:
+  # The editorial fields a row keeps, from whichever keep-list the caller passes.
+  #
+  # `reduce`, NOT `Object.assign({}, ...arr)`. Spread in CALL ARGUMENTS is banned by the
+  # expression sandbox, and it used to fail at RUN time rather than at lint, so the node
+  # reached the vendor, embedded the query, and died on the way back with
+  # `disallowed expression: SpreadElement`.
+  keptMeta:
+    args: [metadata, keep]
+    body: >-
+      return keep
+        .filter(k => (metadata || {})[k] != null && (metadata || {})[k] !== '')
+        .reduce((acc, k) => Object.assign(acc, { [k]: metadata[k] }), {})
+
+  # Whether a row has a picture, WITHOUT handing the model a url. `hasImage` is the flag it
+  # reasons about; ref-hydration turns universal_id into bytes on the way out.
+  hasImage:
+    args: [row]
+    body: >-
+      return Boolean(
+        (typeof (row.metadata || {}).primaryImage === 'string' && (row.metadata || {}).primaryImage)
+          || (Array.isArray((row.metadata || {}).images) && (row.metadata || {}).images.length)
+          || row.object_type === 'image'
+      )
+
+  # ONE SEARCH RESULT, projected. Used by findIntent and discoverRelated alike.
+  #
+  # NO bodyCopy: the full authored copy stays server-side and is fetched on demand by
+  # readResult(universal_id). Lean by default, depth only when an answer needs it — the same
+  # outline/readSection split SmartDocument uses.
+  searchRow:
+    args: [r]
+    body: >-
+      return ['skill', 'mcp', 'component'].includes(String(r.object_type))
+        ? r
+        : Object.assign(
+            {
+              universal_id: r.universal_id,
+              object_type: r.object_type,
+              title: r.title,
+              description: r.description,
+              key_need: r.key_need,
+              source_url: r.source_url,
+              hasImage: helpers.hasImage(r)
+            },
+            typeof r.similarity === 'number' ? { similarity: Math.round(r.similarity * 1000) / 1000 } : {},
+            typeof r.distance === 'number' ? { distance: Math.round(r.distance * 10) / 10 } : {},
+            typeof r.forQuery === 'string' ? { forQuery: r.forQuery } : {},
+            // TWO SHAPES, TWO LISTS. A promoted service is authored copy and a card; a need is
+            // extracted from a page and has none of those fields. Applying the service list to
+            // a need kept nothing, not because a need has nothing worth keeping but because
+            // none of its keys were on the list being asked for.
+            ((meta) => Object.keys(meta).length ? { metadata: meta } : {})(
+              helpers.keptMeta(
+                r.metadata,
+                (r.object_type === 'service' || (r.metadata || {}).promoted === true)
+                  ? helpers.SEARCH_KEEP()
+                  : helpers.NEED_KEEP()
+              )
+            )
+          )
+
+  # THE KEEP-LISTS, as functions because a helper takes arguments and returns a value — there
+  # is no constant form. Based on the retired node's PROMOTED_META_KEEP, which the depth read
+  # extended by three fields. Naming them here is what makes the difference between a search
+  # row and a full read one readable line rather than two lists to diff by eye.
+  #
+  # `app` IS THE COMPONENT the row renders as, and it is the one addition to the retired list.
+  #
+  # The row already carries it, the card lane already draws it, and the agent harness's own
+  # keep-list (agent-mcp/lean.ts MODEL_METADATA_FIELDS) explicitly includes it — but the
+  # harness runs AFTER this projection and can only keep what this leaves, so stripping it
+  # here made that intent unreachable. The model was describing courses whose cards were on
+  # the screen in front of the person, with no way to know they were there.
+  #
+  # The retired node did not send it. That is a deliberate DIFFERENCE, not a transcription
+  # slip: it costs about fifteen tokens a row and it is the only way the model can say "as
+  # shown below" rather than restating a card the person is already looking at.
+  SEARCH_KEEP:
+    args: []
+    body: >-
+      return ['tagline', 'shortDescription', 'introParagraph', 'callToAction', 'actionPrompt',
+              'app']
+
+  # A NEED keeps ONE field: `action`, the short verb the page's own copy leads with
+  # ("Advance Career", "Explore Jobs", "Check Requirements"). Title, description and key_need
+  # already carry the substance; this is the only thing they say that those three do not.
+  #
+  # `questions` is deliberately OUT. Four full sentences a row, so ten needs is forty
+  # sentences of suggested follow-ups the model did not ask for — the same context cost that
+  # the whole lean projection exists to avoid.
+  #
+  # A NEW FIELD NEEDS BOTH HALVES. `action` had to be added to the agent harness's own
+  # keep-list too (agent-mcp/lean.ts), because that projection runs AFTER this one and drops
+  # anything it does not name. Adding it here alone would have changed nothing at all.
+  NEED_KEEP:
+    args: []
+    body: "return ['action']"
+
+  ENTRY_KEEP:
+    args: []
+    body: >-
+      return ['tagline', 'shortDescription', 'introParagraph', 'callToAction', 'actionPrompt',
+              'bodyCopy', 'mainCategory', 'section']
+
+  # ONE ROW'S FULL AUTHORED CONTENT, for readResult. The complement of searchRow: same shape,
+  # a wider keep-list, plus the row's own needs. Crawler bookkeeping (jsonLd, openGraph,
+  # timestamps, paths) never reaches a model on either path.
+  entryRow:
+    args: [r]
+    body: >-
+      return Object.assign(
+        {
+          universal_id: r.universal_id,
+          object_type: r.object_type,
+          title: r.title,
+          description: r.description,
+          key_need: r.key_need,
+          source_url: r.source_url,
+          hasImage: helpers.hasImage(r)
+        },
+        (Array.isArray(r.needs) && r.needs.length) ? { needs: r.needs } : {},
+        ((meta) => Object.keys(meta).length ? { metadata: meta } : {})(
+          helpers.keptMeta(r.metadata, helpers.ENTRY_KEEP())
+        )
+      )

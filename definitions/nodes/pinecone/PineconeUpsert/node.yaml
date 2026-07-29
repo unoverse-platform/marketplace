@@ -1,0 +1,39 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from _legacy/nodes/pinecone/src/PineconeUpload. The embedding step is gone
+# rather than reimplemented (Pinecone embeds server-side), and so is the chunking: see
+# config.yaml, which explains why that one is a genuine loss rather than a simplification.
+
+type: PineconeUpsert
+
+# NOT the old `PineconeUpload`. Beyond the embedding change, this node no longer chunks long
+# text, so a workflow silently repointed at it would start storing whole documents as single
+# records and retrieval quality would drop with nothing reporting a problem.
+
+kind: PromiseNode
+
+name: Pinecone Upsert
+category: Knowledge & Vectors
+color: "#4B5563"
+
+description: Store text in a Pinecone index, letting Pinecone do the embedding
+
+whenToUse: >-
+  Write passages into a Pinecone index so they can be found by meaning later: building or
+  topping up a knowledge base, indexing documents for retrieval. Takes text and stores it;
+  the index must have been created with an embedding model attached. Long documents should
+  be split into passages before this step, since it stores each record whole.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable: this WRITES. Reusing a previous answer would report a successful upsert
+  # for records that were never stored.
+  cacheable: false

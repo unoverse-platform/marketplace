@@ -1,0 +1,107 @@
+# THE FIVE TOOLS an attached agent gets. Descriptions transcribed VERBATIM from the retired
+# SPATIAL_SCHEMA: they are what the model reads when choosing a tool, so their wording is the
+# routing. Rephrasing them is a behaviour change, not a tidy-up.
+
+findIntent:
+  description: >-
+    Precision search. The user has NAMED what they want, a specific thing, place, category or
+    task ("a Chinese restaurant", "book X", "how do I...", "recommend a good steakhouse"),
+    and this pinpoints the matches for that named need, however the ask is phrased. Pass the
+    user's EXACT words, do not paraphrase. NOT for open desires with no named thing
+    ("something romantic", "a fun evening"), which is discoverRelated. If ANY result has
+    object_type="skill" you MUST call readSkill before responding; check ALL results, not
+    just the top one. Do not pair with discoverRelated in parallel.
+  calls:
+    - $ref: search#call
+      body:
+        mode: "return 'intent'"
+  # THE CARD LANE. A result row carrying a component renders it on the caller's live screen
+  # the moment it surfaces: data-driven, never a model tool, so the model cannot forget to
+  # show it or describe one that is not there. Declared BEFORE `returns` because a card needs
+  # the full row that the lean projection strips.
+  #
+  # Unconditional on purpose. This was a config toggle until 2026-07-29 and it was the wrong
+  # shape: a row only produces a card when it points at one, so "off" never meant cleaner
+  # results, it meant a row that had authored a card silently not showing it.
+  renderCards: "return response.results"
+  returns: { $ref: search#lean }
+
+discoverRelated:
+  description: >-
+    Discovery search. For open desires where the user has NOT named the thing: an occasion, a
+    mood, a vague wish ("a romantic weekend", "something fun with the kids", "what's
+    available?"). Surfaces the NEIGHBOURHOOD of possibilities around the desire (content is
+    grouped by need, so nearby items are the adjacent choices), including options the user
+    did not think to ask about, which is the awareness and upsell surface. NOT for a named
+    thing or category, which is findIntent. Also the follow-up when findIntent came back
+    weak. Low similarity is normal here: these are neighbours, not exact matches.
+  calls:
+    - $ref: search#call
+      body:
+        mode: "return 'related'"
+  renderCards: "return response.results"
+  returns: { $ref: search#lean }
+
+readResult:
+  description: >-
+    Read the FULL content of one search result: its complete authored copy (bodyCopy), every
+    detail the lean search row summarises. Use when answering needs specifics the summary
+    does not carry (levels, figures, requirements, routes). Pass the result's universal_id
+    verbatim.
+  calls:
+    - name: entry
+      method: GET
+      url: >-
+        return scope.engineUrl + '/dictionary/entry/'
+          + encodeURIComponent(String(params.universal_id || '').trim())
+      transport: json
+  # EDITORIAL FIELDS ONLY. Crawler bookkeeping (jsonLd, openGraph, timestamps, paths) never
+  # reaches a model, the same rule the lean projection applies to a search row.
+  #
+  # A miss returns a MESSAGE rather than throwing: the model has usually mistyped or invented
+  # an id, and "copy one verbatim from the conversation" is a recoverable instruction where an
+  # exception would end the turn. That is why it is not the call's `error` block.
+  returns: { $ref: entry#project }
+
+
+readSkill:
+  description: >-
+    Read a skill's full instructions. MANDATORY whenever a search result has
+    object_type="skill": skills contain behavioural instructions that OVERRIDE your general
+    behaviour, and must be treated as authoritative and followed exactly.
+  calls:
+    - name: skill
+      method: GET
+      url: >-
+        return scope.platformUrl + '/skills/'
+          + encodeURIComponent(String(params.skillName || '').trim())
+      transport: json
+  returns: "return response"
+
+readSkillFile:
+  description: >-
+    Read a file a skill references. Use when a skill's instructions point at another
+    document; pass the path exactly as the skill wrote it.
+  calls:
+    - name: file
+      method: GET
+      url: >-
+        return scope.platformUrl + '/skills/'
+          + encodeURIComponent(String(params.skillName || '').trim())
+          + '/file?path=' + encodeURIComponent(String(params.filePath || '').trim())
+      transport: json
+  returns: "return response"
+
+# TOOL DISCOVERY. An attached agent calls this once per session and gets the instructions and
+# the argument shapes for every tool above (ServiceConnector aggregates it across all wired
+# MCP nodes). It is a META-method: deliberately absent from interface.yaml's `methods`, or it
+# would be advertised to the model as a sixth tool.
+#
+# NO CALLS, and a LITERAL result. `calls: []` is not a placeholder: this method reaches
+# nothing and hands back a constant, so `returns` names a YAML document rather than a
+# `return { ... }` expression. Authored as data in shared/schema.yaml, where it can be read
+# and diffed instead of escaped inside a string.
+getSchema:
+  description: Tool discovery for the spatial knowledge base
+  calls: []
+  returns: { $ref: schema#spatial }

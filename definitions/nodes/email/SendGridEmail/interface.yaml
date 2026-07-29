@@ -1,0 +1,22 @@
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger signal from the upstream node
+
+outputs:
+  - name: sent
+    type: boolean
+    description: True when SendGrid accepted the message for delivery
+
+  # SendGrid returns the id in a HEADER, not the body, and the body is empty on success.
+  # The retired node surfaced nodemailer's SMTP message id here; this is the equivalent
+  # handle for tracing a message in SendGrid's Activity feed.
+  - name: messageId
+    type: string
+    description: SendGrid's message id, for looking the send up in Activity
+
+credentials:
+  - name: sendgridCredential
+    required: true
+    displayName: SendGrid

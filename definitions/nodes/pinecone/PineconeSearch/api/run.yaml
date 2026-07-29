@@ -1,0 +1,66 @@
+# TWO CALLS: learn the index's host, then search it.
+#
+# The first exists because Pinecone's data plane host is per-index and not derivable from the
+# name. It is not a workaround; it is what the SDK did too, just visibly.
+
+- $ref: index#describe
+
+- name: search
+  method: POST
+
+  # `calls.describeIndex.host` is the previous reply. The host arrives WITHOUT a scheme, so
+  # the https:// is added here; concatenating it raw produced a relative URL that failed as
+  # an unhelpful "invalid URL" rather than as a bad host.
+  #
+  # The namespace is part of the PATH, not a body field, and an empty one is the literal
+  # `__default__` rather than a blank segment — a blank would produce a double slash and a
+  # 404 that says nothing about namespaces.
+  url: >-
+    return 'https://' + calls.describeIndex.host + '/records/namespaces/'
+      + encodeURIComponent(String(config.namespace || '').trim() || '__default__')
+      + '/search'
+
+  transport: json
+  credential: { $ref: index#credential }
+  headers:
+    X-Pinecone-Api-Version: "2025-04"
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    query: >-
+      return Object.assign(
+        {
+          inputs: { text: String(config.query || '') },
+          top_k: Math.max(1, Math.min(100, Number(config.topK) || 10))
+        },
+        // A metadata filter is authored as JSON TEXT in a config box, because the shape is
+        // Pinecone's and there is no form that could express it. Parsed here, and a broken
+        // one is ignored rather than thrown: the retired node did the same, on the grounds
+        // that a typo in an optional filter should not take the whole retrieval down.
+        // NO try/catch: TryStatement is not in the expression sandbox, and like the spread
+        // it fails only at RUN time, after the index host has been looked up and the search
+        // request built. `JSON.parse` on a non-object also cannot be caught here, so the
+        // shape is checked BEFORE parsing rather than after: a filter must start with '{'.
+        //
+        // A malformed filter is still IGNORED rather than fatal, matching the retired node:
+        // a typo in an optional box should not take the whole retrieval down.
+        (String(config.metadataFilter || '').trim().startsWith('{')
+          && String(config.metadataFilter).trim().endsWith('}'))
+          ? { filter: JSON.parse(String(config.metadataFilter).trim()) }
+          : {}
+      )
+
+    # WHICH STORED FIELDS COME BACK. Pinecone returns only what is asked for, and the text
+    # field is the one an answer is actually built from, so omitting it would return scores
+    # attached to nothing. Authored as a comma list because it is a handful of field names.
+    fields: >-
+      return String(config.fields || 'chunk_text').split(',')
+        .map(f => f.trim()).filter(f => f.length > 0)
+
+  error:
+    when: "return !response.result"
+    message: "return 'Pinecone search failed: ' + JSON.stringify(response).slice(0, 300)"

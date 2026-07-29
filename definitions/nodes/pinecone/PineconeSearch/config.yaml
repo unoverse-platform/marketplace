@@ -1,0 +1,105 @@
+$schema: ../../../_schema/config.schema.json
+
+# Transcribed from the retired node, minus two fields that integrated inference makes
+# meaningless:
+#
+#   includeValues   returned the raw embedding alongside each match. There is no client-side
+#                   vector in this design, and shipping thousands of floats into a workflow
+#                   was context bloat nothing downstream could use.
+#   includeMetadata  became `fields`, below. Pinecone now returns exactly the stored fields
+#                   you name rather than a whole metadata blob, so the question changed from
+#                   "include it?" to "which ones?".
+
+configSchema:
+  type: object
+  required: [indexName, query]
+  properties:
+    indexName:
+      type: string
+      title: Index Name
+      description: >-
+        The Pinecone index to search. It must have been created with an embedding model
+        attached, since the query text is embedded by Pinecone rather than beforehand.
+      default: ""
+      ui:field: template
+
+    query:
+      type: string
+      title: Query Text
+      description: The text to search for. Pinecone embeds it and returns the closest stored records.
+      default: ""
+      ui:field: template
+
+    namespace:
+      type: string
+      title: Namespace
+      description: Search inside one namespace. Leave blank to search the index's default namespace.
+      default: ""
+      ui:field: template
+
+    fields:
+      type: string
+      title: Fields To Return
+      description: >-
+        Which stored fields come back with each match, comma-separated. Must include the
+        text field the index embeds (chunk_text unless the index says otherwise), or matches
+        arrive as scores attached to nothing.
+      default: chunk_text
+      ui:field: template
+
+    topK:
+      type: number
+      title: Top K Results
+      description: How many matches to ask Pinecone for, before any score threshold
+      default: 10
+      minimum: 1
+      maximum: 100
+
+    scoreThreshold:
+      type: number
+      title: Score Threshold
+      description: >-
+        Drop matches scoring below this. 0 keeps everything Pinecone returned. Applied here
+        rather than by Pinecone, which has no minimum-score parameter.
+      default: 0.3
+      minimum: 0
+      maximum: 1
+      step: 0.05
+
+    metadataFilter:
+      type: string
+      title: Metadata Filter
+      description: >-
+        A JSON object restricting matches by stored field, e.g. {"category": "support"}. A
+        malformed filter is ignored rather than failing the search.
+      default: ""
+      ui:field: template
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
+    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
+    # are the builder's, per box on the canvas, because the same node type legitimately
+    # faces staff on one workflow and customers on another.
+    #
+    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
+    # identity provider mints, and a node published to the marketplace cannot know the role
+    # vocabulary of every universe that installs it.
+    #
+    # The executor takes the STRICTER of the two. Neither can loosen the other.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order":
+  [indexName, namespace, query, fields, topK, scoreThreshold, metadataFilter,
+   authRequired, authRole]

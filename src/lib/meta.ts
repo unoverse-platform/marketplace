@@ -54,7 +54,7 @@ const defPathIn = (dir: string, name: string): string | undefined => {
   return undefined;
 };
 import { join, dirname } from "path";
-import { NodeInputType, inputPropKeys, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
+import { NodeInputType, inputPropKeys, type EnhancedNodeDefinition } from "@unoverse-platform/base/pluginBase.js";
 
 export interface UnoverseDefinition {
   name: string;
@@ -198,6 +198,8 @@ export function buildComponentNodeDefinition(perComponent: EnhancedNodeDefinitio
     type: "Component",
     name: "Component",
     description: "Render any marketplace component — choose one with `component`.",
+    whenToUse:
+      "Show a piece of interface in the conversation: render any installed marketplace component — a card, a form, a page section — filled with data the workflow computed. Drop it from the component itself (Copy for Canvas) so its identity and prop fields come pre-set; wire props from upstream nodes, and an interactive component returns the person's submission on its output.",
     category: "Marketplace",
     color: "#10b981",
     template: "uiComponent",

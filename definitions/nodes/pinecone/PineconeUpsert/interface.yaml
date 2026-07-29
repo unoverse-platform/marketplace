@@ -1,0 +1,22 @@
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger signal from the upstream node
+
+outputs:
+  - name: upserted
+    type: number
+    description: How many records Pinecone stored
+
+  # The ids are what makes a later run an UPDATE rather than a duplicate, so they are worth
+  # emitting even though the vendor does not return them: a workflow that stores and then
+  # needs to revise the same records has no other handle on them.
+  - name: ids
+    type: array
+    description: The record ids that were written, in the order they were sent
+
+credentials:
+  - name: pineconeCredential
+    required: true
+    displayName: Pinecone

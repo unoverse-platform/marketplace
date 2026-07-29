@@ -1,0 +1,42 @@
+$schema: ../_schema/package.schema.json
+
+name: pinecone
+displayName: Pinecone
+version: 2.0.0
+description: Vector search over Pinecone, with embedding done by Pinecone
+
+# WHY THIS PACKAGE COULD FINALLY BECOME A MANIFEST, and why the reason was not the one
+# recorded in the backlog for months.
+#
+# The blocker was never "Pinecone has no REST API" — it always had one. It was that the old
+# nodes CONSUMED an embedding service over a service edge: query and upload both took a
+# vector from a neighbouring embedding node, and no manifest call can make that hop. Adding
+# REST would not have helped, because the missing piece was upstream of the request.
+#
+# Pinecone's INTEGRATED INFERENCE removes the hop entirely. An index created with an
+# embedding model attached accepts TEXT and embeds it server-side, so `/records/*` takes the
+# raw string and there is no vector to source from anywhere. The service edge disappears
+# rather than being expressed.
+#
+# THE COST, and it is a real one: integrated inference only works on an index created WITH a
+# model and a field_map. An index holding externally-computed vectors cannot use these
+# endpoints. Repointing an existing workflow means recreating the index, which is why the
+# node types changed rather than being reused (see each node.yaml).
+
+category: storage
+
+allowedHosts:
+  # The control plane, where an index is looked up by name.
+  - api.pinecone.io
+  # The DATA plane host is per-index and only learned at run time — a name like
+  # `kb-a1b2c3.svc.aped-4627-b74a.pinecone.io`. Two labels deep, so `*.pinecone.io` (one
+  # level only) would refuse it: `**` is required and is the weaker rule on purpose. Still
+  # bounded to Pinecone's own domain, which is what allowedHosts is for.
+  - "**.pinecone.io"
+
+requires:
+  executorVersion: ">=1.7.0"
+  credential: [apiKeyHeader]
+  transport: [json]
+  # Pinecone's record upsert takes newline-delimited JSON: one document per line, no array.
+  encoding: [ndjson]

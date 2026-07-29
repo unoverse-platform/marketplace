@@ -1,0 +1,30 @@
+$schema: ../../../_schema/interface.schema.json
+
+# A HYBRID: the one output is the workflow half (the rendered markdown for a renderer), and
+# the serviceConnector is the agent half (the editing tools). A MUTATING tool call re-fires
+# the workflow channel, which is what keeps the two halves showing the same document.
+
+inputs: []
+
+outputs:
+  - name: markdown
+    type: string
+    description: Current rendered markdown content
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    description: MCP tools for a single agent to read and edit this markdown document by section
+    # `getSchema` is deliberately absent: it is tool DISCOVERY, a meta-method the harness
+    # calls, not one of the tools on offer.
+    methods:
+      - outline
+      - readSection
+      - updateSection
+      - appendToSection
+      - replaceInSection
+      - insertSection
+      - deleteSection
+      - moveSection
+      - resetDoc

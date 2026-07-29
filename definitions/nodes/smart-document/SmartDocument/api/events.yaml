@@ -1,0 +1,6 @@
+# The one connector: the whole document as markdown, exactly what the retired executor's
+# executeNode emitted. A MarkdownRenderer downstream re-receives it on every mutation via
+# the hybrid re-fire.
+
+- emit: markdown
+  value: "return response.markdown"

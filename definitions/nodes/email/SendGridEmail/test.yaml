@@ -1,0 +1,25 @@
+# Sends a REAL email. There is no dry-run mode on this endpoint, so `to` should be an inbox
+# you own and `from` must be a verified sender on the account the key belongs to.
+#
+# Asserts the SHAPE, not the words: a message id exists and is SendGrid's, rather than the
+# empty string the events row falls back to when the header is missing. That fallback is the
+# thing worth testing, because it is what turns "the header moved" into a silent blank.
+
+testData:
+  config:
+    from: "{{ env.SENDGRID_FROM }}"
+    to: "{{ env.SENDGRID_TO }}"
+    subject: Unoverse node test
+    bodyType: html
+    body: |-
+      A test from the SendGrid manifest node.
+
+      Bare link, which auto-linking should turn into an anchor: https://unoverse.ai
+    autoLinkUrls: true
+    utmSource: node-test
+    utmMedium: email
+  inputs:
+    signal: {}
+  expect:
+    sent: "return output.sent === true"
+    messageId: "return typeof output.messageId === 'string' && output.messageId.length > 0"

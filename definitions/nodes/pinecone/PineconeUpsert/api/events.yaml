@@ -1,0 +1,18 @@
+# One row per output connector, in interface.yaml's order.
+
+- emit: upserted
+  value: "return Number(response.upsertedCount) || 0"
+
+# RECOMPUTED FROM THE CONFIG, not read from the reply, because Pinecone's upsert returns only
+# a count. The derivation repeats the id rule in run.yaml, and it has to: an events row
+# cannot see the body that was sent, and the ids are the only handle a later run has on these
+# records. If the id rule in run.yaml changes, this must change with it.
+- emit: ids
+  value: >-
+    return (
+      Array.isArray(config.records) && config.records.length
+        ? config.records
+        : [{ text: config.text, _id: config.vectorId }]
+    )
+      .filter(r => String((r && (r.text || r.chunk_text)) || '').trim().length > 0)
+      .map((r, i) => String((r && (r._id || r.id)) || config.vectorId || ('rec-' + (i + 1))))

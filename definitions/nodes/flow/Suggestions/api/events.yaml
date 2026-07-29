@@ -1,0 +1,6 @@
+# NO CALLS. This node reaches no host: the object is assembled from the signal and the
+# already-resolved config, emitted on the one connector, and pushed to the screen by
+# api/publish.yaml. `response` is the incoming signal, keyed by input port name.
+
+- emit: suggestions
+  value: "return helpers.suggestionsOf(response.signal, config)"

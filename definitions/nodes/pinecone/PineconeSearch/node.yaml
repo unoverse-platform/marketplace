@@ -1,0 +1,41 @@
+$schema: ../../../_schema/node.schema.json
+
+# Transcribed from _legacy/nodes/pinecone/src/PineconeQuery, with the embedding step removed
+# rather than reimplemented: Pinecone now embeds the query text itself.
+
+type: PineconeSearch
+
+# NOT the old `PineconeQuery`. The old node embedded with whatever model its embedding edge
+# provided; this one embeds with the model bound to the INDEX. Same text in, different
+# vector, so the same query can rank differently. A saved workflow stores the type string,
+# and silently changing which model interprets a search is not a change to make invisibly.
+
+kind: PromiseNode
+
+name: Pinecone Search
+category: Knowledge & Vectors
+color: "#4B5563"
+
+description: Search a Pinecone index by meaning, using text rather than a vector
+
+whenToUse: >-
+  Find the stored passages closest in meaning to a piece of text, in a Pinecone index that
+  embeds its own content. Retrieval for grounding an answer, matching a question to
+  documented material, or finding near-duplicates. The index must have been created with an
+  embedding model attached; one holding vectors computed elsewhere cannot be searched this
+  way, and searching the platform's own knowledge base is a different step entirely.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # A READ, and deterministic for a given index state, so reuse is safe within a run and
+  # skips nothing. The index changing between runs is what cache lifetime is for, not a
+  # reason to refuse caching.
+  cacheable: true

@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: SmartDocument
+kind: PromiseNode
+
+name: Smart Document
+category: Documents
+color: "#10b981"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Produce a long-form deliverable — report, plan, spec, article, brief — that an agent writes
+  and revises section by section instead of emitting one big blob. Section-addressed,
+  hash-checked markdown edits (no drift, no full rewrites); live-renders on every edit.
+
+whenToUse: >-
+  Pick whenever an agent must author or revise a long document — report, plan, spec, article,
+  brief. Writes and revises section by section and live-renders each edit; a one-shot
+  generation can't be revised and blows the context window on every change. Attach via a
+  service edge to an agent node, and route its markdown to a MarkdownRenderer to display.
+
+auth:
+  required: false
+
+capabilities:
+  # The graph-triggered run renders CURRENT Redis state, which a service-channel mutation
+  # changes between any two runs — a cached render is exactly the stale document the whole
+  # hash discipline exists to prevent.
+  cacheable: false

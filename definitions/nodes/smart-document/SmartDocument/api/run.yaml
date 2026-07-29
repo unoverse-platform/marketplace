@@ -1,0 +1,10 @@
+# THE WORKFLOW HALF of the hybrid: when the graph runs this node — including the re-fire the
+# executor performs after every mutating tool call — it renders the CURRENT document for a
+# downstream renderer. `render` initialises from config when the doc is cold, so the very
+# first run seeds initialMarkdown.
+#
+# The doc's KEY is derived by the executor from the run's own ids (user + workflow +
+# conversation + node instance); this file could not name it if it tried.
+
+- name: doc
+  docstore: render

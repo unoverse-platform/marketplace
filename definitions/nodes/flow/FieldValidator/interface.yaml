@@ -1,0 +1,28 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Incoming data object to validate
+    required: false
+
+# THE RETIRED NODE'S FIVE CONNECTORS, names unchanged, because saved workflows wire by these
+# names. nextField and nextFieldSchema are GATED — they only carry a value while something is
+# still missing — so "ask the question" wires off nextField and "we are done" wires off
+# isComplete, and only one of those branches sees data on any given turn.
+outputs:
+  - name: nextField
+    type: string
+    description: Next missing field name. Silent once everything is present.
+  - name: nextFieldSchema
+    type: object
+    description: The schema definition for that field, when the schema carries one
+  - name: missingFields
+    type: array
+    description: Every field still missing, in schema order
+  - name: isComplete
+    type: boolean
+    description: True when every field is present
+  - name: completionPercentage
+    type: number
+    description: Fields present as a percentage of fields defined

@@ -1,0 +1,24 @@
+$schema: ../../../_schema/test.schema.json
+
+# The graph-triggered half: initialise from config, render the whole doc. The docstore
+# normalizes blank-line spacing between sections (heading and body join with one blank
+# line), so the assertion checks CONTENT presence rather than byte equality — byte-level
+# round-trip was never the retired node's contract either.
+
+testData:
+  config:
+    initialMarkdown: |
+      # Plan
+
+      The overview paragraph.
+
+      ## First step
+
+      Do the thing.
+    sectionizeAt: 2
+  inputs: {}
+  expect:
+    markdown: >-
+      return output.markdown.includes('# Plan')
+        && output.markdown.includes('## First step')
+        && output.markdown.includes('Do the thing.')
