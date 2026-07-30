@@ -78,6 +78,31 @@ configSchema:
       minimum: 1
       maximum: 128000
 
+    # THE MEMORY TOGGLES, transcribed from the retired node — they vanished in the migration
+    # and the whole memory system sat idle because nothing declared them (found live
+    # 2026-07-30: healthy memory server, empty ingest stream). Three consumers key off
+    # these flags, and none is this manifest's business to implement:
+    #   - the ENGINE injects the goal-memory toolset from `enableAgentMemory`
+    #     (PlatformMemoryCore reads the node's config — no node-side code, ever)
+    #   - the EXECUTOR hydrates the prompt with the user's context snapshot before the run
+    #   - the EXECUTOR ingests each completed turn to the memory server after it
+    enableUserMemory:
+      type: boolean
+      title: User Memory
+      description: >-
+        Remember the user across conversations — the agent saves what it learns and can look
+        it up later.
+      default: false
+      "ui:widget": toggle
+    enableAgentMemory:
+      type: boolean
+      title: Agent Memory
+      description: >-
+        Give the agent a working notebook for long-running tasks — it tracks its goal,
+        progress and next steps between runs.
+      default: false
+      "ui:widget": toggle
+
     # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
     #
     # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
@@ -103,4 +128,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-ui:order: [model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, authRequired, authRole]
+ui:order: [model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, enableUserMemory, enableAgentMemory, authRequired, authRole]

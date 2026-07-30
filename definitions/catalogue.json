@@ -1,5 +1,5 @@
 {
-  "release": "0.1.8",
+  "release": "0.1.9",
   "items": {
     "component/barchart": "bb6fd70274d71914",
     "component/barlist": "e7bb744d033e520f",
@@ -96,7 +96,7 @@
     "node/ingest/PlaidTransactions": "9a7fd2bb50bc7098",
     "node/ingest/SpatialIngest": "7f31580c1a5fa00b",
     "node/openai/OpenAI": "df73311bf9eae666",
-    "node/openai/OpenAIAgent": "82782746311fccac",
+    "node/openai/OpenAIAgent": "61168fe689f7cba2",
     "node/openai/OpenAIEmbeddingService": "ff56764562e0b040",
     "node/openai/OpenAIStream": "fcd146caa242b24a",
     "node/openai/OpenAIStructuredOutput": "4bcad677109e224b",

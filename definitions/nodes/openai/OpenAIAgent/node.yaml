@@ -2,8 +2,9 @@ $schema: ../../../_schema/node.schema.json
 
 # The agent, as a manifest. Responses API + the tool loop. NO SDK.
 #
-# NOT AT PARITY with the retired TypeScript agent: no cross-execution conversation and
-# no memory. The narrator IS here (api/narrate.yaml). See the gaps at the bottom.
+# NOT AT PARITY with the retired TypeScript agent in ONE respect: no cross-execution
+# conversation. Memory (both toggles + lanes) restored 2026-07-30; the narrator IS here
+# (api/narrate.yaml). See the gap note at the bottom.
 #
 # It takes the real type, because a type is the identity a saved graph stores and an
 # invented suffix would put an implementation detail on a name people read. There is no
@@ -42,9 +43,14 @@ capabilities:
   # through its tools. Reusing a prior answer would skip real side effects.
   cacheable: false
 
-# ── NOT AT PARITY with the TypeScript OpenAIAgent. Two gaps left: ────────────────────
+# ── NOT AT PARITY with the TypeScript OpenAIAgent. One gap left: ─────────────────────
 #
 #   conversation  Redis-backed previous_response_id ACROSS executions, keyed by
 #                 conversationId, plus the "reset conversation" phrase. Multi-turn works
 #                 WITHIN one execution here; it does not survive between them.
-#   memory        hydratePromptWithUserMemory / ingestConversationTurn.
+#
+# memory CLOSED 2026-07-30: the toggles are back in config.yaml and the two lanes
+# (hydratePromptWithUserMemory before the run, ingestConversationTurn after) run in the
+# EXECUTOR off those flags (executor/memory.ts) — the same generic wiring the engine uses
+# to inject the goal-memory toolset from enableAgentMemory. This file declares only the
+# toggles; any agent manifest that declares them gets the lanes.
