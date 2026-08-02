@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SearchNews",
+  "pack": "search",
   "fingerprint": "03273c1cdcadc964",
   "title": "Search News",
   "description": "Find recent news articles on a topic via SearchAPI.io (Google News)",

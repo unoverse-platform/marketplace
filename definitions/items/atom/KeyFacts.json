@@ -1,36 +1,36 @@
 {
   "kind": "atom",
-  "name": "Stats",
-  "fingerprint": "dff6836ee91e5e41",
+  "name": "KeyFacts",
+  "fingerprint": "a24a4a7da271bfd4",
   "bundle": "design-system",
-  "title": "Stats",
-  "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
-  "category": "block",
+  "title": "KeyFacts",
+  "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+  "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Stats",
-    "category": "block",
-    "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+    "name": "KeyFacts",
+    "category": "markdown",
+    "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
     "whenToUse": "Two to four figures the source states plainly, which a reader would compare at a glance, such as an allowance, a duration and a limit. One figure alone belongs in the sentence it came from. A wall of tiles reads as a dashboard, not a document.",
     "props": {
-      "items": {
+      "facts": {
         "type": "array",
         "default": [
           {
-            "label": "Included visits",
+            "label": "Included",
             "value": "4",
-            "note": "per calendar year"
+            "note": "per year"
           },
           {
             "label": "Network",
-            "value": "1,200+",
-            "note": "locations worldwide"
+            "value": "200+",
+            "note": "locations"
           },
           {
             "label": "Guests",
             "value": "1",
-            "note": "complimentary"
+            "note": "at no cost"
           }
         ]
       }
@@ -43,7 +43,7 @@
         "maxItems": 4
       },
       "bind": {
-        "items": "items"
+        "items": "facts"
       },
       "style": {
         "direction": "row",
@@ -103,11 +103,12 @@
             "type": "Text",
             "brief": {
               "description": "The qualifier the figure carries, such as a period or a condition. Empty when the source attaches none.",
+              "optional": true,
               "maxLength": 32
             },
-            "visibleWhen": "note",
+            "visibleWhen": "qualifier",
             "bind": {
-              "value": "note"
+              "value": "qualifier"
             },
             "style": {
               "font": "caption",

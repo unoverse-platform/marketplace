@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApolloPeopleEnrich",
+  "pack": "gtm",
   "fingerprint": "8a80b9ab3a700b5a",
   "title": "Apollo People Enrich",
   "description": "Look up one known person's full Apollo.io profile",

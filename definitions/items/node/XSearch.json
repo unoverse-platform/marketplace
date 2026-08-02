@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "XSearch",
+  "pack": "x-search",
   "fingerprint": "ab787cef26a826fb",
   "title": "X Search",
   "description": "Search recent X (Twitter) posts and return structured tweet data",

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "LoopEnd",
+  "pack": "flow",
   "fingerprint": "914b6fa63570879d",
   "title": "Loop End",
   "description": "Closes a LoopStart loop; optionally collects a value each pass, emitting results when done.",

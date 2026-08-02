@@ -1,0 +1,22 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: Prose
+category: markdown
+description: "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width."
+whenToUse: The default block, and the one to reach for whenever the source is simply written. Prose carries anything Markdown carries. Choose a structured block only when the source itself is structured, never to make a plain passage look busier.
+props:
+  body:
+    type: string
+    default: |-
+      A passage of body copy.
+
+      Markdown renders here: headings, lists, emphasis and links, all styled by the theme's prose recipe.
+root:
+  type: Markdown
+  brief:
+    description: The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.
+  bind:
+    value: body
+  style:
+    width: full

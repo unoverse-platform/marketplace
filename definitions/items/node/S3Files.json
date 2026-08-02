@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "S3Files",
+  "pack": "aws-s3",
   "fingerprint": "ac80329a4ef3d8a9",
   "title": "S3 Files",
   "description": "List files in an S3 bucket, optionally with shareable links",

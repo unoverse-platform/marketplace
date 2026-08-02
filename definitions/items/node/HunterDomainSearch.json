@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HunterDomainSearch",
+  "pack": "gtm",
   "fingerprint": "4d7196e56e058597",
   "title": "Hunter Domain Search",
   "description": "List every known email address at one domain or company",

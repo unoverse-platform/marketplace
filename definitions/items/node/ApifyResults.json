@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApifyResults",
+  "pack": "apify",
   "fingerprint": "4724955b830cc280",
   "title": "Apify Results",
   "description": "Read every item a finished Apify run produced",

@@ -102,8 +102,6 @@ icons:
   # Keep this list and the extractor's prompt (engine: routes/dictionary/pipeline.ts and
   # utils/hyperbrowser/index.ts, both copies) in step. A name outside it renders nothing,
   # which is the intended failure: a blank chip beats a confidently wrong glyph.
-  plane:
-    $value: Plane
   luggage:
     $value: Luggage
   armchair:
@@ -158,3 +156,125 @@ icons:
     $value: HeartPulse
   hotel:
     $value: Hotel
+  ship:
+    $value: Ship
+  train-front:
+    $value: TrainFront
+  bus:
+    $value: Bus
+  bike:
+    $value: Bike
+  map:
+    $value: Map
+  tent:
+    $value: Tent
+  palmtree:
+    $value: Palmtree
+  sun:
+    $value: Sun
+  umbrella:
+    $value: Umbrella
+  hand-coins:
+    $value: HandCoins
+  trending-up:
+    $value: TrendingUp
+  receipt:
+    $value: Receipt
+  calculator:
+    $value: Calculator
+  landmark:
+    $value: Landmark
+  shopping-cart:
+    $value: ShoppingCart
+  tag:
+    $value: Tag
+  package:
+    $value: Package
+  truck:
+    $value: Truck
+  store:
+    $value: Store
+  wrench:
+    $value: Wrench
+  hammer:
+    $value: Hammer
+  life-buoy:
+    $value: LifeBuoy
+  mail:
+    $value: Mail
+  bell:
+    $value: Bell
+  calendar-check:
+    $value: CalendarCheck
+  key:
+    $value: Key
+  user-check:
+    $value: UserCheck
+  handshake:
+    $value: Handshake
+  stethoscope:
+    $value: Stethoscope
+  pill:
+    $value: Pill
+  activity:
+    $value: Activity
+  book-open:
+    $value: BookOpen
+  library:
+    $value: Library
+  laptop:
+    $value: Laptop
+  cloud:
+    $value: Cloud
+  database:
+    $value: Database
+  zap:
+    $value: Zap
+  house:
+    $value: House
+  building:
+    $value: Building
+  bed-double:
+    $value: BedDouble
+  coffee:
+    $value: Coffee
+  wine:
+    $value: Wine
+  chef-hat:
+    $value: ChefHat
+  shopping-basket:
+    $value: ShoppingBasket
+  shield:
+    $value: Shield
+  badge-check:
+    $value: BadgeCheck
+  thumbs-up:
+    $value: ThumbsUp
+  trophy:
+    $value: Trophy
+  flame:
+    $value: Flame
+  leaf:
+    $value: Leaf
+  recycle:
+    $value: Recycle
+  baby:
+    $value: Baby
+  dog:
+    $value: Dog
+  dumbbell:
+    $value: Dumbbell
+  scissors:
+    $value: Scissors
+  wallet-cards:
+    $value: WalletCards
+  phone-call:
+    $value: PhoneCall
+  headset:
+    $value: Headset
+  file-text:
+    $value: FileText
+  clipboard-check:
+    $value: ClipboardCheck
+  id-card:
+    $value: IdCard

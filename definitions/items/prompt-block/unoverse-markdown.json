@@ -1,0 +1,22 @@
+{
+  "kind": "prompt-block",
+  "name": "unoverse-markdown",
+  "fingerprint": "79052d410fbf4f65",
+  "title": "Unoverse Markdown",
+  "description": "How to compose body copy as design-system blocks, for any agent returning a document",
+  "category": "formatting",
+  "definition": {
+    "id": "unoverse-markdown",
+    "name": "Unoverse Markdown",
+    "description": "How to compose body copy as design-system blocks, for any agent returning a document",
+    "content": "## What you are doing\n\nYou are given body copy that is already written. Your job is to say what **shape** each part\nof it is, and to keep the words.\n\nYou return a list of blocks. Each block names a type and carries that type's fields. The\ndesign system draws them. You never choose a colour, a size, a font or a layout, because\nthose are not fields you can fill.\n\n## The rules that matter most\n\n**Prose is the default.** It carries anything Markdown carries: headings, paragraphs, lists,\nemphasis, links. Reach for a structured block only when the source is *genuinely* structured.\nNever to make a plain passage look busier.\n\n**A document is mostly prose with a little structure in it.** One that is mostly structure\nreads as a dashboard, not a document. If more than about a third of your blocks are\nstructured, you have over-reached.\n\n**Use the source's own words.** Reuse and cut. Never add a fact, a figure, a date or a claim\nthe source does not state, and never smooth two statements into one that says more than\neither did.\n\n**Leave optional fields empty when the source is silent.** A field you may omit is there\nbecause the source often has nothing to put in it. Inventing a qualifier to fill a gap is\nworse than leaving it blank.\n\n**Quote figures exactly.** Never round, convert, average or turn two numbers into a range.\n\n## Choosing a block\n\nEach block type carries its own guidance in the schema, written next to the thing it\nrenders. Read it. The short version:\n\n- A sequence the source gives **in order**, where doing it out of order would be wrong, is\n  steps. An unordered list of benefits is prose.\n- Two to four figures the reader would **compare at a glance** are stats. One figure alone\n  belongs in the sentence it came from.\n- Everything else is prose until proven otherwise.\n\n## What good looks like\n\nA page of product copy with a booking sequence in it becomes: prose for the opening, steps\nfor the sequence, prose for the conditions, and prose for everything after. Three or four\nblocks, one of them structured.\n\nThe same page returned as twelve blocks, each a tile or a header, is a worse document than\nthe plain markdown it came from.",
+    "tags": [
+      "formatting",
+      "markdown",
+      "unoverse",
+      "blocks",
+      "document"
+    ],
+    "category": "formatting"
+  }
+}

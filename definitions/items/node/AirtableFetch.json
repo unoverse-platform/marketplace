@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "AirtableFetch",
+  "pack": "airtable",
   "fingerprint": "4fa09279c644cc89",
   "title": "Airtable Fetch",
   "description": "Read records from an Airtable table, with filters, views, sorting and paging",

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "S3FileContent",
+  "pack": "aws-s3",
   "fingerprint": "58a00fc4509cba92",
   "title": "S3 File Content",
   "description": "Read one S3 object's details and mint a link to fetch it",

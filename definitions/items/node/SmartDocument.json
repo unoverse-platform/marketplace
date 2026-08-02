@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SmartDocument",
+  "pack": "smart-document",
   "fingerprint": "f0a65a10212d50cf",
   "title": "Smart Document",
   "description": "Produce a long-form deliverable — report, plan, spec, article, brief — that an agent writes and revises section by section instead of emitting one big blob. Section-addressed, hash-checked markdown edits (no drift, no full rewrites); live-renders on every edit.",

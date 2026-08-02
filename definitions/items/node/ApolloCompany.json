@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApolloCompany",
+  "pack": "gtm",
   "fingerprint": "6aef71c77b987d65",
   "title": "Apollo Company",
   "description": "Search Apollo.io for companies matching keywords, industry, location or size",

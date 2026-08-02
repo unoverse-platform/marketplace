@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "AirtableInsert",
+  "pack": "airtable",
   "fingerprint": "06b8f937e2bd5ead",
   "title": "Airtable Insert",
   "description": "Write records to an Airtable table, batched, updating any that carry a record id",

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "BedrockOpenAI",
+  "pack": "aws-bedrock",
   "fingerprint": "95d67132d4e1bff4",
   "title": "Bedrock GPT",
   "description": "One prompt in, one GPT completion out, running in your AWS account",

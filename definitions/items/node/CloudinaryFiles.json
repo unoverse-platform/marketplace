@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "CloudinaryFiles",
+  "pack": "cloudinary",
   "fingerprint": "0b9cec3aa6ddf0bc",
   "title": "Cloudinary Files",
   "description": "List media already stored in Cloudinary, optionally filtered by folder or tag.",

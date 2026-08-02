@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "GLMAgent",
+  "pack": "zai",
   "fingerprint": "02f8c465b4e13c1c",
   "title": "GLM Agent",
   "description": "Multi-turn GLM-5.2 (Z.AI) agent with MCP tool calling, reasoning, and streaming",

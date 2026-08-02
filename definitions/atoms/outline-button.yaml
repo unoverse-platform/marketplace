@@ -31,9 +31,12 @@ root:
     hover:
       background: action.subtle
   children:
+    # `name` is the ONLY key the data path reads, and a Ref's `with` turns this bind into a
+    # `name` attribute, which the literal path reads too. Bound to `icon` it worked only
+    # when a literal was supplied, and drew nothing whenever a field was mapped.
     - type: Icon
       bind:
-        icon: icon
+        name: icon
       style:
         width: "4"
         height: "4"

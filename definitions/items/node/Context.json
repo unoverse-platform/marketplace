@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Context",
+  "pack": "flow",
   "fingerprint": "e3335d1299e26f17",
   "title": "Context",
   "description": "Extract workflow context (userId, conversationId, chatId, etc.)",

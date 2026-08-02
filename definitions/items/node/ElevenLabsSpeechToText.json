@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ElevenLabsSpeechToText",
+  "pack": "elevenlabs",
   "fingerprint": "abd118ce6d0e155b",
   "title": "ElevenLabs Speech to Text",
   "description": "Transcribe audio to text with word-level timings and optional speaker labels.",

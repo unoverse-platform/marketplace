@@ -1,16 +1,16 @@
 {
   "kind": "atom",
   "name": "Steps",
-  "fingerprint": "3e504b5d3b3365b8",
+  "fingerprint": "5cf5bafd90b75b0d",
   "bundle": "design-system",
   "title": "Steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
-  "category": "block",
+  "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
     "name": "Steps",
-    "category": "block",
+    "category": "markdown",
     "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
     "whenToUse": "A sequence the source states in order, where doing them out of order would be wrong, such as how to book, apply, register or claim something. Not for a list of unordered benefits or features, which is prose or a plain list.",
     "props": {
@@ -18,19 +18,16 @@
         "type": "array",
         "default": [
           {
-            "number": "1",
-            "title": "Download the app",
-            "detail": "Available on the App Store and Google Play."
+            "title": "Choose what you need",
+            "body": "The options are listed with what each includes."
           },
           {
-            "number": "2",
-            "title": "Register or sign in",
-            "detail": ""
+            "title": "Enter your details",
+            "body": ""
           },
           {
-            "number": "3",
-            "title": "Confirm your booking",
-            "detail": "A confirmation follows by message."
+            "title": "Confirm",
+            "body": "A confirmation follows."
           }
         ]
       }
@@ -73,17 +70,11 @@
             },
             "children": [
               {
-                "type": "Text",
-                "brief": {
-                  "description": "The step's position as a numeral, starting at 1 and counting up with no gaps.",
-                  "maxLength": 2
-                },
-                "bind": {
-                  "value": "number"
-                },
+                "type": "Icon",
+                "icon": "arrowRight",
                 "style": {
-                  "font": "body.sm",
-                  "weight": "semibold",
+                  "width": "4",
+                  "height": "4",
                   "color": "action.primary"
                 }
               }
@@ -124,11 +115,12 @@
                 "type": "Text",
                 "brief": {
                   "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
+                  "optional": true,
                   "maxLength": 160
                 },
-                "visibleWhen": "detail",
+                "visibleWhen": "body",
                 "bind": {
-                  "value": "detail"
+                  "value": "body"
                 },
                 "style": {
                   "font": "body.sm",

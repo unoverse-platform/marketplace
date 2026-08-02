@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ElevenLabsSoundEffects",
+  "pack": "elevenlabs",
   "fingerprint": "3812a1c7c618ce59",
   "title": "ElevenLabs Sound Effects",
   "description": "Generate a sound effect clip from a text prompt. Outputs base64 MP3.",

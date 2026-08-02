@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAIStructuredOutput",
+  "pack": "openai",
   "fingerprint": "959ed10324c952e7",
   "title": "GPT-5 Structured Output",
   "description": "Extract structured data using the GPT-5 Responses API with a JSON schema",

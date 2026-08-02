@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ElevenLabsDialogue",
+  "pack": "elevenlabs",
   "fingerprint": "6d6ed0f488f8722c",
   "title": "ElevenLabs Dialogue",
   "description": "Perform a multi-speaker script as one audio clip. Outputs base64 MP3.",

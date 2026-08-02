@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAI",
+  "pack": "openai",
   "fingerprint": "be7f199aedea9f81",
   "title": "OpenAI",
   "description": "One prompt in, one completion out, with no streaming or tools",

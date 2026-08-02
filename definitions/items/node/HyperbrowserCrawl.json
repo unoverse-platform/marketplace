@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HyperbrowserCrawl",
+  "pack": "hyperbrowser",
   "fingerprint": "8815bf78a81b3cd7",
   "title": "Hyperbrowser Crawl",
   "description": "Crawl a site from a seed URL across many pages, returning per-page markdown and links",

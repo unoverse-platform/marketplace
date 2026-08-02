@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAIRealtimeVoice",
+  "pack": "openai-realtime",
   "fingerprint": "2a5df9163c64fb15",
   "title": "OpenAI Realtime Voice",
   "description": "Live two-way voice conversation with OpenAI's realtime models",

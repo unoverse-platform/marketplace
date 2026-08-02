@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "GeminiImageGen",
+  "pack": "gce-toolkit",
   "fingerprint": "4a0fc9eb9d8dc2a9",
   "title": "Gemini Image Gen",
   "description": "Generate images using Google's Gemini models",

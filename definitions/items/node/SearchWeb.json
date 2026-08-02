@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SearchWeb",
+  "pack": "search",
   "fingerprint": "c834c57dae165bb9",
   "title": "Search Web",
   "description": "Search the web using SearchAPI.io (Google) for web results and images",

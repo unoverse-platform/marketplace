@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HunterDiscover",
+  "pack": "gtm",
   "fingerprint": "f80bcd9433873340",
   "title": "Hunter Discover",
   "description": "Build a target-company list from criteria or a natural-language query",

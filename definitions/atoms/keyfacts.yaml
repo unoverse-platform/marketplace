@@ -1,0 +1,78 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: KeyFacts
+category: markdown
+description: "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only."
+whenToUse: Two to four figures the source states plainly, which a reader would compare at a glance, such as an allowance, a duration and a limit. One figure alone belongs in the sentence it came from. A wall of tiles reads as a dashboard, not a document.
+props:
+  facts:
+    type: array
+    default:
+      - label: Included
+        value: "4"
+        note: per year
+      - label: Network
+        value: 200+
+        note: locations
+      - label: Guests
+        value: "1"
+        note: at no cost
+root:
+  type: Each
+  brief:
+    description: The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.
+    minItems: 2
+    maxItems: 4
+  bind:
+    items: facts
+  style:
+    direction: row
+    wrap: wrap
+    align: start
+    gap: "3"
+    width: full
+  template:
+    type: Box
+    style:
+      flex: 1
+      minWidth: "40"
+      direction: column
+      gap: "1"
+      padding: [ "4", "5" ]
+      background: surface.base
+      border: thin subtle
+      radius: lg
+    children:
+      - type: Text
+        brief:
+          description: What the figure counts, in the source's own words. Two or three words.
+          maxLength: 28
+        bind:
+          value: label
+        style:
+          font: caption
+          weight: semibold
+          color: text.tertiary
+      - type: Text
+        brief:
+          description: The figure exactly as the source states it, including any symbol or unit attached to it. Never rounded, never converted, never a range.
+          maxLength: 16
+        bind:
+          value: value
+        style:
+          font: headline.sm
+          weight: bold
+          color: text.primary
+          lineHeight: tight
+      - type: Text
+        brief:
+          description: The qualifier the figure carries, such as a period or a condition. Empty when the source attaches none.
+          optional: true
+          maxLength: 32
+        visibleWhen: qualifier
+        bind:
+          value: qualifier
+        style:
+          font: caption
+          color: text.tertiary

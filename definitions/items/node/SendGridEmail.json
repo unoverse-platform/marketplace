@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SendGridEmail",
+  "pack": "email",
   "fingerprint": "0491ffd81fd2aca0",
   "title": "Send Email",
   "description": "Send an email through SendGrid, as plain text or HTML",

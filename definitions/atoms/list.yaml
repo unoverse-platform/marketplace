@@ -1,0 +1,62 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: List
+category: markdown
+description: "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only."
+whenToUse: Enumerable items the source gives in no particular order, such as what is included or what a service covers. A sequence that must be followed in order is steps.
+props:
+  items:
+    type: array
+    default:
+      - title: Something included
+        body: A line of detail the source gives about it.
+      - title: Something else included
+        body: ""
+root:
+  type: Each
+  bind:
+    items: items
+  style:
+    direction: column
+    gap: "3"
+    width: full
+  template:
+    type: Box
+    style:
+      direction: row
+      align: start
+      gap: "3"
+      width: full
+    children:
+      - type: Box
+        style:
+          flex: 0 0 auto
+          width: "1.5"
+          height: "1.5"
+          radius: full
+          background: action.primary
+          margin: [ "2", "0", "0", "0" ]
+      - type: Box
+        style:
+          direction: column
+          gap: "1"
+          flex: 1
+          minWidth: "0"
+        children:
+          - type: Text
+            bind:
+              value: title
+            style:
+              font: body.md
+              weight: semibold
+              color: text.primary
+              lineHeight: snug
+          - type: Text
+            visibleWhen: body
+            bind:
+              value: body
+            style:
+              font: body.sm
+              lineHeight: snug
+              color: text.secondary

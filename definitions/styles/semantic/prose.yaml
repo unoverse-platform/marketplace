@@ -55,6 +55,56 @@ prose:
       fontWeight: "{font.weight.semibold}"
       background: "{color.surface.sunken}"
       color: "{color.text.primary}"
+  # INLINE MARKS and BLOCKS. Authored copy uses all of these: a bolded access code, a rule
+  # between sections, a quoted term, a reference number set as code. Before these existed
+  # the Markdown primitive had no recipe key for them, so they rendered at the browser's
+  # default, which is the one way a definition's look escapes the token layer entirely.
+  strong:
+    $value:
+      fontWeight: "{font.weight.semibold}"
+      color: "{color.text.primary}"
+  emphasis:
+    $value:
+      fontStyle: italic
+  strikethrough:
+    $value:
+      textDecoration: line-through
+      color: "{color.text.tertiary}"
+  # Inline: a reference, an access code, a rate. Sized in em so it sits with its line.
+  code:
+    $value:
+      fontFamily: "{font.family.mono}"
+      fontSize: 0.9em
+      padding: "0.1em 0.3em"
+      background: "{color.surface.sunken}"
+      border: "{border.width.thin} solid {color.border.subtle}"
+      borderRadius: "{radius.sm}"
+      color: "{color.text.primary}"
+  # Block: scrolls rather than wrapping, because a wrapped code block is unreadable and a
+  # widened one breaks the card it sits in.
+  codeBlock:
+    $value:
+      fontFamily: "{font.family.mono}"
+      fontSize: 0.875em
+      margin: "{space.5} 0"
+      padding: "{space.4}"
+      background: "{color.surface.sunken}"
+      border: "{border.width.thin} solid {color.border.subtle}"
+      borderRadius: "{radius.lg}"
+      overflowX: auto
+  blockquote:
+    $value:
+      margin: "{space.5} 0"
+      paddingLeft: "{space.4}"
+      borderLeft: "{border.width.thick} solid {color.border.strong}"
+      color: "{color.text.secondary}"
+  # A `---` between sections. Quieter than a section heading's rule, which carries its own.
+  rule:
+    $value:
+      border: none
+      borderTop: "{border.width.thin} solid {color.border.subtle}"
+      margin: "{space.8} 0"
+
   image:
     $value:
       maxWidth: 100%

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HunterEmailFinder",
+  "pack": "gtm",
   "fingerprint": "7bd4489ed5b3b087",
   "title": "Hunter Email Finder",
   "description": "Find one person's work email from their LinkedIn or their name and company",

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAIAgent",
+  "pack": "openai",
   "fingerprint": "20f8c029eb020785",
   "title": "OpenAI Agent",
   "description": "Multi-turn agent that works through a problem using MCP tools",

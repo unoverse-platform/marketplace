@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "DynamoDBService",
+  "pack": "aws-dynamodb",
   "fingerprint": "5cb4b66b3124d842",
   "title": "DynamoDB Service",
   "description": "Give an agent the full DynamoDB operation set on a table",

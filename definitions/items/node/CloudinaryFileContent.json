@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "CloudinaryFileContent",
+  "pack": "cloudinary",
   "fingerprint": "ef3de9636ba803e6",
   "title": "Cloudinary File Content",
   "description": "Read one Cloudinary asset's details, and build a transformed delivery URL for it.",

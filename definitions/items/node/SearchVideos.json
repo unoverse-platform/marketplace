@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SearchVideos",
+  "pack": "search",
   "fingerprint": "c1e7530db43cf94a",
   "title": "Search Videos",
   "description": "Search YouTube videos by keyword via SearchAPI.io (youtube)",

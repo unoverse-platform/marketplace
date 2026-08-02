@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "PlaidTransactions",
+  "pack": "ingest",
   "fingerprint": "fae4682e764a62ad",
   "title": "Plaid Transactions",
   "description": "Fetch bank transactions from Plaid Sandbox for testing.",

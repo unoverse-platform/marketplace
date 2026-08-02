@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "PineconeUpsert",
+  "pack": "pinecone",
   "fingerprint": "02c28f954077d814",
   "title": "Pinecone Upsert",
   "description": "Store text in a Pinecone index, letting Pinecone do the embedding",

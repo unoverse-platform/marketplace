@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Note",
+  "pack": "flow",
   "fingerprint": "fc83be51fde77566",
   "title": "Note",
   "description": "Add notes, documentation and comments to your workflow",

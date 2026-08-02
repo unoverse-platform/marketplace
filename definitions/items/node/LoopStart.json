@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "LoopStart",
+  "pack": "flow",
   "fingerprint": "ca73bed11b2b9d70",
   "title": "Loop Start",
   "description": "Iterates an array one item at a time, running the nodes up to its paired LoopEnd per item.",

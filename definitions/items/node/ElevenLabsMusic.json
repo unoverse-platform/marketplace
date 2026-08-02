@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ElevenLabsMusic",
+  "pack": "elevenlabs",
   "fingerprint": "97f96187617e5856",
   "title": "ElevenLabs Music",
   "description": "Compose a music track from a text prompt. Outputs base64 MP3.",

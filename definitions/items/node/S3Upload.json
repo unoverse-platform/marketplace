@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "S3Upload",
+  "pack": "aws-s3",
   "fingerprint": "1910d85889abf08a",
   "title": "S3 Upload",
   "description": "Write a file into S3 from a URL or base64 data",

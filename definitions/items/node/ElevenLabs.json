@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ElevenLabs",
+  "pack": "elevenlabs",
   "fingerprint": "c92614a827344214",
   "title": "ElevenLabs TTS",
   "description": "Speak text aloud in a chosen voice. Outputs base64 MP3.",

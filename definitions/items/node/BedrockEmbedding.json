@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "BedrockEmbedding",
+  "pack": "aws-bedrock",
   "fingerprint": "565a1d30745e2fd4",
   "title": "Bedrock Embedding",
   "description": "Turn text into a vector using AWS Bedrock Titan models",

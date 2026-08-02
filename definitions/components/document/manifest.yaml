@@ -1,0 +1,6 @@
+title: Document
+description: "A record's structured body copy, drawn by the design system."
+whenToUse: "Render the typed sections a promoted record carries: prose, figures, steps, lists, tables, callouts and fine print. Any surface showing a record's body copy uses this, so one document reads the same in a card, in the content editor and in an email."
+category: Content
+version: 1.0.0
+defaultState: inline

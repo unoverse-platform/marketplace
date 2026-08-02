@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "XAIGrokVoice",
+  "pack": "xai-grok",
   "fingerprint": "f2022b4ec80087ab",
   "title": "xAI Grok Voice",
   "description": "Realtime voice conversation with xAI's Grok",

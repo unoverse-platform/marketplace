@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "FieldValidator",
+  "pack": "flow",
   "fingerprint": "1343ea82e09253dd",
   "title": "Field Validator",
   "description": "Validate data against a schema and output the next missing field",

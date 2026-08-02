@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SalesforceMCP",
+  "pack": "salesforce",
   "fingerprint": "322320d594d201e8",
   "title": "Salesforce",
   "description": "Query, read, create and update records in a Salesforce org.",

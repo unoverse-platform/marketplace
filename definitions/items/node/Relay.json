@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Relay",
+  "pack": "flow",
   "fingerprint": "ae74efe0722a74d2",
   "title": "Relay",
   "description": "Instantly forwards any signal without waiting for dependencies",

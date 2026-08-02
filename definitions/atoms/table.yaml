@@ -1,0 +1,81 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: Table
+category: markdown
+description: "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only."
+whenToUse: Anything the source states across two dimensions, such as rates by type or sizes by price. A single list of figures is keyFacts; a list of items is a list.
+props:
+  columns:
+    type: array
+    default:
+      - Type
+      - Rate
+  rows:
+    type: array
+    default:
+      - - Standard
+        - 2.5%
+      - - Preferential
+        - 1.9%
+root:
+  # The frame scrolls, because a table inside a card must never widen the card and must
+  # never crush its columns. The prose recipe makes the same choice for markdown tables.
+  type: Box
+  style:
+    width: full
+    overflow: hidden
+    border: thin subtle
+    radius: lg
+  children:
+    - type: Box
+      style:
+        direction: row
+        width: full
+        gap: "0"
+        padding: [ "3", "4" ]
+        background: surface.sunken
+        borderBottom: thin subtle
+      children:
+        - type: Each
+          bind:
+            items: columns
+          style:
+            direction: row
+            width: full
+            gap: "4"
+          template:
+            type: Text
+            bind:
+              value: value
+            style:
+              flex: 1
+              minWidth: "0"
+              font: caption
+              weight: semibold
+              color: text.tertiary
+    - type: Each
+      bind:
+        items: rows
+      style:
+        direction: column
+        width: full
+      template:
+        type: Each
+        bind:
+          items: value
+        style:
+          direction: row
+          width: full
+          gap: "4"
+          padding: [ "3", "4" ]
+          borderBottom: thin subtle
+        template:
+          type: Text
+          bind:
+            value: value
+          style:
+            flex: 1
+            minWidth: "0"
+            font: body.sm
+            color: text.secondary

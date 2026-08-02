@@ -1,0 +1,21 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: FinePrint
+category: markdown
+description: "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only."
+whenToUse: Terms, conditions and regulatory wording the source carries. Present and readable, never competing with the copy it qualifies.
+props:
+  body:
+    type: string
+    default: Terms and conditions apply.
+root:
+  type: Markdown
+  bind:
+    value: body
+  style:
+    width: full
+    font: caption
+    color: text.tertiary
+    padding: [ "4", "0", "0", "0" ]
+    borderTop: thin subtle

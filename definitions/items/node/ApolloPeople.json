@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApolloPeople",
+  "pack": "gtm",
   "fingerprint": "07865e285f1368c1",
   "title": "Apollo People",
   "description": "Search Apollo.io for people by title, seniority, department or company",

@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HubspotMCP",
+  "pack": "hubspot",
   "fingerprint": "fac1b2de39016783",
   "title": "HubSpot",
   "description": "Resolve the signed-in user to their HubSpot contact and output that profile; an attached agent can also read it and push insight notes back.",

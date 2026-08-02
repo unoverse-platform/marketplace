@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SpatialIngest",
+  "pack": "ingest",
   "fingerprint": "c2a1a1d46d20bc71",
   "title": "Spatial Ingest",
   "description": "Turn raw text into needs or services in the spatial dictionary.",

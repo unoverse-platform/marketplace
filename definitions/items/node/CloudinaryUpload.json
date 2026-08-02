@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "CloudinaryUpload",
+  "pack": "cloudinary",
   "fingerprint": "23e03cd80e2d8dcb",
   "title": "Cloudinary Upload",
   "description": "Upload an image or video to Cloudinary and get back a hosted URL.",

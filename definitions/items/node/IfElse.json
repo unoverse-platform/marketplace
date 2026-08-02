@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "IfElse",
+  "pack": "flow",
   "fingerprint": "ceb73ce50a3afb6e",
   "title": "If/Else",
   "description": "Evaluate a condition and route to a true or false output",

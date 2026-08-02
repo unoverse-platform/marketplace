@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HyperbrowserExtract",
+  "pack": "hyperbrowser",
   "fingerprint": "aeed2efc8f19403b",
   "title": "Hyperbrowser Extract",
   "description": "Extract structured JSON from one or more URLs using a prompt and/or schema",

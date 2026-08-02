@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "BedrockEmbeddingService",
+  "pack": "aws-bedrock",
   "fingerprint": "cb0481f556f13314",
   "title": "Bedrock Embedding Service",
   "description": "Offer Titan embeddings to other nodes over a service edge",

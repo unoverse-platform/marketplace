@@ -1,0 +1,80 @@
+{
+  "kind": "atom",
+  "name": "Faq",
+  "fingerprint": "b75d2a10cd64262f",
+  "bundle": "design-system",
+  "title": "Faq",
+  "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "Faq",
+    "category": "markdown",
+    "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
+    "whenToUse": "Question and answer pairs the source states as such. Not a way to reframe ordinary copy as questions.",
+    "props": {
+      "items": {
+        "type": "array",
+        "default": [
+          {
+            "title": "A question the source answers?",
+            "body": "The answer, in the source's own words."
+          }
+        ]
+      }
+    },
+    "root": {
+      "type": "Each",
+      "bind": {
+        "items": "items"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "4",
+        "width": "full"
+      },
+      "template": {
+        "type": "Box",
+        "style": {
+          "direction": "column",
+          "gap": "2",
+          "width": "full",
+          "padding": [
+            "0",
+            "0",
+            "4",
+            "0"
+          ],
+          "borderBottom": "thin subtle"
+        },
+        "children": [
+          {
+            "type": "Text",
+            "bind": {
+              "value": "title"
+            },
+            "style": {
+              "font": "body.md",
+              "weight": "semibold",
+              "color": "text.primary",
+              "lineHeight": "snug"
+            }
+          },
+          {
+            "type": "Text",
+            "visibleWhen": "body",
+            "bind": {
+              "value": "body"
+            },
+            "style": {
+              "font": "body.md",
+              "lineHeight": "snug",
+              "color": "text.secondary"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

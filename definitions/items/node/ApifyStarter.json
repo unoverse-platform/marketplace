@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApifyStarter",
+  "pack": "apify",
   "fingerprint": "7f4f8efd4ce981dc",
   "title": "Apify Starter",
   "description": "Start an Apify actor or task run over a list of URLs",

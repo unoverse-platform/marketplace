@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ParseDocument",
+  "pack": "unstructured",
   "fingerprint": "f5674c5a5834ad84",
   "title": "Parse Document",
   "description": "Read any document into plain text and structured elements. PDF, Word, slides, spreadsheets, images.",

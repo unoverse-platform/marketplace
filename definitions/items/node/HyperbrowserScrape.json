@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HyperbrowserScrape",
+  "pack": "hyperbrowser",
   "fingerprint": "53c87df82b4d9c0a",
   "title": "Hyperbrowser Scrape",
   "description": "Scrape a single URL to markdown, HTML and links with a stealth headless browser",

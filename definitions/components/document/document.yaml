@@ -1,0 +1,107 @@
+$schema: ../../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: component
+name: Document
+category: Content
+props:
+  sections:
+    type: array
+    input: true
+    default:
+      - kind: keyFacts
+        heading: At a glance
+        facts:
+          - label: Included
+            value: "4"
+            qualifier: per year
+          - label: Network
+            value: 200+
+            qualifier: locations
+      - kind: prose
+        heading: What it is
+        body: A passage of body copy, with **inline marks** and links.
+      - kind: steps
+        heading: How to apply
+        items:
+          - title: Choose what you need
+            body: The options are listed with what each includes.
+          - title: Confirm
+            body: ""
+      - kind: finePrint
+        heading: ""
+        body: Terms and conditions apply.
+root:
+  # The sections ARE the spine, and `kind` selects the atom that draws each one. A section's
+  # fields are named for the atoms' own binds, so an entry resolves inside the item scope
+  # with no mapping: `body` reaches Prose and FinePrint, `facts` reaches KeyFacts, `items`
+  # reaches Steps, List and Faq.
+  #
+  # The cases MUST cover every kind the content pipeline emits, which the document-sections
+  # guard enforces. A kind with no case renders nothing at all, silently.
+  type: Each
+  bind:
+    items: sections
+  style:
+    direction: column
+    gap: "8"
+    width: full
+  template:
+    type: Box
+    style:
+      direction: column
+      gap: "3"
+      width: full
+    children:
+      # The GROUP label, shown once where the group changes. A template cannot see the
+      # section before it, so `groupStart` is derived where the sections are read and the
+      # component simply honours it.
+      - type: Text
+        visibleWhen: groupStart
+        bind:
+          value: group
+        style:
+          font: label
+          weight: semibold
+          color: text.tertiary
+          margin: [ "4", "0", "0", "0" ]
+      # The heading belongs to the DOCUMENT, not to each atom: every kind carries one, and
+      # a section without a heading simply has none.
+      - type: Text
+        visibleWhen: heading
+        bind:
+          value: heading
+        style:
+          font: title
+          weight: semibold
+          color: text.primary
+          lineHeight: tight
+      - type: Switch
+        on: kind
+        cases:
+          prose:
+            type: Ref
+            ref: prose
+          steps:
+            type: Ref
+            ref: steps
+          keyFacts:
+            type: Ref
+            ref: keyfacts
+          list:
+            type: Ref
+            ref: list
+          faq:
+            type: Ref
+            ref: faq
+          finePrint:
+            type: Ref
+            ref: fineprint
+          table:
+            type: Ref
+            ref: table
+          callout:
+            type: Ref
+            ref: alert
+          default:
+            type: Ref
+            ref: prose

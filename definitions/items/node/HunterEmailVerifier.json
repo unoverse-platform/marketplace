@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HunterEmailVerifier",
+  "pack": "gtm",
   "fingerprint": "ad0bc084ff3dc12c",
   "title": "Hunter Email Verifier",
   "description": "Check whether one email address is real and deliverable",

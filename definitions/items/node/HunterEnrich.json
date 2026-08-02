@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "HunterEnrich",
+  "pack": "gtm",
   "fingerprint": "8332ac570c84d45c",
   "title": "Hunter Enrich",
   "description": "Enrich a person or a company from an email, a LinkedIn profile or a domain",

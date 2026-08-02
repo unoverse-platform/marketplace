@@ -1,0 +1,627 @@
+{
+  "kind": "component",
+  "name": "Document",
+  "fingerprint": "718d15ac1b948194",
+  "bundle": "design-system",
+  "title": "Document",
+  "description": "A record's structured body copy, drawn by the design system.",
+  "category": "Content",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "component",
+    "name": "Document",
+    "category": "Content",
+    "props": {
+      "sections": {
+        "type": "array",
+        "input": true,
+        "default": [
+          {
+            "kind": "keyFacts",
+            "heading": "At a glance",
+            "facts": [
+              {
+                "label": "Included",
+                "value": "4",
+                "qualifier": "per year"
+              },
+              {
+                "label": "Network",
+                "value": "200+",
+                "qualifier": "locations"
+              }
+            ]
+          },
+          {
+            "kind": "prose",
+            "heading": "What it is",
+            "body": "A passage of body copy, with **inline marks** and links."
+          },
+          {
+            "kind": "steps",
+            "heading": "How to apply",
+            "items": [
+              {
+                "title": "Choose what you need",
+                "body": "The options are listed with what each includes."
+              },
+              {
+                "title": "Confirm",
+                "body": ""
+              }
+            ]
+          },
+          {
+            "kind": "finePrint",
+            "heading": "",
+            "body": "Terms and conditions apply."
+          }
+        ]
+      }
+    },
+    "root": {
+      "type": "Each",
+      "bind": {
+        "items": "sections"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "8",
+        "width": "full"
+      },
+      "template": {
+        "type": "Box",
+        "style": {
+          "direction": "column",
+          "gap": "3",
+          "width": "full"
+        },
+        "children": [
+          {
+            "type": "Text",
+            "visibleWhen": "groupStart",
+            "bind": {
+              "value": "group"
+            },
+            "style": {
+              "font": "label",
+              "weight": "semibold",
+              "color": "text.tertiary",
+              "margin": [
+                "4",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          },
+          {
+            "type": "Text",
+            "visibleWhen": "heading",
+            "bind": {
+              "value": "heading"
+            },
+            "style": {
+              "font": "title",
+              "weight": "semibold",
+              "color": "text.primary",
+              "lineHeight": "tight"
+            }
+          },
+          {
+            "type": "Switch",
+            "on": "kind",
+            "cases": {
+              "prose": {
+                "type": "Markdown",
+                "brief": {
+                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
+                },
+                "bind": {
+                  "value": "body"
+                },
+                "style": {
+                  "width": "full"
+                }
+              },
+              "steps": {
+                "type": "Each",
+                "brief": {
+                  "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
+                  "minItems": 2,
+                  "maxItems": 12
+                },
+                "bind": {
+                  "items": "items"
+                },
+                "style": {
+                  "direction": "column",
+                  "gap": "4",
+                  "width": "full"
+                },
+                "template": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "row",
+                    "align": "start",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "flex": "0 0 auto",
+                        "width": "8",
+                        "height": "8",
+                        "radius": "full",
+                        "background": "action.subtle",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Icon",
+                          "icon": "arrowRight",
+                          "style": {
+                            "width": "4",
+                            "height": "4",
+                            "color": "action.primary"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "direction": "column",
+                        "gap": "1",
+                        "flex": 1,
+                        "minWidth": "0",
+                        "padding": [
+                          "1",
+                          "0",
+                          "0",
+                          "0"
+                        ]
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "brief": {
+                            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
+                            "maxLength": 60
+                          },
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "body.md",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "snug"
+                          }
+                        },
+                        {
+                          "type": "Text",
+                          "brief": {
+                            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
+                            "optional": true,
+                            "maxLength": 160
+                          },
+                          "visibleWhen": "body",
+                          "bind": {
+                            "value": "body"
+                          },
+                          "style": {
+                            "font": "body.sm",
+                            "lineHeight": "snug",
+                            "color": "text.secondary"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "keyFacts": {
+                "type": "Each",
+                "brief": {
+                  "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+                  "minItems": 2,
+                  "maxItems": 4
+                },
+                "bind": {
+                  "items": "facts"
+                },
+                "style": {
+                  "direction": "row",
+                  "wrap": "wrap",
+                  "align": "start",
+                  "gap": "3",
+                  "width": "full"
+                },
+                "template": {
+                  "type": "Box",
+                  "style": {
+                    "flex": 1,
+                    "minWidth": "40",
+                    "direction": "column",
+                    "gap": "1",
+                    "padding": [
+                      "4",
+                      "5"
+                    ],
+                    "background": "surface.base",
+                    "border": "thin subtle",
+                    "radius": "lg"
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "brief": {
+                        "description": "What the figure counts, in the source's own words. Two or three words.",
+                        "maxLength": 28
+                      },
+                      "bind": {
+                        "value": "label"
+                      },
+                      "style": {
+                        "font": "caption",
+                        "weight": "semibold",
+                        "color": "text.tertiary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "brief": {
+                        "description": "The figure exactly as the source states it, including any symbol or unit attached to it. Never rounded, never converted, never a range.",
+                        "maxLength": 16
+                      },
+                      "bind": {
+                        "value": "value"
+                      },
+                      "style": {
+                        "font": "headline.sm",
+                        "weight": "bold",
+                        "color": "text.primary",
+                        "lineHeight": "tight"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "brief": {
+                        "description": "The qualifier the figure carries, such as a period or a condition. Empty when the source attaches none.",
+                        "optional": true,
+                        "maxLength": 32
+                      },
+                      "visibleWhen": "qualifier",
+                      "bind": {
+                        "value": "qualifier"
+                      },
+                      "style": {
+                        "font": "caption",
+                        "color": "text.tertiary"
+                      }
+                    }
+                  ]
+                }
+              },
+              "list": {
+                "type": "Each",
+                "bind": {
+                  "items": "items"
+                },
+                "style": {
+                  "direction": "column",
+                  "gap": "3",
+                  "width": "full"
+                },
+                "template": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "row",
+                    "align": "start",
+                    "gap": "3",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "flex": "0 0 auto",
+                        "width": "1.5",
+                        "height": "1.5",
+                        "radius": "full",
+                        "background": "action.primary",
+                        "margin": [
+                          "2",
+                          "0",
+                          "0",
+                          "0"
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "direction": "column",
+                        "gap": "1",
+                        "flex": 1,
+                        "minWidth": "0"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "body.md",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "snug"
+                          }
+                        },
+                        {
+                          "type": "Text",
+                          "visibleWhen": "body",
+                          "bind": {
+                            "value": "body"
+                          },
+                          "style": {
+                            "font": "body.sm",
+                            "lineHeight": "snug",
+                            "color": "text.secondary"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "faq": {
+                "type": "Each",
+                "bind": {
+                  "items": "items"
+                },
+                "style": {
+                  "direction": "column",
+                  "gap": "4",
+                  "width": "full"
+                },
+                "template": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "gap": "2",
+                    "width": "full",
+                    "padding": [
+                      "0",
+                      "0",
+                      "4",
+                      "0"
+                    ],
+                    "borderBottom": "thin subtle"
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "bind": {
+                        "value": "title"
+                      },
+                      "style": {
+                        "font": "body.md",
+                        "weight": "semibold",
+                        "color": "text.primary",
+                        "lineHeight": "snug"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "visibleWhen": "body",
+                      "bind": {
+                        "value": "body"
+                      },
+                      "style": {
+                        "font": "body.md",
+                        "lineHeight": "snug",
+                        "color": "text.secondary"
+                      }
+                    }
+                  ]
+                }
+              },
+              "finePrint": {
+                "type": "Markdown",
+                "bind": {
+                  "value": "body"
+                },
+                "style": {
+                  "width": "full",
+                  "font": "caption",
+                  "color": "text.tertiary",
+                  "padding": [
+                    "4",
+                    "0",
+                    "0",
+                    "0"
+                  ],
+                  "borderTop": "thin subtle"
+                }
+              },
+              "table": {
+                "type": "Box",
+                "style": {
+                  "width": "full",
+                  "overflow": "hidden",
+                  "border": "thin subtle",
+                  "radius": "lg"
+                },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": {
+                      "direction": "row",
+                      "width": "full",
+                      "gap": "0",
+                      "padding": [
+                        "3",
+                        "4"
+                      ],
+                      "background": "surface.sunken",
+                      "borderBottom": "thin subtle"
+                    },
+                    "children": [
+                      {
+                        "type": "Each",
+                        "bind": {
+                          "items": "columns"
+                        },
+                        "style": {
+                          "direction": "row",
+                          "width": "full",
+                          "gap": "4"
+                        },
+                        "template": {
+                          "type": "Text",
+                          "bind": {
+                            "value": "value"
+                          },
+                          "style": {
+                            "flex": 1,
+                            "minWidth": "0",
+                            "font": "caption",
+                            "weight": "semibold",
+                            "color": "text.tertiary"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Each",
+                    "bind": {
+                      "items": "rows"
+                    },
+                    "style": {
+                      "direction": "column",
+                      "width": "full"
+                    },
+                    "template": {
+                      "type": "Each",
+                      "bind": {
+                        "items": "value"
+                      },
+                      "style": {
+                        "direction": "row",
+                        "width": "full",
+                        "gap": "4",
+                        "padding": [
+                          "3",
+                          "4"
+                        ],
+                        "borderBottom": "thin subtle"
+                      },
+                      "template": {
+                        "type": "Text",
+                        "bind": {
+                          "value": "value"
+                        },
+                        "style": {
+                          "flex": 1,
+                          "minWidth": "0",
+                          "font": "body.sm",
+                          "color": "text.secondary"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "callout": {
+                "type": "Box",
+                "style": {
+                  "direction": "row",
+                  "align": "start",
+                  "gap": "3",
+                  "width": "full",
+                  "padding": "4",
+                  "background": "surface.sunken",
+                  "border": "subtle",
+                  "radius": "sm"
+                },
+                "children": [
+                  {
+                    "type": "Icon",
+                    "bind": {
+                      "name": "icon"
+                    },
+                    "style": {
+                      "flex": "0 0 auto",
+                      "width": "5",
+                      "height": "5",
+                      "color": "text.secondary"
+                    }
+                  },
+                  {
+                    "type": "Box",
+                    "style": {
+                      "direction": "column",
+                      "gap": "1"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "title"
+                        },
+                        "style": {
+                          "font": "body.md",
+                          "weight": "semibold",
+                          "color": "text.primary"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "visibleWhen": "body",
+                        "bind": {
+                          "value": "body"
+                        },
+                        "style": {
+                          "font": "body.sm",
+                          "color": "text.secondary"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "default": {
+                "type": "Markdown",
+                "brief": {
+                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
+                },
+                "bind": {
+                  "value": "body"
+                },
+                "style": {
+                  "width": "full"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "description": "A record's structured body copy, drawn by the design system.",
+    "whenToUse": "Render the typed sections a promoted record carries: prose, figures, steps, lists, tables, callouts and fine print. Any surface showing a record's body copy uses this, so one document reads the same in a card, in the content editor and in an email.",
+    "title": "Document",
+    "version": "1.0.0",
+    "state": {
+      "defaultState": "inline"
+    },
+    "spatial": true
+  }
+}

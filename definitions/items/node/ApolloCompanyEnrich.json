@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "ApolloCompanyEnrich",
+  "pack": "gtm",
   "fingerprint": "9fa0b31043d25dc3",
   "title": "Apollo Company Enrich",
   "description": "Look up a company's full Apollo.io profile from its domain",

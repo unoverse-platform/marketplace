@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Suggestions",
+  "pack": "flow",
   "fingerprint": "07892b3a75825f22",
   "title": "Suggestions",
   "description": "Publish FAQs, actions and recommendations to the live client UI",

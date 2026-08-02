@@ -57,6 +57,15 @@
     },
     {
       "kind": "component",
+      "name": "Document",
+      "fingerprint": "718d15ac1b948194",
+      "bundle": "design-system",
+      "title": "Document",
+      "description": "A record's structured body copy, drawn by the design system.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
       "name": "ImageBlock",
       "fingerprint": "ccf364fc3198839c",
       "bundle": "design-system",
@@ -267,6 +276,15 @@
     },
     {
       "kind": "atom",
+      "name": "Faq",
+      "fingerprint": "b75d2a10cd64262f",
+      "bundle": "design-system",
+      "title": "Faq",
+      "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
       "name": "Field",
       "fingerprint": "e404d4b230ade789",
       "bundle": "design-system",
@@ -275,11 +293,38 @@
     },
     {
       "kind": "atom",
+      "name": "FinePrint",
+      "fingerprint": "b8d9748934644cd0",
+      "bundle": "design-system",
+      "title": "FinePrint",
+      "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
       "name": "IconButton",
       "fingerprint": "b483ccaadf6731c2",
       "bundle": "design-system",
       "title": "IconButton",
       "description": "A circular icon-only button on a bordered surface: the generic small control (share, edit, refresh, more). Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "KeyFacts",
+      "fingerprint": "a24a4a7da271bfd4",
+      "bundle": "design-system",
+      "title": "KeyFacts",
+      "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "List",
+      "fingerprint": "ca3a2bb01c4b9ccc",
+      "bundle": "design-system",
+      "title": "List",
+      "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
+      "category": "markdown"
     },
     {
       "kind": "atom",
@@ -316,11 +361,11 @@
     {
       "kind": "atom",
       "name": "Prose",
-      "fingerprint": "917f1f1bd1c1bf13",
+      "fingerprint": "c48ff42b87330891",
       "bundle": "design-system",
       "title": "Prose",
       "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
-      "category": "block"
+      "category": "markdown"
     },
     {
       "kind": "atom",
@@ -332,21 +377,21 @@
     },
     {
       "kind": "atom",
-      "name": "Stats",
-      "fingerprint": "dff6836ee91e5e41",
-      "bundle": "design-system",
-      "title": "Stats",
-      "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
-      "category": "block"
-    },
-    {
-      "kind": "atom",
       "name": "Steps",
-      "fingerprint": "3e504b5d3b3365b8",
+      "fingerprint": "5cf5bafd90b75b0d",
       "bundle": "design-system",
       "title": "Steps",
       "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
-      "category": "block"
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "Table",
+      "fingerprint": "815de14f85123bf7",
+      "bundle": "design-system",
+      "title": "Table",
+      "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
+      "category": "markdown"
     },
     {
       "kind": "atom",
@@ -399,6 +444,14 @@
     },
     {
       "kind": "prompt-block",
+      "name": "unoverse-markdown",
+      "fingerprint": "79052d410fbf4f65",
+      "title": "Unoverse Markdown",
+      "description": "How to compose body copy as design-system blocks, for any agent returning a document",
+      "category": "formatting"
+    },
+    {
+      "kind": "prompt-block",
       "name": "gemini-likeness-preface",
       "fingerprint": "3a14a1f5aae7664b",
       "title": "Gemini Likeness Preface",
@@ -429,6 +482,7 @@
     {
       "kind": "node",
       "name": "AirtableExists",
+      "pack": "airtable",
       "fingerprint": "d97cff02e6991552",
       "title": "Airtable Exists",
       "description": "Check whether a record with a given field value already exists in a table",
@@ -439,6 +493,7 @@
     {
       "kind": "node",
       "name": "AirtableFetch",
+      "pack": "airtable",
       "fingerprint": "4fa09279c644cc89",
       "title": "Airtable Fetch",
       "description": "Read records from an Airtable table, with filters, views, sorting and paging",
@@ -449,6 +504,7 @@
     {
       "kind": "node",
       "name": "AirtableInsert",
+      "pack": "airtable",
       "fingerprint": "06b8f937e2bd5ead",
       "title": "Airtable Insert",
       "description": "Write records to an Airtable table, batched, updating any that carry a record id",
@@ -459,6 +515,7 @@
     {
       "kind": "node",
       "name": "ApifyResults",
+      "pack": "apify",
       "fingerprint": "4724955b830cc280",
       "title": "Apify Results",
       "description": "Read every item a finished Apify run produced",
@@ -469,6 +526,7 @@
     {
       "kind": "node",
       "name": "ApifyStarter",
+      "pack": "apify",
       "fingerprint": "7f4f8efd4ce981dc",
       "title": "Apify Starter",
       "description": "Start an Apify actor or task run over a list of URLs",
@@ -479,6 +537,7 @@
     {
       "kind": "node",
       "name": "BedrockClaude",
+      "pack": "aws-bedrock",
       "fingerprint": "37ac7662f01bfa27",
       "title": "Bedrock Chat",
       "description": "Ask Claude on AWS Bedrock, optionally about an image or document",
@@ -489,6 +548,7 @@
     {
       "kind": "node",
       "name": "BedrockEmbedding",
+      "pack": "aws-bedrock",
       "fingerprint": "565a1d30745e2fd4",
       "title": "Bedrock Embedding",
       "description": "Turn text into a vector using AWS Bedrock Titan models",
@@ -499,6 +559,7 @@
     {
       "kind": "node",
       "name": "BedrockEmbeddingService",
+      "pack": "aws-bedrock",
       "fingerprint": "cb0481f556f13314",
       "title": "Bedrock Embedding Service",
       "description": "Offer Titan embeddings to other nodes over a service edge",
@@ -509,6 +570,7 @@
     {
       "kind": "node",
       "name": "BedrockOpenAI",
+      "pack": "aws-bedrock",
       "fingerprint": "95d67132d4e1bff4",
       "title": "Bedrock GPT",
       "description": "One prompt in, one GPT completion out, running in your AWS account",
@@ -519,6 +581,7 @@
     {
       "kind": "node",
       "name": "DynamoDB",
+      "pack": "aws-dynamodb",
       "fingerprint": "5c2192cbb0c19c34",
       "title": "DynamoDB",
       "description": "Write a record to an AWS DynamoDB table",
@@ -529,6 +592,7 @@
     {
       "kind": "node",
       "name": "DynamoDBFetch",
+      "pack": "aws-dynamodb",
       "fingerprint": "8900cea0383167f8",
       "title": "DynamoDB Fetch",
       "description": "Fetch a record from an AWS DynamoDB table by key",
@@ -539,6 +603,7 @@
     {
       "kind": "node",
       "name": "DynamoDBService",
+      "pack": "aws-dynamodb",
       "fingerprint": "5cb4b66b3124d842",
       "title": "DynamoDB Service",
       "description": "Give an agent the full DynamoDB operation set on a table",
@@ -549,6 +614,7 @@
     {
       "kind": "node",
       "name": "S3FileContent",
+      "pack": "aws-s3",
       "fingerprint": "58a00fc4509cba92",
       "title": "S3 File Content",
       "description": "Read one S3 object's details and mint a link to fetch it",
@@ -559,6 +625,7 @@
     {
       "kind": "node",
       "name": "S3Files",
+      "pack": "aws-s3",
       "fingerprint": "ac80329a4ef3d8a9",
       "title": "S3 Files",
       "description": "List files in an S3 bucket, optionally with shareable links",
@@ -569,6 +636,7 @@
     {
       "kind": "node",
       "name": "S3Upload",
+      "pack": "aws-s3",
       "fingerprint": "1910d85889abf08a",
       "title": "S3 Upload",
       "description": "Write a file into S3 from a URL or base64 data",
@@ -579,6 +647,7 @@
     {
       "kind": "node",
       "name": "CloudinaryFileContent",
+      "pack": "cloudinary",
       "fingerprint": "ef3de9636ba803e6",
       "title": "Cloudinary File Content",
       "description": "Read one Cloudinary asset's details, and build a transformed delivery URL for it.",
@@ -589,6 +658,7 @@
     {
       "kind": "node",
       "name": "CloudinaryFiles",
+      "pack": "cloudinary",
       "fingerprint": "0b9cec3aa6ddf0bc",
       "title": "Cloudinary Files",
       "description": "List media already stored in Cloudinary, optionally filtered by folder or tag.",
@@ -599,6 +669,7 @@
     {
       "kind": "node",
       "name": "CloudinaryUpload",
+      "pack": "cloudinary",
       "fingerprint": "23e03cd80e2d8dcb",
       "title": "Cloudinary Upload",
       "description": "Upload an image or video to Cloudinary and get back a hosted URL.",
@@ -609,6 +680,7 @@
     {
       "kind": "node",
       "name": "ElevenLabs",
+      "pack": "elevenlabs",
       "fingerprint": "c92614a827344214",
       "title": "ElevenLabs TTS",
       "description": "Speak text aloud in a chosen voice. Outputs base64 MP3.",
@@ -619,6 +691,7 @@
     {
       "kind": "node",
       "name": "ElevenLabsDialogue",
+      "pack": "elevenlabs",
       "fingerprint": "6d6ed0f488f8722c",
       "title": "ElevenLabs Dialogue",
       "description": "Perform a multi-speaker script as one audio clip. Outputs base64 MP3.",
@@ -629,6 +702,7 @@
     {
       "kind": "node",
       "name": "ElevenLabsMusic",
+      "pack": "elevenlabs",
       "fingerprint": "97f96187617e5856",
       "title": "ElevenLabs Music",
       "description": "Compose a music track from a text prompt. Outputs base64 MP3.",
@@ -639,6 +713,7 @@
     {
       "kind": "node",
       "name": "ElevenLabsSoundEffects",
+      "pack": "elevenlabs",
       "fingerprint": "3812a1c7c618ce59",
       "title": "ElevenLabs Sound Effects",
       "description": "Generate a sound effect clip from a text prompt. Outputs base64 MP3.",
@@ -649,6 +724,7 @@
     {
       "kind": "node",
       "name": "ElevenLabsSpeechToText",
+      "pack": "elevenlabs",
       "fingerprint": "abd118ce6d0e155b",
       "title": "ElevenLabs Speech to Text",
       "description": "Transcribe audio to text with word-level timings and optional speaker labels.",
@@ -659,6 +735,7 @@
     {
       "kind": "node",
       "name": "SendGridEmail",
+      "pack": "email",
       "fingerprint": "0491ffd81fd2aca0",
       "title": "Send Email",
       "description": "Send an email through SendGrid, as plain text or HTML",
@@ -669,6 +746,7 @@
     {
       "kind": "node",
       "name": "Code",
+      "pack": "flow",
       "fingerprint": "7177ff81c29e3489",
       "title": "Code",
       "description": "Execute custom code to transform data",
@@ -679,6 +757,7 @@
     {
       "kind": "node",
       "name": "Context",
+      "pack": "flow",
       "fingerprint": "e3335d1299e26f17",
       "title": "Context",
       "description": "Extract workflow context (userId, conversationId, chatId, etc.)",
@@ -689,6 +768,7 @@
     {
       "kind": "node",
       "name": "FieldValidator",
+      "pack": "flow",
       "fingerprint": "1343ea82e09253dd",
       "title": "Field Validator",
       "description": "Validate data against a schema and output the next missing field",
@@ -699,6 +779,7 @@
     {
       "kind": "node",
       "name": "IfElse",
+      "pack": "flow",
       "fingerprint": "ceb73ce50a3afb6e",
       "title": "If/Else",
       "description": "Evaluate a condition and route to a true or false output",
@@ -709,6 +790,7 @@
     {
       "kind": "node",
       "name": "LoopEnd",
+      "pack": "flow",
       "fingerprint": "914b6fa63570879d",
       "title": "Loop End",
       "description": "Closes a LoopStart loop; optionally collects a value each pass, emitting results when done.",
@@ -719,6 +801,7 @@
     {
       "kind": "node",
       "name": "LoopStart",
+      "pack": "flow",
       "fingerprint": "ca73bed11b2b9d70",
       "title": "Loop Start",
       "description": "Iterates an array one item at a time, running the nodes up to its paired LoopEnd per item.",
@@ -729,6 +812,7 @@
     {
       "kind": "node",
       "name": "Note",
+      "pack": "flow",
       "fingerprint": "fc83be51fde77566",
       "title": "Note",
       "description": "Add notes, documentation and comments to your workflow",
@@ -739,6 +823,7 @@
     {
       "kind": "node",
       "name": "Relay",
+      "pack": "flow",
       "fingerprint": "ae74efe0722a74d2",
       "title": "Relay",
       "description": "Instantly forwards any signal without waiting for dependencies",
@@ -749,6 +834,7 @@
     {
       "kind": "node",
       "name": "Suggestions",
+      "pack": "flow",
       "fingerprint": "07892b3a75825f22",
       "title": "Suggestions",
       "description": "Publish FAQs, actions and recommendations to the live client UI",
@@ -759,6 +845,7 @@
     {
       "kind": "node",
       "name": "GeminiImageGen",
+      "pack": "gce-toolkit",
       "fingerprint": "4a0fc9eb9d8dc2a9",
       "title": "Gemini Image Gen",
       "description": "Generate images using Google's Gemini models",
@@ -769,6 +856,7 @@
     {
       "kind": "node",
       "name": "ApolloCompany",
+      "pack": "gtm",
       "fingerprint": "6aef71c77b987d65",
       "title": "Apollo Company",
       "description": "Search Apollo.io for companies matching keywords, industry, location or size",
@@ -779,6 +867,7 @@
     {
       "kind": "node",
       "name": "ApolloCompanyEnrich",
+      "pack": "gtm",
       "fingerprint": "9fa0b31043d25dc3",
       "title": "Apollo Company Enrich",
       "description": "Look up a company's full Apollo.io profile from its domain",
@@ -789,6 +878,7 @@
     {
       "kind": "node",
       "name": "ApolloPeople",
+      "pack": "gtm",
       "fingerprint": "07865e285f1368c1",
       "title": "Apollo People",
       "description": "Search Apollo.io for people by title, seniority, department or company",
@@ -799,6 +889,7 @@
     {
       "kind": "node",
       "name": "ApolloPeopleEnrich",
+      "pack": "gtm",
       "fingerprint": "8a80b9ab3a700b5a",
       "title": "Apollo People Enrich",
       "description": "Look up one known person's full Apollo.io profile",
@@ -809,6 +900,7 @@
     {
       "kind": "node",
       "name": "HunterDiscover",
+      "pack": "gtm",
       "fingerprint": "f80bcd9433873340",
       "title": "Hunter Discover",
       "description": "Build a target-company list from criteria or a natural-language query",
@@ -819,6 +911,7 @@
     {
       "kind": "node",
       "name": "HunterDomainSearch",
+      "pack": "gtm",
       "fingerprint": "4d7196e56e058597",
       "title": "Hunter Domain Search",
       "description": "List every known email address at one domain or company",
@@ -829,6 +922,7 @@
     {
       "kind": "node",
       "name": "HunterEmailFinder",
+      "pack": "gtm",
       "fingerprint": "7bd4489ed5b3b087",
       "title": "Hunter Email Finder",
       "description": "Find one person's work email from their LinkedIn or their name and company",
@@ -839,6 +933,7 @@
     {
       "kind": "node",
       "name": "HunterEmailVerifier",
+      "pack": "gtm",
       "fingerprint": "ad0bc084ff3dc12c",
       "title": "Hunter Email Verifier",
       "description": "Check whether one email address is real and deliverable",
@@ -849,6 +944,7 @@
     {
       "kind": "node",
       "name": "HunterEnrich",
+      "pack": "gtm",
       "fingerprint": "8332ac570c84d45c",
       "title": "Hunter Enrich",
       "description": "Enrich a person or a company from an email, a LinkedIn profile or a domain",
@@ -859,6 +955,7 @@
     {
       "kind": "node",
       "name": "HubspotMCP",
+      "pack": "hubspot",
       "fingerprint": "fac1b2de39016783",
       "title": "HubSpot",
       "description": "Resolve the signed-in user to their HubSpot contact and output that profile; an attached agent can also read it and push insight notes back.",
@@ -869,6 +966,7 @@
     {
       "kind": "node",
       "name": "HyperbrowserCrawl",
+      "pack": "hyperbrowser",
       "fingerprint": "8815bf78a81b3cd7",
       "title": "Hyperbrowser Crawl",
       "description": "Crawl a site from a seed URL across many pages, returning per-page markdown and links",
@@ -879,6 +977,7 @@
     {
       "kind": "node",
       "name": "HyperbrowserExtract",
+      "pack": "hyperbrowser",
       "fingerprint": "aeed2efc8f19403b",
       "title": "Hyperbrowser Extract",
       "description": "Extract structured JSON from one or more URLs using a prompt and/or schema",
@@ -889,6 +988,7 @@
     {
       "kind": "node",
       "name": "HyperbrowserScrape",
+      "pack": "hyperbrowser",
       "fingerprint": "53c87df82b4d9c0a",
       "title": "Hyperbrowser Scrape",
       "description": "Scrape a single URL to markdown, HTML and links with a stealth headless browser",
@@ -899,6 +999,7 @@
     {
       "kind": "node",
       "name": "Abyssale",
+      "pack": "ingest",
       "fingerprint": "99ec78aaba6eaae9",
       "title": "Abyssale",
       "description": "Generate high-quality images and PDFs from Abyssale templates",
@@ -909,6 +1010,7 @@
     {
       "kind": "node",
       "name": "GoogleSheet",
+      "pack": "ingest",
       "fingerprint": "4489678c62bf6f36",
       "title": "Google Sheet",
       "description": "Read rows from a public Google Sheets spreadsheet",
@@ -919,6 +1021,7 @@
     {
       "kind": "node",
       "name": "PlaidTransactions",
+      "pack": "ingest",
       "fingerprint": "fae4682e764a62ad",
       "title": "Plaid Transactions",
       "description": "Fetch bank transactions from Plaid Sandbox for testing.",
@@ -929,6 +1032,7 @@
     {
       "kind": "node",
       "name": "SpatialIngest",
+      "pack": "ingest",
       "fingerprint": "c2a1a1d46d20bc71",
       "title": "Spatial Ingest",
       "description": "Turn raw text into needs or services in the spatial dictionary.",
@@ -939,6 +1043,7 @@
     {
       "kind": "node",
       "name": "OpenAI",
+      "pack": "openai",
       "fingerprint": "be7f199aedea9f81",
       "title": "OpenAI",
       "description": "One prompt in, one completion out, with no streaming or tools",
@@ -949,6 +1054,7 @@
     {
       "kind": "node",
       "name": "OpenAIAgent",
+      "pack": "openai",
       "fingerprint": "20f8c029eb020785",
       "title": "OpenAI Agent",
       "description": "Multi-turn agent that works through a problem using MCP tools",
@@ -959,6 +1065,7 @@
     {
       "kind": "node",
       "name": "OpenAIEmbeddingService",
+      "pack": "openai",
       "fingerprint": "accf1b228adc4953",
       "title": "Embedding Service",
       "description": "Turns text into vector embeddings for semantic search",
@@ -969,6 +1076,7 @@
     {
       "kind": "node",
       "name": "OpenAIStream",
+      "pack": "openai",
       "fingerprint": "c904a0ce29aadd52",
       "title": "OpenAI Stream",
       "description": "Text generation with tokens streamed live as they are produced",
@@ -979,6 +1087,7 @@
     {
       "kind": "node",
       "name": "OpenAIStructuredOutput",
+      "pack": "openai",
       "fingerprint": "959ed10324c952e7",
       "title": "GPT-5 Structured Output",
       "description": "Extract structured data using the GPT-5 Responses API with a JSON schema",
@@ -989,6 +1098,7 @@
     {
       "kind": "node",
       "name": "OpenAIRealtimeVoice",
+      "pack": "openai-realtime",
       "fingerprint": "2a5df9163c64fb15",
       "title": "OpenAI Realtime Voice",
       "description": "Live two-way voice conversation with OpenAI's realtime models",
@@ -999,6 +1109,7 @@
     {
       "kind": "node",
       "name": "PineconeSearch",
+      "pack": "pinecone",
       "fingerprint": "6c6a43d0d9c009aa",
       "title": "Pinecone Search",
       "description": "Search a Pinecone index by meaning, using text rather than a vector",
@@ -1009,6 +1120,7 @@
     {
       "kind": "node",
       "name": "PineconeUpsert",
+      "pack": "pinecone",
       "fingerprint": "02c28f954077d814",
       "title": "Pinecone Upsert",
       "description": "Store text in a Pinecone index, letting Pinecone do the embedding",
@@ -1019,6 +1131,7 @@
     {
       "kind": "node",
       "name": "SalesforceMCP",
+      "pack": "salesforce",
       "fingerprint": "322320d594d201e8",
       "title": "Salesforce",
       "description": "Query, read, create and update records in a Salesforce org.",
@@ -1029,6 +1142,7 @@
     {
       "kind": "node",
       "name": "SearchNews",
+      "pack": "search",
       "fingerprint": "03273c1cdcadc964",
       "title": "Search News",
       "description": "Find recent news articles on a topic via SearchAPI.io (Google News)",
@@ -1039,6 +1153,7 @@
     {
       "kind": "node",
       "name": "SearchPlaces",
+      "pack": "search",
       "fingerprint": "4682b54dd1f69c35",
       "title": "Search Places",
       "description": "Find local businesses and places with ratings via SearchAPI.io (Google Maps)",
@@ -1049,6 +1164,7 @@
     {
       "kind": "node",
       "name": "SearchVideos",
+      "pack": "search",
       "fingerprint": "c1e7530db43cf94a",
       "title": "Search Videos",
       "description": "Search YouTube videos by keyword via SearchAPI.io (youtube)",
@@ -1059,6 +1175,7 @@
     {
       "kind": "node",
       "name": "SearchWeb",
+      "pack": "search",
       "fingerprint": "c834c57dae165bb9",
       "title": "Search Web",
       "description": "Search the web using SearchAPI.io (Google) for web results and images",
@@ -1069,6 +1186,7 @@
     {
       "kind": "node",
       "name": "SlackMCP",
+      "pack": "slack",
       "fingerprint": "73d5dc8d32ea34ea",
       "title": "Slack",
       "description": "Send messages, search, and read a Slack workspace",
@@ -1079,6 +1197,7 @@
     {
       "kind": "node",
       "name": "SmartDocument",
+      "pack": "smart-document",
       "fingerprint": "f0a65a10212d50cf",
       "title": "Smart Document",
       "description": "Produce a long-form deliverable — report, plan, spec, article, brief — that an agent writes and revises section by section instead of emitting one big blob. Section-addressed, hash-checked markdown edits (no drift, no full rewrites); live-renders on every edit.",
@@ -1089,6 +1208,7 @@
     {
       "kind": "node",
       "name": "SpatialSearch",
+      "pack": "spatial",
       "fingerprint": "737bf044dfd6e4b0",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
@@ -1099,6 +1219,7 @@
     {
       "kind": "node",
       "name": "ParseDocument",
+      "pack": "unstructured",
       "fingerprint": "f5674c5a5834ad84",
       "title": "Parse Document",
       "description": "Read any document into plain text and structured elements. PDF, Word, slides, spreadsheets, images.",
@@ -1109,6 +1230,7 @@
     {
       "kind": "node",
       "name": "XSearch",
+      "pack": "x-search",
       "fingerprint": "ab787cef26a826fb",
       "title": "X Search",
       "description": "Search recent X (Twitter) posts and return structured tweet data",
@@ -1119,6 +1241,7 @@
     {
       "kind": "node",
       "name": "XAIGrokVoice",
+      "pack": "xai-grok",
       "fingerprint": "f2022b4ec80087ab",
       "title": "xAI Grok Voice",
       "description": "Realtime voice conversation with xAI's Grok",
@@ -1129,6 +1252,7 @@
     {
       "kind": "node",
       "name": "GLMAgent",
+      "pack": "zai",
       "fingerprint": "02f8c465b4e13c1c",
       "title": "GLM Agent",
       "description": "Multi-turn GLM-5.2 (Z.AI) agent with MCP tool calling, reasoning, and streaming",

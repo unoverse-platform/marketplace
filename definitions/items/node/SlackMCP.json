@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SlackMCP",
+  "pack": "slack",
   "fingerprint": "73d5dc8d32ea34ea",
   "title": "Slack",
   "description": "Send messages, search, and read a Slack workspace",

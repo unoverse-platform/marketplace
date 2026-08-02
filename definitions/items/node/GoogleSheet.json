@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "GoogleSheet",
+  "pack": "ingest",
   "fingerprint": "4489678c62bf6f36",
   "title": "Google Sheet",
   "description": "Read rows from a public Google Sheets spreadsheet",

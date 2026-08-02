@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "BedrockClaude",
+  "pack": "aws-bedrock",
   "fingerprint": "37ac7662f01bfa27",
   "title": "Bedrock Chat",
   "description": "Ask Claude on AWS Bedrock, optionally about an image or document",

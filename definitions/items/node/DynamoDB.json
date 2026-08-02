@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "DynamoDB",
+  "pack": "aws-dynamodb",
   "fingerprint": "5c2192cbb0c19c34",
   "title": "DynamoDB",
   "description": "Write a record to an AWS DynamoDB table",

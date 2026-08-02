@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAIEmbeddingService",
+  "pack": "openai",
   "fingerprint": "accf1b228adc4953",
   "title": "Embedding Service",
   "description": "Turns text into vector embeddings for semantic search",

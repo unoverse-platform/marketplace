@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Abyssale",
+  "pack": "ingest",
   "fingerprint": "99ec78aaba6eaae9",
   "title": "Abyssale",
   "description": "Generate high-quality images and PDFs from Abyssale templates",

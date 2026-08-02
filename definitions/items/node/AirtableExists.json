@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "AirtableExists",
+  "pack": "airtable",
   "fingerprint": "d97cff02e6991552",
   "title": "Airtable Exists",
   "description": "Check whether a record with a given field value already exists in a table",

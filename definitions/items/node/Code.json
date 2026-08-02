@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "Code",
+  "pack": "flow",
   "fingerprint": "7177ff81c29e3489",
   "title": "Code",
   "description": "Execute custom code to transform data",

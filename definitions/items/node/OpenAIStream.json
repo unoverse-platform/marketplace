@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "OpenAIStream",
+  "pack": "openai",
   "fingerprint": "c904a0ce29aadd52",
   "title": "OpenAI Stream",
   "description": "Text generation with tokens streamed live as they are produced",

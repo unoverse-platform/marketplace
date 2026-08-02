@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "SearchPlaces",
+  "pack": "search",
   "fingerprint": "4682b54dd1f69c35",
   "title": "Search Places",
   "description": "Find local businesses and places with ratings via SearchAPI.io (Google Maps)",

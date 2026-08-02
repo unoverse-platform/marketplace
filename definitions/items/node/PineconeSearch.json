@@ -1,6 +1,7 @@
 {
   "kind": "node",
   "name": "PineconeSearch",
+  "pack": "pinecone",
   "fingerprint": "6c6a43d0d9c009aa",
   "title": "Pinecone Search",
   "description": "Search a Pinecone index by meaning, using text rather than a vector",
