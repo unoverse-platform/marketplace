@@ -16,7 +16,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMarketplace, packageAction, Spinner } from "./host";
 import { useCatalog, type CatalogNode } from "./host";
-import { authedFetch } from "./host";
+import { searchNodes } from "./host";
 import { NodeDetailView } from "./NodeDetailView";
 import { CategoryDetailView } from "./CategoryDetailView";
 import { ItemListView } from "./ItemListView";
@@ -348,18 +348,14 @@ export function DiscoverView({ onOpenCategory }: { onOpenCategory?: (c: Category
     setSearching(true);
     const t = setTimeout(async () => {
       try {
-        const r = await authedFetch("/nodes/search", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ task: q, limit: 24 }),
-        });
-        const d = await r.json();
+        // The universe's semantic ranker is not reachable from a public page, so this
+        // matches text over the same fields it ranked. `results: null` means "no ranked
+        // answer", which is what makes the page fall through to its own local filter, so
+        // an empty match must stay null rather than become an empty ranked list.
+        const found = await searchNodes(q);
         if (cancelled) return;
-        // `ranked:false` means the ranker was unavailable (no key / API error) and the
-        // server returned the whole catalog unordered. Falling back to the local
-        // filter is better than presenting an arbitrary order as if it were ranked.
-        setResults(r.ok && d.ranked ? ((d.nodes ?? []) as CatalogNode[]) : null);
-        setWeak(Boolean(r.ok && d.ranked && d.weak));
+        setResults(found.length ? found : null);
+        setWeak(false);
       } catch {
         // Ranker unavailable: fall back to the local match rather than showing nothing.
         if (!cancelled) setResults(null);

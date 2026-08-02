@@ -75,6 +75,9 @@ export function useRecipes(): { recipes: Recipe[]; loading: boolean; error: stri
               description: i.description ?? "",
               whenToUse: i.whenToUse ?? "",
               category: i.category ?? "",
+              // Defaulted, not assumed present: a browse field the catalogue does not
+              // carry must degrade to empty rather than take the page down.
+              tags: Array.isArray(i.tags) ? i.tags : [],
               art: i.icon,
               graph: item.definition,
             } as Recipe;

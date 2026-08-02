@@ -469,6 +469,11 @@
     {
       "kind": "recipe",
       "name": "smart-agent",
+      "tags": [
+        "Agent",
+        "Spatial search",
+        "Streaming"
+      ],
       "fingerprint": "923db928ca075995",
       "title": "Answer questions about your organisation",
       "description": "A chat agent that searches your own content for context, then streams its answer back.",
