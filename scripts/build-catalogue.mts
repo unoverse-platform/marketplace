@@ -56,7 +56,8 @@ for (const item of full) {
 // experience (MARKETPLACE.md §4), edited like any other page and deployed by pushing
 // this repo. Copied in rather than written here so nobody edits a string in a build
 // script when they mean to change a website.
-copyFileSync(join(pkg, "storefront", "index.html"), join(out, "index.html"));
+// The storefront is a Vite build (storefront/), emitted straight into definitions/ by
+// `npm run build:storefront`. Nothing to copy here.
 
 const byKind = catalogue.reduce<Record<string, number>>((a, i) => ((a[i.kind] = (a[i.kind] ?? 0) + 1), a), {});
 const kinds = Object.entries(byKind).sort(([a], [b]) => a.localeCompare(b));
