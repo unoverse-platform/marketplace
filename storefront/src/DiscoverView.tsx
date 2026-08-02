@@ -14,17 +14,17 @@
  * rules); dynamic values ride inline style vars.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useMarketplace, packageAction, Spinner } from "./Marketplace";
-import { useCatalog, type CatalogNode } from "./catalog";
-import { authedFetch } from "./client";
+import { useMarketplace, packageAction, Spinner } from "./host";
+import { useCatalog, type CatalogNode } from "./host";
+import { authedFetch } from "./host";
 import { NodeDetailView } from "./NodeDetailView";
 import { CategoryDetailView } from "./CategoryDetailView";
 import { ItemListView } from "./ItemListView";
 import { ItemDetailView } from "./ItemDetailView";
-import { useItems, ofKind, heldCount, type ItemKind } from "./items";
+import { useItems, ofKind, heldCount, type ItemKind } from "./host";
 import { lookFor, paintCategory } from "./categoryArt";
 import { useScrollMemory } from "./lib";
-import { BRAND_MARK_WHITE } from "./brand";
+import { BRAND_MARK_WHITE } from "./host";
 
 export interface CategoryRow {
   name: string;

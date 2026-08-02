@@ -277,3 +277,10 @@ export function groupByPackage(nodes: CatalogNode[]): PackageGroup[] {
   }
   return [...by.values()].sort((a, b) => b.nodes.length - a.nodes.length || a.displayName.localeCompare(b.displayName));
 }
+
+/** The universe REST client the original page used. A public storefront has none, and the
+ *  one call that reached for it (semantic node search) is served by `searchNodes` above.
+ *  Kept so the recovered views compile unedited, and honest if anything else calls it. */
+export async function authedFetch(): Promise<Response> {
+  throw new Error("the storefront has no universe to call: actions go through the host");
+}

@@ -14,8 +14,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { lookFor, paintCategory } from "./categoryArt";
 import { useScrollMemory } from "./lib";
-import { groupByPackage, type CatalogNode } from "./catalog";
-import { useMarketplace, packageAction, Spinner, type PkgRow } from "./Marketplace";
+import { groupByPackage, type CatalogNode } from "./host";
+import { useMarketplace, packageAction, Spinner, type PkgRow } from "./host";
 import { NodeDetailView } from "./NodeDetailView";
 
 /** A logo that removes itself if the URL 404s, rather than showing a broken image. */

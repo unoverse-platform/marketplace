@@ -8,7 +8,7 @@
  *
  * Tailwind only (apps/canvas convention: no new .css files).
  */
-import { type ItemKind, type MarketItem } from "./items";
+import { type ItemKind, type MarketItem } from "./host";
 import { useScrollMemory } from "./lib";
 
 const COPY: Record<string, { title: string; blurb: string }> = {

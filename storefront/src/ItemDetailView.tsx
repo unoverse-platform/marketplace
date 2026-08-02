@@ -11,8 +11,8 @@
  * Tailwind only (apps/canvas convention: no new .css files).
  */
 import { useEffect, useState } from "react";
-import { authedFetch } from "./client";
-import type { MarketItem } from "./items";
+import { authedFetch } from "./host";
+import type { MarketItem } from "./host";
 
 interface FullItem extends MarketItem {
   definition: any;

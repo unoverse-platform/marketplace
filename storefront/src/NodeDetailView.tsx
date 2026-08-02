@@ -9,7 +9,7 @@
  * Everything shown comes from the node's own definition in `GET /nodes`.
  */
 import { useEffect, useRef, useState } from "react";
-import { packageDisplayName, type CatalogNode } from "./catalog";
+import { packageDisplayName, type CatalogNode } from "./host";
 
 function Logo({ src, className }: { src: string; className?: string }) {
   const [dead, setDead] = useState(false);
