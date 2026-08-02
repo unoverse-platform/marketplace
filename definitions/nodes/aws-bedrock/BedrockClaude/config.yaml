@@ -7,23 +7,29 @@ configSchema:
     model:
       type: string
       title: Model
-      description: >-
-        Any Converse-capable Bedrock model id — anthropic.claude-sonnet-5,
-        anthropic.claude-opus-5, openai.gpt-5.6-sol / -terra / -luna, amazon.nova-*.
-        Enable the model for your region in the Bedrock console first.
-      default: anthropic.claude-sonnet-5
-      "ui:field": template
+      description: Select the Claude model to use
+      enum: { $ref: models#claude/enum }
+      enumNames: { $ref: models#claude/enumNames }
+      default: { $ref: models#claude/default }
+      # A retired id falls back to the current best model in its tier, so replacing a
+      # model generation cannot break a saved workflow.
+      resolve: modelTier
+    # UI copy matches the OpenAI node: short, plain, about the SETTING. The template
+    # grammar and its traps are not repeated here; the building model reads them from the
+    # template-references skill, which covers every template field on every node.
     prompt:
       type: string
       title: Prompt
-      description: What to ask. Supports {{ signal.<id>.<handle>.<field> }}
+      description: The request to answer. Usually wired in from an upstream node.
       default: ""
       "ui:field": template
       "ui:ai": { editable: true }
     systemPrompt:
       type: string
-      title: Instructions
-      description: System prompt, setting how the model should behave
+      title: System Prompt
+      description: >-
+        Standing instructions for every run: the model's role, tone and limits. Optional.
+        Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.
       default: ""
       "ui:field": template
       "ui:ai": { editable: true }
@@ -33,13 +39,6 @@ configSchema:
       default: 4096
       minimum: 1
       maximum: 200000
-    temperature:
-      type: number
-      title: Temperature
-      default: 0.7
-      minimum: 0
-      maximum: 1
-      step: 0.1
     includeImageUrl:
       type: boolean
       title: Include an Image
@@ -77,12 +76,15 @@ configSchema:
       description: Offer the model a tool schema, so it can return structured arguments
       default: false
       "ui:widget": toggle
+    # A JSON input, not a code editor: the value IS the tool list, no expression around
+    # it. `template` keeps it wirable from an upstream node (config-schema.md, Structured
+    # data).
     toolSchema:
       type: object
       title: Tool Schema
-      description: The tools to offer, as Bedrock toolSpec entries
+      description: The tools to offer, as JSON Anthropic tool entries (name, description, input_schema)
       default: []
-      "ui:field": code
+      "ui:field": template
       "ui:dependencies": { enableTools: true }
     toolChoice:
       type: string
@@ -119,5 +121,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [model, prompt, systemPrompt, maxTokens, temperature, includeImageUrl, imageUrl,
-   includeDocumentUrl, documentUrl, documentName, enableTools, toolSchema, toolChoice, authRequired, authRole]
+  [authRequired, authRole, model, prompt, systemPrompt, maxTokens, includeImageUrl, imageUrl, includeDocumentUrl, documentUrl, documentName, enableTools, toolSchema, toolChoice]

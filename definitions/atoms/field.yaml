@@ -31,9 +31,12 @@ root:
         font: label
         weight: medium
         color: text.secondary
+    # `placeholder` is a BIND, not a `{{placeholder}}` attribute. A Ref's `with` map
+    # resolves binds (and `{{ }}` inside STYLE), never a plain attribute, so the template
+    # form reached the renderer verbatim and every field read "{{placeholder}}".
     - type: Input
-      placeholder: "{{placeholder}}"
       bind:
+        placeholder: placeholder
         value: value
       style:
         width: full

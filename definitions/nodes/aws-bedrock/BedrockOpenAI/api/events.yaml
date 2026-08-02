@@ -1,0 +1,18 @@
+# One row per output connector, in the order interface.yaml declares them.
+#
+# Converse replies put the answer in output.message.content, a LIST of blocks; a long
+# answer can arrive in several text blocks, so they concatenate.
+
+- emit: text
+  value: >-
+    return ((((response.output || {}).message || {}).content) || [])
+      .filter(b => b.text).map(b => b.text).join('')
+
+- emit: usage
+  value: >-
+    return {
+      inputTokens: (response.usage || {}).inputTokens || 0,
+      outputTokens: (response.usage || {}).outputTokens || 0,
+      totalTokens: (response.usage || {}).totalTokens
+        || (((response.usage || {}).inputTokens || 0) + (((response.usage || {}).outputTokens) || 0))
+    }

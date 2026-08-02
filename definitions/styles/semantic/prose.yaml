@@ -17,13 +17,18 @@ prose:
       verticalAlign: middle
       marginLeft: 0.1em
       marginBottom: 0.1em
+  # Steps and contact/benefit lists are what long-form copy is mostly made of, so markers
+  # sit close to the text and rows breathe. A tighter indent than the 1.5rem this started
+  # at: markdown mostly renders inside a CARD, where a deep indent costs a fifth of the line.
   list:
     $value:
       margin: "{space.3} 0"
-      paddingLeft: 1.5rem
+      paddingLeft: 1.25rem
   listItem:
     $value:
       margin: "{space.1} 0"
+      paddingLeft: "{space.1}"
+      lineHeight: "{font.lineHeight.relaxed}"
   bulletStyle:
     $value: disc
   orderedStyle:
@@ -61,11 +66,15 @@ prose:
   imageFallback:
     $value:
       color: "{color.text.tertiary}"
+  # Headings point at the PROSE type styles (semantic/text-styles.json), never at the UI
+  # scale: a heading in a body of copy carries the margins and the section rule that a card
+  # title must never carry. h4 and below share one label style, because copy that needs four
+  # levels of hierarchy has a writing problem rather than a token problem.
   heading:
     $value:
-      h1: headline.lg
-      h2: headline.md
-      h3: headline.sm
-      h4: title
-      h5: title
-      h6: title
+      h1: prose.section
+      h2: prose.section
+      h3: prose.subsection
+      h4: prose.label
+      h5: prose.label
+      h6: prose.label

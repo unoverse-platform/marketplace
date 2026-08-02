@@ -62,4 +62,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [text, durationSeconds, promptInfluence, outputFormat, loop, authRequired, authRole]
+"ui:order": [authRequired, authRole, text, durationSeconds, promptInfluence, outputFormat, loop]

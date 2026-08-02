@@ -58,11 +58,11 @@ This is the sentence before the list.
   ```
 
 ## Link Usage
-- When referencing any product or resource with a provided `urlLink`:
-  1. Link the first mention of the product name in markdown (e.g., `The [Product Name](<urlLink>) offers...`).
+- When referencing any product or resource that came with a URL, in any field (`source_url`, `urlLink`, `url`):
+  1. Link the first mention of the product name in markdown (e.g., `The [Product Name](<source_url>) offers...`).
   2. Place links naturally within the sentence, not as extra notes or lists. Do not group links at the end or create standalone link lists.
-  3. Use descriptive anchor text (e.g., `[Product Name](<urlLink>)`), never generic phrases like "click here". Do not show raw URLs.
-  4. Always use standard markdown link format; only include URLs as provided in `urlLink`, never invent or alter URLs.
+  3. Use descriptive anchor text (e.g., `[Product Name](<source_url>)`), never generic phrases like "click here". Do not show raw URLs.
+  4. Always use standard markdown link format; only include URLs exactly as provided, never invent or alter URLs.
 
 ## Image Usage
 - Include relevant images from search results when they add value, using: `![alt](https://complete-image-url.jpg)`.

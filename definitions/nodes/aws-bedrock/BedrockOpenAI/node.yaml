@@ -1,0 +1,31 @@
+$schema: ../../../_schema/node.schema.json
+
+type: BedrockOpenAI
+kind: PromiseNode
+
+name: Bedrock GPT
+category: AI
+color: "#10a37f"
+
+description: One prompt in, one GPT completion out, running in your AWS account
+
+whenToUse: >-
+  Single prompt to single completion from a GPT model, when the call must run in YOUR AWS
+  account and region: summarise, rewrite, classify, answer. No streaming, no tools, no
+  schema enforcement; reach for a heavier node when a step genuinely needs token
+  streaming, iterative tool use, strict JSON output, or to read an image or document
+  alongside the prompt.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: a model call is non-deterministic, so a reused answer is a different
+  # answer presented as the same one.
+  cacheable: false

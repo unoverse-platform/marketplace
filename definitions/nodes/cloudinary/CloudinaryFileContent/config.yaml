@@ -49,4 +49,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [file, transformation, format, authRequired, authRole]
+"ui:order": [authRequired, authRole, file, transformation, format]

@@ -11,9 +11,10 @@ outputs:
     type: object
     description: >-
       { text, toolUse, usage }. `toolUse` is present only when the model chose a tool, and
-      carries its name and arguments.
+      carries its name and arguments. The tool's arguments are also hoisted to the top of
+      the output, so a schema field like `faqs` reads as `output.faqs` directly.
 
 credentials:
-  - name: awsCredential
+  - name: bedrockCredential
     required: true
-    displayName: AWS
+    displayName: AWS Bedrock

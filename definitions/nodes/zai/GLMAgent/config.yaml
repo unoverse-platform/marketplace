@@ -104,4 +104,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [model, agentName, maxTurns, reasoningEffort, maxTokens, temperature, topP, systemPrompt, prompt, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, model, agentName, maxTurns, reasoningEffort, maxTokens, temperature, topP, systemPrompt, prompt]

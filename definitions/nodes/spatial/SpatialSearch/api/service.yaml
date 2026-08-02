@@ -55,6 +55,10 @@ readResult:
         return scope.engineUrl + '/dictionary/entry/'
           + encodeURIComponent(String(params.universal_id || '').trim())
       transport: json
+      # A miss is an ANSWER: the engine 404s on an unknown id, and the projection turns
+      # that into the "copy the id verbatim" message. Without this the transport throws
+      # first and the model sees an empty result instead of the correction.
+      okOn: [404]
   # EDITORIAL FIELDS ONLY. Crawler bookkeeping (jsonLd, openGraph, timestamps, paths) never
   # reaches a model, the same rule the lean projection applies to a search row.
   #

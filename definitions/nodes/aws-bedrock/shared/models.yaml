@@ -1,0 +1,38 @@
+# The canonical Bedrock model lists, one per model family, organised by TIER.
+#
+# Same contract as openai/shared/models.yaml: the data lives here, the fallback logic
+# (`resolve: modelTier` on the config field) lives in the executor. A new generation is
+# a per-tier edit here, and every node plus every saved workflow moves over automatically.
+#
+# Bedrock ids carry the vendor prefix. Enable each model for your region in the Bedrock
+# console before first use; that is an account setting, not something a manifest can do.
+
+claude:
+  # Listed large first so the strongest reads first. The picker's options.
+  enum:
+    - anthropic.claude-opus-5
+    - anthropic.claude-sonnet-5
+    - anthropic.claude-haiku-4-5
+
+  # Version numbers in the labels by request. When a generation ships, the label is
+  # edited alongside the id, or the two lie together.
+  enumNames:
+    - Claude Opus 5 (Frontier, complex work)
+    - Claude Sonnet 5 (Balanced intelligence/cost)
+    - Claude Haiku 4.5 (Cost-optimized, high-volume)
+
+  # Balanced middle tier, the sensible default for most work.
+  default: anthropic.claude-sonnet-5
+
+gpt:
+  enum:
+    - openai.gpt-5.6-sol
+    - openai.gpt-5.6-terra
+    - openai.gpt-5.6-luna
+
+  enumNames:
+    - GPT-5.6 Sol (Frontier, complex work)
+    - GPT-5.6 Terra (Balanced intelligence/cost)
+    - GPT-5.6 Luna (Cost-optimized, high-volume)
+
+  default: openai.gpt-5.6-terra

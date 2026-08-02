@@ -68,4 +68,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [actorId, urls, waitForCompletion, maxWaitTime, authRequired, authRole]
+"ui:order": [authRequired, authRole, actorId, urls, waitForCompletion, maxWaitTime]

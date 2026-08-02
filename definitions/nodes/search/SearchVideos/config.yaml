@@ -53,4 +53,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [query, numResults, country, language, authRequired, authRole]
+"ui:order": [authRequired, authRole, query, numResults, country, language]

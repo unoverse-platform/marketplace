@@ -23,3 +23,21 @@ call: &call
 
 host: &host >-
   return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com'
+
+# The same call, authenticated with a Bedrock API key instead of request signing.
+# bedrock-runtime accepts the key as a plain bearer header, so the executor needs no
+# signer for the nodes that use this shape.
+keyCall: &keyCall
+  method: POST
+  credential:
+    scheme: bearer
+    token: "{{ credentials.bedrockCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+  transport: json
+  retry:
+    attempts: 4
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+

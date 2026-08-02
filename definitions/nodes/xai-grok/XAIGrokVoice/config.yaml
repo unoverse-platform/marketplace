@@ -70,4 +70,5 @@ configSchema:
 # one thing. `redisChannel` named the channel the code version published audio on, which the audio lane
 # now owns — see api/audio.yaml.
 
-"ui:order": [systemPrompt, initialRequest, voice, turnDetection, conversationHistory, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, systemPrompt, initialRequest, voice, turnDetection, conversationHistory]

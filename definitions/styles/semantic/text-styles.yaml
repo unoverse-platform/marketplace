@@ -80,3 +80,47 @@ text:
       fontWeight: "{font.weight.semibold}"
       lineHeight: "{font.lineHeight.body}"
       letterSpacing: "{font.tracking.button}"
+
+  # PROSE headings, the styles semantic/prose.json's heading map points at. Separate from
+  # the UI scale above because the two want opposite things: a UI heading is placed by its
+  # layout and must carry NO margins, while a heading inside a body of copy has nothing but
+  # its own spacing to separate one section from the next. Mapping markdown at the UI scale
+  # is what made long-form bodyCopy render as one unbroken column in every org.
+  prose:
+    # A `## Section`. The rule and the top margin are what turn a run of sections (a
+    # product's benefits, a course's modules) into readable blocks rather than a wall.
+    section:
+      $value:
+        fontFamily: "{font.family.prose}"
+        fontSize: "{font.size.headline.sm}"
+        fontWeight: "{font.weight.semibold}"
+        lineHeight: "{font.lineHeight.headline}"
+        letterSpacing: "{font.tracking.headline}"
+        color: "{color.text.primary}"
+        marginTop: "{space.8}"
+        marginBottom: "{space.3}"
+        paddingTop: "{space.5}"
+        borderTop: "{border.width.thin} solid {color.border.subtle}"
+    # A `### Sub-section`. Divides WITHIN a section, so no rule: a second horizontal line
+    # would compete with the section break it sits under.
+    subsection:
+      $value:
+        fontFamily: "{font.family.prose}"
+        fontSize: "{font.size.title.lg}"
+        fontWeight: "{font.weight.semibold}"
+        lineHeight: "{font.lineHeight.title}"
+        color: "{color.text.primary}"
+        marginTop: "{space.6}"
+        marginBottom: "{space.2}"
+    # A `#### Label` and below. Smaller and quieter than the body it introduces, so it
+    # reads as an eyebrow instead of competing with a subsection.
+    label:
+      $value:
+        fontFamily: "{font.family.sans}"
+        fontSize: "{font.size.bodyMd}"
+        fontWeight: "{font.weight.semibold}"
+        lineHeight: "{font.lineHeight.label}"
+        letterSpacing: "{font.tracking.label}"
+        color: "{color.text.tertiary}"
+        marginTop: "{space.5}"
+        marginBottom: "{space.1}"

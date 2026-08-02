@@ -66,4 +66,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [model, prompt, fileName, referenceImageUrl, authRequired, authRole]
+"ui:order": [authRequired, authRole, model, prompt, fileName, referenceImageUrl]

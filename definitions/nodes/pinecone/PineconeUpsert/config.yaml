@@ -104,5 +104,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [indexName, namespace, textField, records, text, vectorId, metadata,
-   authRequired, authRole]
+  [authRequired, authRole, indexName, namespace, textField, records, text, vectorId, metadata]

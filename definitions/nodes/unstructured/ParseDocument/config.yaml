@@ -93,4 +93,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [fileUrl, fileBase64, fileName, strategy, chunkingStrategy, languages, includePageBreaks, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, fileUrl, fileBase64, fileName, strategy, chunkingStrategy, languages, includePageBreaks]

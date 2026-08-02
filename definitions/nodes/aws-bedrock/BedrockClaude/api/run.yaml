@@ -2,8 +2,13 @@
 #
 # THE ATTACHMENT CALLS GO TO AN ARBITRARY HOST, which is the whole reason `transport: binary`
 # exists: the bytes have to come back in a form that survives being put into a JSON body.
-# They are also why this package's allowedHosts is wider than its own vendor — see the note
-# on each call.
+# They are also why this package's allowedHosts is wider than its own vendor.
+#
+# The answer call speaks the NATIVE ANTHROPIC MESSAGES API, hosted by AWS at the
+# bedrock-mantle endpoint. Same body and response shape as api.anthropic.com; what is
+# Bedrock about it is only the host, the `anthropic.` model prefix, and the API key.
+# This replaced the Converse call: Converse exists to give every vendor one shape, and a
+# Claude-only node has no use for that abstraction.
 
 - name: image
   when: "return config.includeImageUrl === true && !!config.imageUrl"
@@ -18,40 +23,73 @@
   url: "{{ config.documentUrl }}"
   transport: binary
 
-- $ref: bedrock#call
-  name: answer
+- name: answer
+  method: POST
   url: >-
-    return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
-      + '.amazonaws.com/model/' + encodeURIComponent(config.model) + '/converse'
+    return 'https://bedrock-mantle.' + (credentials.bedrockCredential.region || 'us-east-1')
+      + '.api.aws/anthropic/v1/messages'
+
+  credential:
+    scheme: apiKeyHeader
+    header: x-api-key
+    value: "{{ credentials.bedrockCredential.apiKey }}"
+
+  headers:
+    Content-Type: application/json
+    anthropic-version: "2023-06-01"
+
+  transport: json
+
+  # Bounded, because an unbounded call that never answers hangs the whole step with no
+  # error anywhere. 120s clears a long completion.
+  timeoutMs: 120000
+
+  # Bedrock throttles hard under load and answers 429; retrying is the difference between a
+  # workflow that survives a burst and one that fails a step at random.
+  retry:
+    attempts: 4
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
 
   # The message content is a LIST whose members depend on what was attached, which is
-  # exactly the case an object body cannot express. Order matters: Bedrock wants the
-  # attachments before the text, so the prompt can refer to them.
+  # exactly the case an object body cannot express. Attachments go before the text, so
+  # the prompt can refer to them.
+  #
+  # No temperature: the current Claude generation rejects sampling parameters, so there
+  # is nothing to configure.
   body: >-
     return Object.assign({
+      model: config.model,
+      max_tokens: config.maxTokens,
       messages: [{
         role: 'user',
         content: []
-          .concat(calls.image ? [{ image: {
-            format: String(calls.image.contentType).split('/')[1].split('+')[0],
-            source: { bytes: calls.image.base64 }
+          .concat(calls.image ? [{ type: 'image', source: {
+            type: 'base64',
+            media_type: String(calls.image.contentType).split(';')[0],
+            data: calls.image.base64
           } }] : [])
-          .concat(calls.document ? [{ document: {
-            format: String(calls.document.contentType).split('/').pop().split('+')[0],
-            name: config.documentName || 'document',
-            source: { bytes: calls.document.base64 }
-          } }] : [])
-          .concat([{ text: config.prompt }])
-      }],
-      inferenceConfig: {
-        temperature: config.temperature,
-        maxTokens: config.maxTokens
-      }
+          .concat(calls.document ? [{ type: 'document', source: {
+            type: 'base64',
+            media_type: String(calls.document.contentType).split(';')[0],
+            data: calls.document.base64
+          }, title: config.documentName || 'document' }] : [])
+          .concat([{ type: 'text', text: config.prompt }])
+      }]
     },
-    config.systemPrompt ? { system: [{ text: config.systemPrompt }] } : {},
+    config.systemPrompt ? { system: config.systemPrompt } : {},
     (config.enableTools === true && (config.toolSchema || []).length)
-      ? { toolConfig: Object.assign(
-          { tools: Array.isArray(config.toolSchema) ? config.toolSchema : [config.toolSchema] },
-          config.toolChoice === 'any' ? { toolChoice: { any: {} } } : { toolChoice: { auto: {} } }
-        ) }
+      ? {
+          tools: (Array.isArray(config.toolSchema) ? config.toolSchema : [config.toolSchema])
+            .map(t => t.toolSpec
+              ? { name: t.toolSpec.name, description: t.toolSpec.description,
+                  input_schema: (t.toolSpec.inputSchema || {}).json || t.toolSpec.inputSchema }
+              : t),
+          tool_choice: config.toolChoice === 'any' ? { type: 'any' } : { type: 'auto' }
+        }
       : {})
+
+  # A 200 carrying an error envelope must not read as success.
+  error:
+    when: "return response.type === 'error'"
+    message: "return response.error && response.error.message"

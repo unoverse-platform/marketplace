@@ -10,8 +10,6 @@ props:
     default: Get Started
 root:
   type: Button
-  bind:
-    label: label
   action: click
   style:
     display: inline-flex
@@ -25,3 +23,15 @@ root:
     padding: [ "3", "6" ]
     minHeight: "10"
     radius: sm
+  # The label is a CHILD, not a `bind` on the button itself: ButtonView renders
+  # `bind.label` only while the node has NO children, and a Ref's `with` map turns a
+  # bind into a hardcoded attribute — which that path never reads, so a literal label
+  # rendered an empty button. As a child it works from `with` (literal) and from
+  # `props` (field remap) alike.
+  children:
+    - type: Text
+      bind:
+        value: label
+      style:
+        font: button
+        color: action.primary-text

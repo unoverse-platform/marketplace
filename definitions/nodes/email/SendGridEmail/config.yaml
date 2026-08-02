@@ -141,5 +141,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [from, to, cc, bcc, subject, bodyType, body, autoLinkUrls, utmSource, utmMedium,
-   utmCampaign, utmContent, gaMeasurementId, authRequired, authRole]
+  [authRequired, authRole, from, to, cc, bcc, subject, bodyType, body, autoLinkUrls, utmSource, utmMedium, utmCampaign, utmContent, gaMeasurementId]

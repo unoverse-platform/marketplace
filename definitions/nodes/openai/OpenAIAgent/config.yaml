@@ -128,4 +128,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-ui:order: [model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, enableUserMemory, enableAgentMemory, authRequired, authRole]
+ui:order:
+  [authRequired, authRole, model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, enableUserMemory, enableAgentMemory]

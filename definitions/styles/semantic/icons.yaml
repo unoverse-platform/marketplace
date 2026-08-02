@@ -90,3 +90,71 @@ icons:
     $value: Clock
   sliders:
     $value: SlidersHorizontal
+
+  # ---- BENEFIT ICONS: the vocabulary a CONTENT RECORD may name -------------------------
+  #
+  # Everything above is authored: a definition writes the name, so a typo is caught by
+  # eye. These are different. A promoted service row carries `features: [{title,
+  # description, icon}]`, and the icon is chosen by the extractor from THIS list, which is
+  # why the keys are kebab-case: that is the form the extraction schema asks for, and a
+  # name is only useful if the thing that writes it and the thing that renders it agree.
+  #
+  # Keep this list and the extractor's prompt (engine: routes/dictionary/pipeline.ts and
+  # utils/hyperbrowser/index.ts, both copies) in step. A name outside it renders nothing,
+  # which is the intended failure: a blank chip beats a confidently wrong glyph.
+  plane:
+    $value: Plane
+  luggage:
+    $value: Luggage
+  armchair:
+    $value: Armchair
+  concierge-bell:
+    $value: ConciergeBell
+  headphones:
+    $value: Headphones
+  utensils:
+    $value: Utensils
+  percent:
+    $value: Percent
+  car:
+    $value: Car
+  shield-check:
+    $value: ShieldCheck
+  credit-card:
+    $value: CreditCard
+  banknote:
+    $value: Banknote
+  piggy-bank:
+    $value: PiggyBank
+  wallet:
+    $value: Wallet
+  gift:
+    $value: Gift
+  users:
+    $value: Users
+  globe:
+    $value: Globe
+  map-pin:
+    $value: MapPin
+  star:
+    $value: Star
+  award:
+    $value: Award
+  sparkles:
+    $value: Sparkles
+  briefcase:
+    $value: Briefcase
+  graduation-cap:
+    $value: GraduationCap
+  shopping-bag:
+    $value: ShoppingBag
+  fuel:
+    $value: Fuel
+  smartphone:
+    $value: Smartphone
+  lock:
+    $value: Lock
+  heart-pulse:
+    $value: HeartPulse
+  hotel:
+    $value: Hotel

@@ -1,119 +1,1113 @@
 {
   "release": "0.1.10",
-  "items": {
-    "component/barchart": "bb6fd70274d71914",
-    "component/barlist": "e7bb744d033e520f",
-    "component/card": "2eaae626c238f067",
-    "component/card2": "03ec82b6e6b0251f",
-    "component/cardcarousel": "a2ca24877ec8b591",
-    "component/composerbar": "dd9883c9f3359293",
-    "component/imageblock": "2139e513cb270a51",
-    "component/kenburnsimage": "9f59d7d82e258a3c",
-    "component/listpicker": "de52aa9396dce559",
-    "component/markdownrenderer": "f3b415a759ed5c3b",
-    "component/metricgrid": "10965932d88ba87c",
-    "component/radialgauge": "a9437e23e5b4b6ed",
-    "component/stackedbarchart": "b35effd61b5c6eca",
-    "component/statcard": "6534eb47e1accd08",
-    "component/streamingtext": "10d147a87a5d6a1d",
-    "component/table": "9883fe25f09a5ca3",
-    "atom/account-row": "e8c05f5b25f910d4",
-    "atom/agent-avatar": "01f2e5e03842277c",
-    "atom/alert": "f4593d92d0d7ecdc",
-    "atom/avatar": "2c349a1e0dd74e63",
-    "atom/button": "889e5e136b87ce3d",
-    "atom/call-action": "43a6a26e39f55798",
-    "atom/call-button": "d203198f9a113b3e",
-    "atom/checkbox-row": "4c0201d86b18b960",
-    "atom/choice-row": "d6b6bd26e39a8276",
-    "atom/choice-tile": "585c9fc5ca657933",
-    "atom/close-button": "cebd289e66a19f64",
-    "atom/cta-link": "f88ff913f309fd46",
-    "atom/detail-row": "7d4cd1355e32ebc2",
-    "atom/divider": "cb6c38df5cf7a3b0",
-    "atom/empty-state": "351881b3a8b624a7",
-    "atom/field": "0f8038761b465e8a",
-    "atom/icon-button": "27204c4db12e70ee",
-    "atom/match-gauge": "301add6f197abc72",
-    "atom/outline-button": "47a8e3373e3817be",
-    "atom/pill": "1b0e210c92bf2529",
-    "atom/progress": "35a36ea85b970302",
-    "atom/section-header": "8ad234d4dd29557c",
-    "atom/toggle-row": "477dd857b30f8355",
-    "skill/complaints-handling": "5d48aeeb318dbe39",
-    "block/core": "9f8978c3d618e7ad",
-    "block/formatting": "2b3932ab61a488ea",
-    "block/media": "a70ec36c76a382a2",
-    "styles": "af9a4c43912c40c8",
-    "node/airtable/AirtableExists": "56cdbfd91e6b3e6a",
-    "node/airtable/AirtableFetch": "0b405e479e831c29",
-    "node/airtable/AirtableInsert": "1ae82b19e936c548",
-    "node/apify/ApifyResults": "26feecc89dfc8ed7",
-    "node/apify/ApifyStarter": "bdec4ab6dcc7b436",
-    "node/aws-bedrock/BedrockClaude": "d07fdfc76c852712",
-    "node/aws-bedrock/BedrockEmbedding": "340dd8e69d08f5d1",
-    "node/aws-bedrock/BedrockEmbeddingService": "58e7970e9350d4f1",
-    "node/aws-dynamodb/DynamoDB": "9a89b9e5b11300f1",
-    "node/aws-dynamodb/DynamoDBFetch": "89ffbf7a0a744ddb",
-    "node/aws-dynamodb/DynamoDBService": "290a0b6308be678c",
-    "node/aws-s3/S3FileContent": "8f9af94838f1687b",
-    "node/aws-s3/S3Files": "df6403c807ffad61",
-    "node/aws-s3/S3Upload": "1ab0a9430d6ed6d3",
-    "node/cloudinary/CloudinaryFileContent": "dfaf6294d1bc298c",
-    "node/cloudinary/CloudinaryFiles": "b0f34b882e143c73",
-    "node/cloudinary/CloudinaryUpload": "9ddb8a0c53b7a797",
-    "node/elevenlabs/ElevenLabs": "68f2eb8be556a287",
-    "node/elevenlabs/ElevenLabsDialogue": "da82dcaf17d93df1",
-    "node/elevenlabs/ElevenLabsMusic": "dba9df6cf2d342ad",
-    "node/elevenlabs/ElevenLabsSoundEffects": "483613b4f20cb942",
-    "node/elevenlabs/ElevenLabsSpeechToText": "0815ea522840009f",
-    "node/email/SendGridEmail": "428ba295f759ef54",
-    "node/flow/Code": "8cd071d93e687ba3",
-    "node/flow/Context": "ce4c321d72b87f6f",
-    "node/flow/FieldValidator": "4680131c6aabf8ca",
-    "node/flow/IfElse": "91650841cbf42b24",
-    "node/flow/LoopEnd": "c6d3c06df01230a9",
-    "node/flow/LoopStart": "93d6813b7ee4312d",
-    "node/flow/Note": "41e334dc6410e928",
-    "node/flow/Relay": "bdec8471c649c85a",
-    "node/flow/Suggestions": "027517af5da214c7",
-    "node/gce-toolkit/GeminiImageGen": "a003adfa216428ba",
-    "node/gtm/ApolloCompany": "6a2db317e458bde8",
-    "node/gtm/ApolloCompanyEnrich": "d1a80eef30c25ad7",
-    "node/gtm/ApolloPeople": "47bb00779b253031",
-    "node/gtm/ApolloPeopleEnrich": "401547130a02f893",
-    "node/gtm/HunterDiscover": "0d1aeb42f871026f",
-    "node/gtm/HunterDomainSearch": "0a59b4178368f8fe",
-    "node/gtm/HunterEmailFinder": "e2247a55ff6f9680",
-    "node/gtm/HunterEmailVerifier": "b0a9aa1ad8bdc2b8",
-    "node/gtm/HunterEnrich": "9bf88f0a0b5c3dbf",
-    "node/hubspot/HubspotMCP": "aa4686e0583c0192",
-    "node/hyperbrowser/HyperbrowserCrawl": "875fa87acf8efdc1",
-    "node/hyperbrowser/HyperbrowserExtract": "900cd32f245b4046",
-    "node/hyperbrowser/HyperbrowserScrape": "e5f50cc1c6deb37e",
-    "node/ingest/Abyssale": "48fd3f7afb41d93c",
-    "node/ingest/GoogleSheet": "a1bb496ebd167555",
-    "node/ingest/PlaidTransactions": "9a7fd2bb50bc7098",
-    "node/ingest/SpatialIngest": "7f31580c1a5fa00b",
-    "node/openai/OpenAI": "df73311bf9eae666",
-    "node/openai/OpenAIAgent": "61168fe689f7cba2",
-    "node/openai/OpenAIEmbeddingService": "ff56764562e0b040",
-    "node/openai/OpenAIStream": "fcd146caa242b24a",
-    "node/openai/OpenAIStructuredOutput": "4bcad677109e224b",
-    "node/openai-realtime/OpenAIRealtimeVoice": "435d670154effb97",
-    "node/pinecone/PineconeSearch": "31d1f73bbd3b75d7",
-    "node/pinecone/PineconeUpsert": "ea58c8778f7a1c9a",
-    "node/salesforce/SalesforceMCP": "a9198b97253e1cc7",
-    "node/search/SearchNews": "4bbe2d3a0ad4a2aa",
-    "node/search/SearchPlaces": "544801ae3d7f8202",
-    "node/search/SearchVideos": "4e39adb819c31bbe",
-    "node/search/SearchWeb": "2587480f92961980",
-    "node/slack/SlackMCP": "b9d7ad158fdde4ad",
-    "node/smart-document/SmartDocument": "cef106d374124268",
-    "node/spatial/SpatialSearch": "c3c9eae481e671fe",
-    "node/unstructured/ParseDocument": "029f0690b2e2f748",
-    "node/x-search/XSearch": "35c63df571de2cb6",
-    "node/xai-grok/XAIGrokVoice": "8091ac08f1c6bef6",
-    "node/zai/GLMAgent": "baf5d44b5b8930fd"
-  }
+  "items": [
+    {
+      "kind": "component",
+      "name": "BarChart",
+      "fingerprint": "45abc83c3dec06ce",
+      "bundle": "design-system",
+      "title": "BarChart",
+      "description": "Interactive vertical bar chart of labelled values. Composed from Box + Each + Button (NOT a chart primitive): each bar is a Button whose height binds to a producer-supplied proportion (`pct`, e.g. \"72%\"); tapping a bar writes the selection to the store (cross-filter). Value labels sit on each bar, months below, on a baseline. Colour is a served token.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "BarList",
+      "fingerprint": "b6125245fc2242fc",
+      "bundle": "design-system",
+      "title": "BarList",
+      "description": "Ranked list of horizontal bars — each row a label, a track with a {{pct}}-bound fill, and a value. Composed from Box + Each (no chart primitive); the fill proportions are supplied by the data producer.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "Card",
+      "fingerprint": "dbe9f2b012b46352",
+      "bundle": "design-system",
+      "title": "Card",
+      "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
+      "name": "Card2",
+      "fingerprint": "f596ce723618e1d2",
+      "bundle": "design-system",
+      "title": "Card2",
+      "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
+      "name": "CardCarousel",
+      "fingerprint": "1aa0f476bd642f63",
+      "bundle": "design-system",
+      "title": "CardCarousel",
+      "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
+      "name": "ComposerBar",
+      "fingerprint": "74fdedb7c213bc83",
+      "bundle": "design-system",
+      "title": "ComposerBar",
+      "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
+      "category": "Input"
+    },
+    {
+      "kind": "component",
+      "name": "ImageBlock",
+      "fingerprint": "ccf364fc3198839c",
+      "bundle": "design-system",
+      "title": "ImageBlock",
+      "description": "A single image from a URL with an optional caption beneath it.",
+      "category": "Media"
+    },
+    {
+      "kind": "component",
+      "name": "KenBurnsImage",
+      "fingerprint": "45ae1e75ac958f23",
+      "bundle": "design-system",
+      "title": "KenBurnsImage",
+      "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
+      "category": "Media"
+    },
+    {
+      "kind": "component",
+      "name": "ListPicker",
+      "fingerprint": "f874e5e78fedb62a",
+      "bundle": "design-system",
+      "title": "ListPicker",
+      "description": "Vertical list of selectable rows — each an optional thumbnail with a title and supporting subtitle — under an optional heading. One tap selects a row.",
+      "category": "Input"
+    },
+    {
+      "kind": "component",
+      "name": "MarkdownRenderer",
+      "fingerprint": "150d7841c6c3b5b3",
+      "bundle": "design-system",
+      "title": "MarkdownRenderer",
+      "description": "Static markdown document renderer: an optional titled header with a streaming indicator, then a full markdown body (headings, lists, tables, code, links, images) or a waiting placeholder.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
+      "name": "MetricGrid",
+      "fingerprint": "83b895cfdf588766",
+      "bundle": "design-system",
+      "title": "MetricGrid",
+      "description": "Grid of KPI tiles — each a labelled headline value with an optional prefix/suffix and icon, plus a colour-coded period-over-period delta (up/down/neutral). Sentiment and arrow glyph are resolved by the data producer (deltaPositive/deltaNegative/deltaNeutral + deltaArrow); the definition only composes them — no computation lives in the renderer.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "RadialGauge",
+      "fingerprint": "f1f239a1166fd1db",
+      "bundle": "design-system",
+      "title": "RadialGauge",
+      "description": "Radial progress dial: a circular ring filled to a producer-supplied proportion ({{pct}}), with a value and label in the centre. Composed from a circular Box using the neutral `radial` style (a served fill token sweeping to the stop over a served track token) plus a centred hole — no chart primitive.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "StackedBarChart",
+      "fingerprint": "6145678b2c303aa3",
+      "bundle": "design-system",
+      "title": "StackedBarChart",
+      "description": "Stacked bar chart showing composition per category. Composed from a nested Box + Each (no chart primitive): each bar stacks segments whose heights bind to producer-supplied proportions ({{pct}}) and whose colours are served tokens bound per segment ({{color}}). A legend maps colours to series.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "StatCard",
+      "fingerprint": "ed1ef36cf6d9d303",
+      "bundle": "design-system",
+      "title": "StatCard",
+      "description": "Single hero KPI card: a label, a large headline value, a colour-coded period-over-period delta, and a compact bar trend. Composed from Box + Each + {{pct}}-bound bars (no chart primitive); delta sentiment (deltaPositive/deltaNegative/deltaNeutral) and the trend proportions are resolved by the data producer.",
+      "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "StreamingText",
+      "fingerprint": "8dcb3c8f33499e8d",
+      "bundle": "design-system",
+      "title": "StreamingText",
+      "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
+      "category": "Content"
+    },
+    {
+      "kind": "component",
+      "name": "Table",
+      "fingerprint": "c9f471af266d3ade",
+      "bundle": "design-system",
+      "title": "Table",
+      "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
+      "category": "Charts"
+    },
+    {
+      "kind": "atom",
+      "name": "AccountRow",
+      "fingerprint": "6374ce0876bd286f",
+      "bundle": "design-system",
+      "title": "AccountRow",
+      "description": "A selectable account/beneficiary card: a title with an optional masked-number sub-line, an optional right-aligned figure (e.g. balance), and an optional bank line below. A richer sibling of choice-row for money UIs. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "AgentAvatar",
+      "fingerprint": "1e1eadb51827f4e1",
+      "bundle": "design-system",
+      "title": "AgentAvatar",
+      "description": "Circular assistant avatar with concentric sonar rings that pulse calmly while a call is active and burst into a slower layered ripple while the assistant is speaking, plus a gentle breathe (scale) on the photo while speaking. Owns its full style — references tokens only; rings are DATA. The breathe is a transform, so it grows the photo visually without shifting layout. Reads the host's `callState` field directly (idle|active|agentSpeaking|userSpeaking)."
+    },
+    {
+      "kind": "atom",
+      "name": "Alert",
+      "fingerprint": "18471832b4d78705",
+      "bundle": "design-system",
+      "title": "Alert",
+      "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "Avatar",
+      "fingerprint": "eff666c8aa017f12",
+      "bundle": "design-system",
+      "title": "Avatar",
+      "description": "A circular person avatar: the photo when there is one, initials on a sunken surface when there is not (the initials sit underneath and the photo overlays them). Owns its full style — references tokens only; resize via the Ref's style."
+    },
+    {
+      "kind": "atom",
+      "name": "Button",
+      "fingerprint": "5227a5e180d958b8",
+      "bundle": "design-system",
+      "title": "Button",
+      "description": "Primary action button. Owns its full style — references tokens only (the theme's action colors carry the brand)."
+    },
+    {
+      "kind": "atom",
+      "name": "CallAction",
+      "fingerprint": "0b68ac8205471bc1",
+      "bundle": "design-system",
+      "title": "CallAction",
+      "description": "Pill call-to-action: a leading icon + label on a solid brand surface, sized as a primary tap target. Icon + label are bound fields and INHERIT the button colour, so a Ref tone override (style.background/color) recolours both. References tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "CallButton",
+      "fingerprint": "41c379a530054dc2",
+      "bundle": "design-system",
+      "title": "CallButton",
+      "description": "A round icon-only control button. Owns its full chrome (circle, size, centring) — references tokens only. The icon is a bound field; the Ref overrides `action` and overrides `style.background`/`style.color` per use (the icon inherits the button colour via currentColor)."
+    },
+    {
+      "kind": "atom",
+      "name": "CheckboxRow",
+      "fingerprint": "6a9d562950b5547c",
+      "bundle": "design-system",
+      "title": "CheckboxRow",
+      "description": "A selectable row with a real checkbox: a bordered square that fills with the brand color and a check glyph when the bound `checked` field is true, beside a label and optional description. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "ChoiceRow",
+      "fingerprint": "7fa620ad5ae1a409",
+      "bundle": "design-system",
+      "title": "ChoiceRow",
+      "description": "Selectable option row: an optional leading icon, a label and optional description, inside a bordered card button with a hover surface. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "ChoiceTile",
+      "fingerprint": "70bf7867349f1396",
+      "bundle": "design-system",
+      "title": "ChoiceTile",
+      "description": "Selectable option tile for a wrapping two-up grid: an optional leading icon beside a label and optional one-line description — the compact half-width sibling of ChoiceRow. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "CloseButton",
+      "fingerprint": "ec2b54871996aae0",
+      "bundle": "design-system",
+      "title": "CloseButton",
+      "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "CtaLink",
+      "fingerprint": "3326339429983a06",
+      "bundle": "design-system",
+      "title": "CtaLink",
+      "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here."
+    },
+    {
+      "kind": "atom",
+      "name": "DetailRow",
+      "fingerprint": "edfa2f2b8c22ea3e",
+      "bundle": "design-system",
+      "title": "DetailRow",
+      "description": "A key↔value row: a muted label on the left, a value on the right with an optional sub-line beneath it. A hairline bottom border (override to none on the last row). Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "Divider",
+      "fingerprint": "1bb2657ad4dfdd51",
+      "bundle": "design-system",
+      "title": "Divider",
+      "description": "A full-width hairline rule separating sections. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "EmptyState",
+      "fingerprint": "5b8712f868a206f7",
+      "bundle": "design-system",
+      "title": "EmptyState",
+      "description": "A centered nothing-here block: a muted icon over a title and a hint line. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "Field",
+      "fingerprint": "e404d4b230ade789",
+      "bundle": "design-system",
+      "title": "Field",
+      "description": "A labeled text input: a small label above an Input, with an optional help line beneath. The standard form row. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "IconButton",
+      "fingerprint": "b483ccaadf6731c2",
+      "bundle": "design-system",
+      "title": "IconButton",
+      "description": "A circular icon-only button on a bordered surface: the generic small control (share, edit, refresh, more). Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "MatchGauge",
+      "fingerprint": "6121daa1b0c93733",
+      "bundle": "design-system",
+      "title": "MatchGauge",
+      "description": "Circular score gauge: a conic radial ring filled to a percent, the value in the center, a label below. Composed from primitives (a circular Box with a `radial` fill) — not a chart leaf. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "OutlineButton",
+      "fingerprint": "bdea8b91201f0633",
+      "bundle": "design-system",
+      "title": "OutlineButton",
+      "description": "Outline call-to-action button: a leading icon + bold label inside a transparent pill with an accent-coloured border. Border, icon and label all take action.primary, so a Ref style override recolours the whole set. References tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "Pill",
+      "fingerprint": "e60cb553c154c88d",
+      "bundle": "design-system",
+      "title": "Pill",
+      "description": "A small rounded tag/chip: a single label on a sunken surface. Owns its full style — references tokens only. Override `background` via the Ref's style for other tones."
+    },
+    {
+      "kind": "atom",
+      "name": "Progress",
+      "fingerprint": "cc3c8b3a8983a576",
+      "bundle": "design-system",
+      "title": "Progress",
+      "description": "A determinate progress bar: a sunken full-width track with a brand-colored fill whose width is data-driven ({{pct}}, a percentage string like \"62%\"). Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "SectionHeader",
+      "fingerprint": "867887a9a5cb155e",
+      "bundle": "design-system",
+      "title": "SectionHeader",
+      "description": "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "ToggleRow",
+      "fingerprint": "9039f645ee249c17",
+      "bundle": "design-system",
+      "title": "ToggleRow",
+      "description": "A settings row with a switch: label and optional description on the left, a pill track on the right whose knob slides and fills with the brand color when the bound `on` field is true. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "style",
+      "name": "styles",
+      "fingerprint": "5308541cd791ff2d",
+      "bundle": "design-system",
+      "title": "Design tokens and themes",
+      "description": "The token contract every component renders against."
+    },
+    {
+      "kind": "skill",
+      "name": "complaints-handling",
+      "fingerprint": "70e44f09357652b9",
+      "title": "Complaints Handling",
+      "description": "Guide for handling customer complaints professionally, with empathy and clear escalation paths.",
+      "category": "ai",
+      "whenToUse": "Handle an unhappy customer — a complaint, frustration, dissatisfaction, or a request to escalate or speak to a manager. Acknowledges feelings first, then resolves or escalates with a clear path."
+    },
+    {
+      "kind": "prompt-block",
+      "name": "crm-sync",
+      "fingerprint": "3eede32c13792f61",
+      "title": "CRM Sync",
+      "description": "Directs an agent to ground itself in the connected CRM (system of record) at the start of a conversation and record durable learnings back as append-only notes, never editing core profile fields",
+      "category": "core"
+    },
+    {
+      "kind": "prompt-block",
+      "name": "react-agent",
+      "fingerprint": "8ae4c247d7ac431b",
+      "title": "ReAct Agent",
+      "description": "ReAct reasoning pattern for tool-augmented agents",
+      "category": "core"
+    },
+    {
+      "kind": "prompt-block",
+      "name": "markdown-guidelines",
+      "fingerprint": "f06116a1f960010c",
+      "title": "Markdown Guidelines",
+      "description": "Complete markdown formatting guide for text, links, and images",
+      "category": "formatting"
+    },
+    {
+      "kind": "prompt-block",
+      "name": "gemini-likeness-preface",
+      "fingerprint": "3a14a1f5aae7664b",
+      "title": "Gemini Likeness Preface",
+      "description": "Prepended to an image prompt when a reference photo is attached, restating that the photo is a casting sheet and the prompt is the director",
+      "category": "media"
+    },
+    {
+      "kind": "prompt-block",
+      "name": "gemini-likeness-system",
+      "fingerprint": "8667c76c91f5447d",
+      "title": "Gemini Likeness System",
+      "description": "System instruction for image generation with a reference photo, so the prompt directs the scene and the photo only supplies facial identity",
+      "category": "media"
+    },
+    {
+      "kind": "recipe",
+      "name": "smart-agent",
+      "fingerprint": "923db928ca075995",
+      "title": "Answer questions about your organisation",
+      "description": "A chat agent that searches your own content for context, then streams its answer back.",
+      "category": "Assistant",
+      "icon": {
+        "motif": "orbit",
+        "palette": "violet"
+      },
+      "whenToUse": "Answer customer or staff questions about your products, services and policies, grounded in your own content rather than the model's guesswork. Streams the reply as it is written so long answers start appearing immediately, and searches your spatial content on every question so it stays current as that content changes."
+    },
+    {
+      "kind": "node",
+      "name": "AirtableExists",
+      "fingerprint": "d97cff02e6991552",
+      "title": "Airtable Exists",
+      "description": "Check whether a record with a given field value already exists in a table",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
+      "whenToUse": "Pick to answer \"is this already in Airtable?\" before writing: it looks for one record whose field equals a value and returns a boolean plus the record id. Use it as a guard on a branch; it checks one value rather than fetching rows.\n"
+    },
+    {
+      "kind": "node",
+      "name": "AirtableFetch",
+      "fingerprint": "4fa09279c644cc89",
+      "title": "Airtable Fetch",
+      "description": "Read records from an Airtable table, with filters, views, sorting and paging",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
+      "whenToUse": "Pick to READ rows out of an Airtable table: filtered, sorted, from a named view, and paged automatically past the first hundred. Returns the records as plain objects with their Airtable id. Use it when the data lives in Airtable rather than a database.\n"
+    },
+    {
+      "kind": "node",
+      "name": "AirtableInsert",
+      "fingerprint": "06b8f937e2bd5ead",
+      "title": "Airtable Insert",
+      "description": "Write records to an Airtable table, batched, updating any that carry a record id",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
+      "whenToUse": "Pick to WRITE rows into an Airtable table from upstream data: it batches automatically, updates any record that already carries an Airtable id, and can skip rows whose value is already present. Use it to persist a collection; it writes, it does not read.\n"
+    },
+    {
+      "kind": "node",
+      "name": "ApifyResults",
+      "fingerprint": "4724955b830cc280",
+      "title": "Apify Results",
+      "description": "Read every item a finished Apify run produced",
+      "category": "Web Scraping",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png",
+      "whenToUse": "Pick to read what an Apify run scraped. Always the downstream half of Apify Starter: feed it the run id. It returns every item in the run's dataset, following each page, with a stable id per item. To handle them one at a time, wire Loop Start to the items."
+    },
+    {
+      "kind": "node",
+      "name": "ApifyStarter",
+      "fingerprint": "7f4f8efd4ce981dc",
+      "title": "Apify Starter",
+      "description": "Start an Apify actor or task run over a list of URLs",
+      "category": "Web Scraping",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png",
+      "whenToUse": "Pick to scrape a LARGE LIST of URLs in bulk: the whole list is handed to one Apify run rather than fetched a page per request. It hands back a run id and nothing else, so pair it with Apify Results to read what the run produced."
+    },
+    {
+      "kind": "node",
+      "name": "BedrockClaude",
+      "fingerprint": "37ac7662f01bfa27",
+      "title": "Bedrock Chat",
+      "description": "Ask Claude on AWS Bedrock, optionally about an image or document",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+      "whenToUse": "Reach for this when a step needs Claude to answer in ONE pass and the call must run in YOUR AWS account and region: summarise, analyse, classify, answer, including about an image or a document fetched alongside the prompt. It can be given a tool schema to return structured arguments instead of prose. Working through a problem across several tool calls is an agent's job, not this one's, and a step that needs a GPT model rather than Claude is not this node's job either."
+    },
+    {
+      "kind": "node",
+      "name": "BedrockEmbedding",
+      "fingerprint": "565a1d30745e2fd4",
+      "title": "Bedrock Embedding",
+      "description": "Turn text into a vector using AWS Bedrock Titan models",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+      "whenToUse": "Pick to turn a piece of text into the vector a similarity search needs, run on AWS in your own region and account. It embeds one text inline; offering embeddings to an attached agent on demand is a different node."
+    },
+    {
+      "kind": "node",
+      "name": "BedrockEmbeddingService",
+      "fingerprint": "cb0481f556f13314",
+      "title": "Bedrock Embedding Service",
+      "description": "Offer Titan embeddings to other nodes over a service edge",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+      "whenToUse": "Reach for this when something needs to turn text into vectors as it works, deciding for itself what and when: one piece, or a whole batch in a single pass. Embedding one fixed piece of text at a known point is cheaper done inline. Attach it by a service edge."
+    },
+    {
+      "kind": "node",
+      "name": "BedrockOpenAI",
+      "fingerprint": "95d67132d4e1bff4",
+      "title": "Bedrock GPT",
+      "description": "One prompt in, one GPT completion out, running in your AWS account",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+      "whenToUse": "Single prompt to single completion from a GPT model, when the call must run in YOUR AWS account and region: summarise, rewrite, classify, answer. No streaming, no tools, no schema enforcement; reach for a heavier node when a step genuinely needs token streaming, iterative tool use, strict JSON output, or to read an image or document alongside the prompt."
+    },
+    {
+      "kind": "node",
+      "name": "DynamoDB",
+      "fingerprint": "5c2192cbb0c19c34",
+      "title": "DynamoDB",
+      "description": "Write a record to an AWS DynamoDB table",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/DynamoDB.png",
+      "whenToUse": "Pick to put ONE record into a DynamoDB table as a step in a flow. Reading a record back, and exposing the full operation set to an attached agent, are different jobs with their own nodes."
+    },
+    {
+      "kind": "node",
+      "name": "DynamoDBFetch",
+      "fingerprint": "8900cea0383167f8",
+      "title": "DynamoDB Fetch",
+      "description": "Fetch a record from an AWS DynamoDB table by key",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/DynamoDB.png",
+      "whenToUse": "Pick to read ONE DynamoDB record by its primary key, with an optional sort key. It emits the item and a found flag, so a miss is an answer rather than an error. Writing a record, and querying a range of them, are different jobs."
+    },
+    {
+      "kind": "node",
+      "name": "DynamoDBService",
+      "fingerprint": "5cb4b66b3124d842",
+      "title": "DynamoDB Service",
+      "description": "Give an agent the full DynamoDB operation set on a table",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/DynamoDB.png",
+      "whenToUse": "Reach for this when an agent needs to look things up and record them as it goes, forming its own reads and writes rather than following one fixed lookup: fetch a record by key, read a range, store or amend one. A single known read or write in a fixed place is cheaper done inline. Attach it to the agent by a service edge."
+    },
+    {
+      "kind": "node",
+      "name": "S3FileContent",
+      "fingerprint": "58a00fc4509cba92",
+      "title": "S3 File Content",
+      "description": "Read one S3 object's details and mint a link to fetch it",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
+      "whenToUse": "Pick when you have a specific object and need a way to get at it: its size and type, plus a time-limited link a later step can fetch without AWS credentials. Finding out what is in a bucket is a different job."
+    },
+    {
+      "kind": "node",
+      "name": "S3Files",
+      "fingerprint": "ac80329a4ef3d8a9",
+      "title": "S3 Files",
+      "description": "List files in an S3 bucket, optionally with shareable links",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
+      "whenToUse": "Pick to find out what is in a bucket or under a prefix: names, sizes and modified dates, filtered by extension. It can also mint a time-limited link per file, so a later step can fetch one without credentials. Reading a single known object is a different job."
+    },
+    {
+      "kind": "node",
+      "name": "S3Upload",
+      "fingerprint": "1910d85889abf08a",
+      "title": "S3 Upload",
+      "description": "Write a file into S3 from a URL or base64 data",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
+      "whenToUse": "Pick to STORE a file in your own S3 bucket and get back a link to it: an image a model generated, a document a step produced, or anything fetched from a url that needs to persist somewhere you control. Takes the bytes either as a url to pull from or as base64 already in hand, and returns the object's key alongside a time-limited download link. Reading a file already in a bucket is a different job."
+    },
+    {
+      "kind": "node",
+      "name": "CloudinaryFileContent",
+      "fingerprint": "ef3de9636ba803e6",
+      "title": "Cloudinary File Content",
+      "description": "Read one Cloudinary asset's details, and build a transformed delivery URL for it.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
+      "whenToUse": "Take one asset from Cloudinary Files and get its full details plus a delivery URL, optionally RESIZED or reformatted by a transformation. Use it when you have an asset and need a specific rendition of it; use Cloudinary Files to find assets in the first place."
+    },
+    {
+      "kind": "node",
+      "name": "CloudinaryFiles",
+      "fingerprint": "0b9cec3aa6ddf0bc",
+      "title": "Cloudinary Files",
+      "description": "List media already stored in Cloudinary, optionally filtered by folder or tag.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
+      "whenToUse": "Find assets ALREADY in Cloudinary — browse a folder, pull everything with a tag, or take a random selection for a gallery. It reads an existing library rather than creating anything, so pair it with Cloudinary Upload when the asset does not exist yet."
+    },
+    {
+      "kind": "node",
+      "name": "CloudinaryUpload",
+      "fingerprint": "23e03cd80e2d8dcb",
+      "title": "Cloudinary Upload",
+      "description": "Upload an image or video to Cloudinary and get back a hosted URL.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
+      "whenToUse": "Put a generated or fetched file into Cloudinary and get a durable hosted URL back. Reach for it whenever something downstream needs a LINK rather than bytes: base64 does not survive a chat message, an email or a browser page well, and a Cloudinary URL does."
+    },
+    {
+      "kind": "node",
+      "name": "ElevenLabs",
+      "fingerprint": "c92614a827344214",
+      "title": "ElevenLabs TTS",
+      "description": "Speak text aloud in a chosen voice. Outputs base64 MP3.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+      "whenToUse": "Read TEXT ALOUD in one voice: a narration, an announcement, a spoken reply. It performs words that are already written, so use it when the words exist and only the voice is needed. For several speakers in one clip use ElevenLabs Dialogue; for the sound of a thing rather than speech use Sound Effects."
+    },
+    {
+      "kind": "node",
+      "name": "ElevenLabsDialogue",
+      "fingerprint": "6d6ed0f488f8722c",
+      "title": "ElevenLabs Dialogue",
+      "description": "Perform a multi-speaker script as one audio clip. Outputs base64 MP3.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+      "whenToUse": "Perform a SCRIPT with several speakers as a single clip, with the turn-taking and interruptions of real conversation. Give it lines with a voice each. Use it over TTS whenever more than one person speaks, because TTS reads everything in one voice."
+    },
+    {
+      "kind": "node",
+      "name": "ElevenLabsMusic",
+      "fingerprint": "97f96187617e5856",
+      "title": "ElevenLabs Music",
+      "description": "Compose a music track from a text prompt. Outputs base64 MP3.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+      "whenToUse": "Compose MUSIC from a description: a backing track, a theme, a loop, a score for a video. It writes and performs a piece from words, so it is for music rather than for a one-off sound effect or for reading text aloud."
+    },
+    {
+      "kind": "node",
+      "name": "ElevenLabsSoundEffects",
+      "fingerprint": "3812a1c7c618ce59",
+      "title": "ElevenLabs Sound Effects",
+      "description": "Generate a sound effect clip from a text prompt. Outputs base64 MP3.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+      "whenToUse": "Generate a sound effect from a text prompt: footsteps on gravel, a door creak, rain, a whoosh, an explosion, ambient room tone. It synthesizes the actual audio of an effect from words and never spoken text, so \"door slam\" becomes the sound rather than a voice reading the phrase."
+    },
+    {
+      "kind": "node",
+      "name": "ElevenLabsSpeechToText",
+      "fingerprint": "abd118ce6d0e155b",
+      "title": "ElevenLabs Speech to Text",
+      "description": "Transcribe audio to text with word-level timings and optional speaker labels.",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+      "whenToUse": "Turn RECORDED AUDIO into text: a meeting, a voice note, an interview, a video's soundtrack. It reads audio and returns words, which is the opposite direction to every other node in this package. Ask for diarization when you need to know who spoke."
+    },
+    {
+      "kind": "node",
+      "name": "SendGridEmail",
+      "fingerprint": "0491ffd81fd2aca0",
+      "title": "Send Email",
+      "description": "Send an email through SendGrid, as plain text or HTML",
+      "category": "Communication",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/microsoft365.png",
+      "whenToUse": "Send an email to a recipient inbox: a notification, report, confirmation or outreach message addressed to an email address. Runs as a pipeline step rather than a tool an agent calls, and reaches a mailbox rather than a chat channel or the client UI, so it is the wrong step when the message should appear in a conversation the user is already in."
+    },
+    {
+      "kind": "node",
+      "name": "Code",
+      "fingerprint": "7177ff81c29e3489",
+      "title": "Code",
+      "description": "Execute custom code to transform data",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
+      "whenToUse": "Transform, reshape, compute or combine data inline with a JS expression: map or filter an array, build an object, derive a value from upstream outputs. Prefer it over routing data through an LLM node just to reformat or merge it, because it is deterministic and free. Toggle generateIds for content hashes, or saveToContext to keep the result reachable from later templates."
+    },
+    {
+      "kind": "node",
+      "name": "Context",
+      "fingerprint": "e3335d1299e26f17",
+      "title": "Context",
+      "description": "Extract workflow context (userId, conversationId, chatId, etc.)",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Read the current run's identity and session fields — userId, conversationId, chatId, workflowId, executionId — to scope, personalise or key a later step. It hands them over as one ready-to-use object rather than making a template dig through the raw execution context."
+    },
+    {
+      "kind": "node",
+      "name": "FieldValidator",
+      "fingerprint": "1343ea82e09253dd",
+      "title": "Field Validator",
+      "description": "Validate data against a schema and output the next missing field",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
+      "whenToUse": "Ask the next question in a form-filling conversation: compare what the guest has already given against a schema and get back the single field to ask for next, with completion state alongside. Deterministic — required fields first, then schema order — so the dialog never relies on a model to decide what to ask. Reach for it when a workflow collects a fixed set of fields turn by turn; it validates presence only, never formats or types."
+    },
+    {
+      "kind": "node",
+      "name": "IfElse",
+      "fingerprint": "ceb73ce50a3afb6e",
+      "title": "If/Else",
+      "description": "Evaluate a condition and route to a true or false output",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Branch the workflow: evaluate a boolean condition and send the same payload down either a true or a false path, so only one downstream branch runs. Reach for it when a step must FORK execution rather than change data, because the upstream payload passes through untouched on whichever single edge is chosen."
+    },
+    {
+      "kind": "node",
+      "name": "LoopEnd",
+      "fingerprint": "914b6fa63570879d",
+      "title": "Loop End",
+      "description": "Closes a LoopStart loop; optionally collects a value each pass, emitting results when done.",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Close a per-item loop and gather its results: collect a value on each pass and emit { done, collected, total } once the array is exhausted, then carry on with the collected list. It is the required closer for a LoopStart, so set loopStartNodeId to that node's id; it does nothing on its own."
+    },
+    {
+      "kind": "node",
+      "name": "LoopStart",
+      "fingerprint": "ca73bed11b2b9d70",
+      "title": "Loop Start",
+      "description": "Iterates an array one item at a time, running the nodes up to its paired LoopEnd per item.",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Loop over an array, running a branch of nodes once per item: for-each or repeat-per-item processing where each item flows through real workflow steps such as API calls and agents, rather than an in-memory transform. It emits item, index and total on every pass. Always close it with exactly one LoopEnd whose loopStartNodeId points back here; it does nothing useful alone."
+    },
+    {
+      "kind": "node",
+      "name": "Note",
+      "fingerprint": "fc83be51fde77566",
+      "title": "Note",
+      "description": "Add notes, documentation and comments to your workflow",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Add a markdown comment, label or sticky onto the canvas to explain what a workflow does. It is annotation only: it has no inputs or outputs and never runs in the data flow, so it cannot transform anything or show anything to an end user."
+    },
+    {
+      "kind": "node",
+      "name": "Relay",
+      "fingerprint": "ae74efe0722a74d2",
+      "title": "Relay",
+      "description": "Instantly forwards any signal without waiting for dependencies",
+      "category": "Flow",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Forward a signal downstream immediately without waiting on the normal dependency and join rules: a pass-through wire to fan a signal out, or to break a blocking dependency. It adds no transform, only unwrapping a single upstream output and re-timing the signal, so it exists for control-flow rewiring rather than for changing data."
+    },
+    {
+      "kind": "node",
+      "name": "Suggestions",
+      "fingerprint": "07892b3a75825f22",
+      "title": "Suggestions",
+      "description": "Publish FAQs, actions and recommendations to the live client UI",
+      "category": "Output",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Show the guest clickable follow-up chips: push suggested FAQs, quick actions and recommendations into the live chat UI as the workflow runs. The dedicated path for chat suggestions — the object lands in template state where the template's own fragments pick it up, so a generic data emit will not render as chips. Reach for it whenever a step has computed what the guest might ask or do next."
+    },
+    {
+      "kind": "node",
+      "name": "GeminiImageGen",
+      "fingerprint": "4a0fc9eb9d8dc2a9",
+      "title": "Gemini Image Gen",
+      "description": "Generate images using Google's Gemini models",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png",
+      "whenToUse": "Pick to CREATE an image from a description: a picture, illustration, photo or graphic that does not exist yet. Returns the rendered image data itself rather than a description of one, and can take a reference photo to keep a person recognisable across several generations. Editing an image that already exists, and producing a fixed branded template, are different jobs."
+    },
+    {
+      "kind": "node",
+      "name": "ApolloCompany",
+      "fingerprint": "6aef71c77b987d65",
+      "title": "Apollo Company",
+      "description": "Search Apollo.io for companies matching keywords, industry, location or size",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
+      "whenToUse": "Pick to DISCOVER or build a list of companies matching criteria (keywords, industry, location, size) from Apollo's database, returning firmographics and account data. Use it to find unknown companies by criteria; enriching a domain you already have, or finding people, are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "ApolloCompanyEnrich",
+      "fingerprint": "9fa0b31043d25dc3",
+      "title": "Apollo Company Enrich",
+      "description": "Look up a company's full Apollo.io profile from its domain",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
+      "whenToUse": "Pick when you ALREADY HAVE a company domain and need its full Apollo profile: industry, revenue, headcount, funding and contact details. Use it to enrich a known domain; discovering companies by criteria, or enriching people, are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "ApolloPeople",
+      "fingerprint": "07865e285f1368c1",
+      "title": "Apollo People",
+      "description": "Search Apollo.io for people by title, seniority, department or company",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
+      "whenToUse": "Pick to DISCOVER lists of people by title, seniority, department or company filters, returning each with email, LinkedIn and phone in one call. Use it to find unknown people by role across companies; enriching one already-known person, or finding companies, are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "ApolloPeopleEnrich",
+      "fingerprint": "8a80b9ab3a700b5a",
+      "title": "Apollo People Enrich",
+      "description": "Look up one known person's full Apollo.io profile",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
+      "whenToUse": "Pick when you have an identifier for ONE KNOWN person (email, LinkedIn URL, or name plus company) and need their full Apollo profile: employment history and contact details. Use it to enrich one already-identified person; discovering unknown people, or only finding and verifying an email address, are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HunterDiscover",
+      "fingerprint": "f80bcd9433873340",
+      "title": "Hunter Discover",
+      "description": "Build a target-company list from criteria or a natural-language query",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+      "whenToUse": "Pick to BUILD a target-company list from criteria (industry, tech stack, size, location) or a natural-language query, the starting point for prospecting, with tech-stack and lookalike filters. Use it to discover unknown companies by criteria; if you already have a domain you do not need a discovery step.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HunterDomainSearch",
+      "fingerprint": "4d7196e56e058597",
+      "title": "Hunter Domain Search",
+      "description": "List every known email address at one domain or company",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+      "whenToUse": "Pick to list EVERY known email address at one domain or company, for exhaustive coverage of a single known domain. Use it when you have a domain and want all its addresses; finding one person's address, verifying deliverability, full profiles, or role-filtered people across companies are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HunterEmailFinder",
+      "fingerprint": "7bd4489ed5b3b087",
+      "title": "Hunter Email Finder",
+      "description": "Find one person's work email from their LinkedIn or their name and company",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+      "whenToUse": "Pick when you have a person's LinkedIn profile (handle or URL) or their name plus a company or domain, and need ONLY their work email and a confidence score. Use it to find one specific person's address; listing every address at a domain, verifying deliverability, or a full profile are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HunterEmailVerifier",
+      "fingerprint": "ad0bc084ff3dc12c",
+      "title": "Hunter Email Verifier",
+      "description": "Check whether one email address is real and deliverable",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+      "whenToUse": "Pick to CHECK that a single email address is real and deliverable before sending. Use it to verify an address you already have; discovering an unknown address is a separate, upstream step.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HunterEnrich",
+      "fingerprint": "8332ac570c84d45c",
+      "title": "Hunter Enrich",
+      "description": "Enrich a person or a company from an email, a LinkedIn profile or a domain",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+      "whenToUse": "Enrich a PERSON or a COMPANY from an email, a LinkedIn profile (handle or URL), or a domain, returning the full profile: job, employment, location, socials and company metrics. Use it for full enrichment; finding or verifying a single address, or listing a domain's emails, are different jobs.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HubspotMCP",
+      "fingerprint": "fac1b2de39016783",
+      "title": "HubSpot",
+      "description": "Resolve the signed-in user to their HubSpot contact and output that profile; an attached agent can also read it and push insight notes back.",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1784461921/gravity/icons/Hubspot.svg",
+      "whenToUse": "Pick to ground a conversation in the signed-in customer. It resolves the logged-in user (by their authenticated email) to their HubSpot contact and emits that identity profile, so downstream steps start already knowing who they are talking to. Wire it inline (trigger to contact profile out) to use the lookup as a step, or attach it via a service edge to an agent, which can also append a durable insight note to the contact. The user is read from the session, never from the input.\n"
+    },
+    {
+      "kind": "node",
+      "name": "HyperbrowserCrawl",
+      "fingerprint": "8815bf78a81b3cd7",
+      "title": "Hyperbrowser Crawl",
+      "description": "Crawl a site from a seed URL across many pages, returning per-page markdown and links",
+      "category": "Web Scraping",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg",
+      "whenToUse": "Pick to FOLLOW LINKS from a seed URL across many pages of one site, bounded by a page limit and optional include or exclude patterns. It walks a site; reading one known page, pulling typed fields against a schema, and running a bulk offloaded actor are different jobs with their own nodes."
+    },
+    {
+      "kind": "node",
+      "name": "HyperbrowserExtract",
+      "fingerprint": "aeed2efc8f19403b",
+      "title": "Hyperbrowser Extract",
+      "description": "Extract structured JSON from one or more URLs using a prompt and/or schema",
+      "category": "Web Scraping",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg",
+      "whenToUse": "Pick when you need TYPED FIELDS pulled out of pages: an object or array matching a schema you describe, read by a model rather than by you. Give it a schema, a prompt, or both. It returns structured data; raw page markdown and multi-page link-following are different jobs with their own nodes."
+    },
+    {
+      "kind": "node",
+      "name": "HyperbrowserScrape",
+      "fingerprint": "53c87df82b4d9c0a",
+      "title": "Hyperbrowser Scrape",
+      "description": "Scrape a single URL to markdown, HTML and links with a stealth headless browser",
+      "category": "Web Scraping",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg",
+      "whenToUse": "Pick to grab the content of ONE known URL as markdown, HTML and links. It reads a single known page; following links across a site, pulling typed fields against a schema, and finding URLs by query are all different jobs with their own nodes."
+    },
+    {
+      "kind": "node",
+      "name": "Abyssale",
+      "fingerprint": "99ec78aaba6eaae9",
+      "title": "Abyssale",
+      "description": "Generate high-quality images and PDFs from Abyssale templates",
+      "category": "Media & Design",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1768052235/gravity/icons/abyssale-picto-airtable.png",
+      "whenToUse": "Pick to render branded images or PDFs from pre-built Abyssale TEMPLATES by mapping data to named layers. It is for on-brand assets with a fixed designed layout, not free-form AI-generated imagery and not a document designed from scratch."
+    },
+    {
+      "kind": "node",
+      "name": "GoogleSheet",
+      "fingerprint": "4489678c62bf6f36",
+      "title": "Google Sheet",
+      "description": "Read rows from a public Google Sheets spreadsheet",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1753618586/gravity/icons/googleSheetIcon.png",
+      "whenToUse": "Pick to read rows from a public GOOGLE SHEET. It returns every row in one go, so pair it with Loop Start and Loop End when each row needs to flow through its own workflow steps. It reads a Google Sheet specifically, not an app-owned database table."
+    },
+    {
+      "kind": "node",
+      "name": "PlaidTransactions",
+      "fingerprint": "fae4682e764a62ad",
+      "title": "Plaid Transactions",
+      "description": "Fetch bank transactions from Plaid Sandbox for testing.",
+      "category": "Storage & Data",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1765729171/gravity/icons/plaid_logo.png",
+      "whenToUse": "Pick ONLY when a workflow needs realistic test bank transactions. It hits Plaid Sandbox with test personas and never a live account, so it is a sandbox data source rather than a general store of real records."
+    },
+    {
+      "kind": "node",
+      "name": "SpatialIngest",
+      "fingerprint": "c2a1a1d46d20bc71",
+      "title": "Spatial Ingest",
+      "description": "Turn raw text into needs or services in the spatial dictionary.",
+      "category": "Documents",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a message thread. It reads the text, pulls out the distinct needs or services it describes, embeds each one and stores it. It only WRITES to that map — searching it is a different job — and it takes text that is already in hand rather than fetching from anywhere."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAI",
+      "fingerprint": "be7f199aedea9f81",
+      "title": "OpenAI",
+      "description": "One prompt in, one completion out, with no streaming or tools",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Single prompt to single completion, the plain one-shot text generator: summarise, rewrite, classify, answer. No streaming, no tools, no schema enforcement; reach for a heavier node only when a step genuinely needs token streaming, iterative tool use, or strict JSON output."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAIAgent",
+      "fingerprint": "20f8c029eb020785",
+      "title": "OpenAI Agent",
+      "description": "Multi-turn agent that works through a problem using MCP tools",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Reach for this when a step needs the model to work through a problem using tools rather than answer in one pass: look something up, act on what it found, then decide what to do next. A single prompt with no tool use is cheaper and more predictable done elsewhere. Attach MCP provider nodes by service edge to give it capabilities."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAIEmbeddingService",
+      "fingerprint": "accf1b228adc4953",
+      "title": "Embedding Service",
+      "description": "Turns text into vector embeddings for semantic search",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Turn text into vectors so records can be indexed for and retrieved by semantic search: the backend a vector store calls to embed both what it stores and what it later queries. Model and dimensions are selectable. Attach via a service edge to that consumer; it is not a data-flow step."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAIStream",
+      "fingerprint": "c904a0ce29aadd52",
+      "title": "OpenAI Stream",
+      "description": "Text generation with tokens streamed live as they are produced",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Summarize, extract, answer or generate text with the reply arriving word by word as it is written, so a person watches it appear rather than waiting for a finished block. A single pass, plus a few bounded tool calls when MCP provider nodes are attached by service edge; it is not an iterative loop, so many sequential tool calls or multi-turn work needs more."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAIStructuredOutput",
+      "fingerprint": "959ed10324c952e7",
+      "title": "GPT-5 Structured Output",
+      "description": "Extract structured data using the GPT-5 Responses API with a JSON schema",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Pick when the output must be JSON that strictly matches a schema, so downstream nodes can rely on the shape instead of parsing defensively: schema-enforced extraction and structuring. Free-form prose or multi-turn tool use makes it the wrong, over-constrained choice. Wire the schema and the content in as inputs."
+    },
+    {
+      "kind": "node",
+      "name": "OpenAIRealtimeVoice",
+      "fingerprint": "2a5df9163c64fb15",
+      "title": "OpenAI Realtime Voice",
+      "description": "Live two-way voice conversation with OpenAI's realtime models",
+      "category": "Voice",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Pick when someone should TALK to the workflow and be spoken back to, in real time, with the model hearing them mid-sentence and able to be interrupted. Holds one continuous conversation for as long as the call lasts and emits both sides as transcripts while it runs. Reading a script aloud, and transcribing a recording that already exists, are different jobs, because neither needs a live listener."
+    },
+    {
+      "kind": "node",
+      "name": "PineconeSearch",
+      "fingerprint": "6c6a43d0d9c009aa",
+      "title": "Pinecone Search",
+      "description": "Search a Pinecone index by meaning, using text rather than a vector",
+      "category": "Knowledge & Vectors",
+      "icon": null,
+      "whenToUse": "Find the stored passages closest in meaning to a piece of text, in a Pinecone index that embeds its own content. Retrieval for grounding an answer, matching a question to documented material, or finding near-duplicates. The index must have been created with an embedding model attached; one holding vectors computed elsewhere cannot be searched this way, and searching the platform's own knowledge base is a different step entirely."
+    },
+    {
+      "kind": "node",
+      "name": "PineconeUpsert",
+      "fingerprint": "02c28f954077d814",
+      "title": "Pinecone Upsert",
+      "description": "Store text in a Pinecone index, letting Pinecone do the embedding",
+      "category": "Knowledge & Vectors",
+      "icon": null,
+      "whenToUse": "Write passages into a Pinecone index so they can be found by meaning later: building or topping up a knowledge base, indexing documents for retrieval. Takes text and stores it; the index must have been created with an embedding model attached. Long documents should be split into passages before this step, since it stores each record whole."
+    },
+    {
+      "kind": "node",
+      "name": "SalesforceMCP",
+      "fingerprint": "322320d594d201e8",
+      "title": "Salesforce",
+      "description": "Query, read, create and update records in a Salesforce org.",
+      "category": "Go To Market",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1781672225/gravity/icons/Salesforce-dark.svg",
+      "whenToUse": "Pick for customer and CRM data in Salesforce: look up customers, accounts, contacts and opportunities, and capture or update leads. Reads any object, SOQL under the hood; writes are lead-only with a fixed field set, so an agent can never modify other records. Attach it via a service edge to an agent, or trigger it directly with a fixed query.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SearchNews",
+      "fingerprint": "03273c1cdcadc964",
+      "title": "Search News",
+      "description": "Find recent news articles on a topic via SearchAPI.io (Google News)",
+      "category": "Search",
+      "icon": "https://cdn-icons-png.flaticon.com/512/2965/2965879.png",
+      "whenToUse": "Pick to find recent, DATED news articles on a topic: each result carries a publication date and source (Google News). Use it specifically when recency and an article's date matter; it returns dated news, not arbitrary web pages, videos, places, or social posts.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SearchPlaces",
+      "fingerprint": "4682b54dd1f69c35",
+      "title": "Search Places",
+      "description": "Find local businesses and places with ratings via SearchAPI.io (Google Maps)",
+      "category": "Search",
+      "icon": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+      "whenToUse": "Pick to find local BUSINESSES or PLACES: each result carries address, rating, review count, phone, website and GPS coordinates (Google Maps). Use it when you need structured place or location data; it returns places, not arbitrary web pages, dated articles, or videos.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SearchVideos",
+      "fingerprint": "c1e7530db43cf94a",
+      "title": "Search Videos",
+      "description": "Search YouTube videos by keyword via SearchAPI.io (youtube)",
+      "category": "Search",
+      "icon": "https://cdn-icons-png.flaticon.com/512/1384/1384060.png",
+      "whenToUse": "Pick to find YOUTUBE VIDEOS for a keyword: title, channel, views, length and thumbnail per result. Use it when you specifically want video content; it returns videos, not arbitrary web pages, dated articles, or places.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SearchWeb",
+      "fingerprint": "c834c57dae165bb9",
+      "title": "Search Web",
+      "description": "Search the web using SearchAPI.io (Google) for web results and images",
+      "category": "Search",
+      "icon": "https://cdn-icons-png.flaticon.com/512/3128/3128287.png",
+      "whenToUse": "Pick to find WEB PAGES and images for a keyword query: titles, URLs and snippets from across the open web (Google). Use it for general open-web results, any relevant page; it returns web pages, not specifically dated news, videos, places, or social posts.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SlackMCP",
+      "fingerprint": "73d5dc8d32ea34ea",
+      "title": "Slack",
+      "description": "Send messages, search, and read a Slack workspace",
+      "category": "Communication",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1779530623/gravity/icons/Slack.svg",
+      "whenToUse": "Pick to reach a Slack workspace: post a message or thread reply, search messages, read a channel's history, list channels, look up a user, or react to a post. Attach it to an agent so it can talk to a team, or trigger it directly to post to a default channel.\n"
+    },
+    {
+      "kind": "node",
+      "name": "SmartDocument",
+      "fingerprint": "f0a65a10212d50cf",
+      "title": "Smart Document",
+      "description": "Produce a long-form deliverable — report, plan, spec, article, brief — that an agent writes and revises section by section instead of emitting one big blob. Section-addressed, hash-checked markdown edits (no drift, no full rewrites); live-renders on every edit.",
+      "category": "Documents",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Pick whenever an agent must author or revise a long document — report, plan, spec, article, brief. Writes and revises section by section and live-renders each edit; a one-shot generation can't be revised and blows the context window on every change. Attach via a service edge to an agent node, and route its markdown to a MarkdownRenderer to display."
+    },
+    {
+      "kind": "node",
+      "name": "SpatialSearch",
+      "fingerprint": "737bf044dfd6e4b0",
+      "title": "Spatial Search",
+      "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
+      "category": "Search",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Give an agent semantic search over the platform's own knowledge base: find the needs, skills, services and content most relevant to a query, and discover what else sits near a topic. Two searches in one, precise intent lookup and spatial discovery. Reach elsewhere when the knowledge lives in an external vector store. Attach by a service edge to the agent; it is not a data-flow step."
+    },
+    {
+      "kind": "node",
+      "name": "ParseDocument",
+      "fingerprint": "f5674c5a5834ad84",
+      "title": "Parse Document",
+      "description": "Read any document into plain text and structured elements. PDF, Word, slides, spreadsheets, images.",
+      "category": "Documents",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Read an existing document into text an Agent can work with: a PDF, Word file, slides, spreadsheet, scanned page or a photo of one. It handles digital text and OCR alike, and returns the document broken into titles, paragraphs and tables as well as one plain string. It only READS a file that already exists, so it cannot author or revise one."
+    },
+    {
+      "kind": "node",
+      "name": "XSearch",
+      "fingerprint": "ab787cef26a826fb",
+      "title": "X Search",
+      "description": "Search recent X (Twitter) posts and return structured tweet data",
+      "category": "Search",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg",
+      "whenToUse": "Search recent X (Twitter) posts by keyword, hashtag, user or language and get structured tweet data with engagement metrics; supports X query operators (from:, #hashtag, lang:, -is:retweet). It returns native posts with per-post engagement metrics, not crawled web pages and not scraped arbitrary sites.\n"
+    },
+    {
+      "kind": "node",
+      "name": "XAIGrokVoice",
+      "fingerprint": "f2022b4ec80087ab",
+      "title": "xAI Grok Voice",
+      "description": "Realtime voice conversation with xAI's Grok",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Hold a spoken, two-way conversation with Grok in real time: the person talks, Grok answers aloud, and either can interrupt the other. Pick it when the interaction is a VOICE CALL rather than text, and when you want xAI's model. It consumes tools from MCP provider nodes attached via service edges."
+    },
+    {
+      "kind": "node",
+      "name": "GLMAgent",
+      "fingerprint": "02f8c465b4e13c1c",
+      "title": "GLM Agent",
+      "description": "Multi-turn GLM-5.2 (Z.AI) agent with MCP tool calling, reasoning, and streaming",
+      "category": "AI",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1782027963/gravity/icons/z.svg",
+      "whenToUse": "Run a multi-turn agent on Z.AI's GLM-5.2 that calls tools, reasons, and streams its answer. Pick it specifically when you want the GLM model family — large context, strong coding and agentic reasoning. It consumes tools from MCP provider nodes attached via service edges."
+    }
+  ]
 }

@@ -36,4 +36,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [runId, authRequired, authRole]
+"ui:order": [authRequired, authRole, runId]

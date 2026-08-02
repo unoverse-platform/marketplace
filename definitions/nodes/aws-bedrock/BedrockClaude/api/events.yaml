@@ -1,25 +1,36 @@
 # One row per output connector.
 #
-# Bedrock's Converse reply puts the answer in output.message.content, which is a LIST of
-# blocks: text blocks and, when the model reached for a tool, a toolUse block. The retired
-# node concatenated every text block, which is right — a long answer can arrive in several.
+# The Messages API reply puts the answer in response.content, a LIST of blocks: text
+# blocks, thinking blocks, and a tool_use block when the model reached for a tool. Text
+# blocks concatenate, because a long answer can arrive in several.
+#
+# THE OUTPUT SHAPE IS THE CONTRACT this node has always had: { text, usage: { inputTokens,
+# outputTokens, totalTokens }, stopReason, toolUse? }. Downstream templates reference
+# those names, so the vendor's snake_case is mapped here, never passed through.
 
+# The chosen tool's ARGUMENTS are also hoisted to the top of the output, so a downstream
+# template reads output.faqs directly rather than output.toolUse.toolInput.faqs. Assigned
+# FIRST, so the node's fixed keys (text, usage, stopReason, toolUse) win any name
+# collision with a tool argument.
 - emit: output
   from: response
   value: >-
-    return Object.assign({
-      text: ((((response.output || {}).message || {}).content) || [])
-        .filter(b => b.text).map(b => b.text).join(''),
+    return Object.assign(
+    {},
+    (((response.content || []).filter(b => b.type === 'tool_use')[0] || {}).input) || {},
+    {
+      text: (response.content || [])
+        .filter(b => b.type === 'text').map(b => b.text).join(''),
       usage: {
-        inputTokens: (response.usage || {}).inputTokens || 0,
-        outputTokens: (response.usage || {}).outputTokens || 0,
-        totalTokens: (response.usage || {}).totalTokens
-          || (((response.usage || {}).inputTokens || 0) + (((response.usage || {}).outputTokens) || 0))
+        inputTokens: (response.usage || {}).input_tokens || 0,
+        outputTokens: (response.usage || {}).output_tokens || 0,
+        totalTokens: ((response.usage || {}).input_tokens || 0)
+          + ((response.usage || {}).output_tokens || 0)
       },
-      stopReason: response.stopReason || ''
+      stopReason: response.stop_reason || ''
     },
-    ((((response.output || {}).message || {}).content) || []).filter(b => b.toolUse).length
-      ? { toolUse: ((((response.output || {}).message || {}).content) || [])
-          .filter(b => b.toolUse)
-          .map(b => ({ toolName: b.toolUse.name, toolInput: b.toolUse.input }))[0] }
+    (response.content || []).filter(b => b.type === 'tool_use').length
+      ? { toolUse: (response.content || [])
+          .filter(b => b.type === 'tool_use')
+          .map(b => ({ toolName: b.name, toolInput: b.input }))[0] }
       : {})

@@ -9,25 +9,32 @@ $schema: ../_schema/package.schema.json
 
 name: aws-bedrock
 displayName: AWS Bedrock
-description: Claude models and Titan embeddings on AWS Bedrock
-version: 2.0.0
+description: Claude and GPT models plus Titan embeddings on AWS Bedrock
+version: 2.1.0
 category: ai
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/bedrock.png
+publisher: unoverse
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp
 
 features:
-  - Claude on Bedrock, with images, documents and tools
+  - Claude on Bedrock via the native Messages API, with images, documents and tools
+  - GPT on Bedrock, one prompt to one completion
   - Titan text embeddings, inline or over a service edge
 
 # Two labels deep at least: bedrock-runtime.eu-west-1.amazonaws.com.
 allowedHosts:
   - "**.amazonaws.com"
+  # The bedrock-mantle endpoint, AWS's host for the native Anthropic Messages API:
+  # bedrock-mantle.us-east-1.api.aws.
+  - "**.api.aws"
   # Any host, for the UNAUTHENTICATED attachment fetches only. BedrockClaude reads an image
   # or document from a url a person supplies, which cannot be declared in advance. Those
   # calls send no credential, and the executor refuses "*" the moment one does.
   - "*"
 
 requires:
-  credential: [awsSigV4]
+  # SigV4 for the embeddings nodes; the LLM nodes authenticate with a Bedrock API key,
+  # x-api-key on the Mantle endpoint and bearer on bedrock-runtime.
+  credential: [awsSigV4, apiKeyHeader, bearer]
   transport: [json, binary]
   # Bedrock embeds ONE text per request, so a batch is a fan-out.
   chunk: true

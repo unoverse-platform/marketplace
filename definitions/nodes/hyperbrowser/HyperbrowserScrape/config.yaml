@@ -75,4 +75,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [url, onlyMainContent, waitFor, useStealth, useUltraStealth, solveCaptchas, country, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, url, onlyMainContent, waitFor, useStealth, useUltraStealth, solveCaptchas, country]

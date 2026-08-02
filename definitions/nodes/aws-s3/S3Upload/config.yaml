@@ -83,4 +83,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [bucket, key, sourceType, sourceUrl, base64Data, contentType, downloadUrlExpiry, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, bucket, key, sourceType, sourceUrl, base64Data, contentType, downloadUrlExpiry]

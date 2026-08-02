@@ -62,4 +62,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [rawContent, category, sourceUrl, maxItems, authRequired, authRole]
+"ui:order": [authRequired, authRole, rawContent, category, sourceUrl, maxItems]

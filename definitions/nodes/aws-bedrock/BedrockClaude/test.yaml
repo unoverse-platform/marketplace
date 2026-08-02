@@ -2,11 +2,10 @@ $schema: ../../../_schema/test.schema.json
 
 testData:
   config:
-    model: anthropic.claude-3-5-sonnet-20241022-v2:0
+    model: anthropic.claude-sonnet-5
     prompt: Reply with exactly the word READY and nothing else.
     systemPrompt: You follow instructions precisely.
     maxTokens: 64
-    temperature: 0
     includeImageUrl: false
     includeDocumentUrl: false
     enableTools: false

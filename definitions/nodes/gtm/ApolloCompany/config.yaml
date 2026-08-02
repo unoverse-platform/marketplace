@@ -79,5 +79,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [keywords, industries, organizationNames, organizationDomains, organizationLocations,
-   organizationNumEmployeesRanges, limit, authRequired, authRole]
+  [authRequired, authRole, keywords, industries, organizationNames, organizationDomains, organizationLocations, organizationNumEmployeesRanges, limit]

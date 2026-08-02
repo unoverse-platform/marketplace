@@ -52,4 +52,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [baseId, tableId, field, value, authRequired, authRole]
+"ui:order": [authRequired, authRole, baseId, tableId, field, value]

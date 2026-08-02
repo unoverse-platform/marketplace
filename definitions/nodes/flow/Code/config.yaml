@@ -55,4 +55,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [code, generateIds, saveToContext, authRequired, authRole]
+"ui:order": [authRequired, authRole, code, generateIds, saveToContext]

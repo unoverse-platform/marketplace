@@ -101,5 +101,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [indexName, namespace, query, fields, topK, scoreThreshold, metadataFilter,
-   authRequired, authRole]
+  [authRequired, authRole, indexName, namespace, query, fields, topK, scoreThreshold, metadataFilter]

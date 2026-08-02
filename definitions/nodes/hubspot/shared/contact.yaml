@@ -7,6 +7,16 @@
 
 # ── the calls ────────────────────────────────────────────────────────────────────
 
+# The node's own last snapshot, read back so the WORKFLOW channel can skip HubSpot while it
+# is fresh. Freshness is judged on `syncedAt`, which only the cache call below writes:
+# `updatedAt` is stamped by EVERY merge to this key, including the memory server's, so a
+# busy memory lane would keep it looking fresh and the sync would never run again.
+snapshot: &snapshot
+  name: snapshot
+  state: read
+  when: "return !!scope.userId && !!scope.workflowId"
+  key: "crm:{{ scope.userId }}:{{ scope.workflowId }}"
+
 # The email is the join key, and it comes from the SESSION, not the wire. A caller may name
 # one (an agent asking about a colleague), and with no caller `params` is empty, so the
 # workflow channel always resolves the signed-in user and cannot be steered onto someone
@@ -21,6 +31,47 @@ search: &search
   # It happens for real: the node tester has no signed-in session, so `user.email` is empty
   # unless a caller passes one.
   when: "return !!(params.email || user.email)"
+  method: POST
+  url: { $ref: endpoints#contactSearch }
+  credential:
+    scheme: bearer
+    token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+  body: >-
+    return {
+      filterGroups: [{ filters: [{
+        propertyName: 'email',
+        operator: 'EQ',
+        value: params.email || user.email
+      }] }],
+      properties: ['firstname', 'lastname', 'email', 'phone', 'jobtitle', 'company', 'lifecyclestage'],
+      limit: 1
+    }
+  transport: json
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+# The search the SYNC sequence runs: identical to `search` except it also stands down while
+# the snapshot is fresh. The 10 minutes is MEMORY_SPEC.md's number for this snapshot
+# (cache-aside, 10-min TTL) — the retired executor carried it as a Redis TTL, which the
+# shared state key can no longer do (the memory server merges into it), so the freshness
+# window moved onto the sync's own stamp. A duplicate rather than a merge key because the
+# YAML loader parses 1.2, which has no `<<`. The `name` stays `search` so every downstream
+# `calls.search` gate works unchanged; only the sync sequence carries a snapshot call, so
+# only it can skip.
+#
+# The service tools deliberately do NOT use this: `write_contact_meta` attaches a note by
+# the id of a LIVE search, and `get_contact` answers a direct question, where a stale reply
+# is a lie rather than a saving.
+syncSearch: &syncSearch
+  name: search
+  when: >-
+    return !!(params.email || user.email) && (
+      !!params.email
+      || !((calls.snapshot || {}).syncedAt)
+      || (Date.now() - (calls.snapshot || {}).syncedAt) > 10 * 60 * 1000
+    )
   method: POST
   url: { $ref: endpoints#contactSearch }
   credential:
@@ -88,13 +139,24 @@ cache: &cache
   # nobody was even named would write a cold miss over a warm snapshot.
   when: "return !!scope.userId && !!scope.workflowId && !!calls.search"
   key: "crm:{{ scope.userId }}:{{ scope.workflowId }}"
+  # The FULL result allowlist, not a trimmed one: a sync turn that skips the search replays
+  # this contact as its result, so anything the result promises must be here. `syncedAt` is
+  # epoch millis (`new Date()` is unavailable in the sandbox, and rightly so) and is the
+  # freshness stamp `syncSearch` reads; see the snapshot call for why `updatedAt` cannot
+  # serve.
   value: >-
-    return { contact: (((calls.search || {}).results) || []).map(c => ({
+    return { syncedAt: Date.now(),
+      contact: (((calls.search || {}).results) || []).map(c => ({
       id: c.id,
       name: [c.properties.firstname, c.properties.lastname].filter(Boolean).join(' ') || null,
+      firstName: c.properties.firstname || null,
+      lastName: c.properties.lastname || null,
       email: c.properties.email || null,
+      phone: c.properties.phone || null,
+      title: c.properties.jobtitle || null,
       company: c.properties.company || ((calls.company || {}).properties || {}).name || null,
-      lifecycleStage: c.properties.lifecyclestage || null
+      lifecycleStage: c.properties.lifecyclestage || null,
+      kind: c.properties.lifecyclestage === 'customer' ? 'customer' : 'lead'
     }))[0] || null }
 
 # Hydrate, the other direction: the memory server appends a high-certainty deduction to
@@ -107,7 +169,14 @@ cache: &cache
 hydrate: &hydrate
   name: hydrate
   state: drain
-  when: "return config.syncUser === true && (((calls.search || {}).results) || []).length > 0"
+  # A contact from EITHER source will do: the drain runs on every sync turn, including the
+  # ones where a fresh snapshot skipped the search, so a queued deduction never waits out
+  # the cache TTL before landing in the CRM.
+  when: >-
+    return config.syncUser === true && (
+      (((calls.search || {}).results) || []).length > 0
+      || !!(((calls.snapshot || {}).contact) || {}).id
+    )
   key: "crm:hydrate:{{ scope.userId }}:{{ scope.workflowId }}"
   max: 25
 
@@ -131,7 +200,7 @@ hydrateNotes: &hydrateNotes
         hs_timestamp: Date.now()
       },
       associations: [{
-        to: { id: (((calls.search || {}).results) || [])[0].id },
+        to: { id: ((((calls.search || {}).results) || [])[0] || {}).id || (((calls.snapshot || {}).contact) || {}).id },
         types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }]
       }]
     })) }
@@ -148,7 +217,10 @@ resolveAndCache: [*search, *association, *company, *cache]
 
 # The full workflow-channel sequence. With `syncUser` off it behaves exactly like
 # resolveAndCache, because every state call and the hydrate write are gated on the toggle.
-sync: [*search, *association, *company, *cache, *hydrate, *hydrateNotes]
+# The snapshot read leads and the search is the TTL-gated variant, so a sync within the
+# last 10 minutes costs one Redis read instead of the HubSpot chain. Only this sequence
+# carries the snapshot, so the READ paths are unchanged.
+sync: [*snapshot, *syncSearch, *association, *company, *cache, *hydrate, *hydrateNotes]
 
 # ── what a caller gets back ──────────────────────────────────────────────────────
 #
@@ -164,8 +236,10 @@ sync: [*search, *association, *company, *cache, *hydrate, *hydrateNotes]
 # `kind` is derived here rather than stored, so it cannot go stale against lifecyclestage.
 result: >-
   return !calls.search
-    ? { ok: false, found: false, contact: null,
-        error: 'No email to resolve. In production this defaults to the authenticated user; in a debug run, pass the contact email explicitly.' }
+    ? (((calls.snapshot || {}).syncedAt)
+      ? { ok: true, found: !!calls.snapshot.contact, cached: true, contact: calls.snapshot.contact || null }
+      : { ok: false, found: false, contact: null,
+          error: 'No email to resolve. In production this defaults to the authenticated user; in a debug run, pass the contact email explicitly.' })
     : [(((calls.search || {}).results) || []).map(c => ({
     id: c.id,
     name: [c.properties.firstname, c.properties.lastname].filter(Boolean).join(' ') || null,

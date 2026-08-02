@@ -65,4 +65,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [testUsername, testPassword, institutionId, daysBack, maxTransactions, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, testUsername, testPassword, institutionId, daysBack, maxTransactions]

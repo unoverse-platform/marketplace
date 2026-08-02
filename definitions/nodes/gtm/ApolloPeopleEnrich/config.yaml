@@ -76,5 +76,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [email, linkedinUrl, firstName, lastName, domain, organizationName,
-   revealPersonalEmails, revealPhoneNumber, authRequired, authRole]
+  [authRequired, authRole, email, linkedinUrl, firstName, lastName, domain, organizationName, revealPersonalEmails, revealPhoneNumber]

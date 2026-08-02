@@ -104,16 +104,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [
-    url,
-    maxPages,
-    onlyMainContent,
-    includePatterns,
-    excludePatterns,
-    useStealth,
-    useUltraStealth,
-    useProxy,
-    proxyCountry,
-    solveCaptchas,
-    adblock,
-    acceptCookies, authRequired, authRole]
+  [authRequired, authRole, url, maxPages, onlyMainContent, includePatterns, excludePatterns, useStealth, useUltraStealth, useProxy, proxyCountry, solveCaptchas, adblock, acceptCookies]

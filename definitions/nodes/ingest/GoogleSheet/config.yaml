@@ -48,4 +48,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [spreadsheetId, range, useHeaders, authRequired, authRole]
+"ui:order": [authRequired, authRole, spreadsheetId, range, useHeaders]

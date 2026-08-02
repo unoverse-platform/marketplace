@@ -1,0 +1,13 @@
+$schema: ../../../_schema/test.schema.json
+
+testData:
+  config:
+    model: openai.gpt-5.6-luna
+    prompt: Reply with exactly the word READY and nothing else.
+    systemPrompt: You follow instructions precisely.
+    maxTokens: 64
+  inputs:
+    signal: {}
+  expect:
+    text: "return output.text.trim().length > 0"
+    usage: "return output.usage.totalTokens > 0"

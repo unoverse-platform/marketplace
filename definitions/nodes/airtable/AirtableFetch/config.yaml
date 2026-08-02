@@ -84,4 +84,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [baseId, tableId, filterFormula, fields, view, sortField, sortDirection, maxRecords, dedupField, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, baseId, tableId, filterFormula, fields, view, sortField, sortDirection, maxRecords, dedupField]

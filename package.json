@@ -11,9 +11,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "sync-defs": "node scripts/bundle-defs.mjs",
+    "sync-defs": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts",
     "build": "tsc",
-    "prepack": "node scripts/bundle-defs.mjs && tsc"
+    "prepack": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts && tsc"
   },
   "dependencies": {
     "uuid": "^11.1.0",
@@ -22,7 +22,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "tsx": "^4.19.2"
   },
   "gravity": {
     "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",

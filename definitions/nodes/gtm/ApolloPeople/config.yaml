@@ -80,5 +80,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [personTitles, personSeniorities, personDepartments, personLocations,
-   organizationNames, organizationDomains, perPage, page, authRequired, authRole]
+  [authRequired, authRole, personTitles, personSeniorities, personDepartments, personLocations, organizationNames, organizationDomains, perPage, page]

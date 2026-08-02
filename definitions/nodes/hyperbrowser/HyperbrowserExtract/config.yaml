@@ -75,4 +75,5 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [urls, prompt, schema, useStealth, useUltraStealth, solveCaptchas, country, authRequired, authRole]
+"ui:order":
+  [authRequired, authRole, urls, prompt, schema, useStealth, useUltraStealth, solveCaptchas, country]

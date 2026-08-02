@@ -56,4 +56,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [text, model, dimensions, normalize, authRequired, authRole]
+"ui:order": [authRequired, authRole, text, model, dimensions, normalize]

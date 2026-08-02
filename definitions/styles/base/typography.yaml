@@ -30,6 +30,9 @@ font:
         - Helvetica
         - Arial
         - sans-serif
+    prose:
+      $description: Long-form HEADING family (semantic/text-styles.json's prose.* styles). Defaults to the display face, because for most orgs the heading face IS the display face. An org whose display face is a poster face (single weight, uppercase, tight) overrides THIS one token rather than re-declaring the prose styles, because such a face is unreadable over a page of copy while remaining right on a hero.
+      $value: "{font.family.display}"
   size:
     $type: dimension
     xs:

@@ -108,5 +108,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [maxResults, similarityThreshold, includeNeeds, includeImages, includeServices,
-   includeActions, includeSkills, includeMcps, authRequired, authRole]
+  [authRequired, authRole, maxResults, similarityThreshold, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]

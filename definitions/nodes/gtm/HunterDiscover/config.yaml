@@ -92,5 +92,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [query, industry, country, headcount, technology, keywords, companyType, similarTo,
-   limit, offset, authRequired, authRole]
+  [authRequired, authRole, query, industry, country, headcount, technology, keywords, companyType, similarTo, limit, offset]
