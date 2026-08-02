@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "KeyFacts",
-  "fingerprint": "a24a4a7da271bfd4",
+  "fingerprint": "ed57a4e752a7f277",
   "bundle": "design-system",
   "title": "KeyFacts",
   "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -46,22 +46,18 @@
         "items": "facts"
       },
       "style": {
-        "direction": "row",
-        "wrap": "wrap",
-        "align": "start",
+        "columns": "3",
         "gap": "3",
         "width": "full"
       },
       "template": {
         "type": "Box",
         "style": {
-          "flex": 1,
-          "minWidth": "40",
           "direction": "column",
           "gap": "1",
           "padding": [
-            "4",
-            "5"
+            "3",
+            "4"
           ],
           "background": "surface.base",
           "border": "thin subtle",
@@ -80,7 +76,8 @@
             "style": {
               "font": "caption",
               "weight": "semibold",
-              "color": "text.tertiary"
+              "color": "text.tertiary",
+              "lineHeight": "snug"
             }
           },
           {
@@ -93,7 +90,7 @@
               "value": "value"
             },
             "style": {
-              "font": "headline.sm",
+              "font": "title",
               "weight": "bold",
               "color": "text.primary",
               "lineHeight": "tight"
@@ -112,6 +109,7 @@
             },
             "style": {
               "font": "caption",
+              "lineHeight": "snug",
               "color": "text.tertiary"
             }
           }

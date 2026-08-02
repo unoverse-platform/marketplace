@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "Document",
-      "fingerprint": "718d15ac1b948194",
+      "fingerprint": "c78d0e06bfa40cea",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -311,7 +311,7 @@
     {
       "kind": "atom",
       "name": "KeyFacts",
-      "fingerprint": "a24a4a7da271bfd4",
+      "fingerprint": "ed57a4e752a7f277",
       "bundle": "design-system",
       "title": "KeyFacts",
       "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -378,7 +378,7 @@
     {
       "kind": "atom",
       "name": "Steps",
-      "fingerprint": "5cf5bafd90b75b0d",
+      "fingerprint": "ec6544c7208f15c2",
       "bundle": "design-system",
       "title": "Steps",
       "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -404,7 +404,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "5ea1178d5757c192",
+      "fingerprint": "aa7fef900fa1b918",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
