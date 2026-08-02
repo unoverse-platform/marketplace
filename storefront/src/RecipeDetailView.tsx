@@ -20,6 +20,7 @@ function Spinner() {
   return <span className="inline-block h-3 w-3 animate-spin rounded-full border-[1.5px] border-white/40 border-t-white" />;
 }
 import { credentialsNeeded, sanitiseGraph, type Recipe } from "./recipes";
+import { RecipePreview } from "./RecipePreview";
 
 function Logo({ src, className }: { src: string; className?: string }) {
   const [dead, setDead] = useState(false);
@@ -202,10 +203,14 @@ export function RecipeDetailView({ recipe, onBack }: { recipe: Recipe; onBack: (
         )}
       </div>
 
-      {/* THE MURAL STAYED IN THE PLATFORM. Drawing a recipe as a real canvas needs
-          Canvas's own node renderers, React Flow and the SDK, and a second copy of node
-          chrome here would go stale the first time a node is restyled. The recipe itself
-          is published JSON, so everything above this reads it directly. */}
+      {/* The mural. Drawn with the platform's own node chrome, copied into this repo
+          (src/canvas/README.md) because a recipe that does not render is not worth
+          publishing. */}
+      <div className="mx-auto mt-6 flex w-full max-w-[1180px] gap-4 px-8 pb-14" style={{ height: 560 }}>
+        <div className="min-w-0 flex-1">
+          <RecipePreview clip={graph} catalog={catalog} height="100%" />
+        </div>
+      </div>
 
     </div>
   );

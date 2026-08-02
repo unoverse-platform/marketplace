@@ -14,7 +14,8 @@
     "sync-defs": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts && npm run build:storefront",
     "build": "tsc",
     "prepack": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts && npm run build:storefront && tsc",
-    "build:storefront": "cd storefront && vite build"
+    "build:storefront": "cd storefront && vite build",
+    "test": "cd storefront && node --import tsx --import ./tests/css-stub.mjs --test tests/*.test.tsx"
   },
   "dependencies": {
     "uuid": "^11.1.0",
@@ -22,11 +23,13 @@
     "@unoverse-platform/base": "*"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.1.0",
     "@types/node": "^20.19.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.21",
+    "jsdom": "^25.0.1",
     "lucide-react": "^0.546.0",
     "postcss": "^8.5.4",
     "react": "^18.2.0",

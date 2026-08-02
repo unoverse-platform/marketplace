@@ -71,12 +71,15 @@ export function ItemDetailView({
 
   useEffect(() => {
     let live = true;
-    authedFetch(`/marketplace/item?kind=${encodeURIComponent(kind)}&name=${encodeURIComponent(name)}`)
+    // The PUBLISHED item file, not the universe's /marketplace/item route: a public
+    // storefront has no universe to ask, and the definition it needs is already served
+    // beside the catalogue at a path derived from (kind, name).
+    fetch(`items/${encodeURIComponent(kind)}/${encodeURIComponent(name)}.json`)
       .then(async (r) => {
         if (!r.ok) throw new Error(`could not load ${kind}/${name} (${r.status})`);
         return r.json();
       })
-      .then((d) => live && setItem(d.item))
+      .then((d) => live && setItem(d))
       .catch((e) => live && setError(e.message));
     return () => {
       live = false;
