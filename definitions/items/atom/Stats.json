@@ -1,0 +1,121 @@
+{
+  "kind": "atom",
+  "name": "Stats",
+  "fingerprint": "dff6836ee91e5e41",
+  "bundle": "design-system",
+  "title": "Stats",
+  "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+  "category": "block",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "Stats",
+    "category": "block",
+    "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+    "whenToUse": "Two to four figures the source states plainly, which a reader would compare at a glance, such as an allowance, a duration and a limit. One figure alone belongs in the sentence it came from. A wall of tiles reads as a dashboard, not a document.",
+    "props": {
+      "items": {
+        "type": "array",
+        "default": [
+          {
+            "label": "Included visits",
+            "value": "4",
+            "note": "per calendar year"
+          },
+          {
+            "label": "Network",
+            "value": "1,200+",
+            "note": "locations worldwide"
+          },
+          {
+            "label": "Guests",
+            "value": "1",
+            "note": "complimentary"
+          }
+        ]
+      }
+    },
+    "root": {
+      "type": "Each",
+      "brief": {
+        "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+        "minItems": 2,
+        "maxItems": 4
+      },
+      "bind": {
+        "items": "items"
+      },
+      "style": {
+        "direction": "row",
+        "wrap": "wrap",
+        "align": "start",
+        "gap": "3",
+        "width": "full"
+      },
+      "template": {
+        "type": "Box",
+        "style": {
+          "flex": 1,
+          "minWidth": "40",
+          "direction": "column",
+          "gap": "1",
+          "padding": [
+            "4",
+            "5"
+          ],
+          "background": "surface.base",
+          "border": "thin subtle",
+          "radius": "lg"
+        },
+        "children": [
+          {
+            "type": "Text",
+            "brief": {
+              "description": "What the figure counts, in the source's own words. Two or three words.",
+              "maxLength": 28
+            },
+            "bind": {
+              "value": "label"
+            },
+            "style": {
+              "font": "caption",
+              "weight": "semibold",
+              "color": "text.tertiary"
+            }
+          },
+          {
+            "type": "Text",
+            "brief": {
+              "description": "The figure exactly as the source states it, including any symbol or unit attached to it. Never rounded, never converted, never a range.",
+              "maxLength": 16
+            },
+            "bind": {
+              "value": "value"
+            },
+            "style": {
+              "font": "headline.sm",
+              "weight": "bold",
+              "color": "text.primary",
+              "lineHeight": "tight"
+            }
+          },
+          {
+            "type": "Text",
+            "brief": {
+              "description": "The qualifier the figure carries, such as a period or a condition. Empty when the source attaches none.",
+              "maxLength": 32
+            },
+            "visibleWhen": "note",
+            "bind": {
+              "value": "note"
+            },
+            "style": {
+              "font": "caption",
+              "color": "text.tertiary"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -292,7 +292,7 @@
     {
       "kind": "atom",
       "name": "OutlineButton",
-      "fingerprint": "bdea8b91201f0633",
+      "fingerprint": "4da2f778502a3481",
       "bundle": "design-system",
       "title": "OutlineButton",
       "description": "Outline call-to-action button: a leading icon + bold label inside a transparent pill with an accent-coloured border. Border, icon and label all take action.primary, so a Ref style override recolours the whole set. References tokens only."
@@ -315,11 +315,38 @@
     },
     {
       "kind": "atom",
+      "name": "Prose",
+      "fingerprint": "917f1f1bd1c1bf13",
+      "bundle": "design-system",
+      "title": "Prose",
+      "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
+      "category": "block"
+    },
+    {
+      "kind": "atom",
       "name": "SectionHeader",
       "fingerprint": "867887a9a5cb155e",
       "bundle": "design-system",
       "title": "SectionHeader",
       "description": "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
+      "name": "Stats",
+      "fingerprint": "dff6836ee91e5e41",
+      "bundle": "design-system",
+      "title": "Stats",
+      "description": "A row of figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
+      "category": "block"
+    },
+    {
+      "kind": "atom",
+      "name": "Steps",
+      "fingerprint": "3e504b5d3b3365b8",
+      "bundle": "design-system",
+      "title": "Steps",
+      "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
+      "category": "block"
     },
     {
       "kind": "atom",
@@ -332,7 +359,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "5308541cd791ff2d",
+      "fingerprint": "5ea1178d5757c192",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."

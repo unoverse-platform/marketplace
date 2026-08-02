@@ -17,7 +17,7 @@
  *
  * Runs after bundle-defs.mjs, which is what puts the definitions on disk to read.
  */
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdirSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildCatalogue } from "@unoverse-platform/base/items/catalogue.js";
@@ -27,9 +27,30 @@ const pkg = dirname(here);
 const out = join(pkg, "definitions");
 
 const release = JSON.parse(readFileSync(join(pkg, "package.json"), "utf8")).version;
-const catalogue = (await buildCatalogue()).map(({ definition, ...rest }) => rest);
+const full = await buildCatalogue();
+const catalogue = full.map(({ definition, ...rest }) => rest);
 
 writeFileSync(join(out, "catalogue.json"), JSON.stringify({ release, items: catalogue }, null, 2) + "\n");
+
+/**
+ * ONE FILE PER ITEM, ready to install.
+ *
+ * The catalogue is the menu and deliberately carries no definitions: it is fetched on
+ * every visit and forty component trees would make it heavy for no gain. An install needs
+ * the definition though, and a static host cannot compose one out of the source folders
+ * beside it. So the definition is written here, already composed, at a path derived from
+ * (kind, name) so a universe can fetch it without asking anything first.
+ *
+ * Rebuilt from scratch each time: a stale file for an item that no longer exists would be
+ * installable long after it was withdrawn.
+ */
+const itemsDir = join(out, "items");
+rmSync(itemsDir, { recursive: true, force: true });
+for (const item of full) {
+  const dir = join(itemsDir, item.kind);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, `${item.name}.json`), JSON.stringify(item, null, 2) + "\n");
+}
 
 const byKind = catalogue.reduce<Record<string, number>>((a, i) => ((a[i.kind] = (a[i.kind] ?? 0) + 1), a), {});
 const kinds = Object.entries(byKind).sort(([a], [b]) => a.localeCompare(b));

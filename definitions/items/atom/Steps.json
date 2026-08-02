@@ -1,0 +1,145 @@
+{
+  "kind": "atom",
+  "name": "Steps",
+  "fingerprint": "3e504b5d3b3365b8",
+  "bundle": "design-system",
+  "title": "Steps",
+  "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
+  "category": "block",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "Steps",
+    "category": "block",
+    "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
+    "whenToUse": "A sequence the source states in order, where doing them out of order would be wrong, such as how to book, apply, register or claim something. Not for a list of unordered benefits or features, which is prose or a plain list.",
+    "props": {
+      "items": {
+        "type": "array",
+        "default": [
+          {
+            "number": "1",
+            "title": "Download the app",
+            "detail": "Available on the App Store and Google Play."
+          },
+          {
+            "number": "2",
+            "title": "Register or sign in",
+            "detail": ""
+          },
+          {
+            "number": "3",
+            "title": "Confirm your booking",
+            "detail": "A confirmation follows by message."
+          }
+        ]
+      }
+    },
+    "root": {
+      "type": "Each",
+      "brief": {
+        "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
+        "minItems": 2,
+        "maxItems": 12
+      },
+      "bind": {
+        "items": "items"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "4",
+        "width": "full"
+      },
+      "template": {
+        "type": "Box",
+        "style": {
+          "direction": "row",
+          "align": "start",
+          "gap": "4",
+          "width": "full"
+        },
+        "children": [
+          {
+            "type": "Box",
+            "style": {
+              "flex": "0 0 auto",
+              "width": "8",
+              "height": "8",
+              "radius": "full",
+              "background": "action.subtle",
+              "direction": "row",
+              "align": "center",
+              "justify": "center"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "brief": {
+                  "description": "The step's position as a numeral, starting at 1 and counting up with no gaps.",
+                  "maxLength": 2
+                },
+                "bind": {
+                  "value": "number"
+                },
+                "style": {
+                  "font": "body.sm",
+                  "weight": "semibold",
+                  "color": "action.primary"
+                }
+              }
+            ]
+          },
+          {
+            "type": "Box",
+            "style": {
+              "direction": "column",
+              "gap": "1",
+              "flex": 1,
+              "minWidth": "0",
+              "padding": [
+                "1",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            "children": [
+              {
+                "type": "Text",
+                "brief": {
+                  "description": "What the reader does, as an instruction in a few words. Start with the verb.",
+                  "maxLength": 60
+                },
+                "bind": {
+                  "value": "title"
+                },
+                "style": {
+                  "font": "body.md",
+                  "weight": "semibold",
+                  "color": "text.primary",
+                  "lineHeight": "snug"
+                }
+              },
+              {
+                "type": "Text",
+                "brief": {
+                  "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
+                  "maxLength": 160
+                },
+                "visibleWhen": "detail",
+                "bind": {
+                  "value": "detail"
+                },
+                "style": {
+                  "font": "body.sm",
+                  "lineHeight": "snug",
+                  "color": "text.secondary"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
