@@ -24,7 +24,7 @@ props:
       - kind: finePrint
         heading: ""
         body: Terms and conditions apply.
-  # TABBED mode: `toDocument` (base/agent-mcp/sections) decides which, and shapes these.
+  # TABBED mode: `toDocument` (base/markdown/document) decides which, and shapes these.
   # Tabs are addressed by POSITION because a Switch case is a static name and a group
   # label is whatever the source called it.
   tabbed:
