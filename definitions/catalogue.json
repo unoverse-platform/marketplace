@@ -1,5 +1,5 @@
 {
-  "release": "0.1.13",
+  "release": "0.1.14",
   "items": [
     {
       "kind": "component",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "Document",
-      "fingerprint": "5bbb86995eb7c58c",
+      "fingerprint": "daa527c70ccc497b",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -379,7 +379,7 @@
     {
       "kind": "atom",
       "name": "Steps",
-      "fingerprint": "ec6544c7208f15c2",
+      "fingerprint": "e5c02efb0d19a252",
       "bundle": "design-system",
       "title": "Steps",
       "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "Document",
-  "fingerprint": "5bbb86995eb7c58c",
+  "fingerprint": "daa527c70ccc497b",
   "bundle": "design-system",
   "title": "Document",
   "description": "A record's structured body copy, drawn by the design system.",
@@ -198,8 +198,8 @@
                               "type": "Box",
                               "style": {
                                 "flex": "0 0 auto",
-                                "width": "8",
-                                "height": "8",
+                                "width": "6",
+                                "height": "6",
                                 "radius": "full",
                                 "background": "action.subtle",
                                 "direction": "row",
@@ -215,7 +215,8 @@
                                   "style": {
                                     "font": "body.sm",
                                     "weight": "semibold",
-                                    "color": "action.primary"
+                                    "color": "action.primary",
+                                    "lineHeight": "none"
                                   }
                                 }
                               ]
@@ -226,13 +227,7 @@
                                 "direction": "column",
                                 "gap": "1",
                                 "flex": 1,
-                                "minWidth": "0",
-                                "padding": [
-                                  "1",
-                                  "0",
-                                  "0",
-                                  "0"
-                                ]
+                                "minWidth": "0"
                               },
                               "children": [
                                 {
@@ -717,7 +712,13 @@
                 "align": "center",
                 "gap": "5",
                 "width": "full",
-                "borderBottom": "thin subtle"
+                "borderBottom": "thin subtle",
+                "margin": [
+                  "0",
+                  "0",
+                  "2",
+                  "0"
+                ]
               },
               "children": [
                 {
@@ -1040,8 +1041,8 @@
                                   "type": "Box",
                                   "style": {
                                     "flex": "0 0 auto",
-                                    "width": "8",
-                                    "height": "8",
+                                    "width": "6",
+                                    "height": "6",
                                     "radius": "full",
                                     "background": "action.subtle",
                                     "direction": "row",
@@ -1057,7 +1058,8 @@
                                       "style": {
                                         "font": "body.sm",
                                         "weight": "semibold",
-                                        "color": "action.primary"
+                                        "color": "action.primary",
+                                        "lineHeight": "none"
                                       }
                                     }
                                   ]
@@ -1068,13 +1070,7 @@
                                     "direction": "column",
                                     "gap": "1",
                                     "flex": 1,
-                                    "minWidth": "0",
-                                    "padding": [
-                                      "1",
-                                      "0",
-                                      "0",
-                                      "0"
-                                    ]
+                                    "minWidth": "0"
                                   },
                                   "children": [
                                     {
@@ -1638,8 +1634,8 @@
                                   "type": "Box",
                                   "style": {
                                     "flex": "0 0 auto",
-                                    "width": "8",
-                                    "height": "8",
+                                    "width": "6",
+                                    "height": "6",
                                     "radius": "full",
                                     "background": "action.subtle",
                                     "direction": "row",
@@ -1655,7 +1651,8 @@
                                       "style": {
                                         "font": "body.sm",
                                         "weight": "semibold",
-                                        "color": "action.primary"
+                                        "color": "action.primary",
+                                        "lineHeight": "none"
                                       }
                                     }
                                   ]
@@ -1666,13 +1663,7 @@
                                     "direction": "column",
                                     "gap": "1",
                                     "flex": 1,
-                                    "minWidth": "0",
-                                    "padding": [
-                                      "1",
-                                      "0",
-                                      "0",
-                                      "0"
-                                    ]
+                                    "minWidth": "0"
                                   },
                                   "children": [
                                     {
@@ -2236,8 +2227,8 @@
                                   "type": "Box",
                                   "style": {
                                     "flex": "0 0 auto",
-                                    "width": "8",
-                                    "height": "8",
+                                    "width": "6",
+                                    "height": "6",
                                     "radius": "full",
                                     "background": "action.subtle",
                                     "direction": "row",
@@ -2253,7 +2244,8 @@
                                       "style": {
                                         "font": "body.sm",
                                         "weight": "semibold",
-                                        "color": "action.primary"
+                                        "color": "action.primary",
+                                        "lineHeight": "none"
                                       }
                                     }
                                   ]
@@ -2264,13 +2256,7 @@
                                     "direction": "column",
                                     "gap": "1",
                                     "flex": 1,
-                                    "minWidth": "0",
-                                    "padding": [
-                                      "1",
-                                      "0",
-                                      "0",
-                                      "0"
-                                    ]
+                                    "minWidth": "0"
                                   },
                                   "children": [
                                     {
@@ -2834,8 +2820,8 @@
                                   "type": "Box",
                                   "style": {
                                     "flex": "0 0 auto",
-                                    "width": "8",
-                                    "height": "8",
+                                    "width": "6",
+                                    "height": "6",
                                     "radius": "full",
                                     "background": "action.subtle",
                                     "direction": "row",
@@ -2851,7 +2837,8 @@
                                       "style": {
                                         "font": "body.sm",
                                         "weight": "semibold",
-                                        "color": "action.primary"
+                                        "color": "action.primary",
+                                        "lineHeight": "none"
                                       }
                                     }
                                   ]
@@ -2862,13 +2849,7 @@
                                     "direction": "column",
                                     "gap": "1",
                                     "flex": 1,
-                                    "minWidth": "0",
-                                    "padding": [
-                                      "1",
-                                      "0",
-                                      "0",
-                                      "0"
-                                    ]
+                                    "minWidth": "0"
                                   },
                                   "children": [
                                     {
@@ -3436,8 +3417,8 @@
                           "type": "Box",
                           "style": {
                             "flex": "0 0 auto",
-                            "width": "8",
-                            "height": "8",
+                            "width": "6",
+                            "height": "6",
                             "radius": "full",
                             "background": "action.subtle",
                             "direction": "row",
@@ -3453,7 +3434,8 @@
                               "style": {
                                 "font": "body.sm",
                                 "weight": "semibold",
-                                "color": "action.primary"
+                                "color": "action.primary",
+                                "lineHeight": "none"
                               }
                             }
                           ]
@@ -3464,13 +3446,7 @@
                             "direction": "column",
                             "gap": "1",
                             "flex": 1,
-                            "minWidth": "0",
-                            "padding": [
-                              "1",
-                              "0",
-                              "0",
-                              "0"
-                            ]
+                            "minWidth": "0"
                           },
                           "children": [
                             {

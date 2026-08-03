@@ -38,8 +38,13 @@ root:
       - type: Box
         style:
           flex: 0 0 auto
-          width: "8"
-          height: "8"
+          # 6 is the marker that ALIGNS. The step's title is body.md at snug, a line box
+          # of about 6; a marker of 8 stood taller than the line it sits beside, so the
+          # column under it had to be nudged down by a quarter step to fake the match and
+          # still landed off. At the same height as the line, both centres agree and the
+          # nudge is gone.
+          width: "6"
+          height: "6"
           radius: full
           background: action.subtle
           direction: row
@@ -55,13 +60,17 @@ root:
               font: body.sm
               weight: semibold
               color: action.primary
+              # The marker centres its line BOX, and body.sm carries a 1.5 line-height, so
+              # the half-line of leading below the digit pushed the glyph off the circle's
+              # centre. `none` collapses the box onto the glyph, so centring centres what
+              # is actually seen.
+              lineHeight: none
       - type: Box
         style:
           direction: column
           gap: "1"
           flex: 1
           minWidth: "0"
-          padding: [ "1", "0", "0", "0" ]
         children:
           - type: Text
             brief:

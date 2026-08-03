@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "Steps",
-  "fingerprint": "ec6544c7208f15c2",
+  "fingerprint": "e5c02efb0d19a252",
   "bundle": "design-system",
   "title": "Steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -60,8 +60,8 @@
             "type": "Box",
             "style": {
               "flex": "0 0 auto",
-              "width": "8",
-              "height": "8",
+              "width": "6",
+              "height": "6",
               "radius": "full",
               "background": "action.subtle",
               "direction": "row",
@@ -77,7 +77,8 @@
                 "style": {
                   "font": "body.sm",
                   "weight": "semibold",
-                  "color": "action.primary"
+                  "color": "action.primary",
+                  "lineHeight": "none"
                 }
               }
             ]
@@ -88,13 +89,7 @@
               "direction": "column",
               "gap": "1",
               "flex": 1,
-              "minWidth": "0",
-              "padding": [
-                "1",
-                "0",
-                "0",
-                "0"
-              ]
+              "minWidth": "0"
             },
             "children": [
               {

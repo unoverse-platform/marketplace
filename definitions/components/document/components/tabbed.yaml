@@ -25,6 +25,11 @@ children:
       gap: "5"
       width: full
       borderBottom: thin subtle
+      # A little air under the rule, on top of the column's own gap. The heading of the
+      # selected tab sat close enough to the strip to read as attached to it, which made
+      # the rule look like the heading's underline rather than the strip's baseline. The
+      # margin is on the strip alone so the spacing above it is unchanged.
+      margin: [ "0", "0", "2", "0" ]
     children:
           - type: Button
             visibleWhen: tab0Label
