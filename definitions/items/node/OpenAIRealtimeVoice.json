@@ -8,6 +8,155 @@
   "category": "Voice",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Pick when someone should TALK to the workflow and be spoken back to, in real time, with the model hearing them mid-sentence and able to be interrupted. Holds one continuous conversation for as long as the call lasts and emits both sides as transcripts while it runs. Reading a script aloud, and transcribing a recording that already exists, are different jobs, because neither needs a live listener.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Data from previous nodes, referenceable in the system prompt",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "object",
+        "description": "{ query, response } for the last completed turn: what the person said and what the model answered"
+      },
+      {
+        "name": "mcpResult",
+        "type": "object",
+        "description": "The result of each tool the model called, as { name, args, output }"
+      },
+      {
+        "name": "progress",
+        "type": "string",
+        "description": "A running Q/A log of the conversation, in the retired node's format"
+      },
+      {
+        "name": "sessionReady",
+        "type": "boolean",
+        "description": "True once the vendor has accepted the session configuration"
+      },
+      {
+        "name": "userTranscript",
+        "type": "string",
+        "description": "What the person said, as the model transcribed it"
+      },
+      {
+        "name": "assistantTranscript",
+        "type": "string",
+        "description": "What the model said, accumulated as it speaks"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "openaiCredential",
+        "required": true,
+        "displayName": "OpenAI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "voice",
+        "turnDetection"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Realtime model. Pro for the highest quality, Light for faster and cheaper calls.",
+          "enum": [
+            "gpt-realtime-2.1",
+            "gpt-realtime-2.1-mini"
+          ],
+          "enumNames": [
+            "Realtime Pro",
+            "Realtime Light"
+          ],
+          "default": "gpt-realtime-2.1"
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "How the model should behave on the call. Shared blocks work here.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "voice": {
+          "type": "string",
+          "title": "Voice",
+          "description": "Which voice the model speaks with",
+          "enum": [
+            "alloy",
+            "ash",
+            "ballad",
+            "coral",
+            "echo",
+            "sage",
+            "shimmer",
+            "verse",
+            "marin",
+            "cedar"
+          ],
+          "default": "alloy"
+        },
+        "turnDetection": {
+          "type": "string",
+          "title": "Turn Detection",
+          "description": "How the model decides the person has finished speaking. Semantic listens for a complete thought; Server VAD waits for a fixed silence.",
+          "enum": [
+            "semantic_vad",
+            "server_vad",
+            "disabled"
+          ],
+          "enumNames": [
+            "Semantic (recommended)",
+            "Server VAD",
+            "Disabled"
+          ],
+          "default": "semantic_vad"
+        },
+        "initialRequest": {
+          "type": "object",
+          "title": "Initial Request",
+          "description": "Sent as a user message the moment the call opens, so the model speaks first. Leave empty and the model waits for the person.",
+          "ui:field": "template"
+        },
+        "conversationHistory": {
+          "type": "object",
+          "title": "Conversation History",
+          "description": "Prior turns to replay into the session before the call starts, as an array of { role, content }. The model then continues a conversation rather than beginning one.",
+          "ui:field": "template"
+        },
+        "maxResponseOutputTokens": {
+          "type": "number",
+          "title": "Max Response Tokens",
+          "description": "Caps how long any single spoken reply can be",
+          "default": 4096,
+          "minimum": 1
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai-realtime",

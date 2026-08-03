@@ -8,6 +8,106 @@
   "category": "Knowledge & Vectors",
   "icon": null,
   "whenToUse": "Write passages into a Pinecone index so they can be found by meaning later: building or topping up a knowledge base, indexing documents for retrieval. Takes text and stores it; the index must have been created with an embedding model attached. Long documents should be split into passages before this step, since it stores each record whole.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "required": true,
+        "description": "Trigger signal from the upstream node"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "upserted",
+        "type": "number",
+        "description": "How many records Pinecone stored"
+      },
+      {
+        "name": "ids",
+        "type": "array",
+        "description": "The record ids that were written, in the order they were sent"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "pineconeCredential",
+        "required": true,
+        "displayName": "Pinecone"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "indexName"
+      ],
+      "properties": {
+        "indexName": {
+          "type": "string",
+          "title": "Index Name",
+          "description": "The Pinecone index to write to. It must have been created with an embedding model attached, since the text is embedded by Pinecone rather than beforehand.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "namespace": {
+          "type": "string",
+          "title": "Namespace",
+          "description": "Write into one namespace. Leave blank for the index's default namespace.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "textField": {
+          "type": "string",
+          "title": "Text Field Name",
+          "description": "The field the index embeds, from its field_map. Get this wrong and Pinecone accepts the record, embeds nothing, and reports no error, so it is worth checking against the index rather than assuming.",
+          "default": "chunk_text",
+          "ui:field": "template"
+        },
+        "records": {
+          "type": "array",
+          "title": "Records",
+          "description": "A batch from an upstream step: an array of objects with text, and optionally _id and metadata. Takes precedence over the single-record fields below. An expression, e.g. \"return signal.split1.passages\".",
+          "default": []
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The passage to store, when writing a single record. Ignored if Records is set.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "vectorId": {
+          "type": "string",
+          "title": "Record ID",
+          "description": "A stable id for the single record. Reusing an id UPDATES that record rather than adding another, which is how a re-run avoids duplicating everything. Leave blank and one is generated positionally, which does not survive a re-run.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "metadata": {
+          "type": "object",
+          "title": "Metadata",
+          "description": "Extra fields stored alongside the text and filterable at search time, e.g. \"return { source: signal.doc.url }\". Field names cannot collide with the id or the text field; those always win.",
+          "default": {}
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "pinecone",

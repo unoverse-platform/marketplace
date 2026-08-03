@@ -8,6 +8,112 @@
   "category": "Knowledge & Vectors",
   "icon": null,
   "whenToUse": "Find the stored passages closest in meaning to a piece of text, in a Pinecone index that embeds its own content. Retrieval for grounding an answer, matching a question to documented material, or finding near-duplicates. The index must have been created with an embedding model attached; one holding vectors computed elsewhere cannot be searched this way, and searching the platform's own knowledge base is a different step entirely.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "required": true,
+        "description": "Trigger signal from the upstream node"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "matches",
+        "type": "array",
+        "description": "Matching records, best first, each with id, score and the requested fields"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "How many matches came back, after any score threshold"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "pineconeCredential",
+        "required": true,
+        "displayName": "Pinecone"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "indexName",
+        "query"
+      ],
+      "properties": {
+        "indexName": {
+          "type": "string",
+          "title": "Index Name",
+          "description": "The Pinecone index to search. It must have been created with an embedding model attached, since the query text is embedded by Pinecone rather than beforehand.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "query": {
+          "type": "string",
+          "title": "Query Text",
+          "description": "The text to search for. Pinecone embeds it and returns the closest stored records.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "namespace": {
+          "type": "string",
+          "title": "Namespace",
+          "description": "Search inside one namespace. Leave blank to search the index's default namespace.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "fields": {
+          "type": "string",
+          "title": "Fields To Return",
+          "description": "Which stored fields come back with each match, comma-separated. Must include the text field the index embeds (chunk_text unless the index says otherwise), or matches arrive as scores attached to nothing.",
+          "default": "chunk_text",
+          "ui:field": "template"
+        },
+        "topK": {
+          "type": "number",
+          "title": "Top K Results",
+          "description": "How many matches to ask Pinecone for, before any score threshold",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "scoreThreshold": {
+          "type": "number",
+          "title": "Score Threshold",
+          "description": "Drop matches scoring below this. 0 keeps everything Pinecone returned. Applied here rather than by Pinecone, which has no minimum-score parameter.",
+          "default": 0.3,
+          "minimum": 0,
+          "maximum": 1,
+          "step": 0.05
+        },
+        "metadataFilter": {
+          "type": "string",
+          "title": "Metadata Filter",
+          "description": "A JSON object restricting matches by stored field, e.g. {\"category\": \"support\"}. A malformed filter is ignored rather than failing the search.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "pinecone",

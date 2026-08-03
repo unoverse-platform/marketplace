@@ -8,6 +8,92 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
   "whenToUse": "Pick to turn a piece of text into the vector a similarity search needs, run on AWS in your own region and account. It embeds one text inline; offering embeddings to an attached agent on demand is a different node.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes, referenceable in the text template",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "embedding",
+        "type": "array",
+        "description": "The embedding vector"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "awsCredential",
+        "required": true,
+        "displayName": "AWS"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The text to embed. Supports {{ signal.<id>.<handle>.<field> }}",
+          "default": "",
+          "ui:field": "template"
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "enum": [
+            "amazon.titan-embed-text-v2:0",
+            "amazon.titan-embed-text-v1"
+          ],
+          "enumNames": [
+            "Titan Text v2",
+            "Titan Text v1"
+          ],
+          "default": "amazon.titan-embed-text-v2:0"
+        },
+        "dimensions": {
+          "type": "number",
+          "title": "Dimensions",
+          "description": "Vector length. Must match what the store it goes into expects, or the search will reject it. v1 ignores this and always returns 1536.",
+          "enum": [
+            1024,
+            512,
+            256
+          ],
+          "default": 1024
+        },
+        "normalize": {
+          "type": "boolean",
+          "title": "Normalize",
+          "description": "Scale to unit length, which is what cosine similarity expects",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-bedrock",

@@ -1,0 +1,60 @@
+$schema: ../../../../_schema/unoverse.schema.json
+# ONE section, drawn by the atom its `kind` names, with its group label and heading above.
+# Included by every body in document.yaml: the scroll, the lead and each tab.
+type: Box
+style:
+  direction: column
+  gap: "2"
+  width: full
+children:
+  # The GROUP label, shown once where the group changes. A template cannot see the
+  # section before it, so `groupStart` is derived where the sections are read and the
+  # component simply honours it.
+  - type: Text
+    visibleWhen: groupStart
+    bind:
+      value: group
+    style:
+      font: eyebrow
+      color: text.tertiary
+  # The heading belongs to the DOCUMENT, not to each atom: every kind carries one, and
+  # a section without a heading simply has none.
+  - type: Text
+    visibleWhen: heading
+    bind:
+      value: heading
+    style:
+      font: headline.sm
+      weight: semibold
+      color: text.primary
+      lineHeight: tight
+  - type: Switch
+    on: kind
+    cases:
+      prose:
+        type: Ref
+        ref: prose
+      steps:
+        type: Ref
+        ref: steps
+      keyFacts:
+        type: Ref
+        ref: key-facts
+      list:
+        type: Ref
+        ref: list
+      faq:
+        type: Ref
+        ref: faq
+      finePrint:
+        type: Ref
+        ref: fine-print
+      table:
+        type: Ref
+        ref: table
+      callout:
+        type: Ref
+        ref: alert
+      default:
+        type: Ref
+        ref: prose

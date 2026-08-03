@@ -8,6 +8,63 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
   "whenToUse": "Reach for this when something needs to turn text into vectors as it works, deciding for itself what and when: one piece, or a whole batch in a single pass. Embedding one fixed piece of text at a known point is cheaper done inline. Attach it by a service edge.",
+  "detail": {
+    "inputs": [],
+    "outputs": [],
+    "credentials": [
+      {
+        "name": "awsCredential",
+        "required": true,
+        "displayName": "AWS"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "enum": [
+            "amazon.titan-embed-text-v2:0",
+            "amazon.titan-embed-text-v1"
+          ],
+          "enumNames": [
+            "Titan Text v2",
+            "Titan Text v1"
+          ],
+          "default": "amazon.titan-embed-text-v2:0"
+        },
+        "dimensions": {
+          "type": "number",
+          "title": "Dimensions",
+          "description": "Vector length. Must match the store these vectors go into.",
+          "enum": [
+            1024,
+            512,
+            256
+          ],
+          "default": 1024
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-bedrock",

@@ -8,6 +8,81 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751473913/gravity/icons/DynamoDB.png",
   "whenToUse": "Pick to read ONE DynamoDB record by its primary key, with an optional sort key. It emits the item and a found flag, so a miss is an answer rather than an error. Writing a record, and querying a range of them, are different jobs.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Carries the key values, read under the field names named in config",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "The record, or null when nothing exists at that key"
+      },
+      {
+        "name": "found",
+        "type": "boolean",
+        "description": "Whether an item existed at that key"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "awsCredential",
+        "required": true,
+        "displayName": "AWS"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "tableName",
+        "primaryKey"
+      ],
+      "properties": {
+        "tableName": {
+          "type": "string",
+          "title": "Table Name",
+          "description": "The DynamoDB table to read from",
+          "default": "",
+          "ui:field": "template"
+        },
+        "primaryKey": {
+          "type": "string",
+          "title": "Primary Key Field",
+          "description": "Field name of the partition key, looked up on the incoming signal",
+          "default": "universalId",
+          "ui:field": "template"
+        },
+        "sortKey": {
+          "type": "string",
+          "title": "Sort Key Field",
+          "description": "Field name of the sort key, if the table has one",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-dynamodb",

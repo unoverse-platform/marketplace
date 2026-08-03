@@ -8,6 +8,98 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
   "whenToUse": "Find assets ALREADY in Cloudinary — browse a folder, pull everything with a tag, or take a random selection for a gallery. It reads an existing library rather than creating anything, so pair it with Cloudinary Upload when the asset does not exist yet.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The filters come from config.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "files",
+        "type": "array",
+        "description": "Matching assets, each with public_id, urls, dimensions, tags and a universalId"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "How many assets were returned"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "cloudinaryCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "folder": {
+          "type": "string",
+          "title": "Folder",
+          "description": "Only assets whose public id starts with this. Leave blank for the whole account.",
+          "default": ""
+        },
+        "maxFiles": {
+          "type": "number",
+          "title": "Max Files",
+          "description": "How many to return, up to Cloudinary's 500 per request",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "resourceType": {
+          "type": "string",
+          "title": "Resource Type",
+          "enum": [
+            "image",
+            "video",
+            "raw"
+          ],
+          "enumNames": [
+            "Image",
+            "Video",
+            "Raw"
+          ],
+          "default": "image"
+        },
+        "tags": {
+          "type": "string",
+          "title": "Tag",
+          "description": "Only assets carrying this tag. Leave blank for all.",
+          "default": ""
+        },
+        "randomSelection": {
+          "type": "boolean",
+          "title": "Random Selection",
+          "description": "Shuffle before trimming to Max Files, so repeated runs surface different assets. Only has an effect when more were found than Max Files.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "cloudinary",

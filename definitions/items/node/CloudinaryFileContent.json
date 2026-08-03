@@ -8,6 +8,69 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
   "whenToUse": "Take one asset from Cloudinary Files and get its full details plus a delivery URL, optionally RESIZED or reformatted by a transformation. Use it when you have an asset and need a specific rendition of it; use Cloudinary Files to find assets in the first place.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "file",
+        "type": "object",
+        "description": "One asset from Cloudinary Files ({ public_id, resource_type, universalId })",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fileContent",
+        "type": "object",
+        "description": "public_id, url, secure_url, downloadUrl, format, width, height, bytes, universalId, transformation"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "cloudinaryCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "file": {
+          "type": "object",
+          "title": "File",
+          "description": "The asset, as emitted by Cloudinary Files — needs at least public_id. Wire it in as an expression, e.g. return signal.cloudinaryfiles1.files[0]",
+          "ui:field": "template"
+        },
+        "transformation": {
+          "type": "string",
+          "title": "Transformation",
+          "description": "Cloudinary transformation string, e.g. w_800,c_fill,q_auto. Left blank, the asset's own URLs are returned unchanged.",
+          "default": ""
+        },
+        "format": {
+          "type": "string",
+          "title": "Format",
+          "description": "Convert on delivery, e.g. webp. Added to the transformation as f_<format>.",
+          "default": ""
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "cloudinary",

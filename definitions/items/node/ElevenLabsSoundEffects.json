@@ -8,6 +8,93 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
   "whenToUse": "Generate a sound effect from a text prompt: footsteps on gravel, a door creak, rain, a whoosh, an explosion, ambient room tone. It synthesizes the actual audio of an effect from words and never spoken text, so \"door slam\" becomes the sound rather than a voice reading the phrase.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "string",
+        "required": true,
+        "description": "Text prompt describing the sound effect to generate"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "audio",
+        "type": "object",
+        "description": "Generated audio: { data (base64), mimeType, fileName }"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "format, durationSeconds, prompt"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elevenlabsCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "Describe the sound effect, e.g. \"heavy wooden door slamming shut in a stone corridor\".",
+          "default": "{{{input}}}",
+          "ui:field": "template"
+        },
+        "durationSeconds": {
+          "type": "number",
+          "title": "Duration (seconds)",
+          "description": "0.5 to 30. Leave blank to let the model choose the optimal length.",
+          "minimum": 0.5,
+          "maximum": 30
+        },
+        "promptInfluence": {
+          "type": "number",
+          "title": "Prompt Influence",
+          "description": "0 is more creative, 1 follows the prompt strictly. Default 0.3.",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.3
+        },
+        "outputFormat": {
+          "type": "string",
+          "title": "Output Format",
+          "description": "Audio encoding, e.g. mp3_44100_128. Leave blank for the account default — the service passed it only when set, and naming a format your plan disallows is a 400.",
+          "default": ""
+        },
+        "loop": {
+          "type": "boolean",
+          "title": "Loopable",
+          "description": "Generate a seamless looping clip (v2 model)",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "elevenlabs",

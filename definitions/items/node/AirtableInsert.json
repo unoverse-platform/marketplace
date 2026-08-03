@@ -8,6 +8,95 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
   "whenToUse": "Pick to WRITE rows into an Airtable table from upstream data: it batches automatically, updates any record that already carries an Airtable id, and can skip rows whose value is already present. Use it to persist a collection; it writes, it does not read.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger. The records usually template from an upstream node's output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "inserted",
+        "type": "number",
+        "description": "Records accepted, across creates and updates"
+      },
+      {
+        "name": "skipped",
+        "type": "number",
+        "description": "Records dropped because the dedup field's value was already present"
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "description": "Records offered"
+      },
+      {
+        "name": "errors",
+        "type": "array",
+        "description": "One entry per failed batch. Empty means every batch landed."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "airtableCredential",
+        "required": true,
+        "displayName": "Airtable"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "baseId",
+        "tableId",
+        "records"
+      ],
+      "properties": {
+        "baseId": {
+          "type": "string",
+          "title": "Base ID",
+          "default": "",
+          "ui:field": "template"
+        },
+        "tableId": {
+          "type": "string",
+          "title": "Table Name or ID",
+          "default": "",
+          "ui:field": "template"
+        },
+        "records": {
+          "type": "array",
+          "title": "Records",
+          "description": "The rows to write. An expression, usually reading an upstream node's output. A row carrying a valid Airtable id is UPDATED rather than created.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "dedupField": {
+          "type": "string",
+          "title": "Dedup Field (optional)",
+          "description": "Skip a new row when this field's value already exists in the table. Existing values are read first, paging the whole table.",
+          "default": ""
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "airtable",

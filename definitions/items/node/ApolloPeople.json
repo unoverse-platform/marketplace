@@ -8,6 +8,128 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
   "whenToUse": "Pick to DISCOVER lists of people by title, seniority, department or company filters, returning each with email, LinkedIn and phone in one call. Use it to find unknown people by role across companies; enriching one already-known person, or finding companies, are different jobs.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. Filters may template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "people",
+        "type": "array",
+        "description": "Matched people with their profile and organisation"
+      },
+      {
+        "name": "organizations",
+        "type": "array",
+        "description": "The distinct organisations those people belong to"
+      },
+      {
+        "name": "totalCount",
+        "type": "number",
+        "description": "Total matching records in Apollo, which normally exceeds one page"
+      },
+      {
+        "name": "page",
+        "type": "number",
+        "description": "The page returned"
+      },
+      {
+        "name": "perPage",
+        "type": "number",
+        "description": "Page size used"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "apolloCredential",
+        "required": true,
+        "displayName": "Apollo.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "personTitles": {
+          "type": "string",
+          "title": "Person Titles",
+          "description": "Comma-separated job titles, e.g. 'CEO, CTO, VP Engineering'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "organizationNames": {
+          "type": "string",
+          "title": "Organisation Names",
+          "description": "Comma-separated company names, e.g. 'Google, Meta'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "organizationDomains": {
+          "type": "string",
+          "title": "Organisation Domains",
+          "description": "Comma-separated company domains, e.g. 'google.com, meta.com'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "personLocations": {
+          "type": "string",
+          "title": "Person Locations",
+          "description": "Comma-separated locations, e.g. 'New York, London'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "personSeniorities": {
+          "type": "string",
+          "title": "Seniority Levels",
+          "description": "Comma-separated seniorities, e.g. 'senior, manager, director, vp, c_suite'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "personDepartments": {
+          "type": "string",
+          "title": "Departments",
+          "description": "Comma-separated departments, e.g. 'engineering, sales, marketing'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "perPage": {
+          "type": "number",
+          "title": "Results Per Page",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "page": {
+          "type": "number",
+          "title": "Page",
+          "description": "Which page to fetch. Apollo allows 500 pages, 50,000 records.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

@@ -8,6 +8,63 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Close a per-item loop and gather its results: collect a value on each pass and emit { done, collected, total } once the array is exhausted, then carry on with the collected list. It is the required closer for a LoopStart, so set loopStartNodeId to that node's id; it does nothing on its own.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Output from the last node in the loop body. Reaching this node is what ends a pass."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "continue",
+        "type": "signal",
+        "description": "Internal: next-iteration signal to the paired LoopStart"
+      },
+      {
+        "name": "done",
+        "type": "object",
+        "description": "Emitted once the array is exhausted: { done, collected, total }"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "loopStartNodeId"
+      ],
+      "properties": {
+        "loopStartNodeId": {
+          "type": "string",
+          "title": "Loop Start Node ID",
+          "description": "The paired LoopStart's node id, e.g. loopstart1. It identifies WHICH loop this closes, so two loops on one canvas cannot advance each other's index. Getting it wrong raises \"loop state not found\" rather than quietly closing the wrong loop."
+        },
+        "collect": {
+          "type": "object",
+          "title": "Collect",
+          "description": "Optional value to keep from each pass, e.g. {{ signal.openai1.text }}. An array is spread into separate entries rather than nested, so what arrives on `done` is one flat list.",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

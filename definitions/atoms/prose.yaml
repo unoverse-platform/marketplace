@@ -8,10 +8,18 @@ whenToUse: The default block, and the one to reach for whenever the source is si
 props:
   body:
     type: string
+    # The default CONTAINS the marks rather than describing them, so the preview shows what
+    # the theme's prose recipe does with **bold**, a link and a list. The previous default
+    # said "markdown renders here" in plain text, which rendered as plain text and read as
+    # a broken renderer.
     default: |-
-      A passage of body copy.
+      ### A passage of body copy
 
-      Markdown renders here: headings, lists, emphasis and links, all styled by the theme's prose recipe.
+      Markdown renders here: **bold**, *emphasis*, [links](https://example.com) and lists,
+      all styled by the theme's prose recipe.
+
+      - The design system decides how each mark looks
+      - The writer decides only what the words are
 root:
   type: Markdown
   brief:

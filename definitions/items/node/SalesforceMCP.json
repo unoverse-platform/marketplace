@@ -8,6 +8,68 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781672225/gravity/icons/Salesforce-dark.svg",
   "whenToUse": "Pick for customer and CRM data in Salesforce: look up customers, accounts, contacts and opportunities, and capture or update leads. Reads any object, SOQL under the hood; writes are lead-only with a fixed field set, so an agent can never modify other records. Attach it via a service edge to an agent, or trigger it directly with a fixed query.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger input. Optionally { soql } to run a query instead of the configured one."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "What the node ran. A query result when Sync user is off, the resolved contact profile when it is on."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "salesforceOAuth",
+        "required": true,
+        "displayName": "Salesforce"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "syncUser": {
+          "type": "boolean",
+          "title": "Sync user on trigger",
+          "description": "On trigger, resolve the signed-in user, refresh their cached profile, and write back any insight Tasks the memory server has queued. Leave off to run a query instead.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "defaultQuery": {
+          "type": "string",
+          "title": "Default SOQL Query",
+          "description": "SOQL run when the workflow triggers this node directly. Not used for MCP tool calls or when Sync user is on. An upstream { soql } on the input wins over this.",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "syncUser": false
+          }
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "salesforce",

@@ -8,6 +8,85 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
   "whenToUse": "Pick to CHECK that a single email address is real and deliverable before sending. Use it to verify an address you already have; discovering an unknown address is a separate, upstream step.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The email usually templates from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "email",
+        "type": "string",
+        "description": "The address that was verified"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "valid, invalid, accept_all, webmail, disposable or unknown"
+      },
+      {
+        "name": "result",
+        "type": "string",
+        "description": "deliverable, undeliverable or risky"
+      },
+      {
+        "name": "score",
+        "type": "number",
+        "description": "Confidence 0-100"
+      },
+      {
+        "name": "accept_all",
+        "type": "boolean",
+        "description": "True when the domain accepts every address, which makes the result less certain"
+      },
+      {
+        "name": "disposable",
+        "type": "boolean",
+        "description": "True when the address is from a disposable provider"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hunterCredential",
+        "required": true,
+        "displayName": "Hunter.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "title": "Email",
+          "description": "The address to verify",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

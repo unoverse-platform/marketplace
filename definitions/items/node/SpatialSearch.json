@@ -8,6 +8,92 @@
   "category": "Search",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Give an agent semantic search over the platform's own knowledge base: find the needs, skills, services and content most relevant to a query, and discover what else sits near a topic. Two searches in one, precise intent lookup and spatial discovery. Reach elsewhere when the knowledge lives in an external vector store. Attach by a service edge to the agent; it is not a data-flow step.",
+  "detail": {
+    "inputs": [],
+    "outputs": [],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "maxResults": {
+          "type": "number",
+          "title": "Max Results",
+          "description": "Maximum total results to return (safety cap)",
+          "default": 10,
+          "minimum": 5,
+          "maximum": 30
+        },
+        "similarityThreshold": {
+          "type": "number",
+          "title": "Min Similarity (Intent)",
+          "description": "Precision floor for findIntent (0 to 0.9). Results scoring below this cosine similarity are dropped. Discovery is unaffected, since it ranks by spatial distance.",
+          "default": 0.35,
+          "minimum": 0,
+          "maximum": 0.9,
+          "step": 0.05
+        },
+        "includeNeeds": {
+          "type": "boolean",
+          "title": "Include Needs",
+          "description": "Fetch needs from results",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "includeImages": {
+          "type": "boolean",
+          "title": "Include Images",
+          "description": "Fetch images from results",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "includeServices": {
+          "type": "boolean",
+          "title": "Include Services",
+          "description": "Fetch services from results",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "includeActions": {
+          "type": "boolean",
+          "title": "Include Actions",
+          "description": "Fetch actions from results",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "includeSkills": {
+          "type": "boolean",
+          "title": "Include Skills",
+          "description": "Fetch skills (behavioural instructions)",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "includeMcps": {
+          "type": "boolean",
+          "title": "Include Apps",
+          "description": "Fetch apps and MCP workflows from results",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "spatial",

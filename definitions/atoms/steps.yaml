@@ -46,11 +46,14 @@ root:
           align: center
           justify: center
         children:
-          - type: Icon
-            icon: arrowRight
+          # `position` is the renderer's, not the content's: the sections carry no ordinal,
+          # and a step that says which number it is would be presentation in the data.
+          - type: Text
+            bind:
+              value: position
             style:
-              width: "4"
-              height: "4"
+              font: body.sm
+              weight: semibold
               color: action.primary
       - type: Box
         style:

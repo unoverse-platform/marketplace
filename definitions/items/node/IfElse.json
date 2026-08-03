@@ -8,6 +8,60 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Branch the workflow: evaluate a boolean condition and send the same payload down either a true or a false path, so only one downstream branch runs. Reach for it when a step must FORK execution rather than change data, because the upstream payload passes through untouched on whichever single edge is chosen.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "The payload to route. It passes through unchanged.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "true",
+        "type": "object",
+        "description": "Carries the payload when the condition holds"
+      },
+      {
+        "name": "false",
+        "type": "object",
+        "description": "Carries the payload when it does not"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "condition"
+      ],
+      "properties": {
+        "condition": {
+          "type": "object",
+          "title": "Condition",
+          "description": "An expression over the incoming data that decides the branch. Resolved before the node runs, so what arrives here is already true or false.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

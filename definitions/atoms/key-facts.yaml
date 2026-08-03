@@ -27,19 +27,15 @@ root:
   bind:
     items: facts
   style:
-    direction: row
-    wrap: wrap
-    align: start
+    columns: "3"
     gap: "3"
     width: full
   template:
     type: Box
     style:
-      flex: 1
-      minWidth: "40"
       direction: column
       gap: "1"
-      padding: [ "4", "5" ]
+      padding: [ "3", "4" ]
       background: surface.base
       border: thin subtle
       radius: lg
@@ -54,6 +50,7 @@ root:
           font: caption
           weight: semibold
           color: text.tertiary
+          lineHeight: snug
       - type: Text
         brief:
           description: The figure exactly as the source states it, including any symbol or unit attached to it. Never rounded, never converted, never a range.
@@ -61,7 +58,7 @@ root:
         bind:
           value: value
         style:
-          font: headline.sm
+          font: title
           weight: bold
           color: text.primary
           lineHeight: tight
@@ -75,4 +72,5 @@ root:
           value: qualifier
         style:
           font: caption
+          lineHeight: snug
           color: text.tertiary

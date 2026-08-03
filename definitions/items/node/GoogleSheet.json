@@ -8,6 +8,77 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1753618586/gravity/icons/googleSheetIcon.png",
   "whenToUse": "Pick to read rows from a public GOOGLE SHEET. It returns every row in one go, so pair it with Loop Start and Loop End when each row needs to flow through its own workflow steps. It reads a Google Sheet specifically, not an app-owned database table.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. Nothing is read from it — the sheet is named in config.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "rows",
+        "type": "array",
+        "description": "Every row in the range. Objects keyed by the header row when Use Headers is on, otherwise raw arrays of cell values."
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "description": "Number of rows returned"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "googleApiCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "spreadsheetId"
+      ],
+      "properties": {
+        "spreadsheetId": {
+          "type": "string",
+          "title": "Spreadsheet ID",
+          "description": "The id from the sheet's URL — the part between /d/ and /edit. The sheet must be shared so that anyone with the link can view it; an API key cannot open a private sheet.",
+          "placeholder": "Enter your Google Sheets spreadsheet ID"
+        },
+        "range": {
+          "type": "string",
+          "title": "Range",
+          "description": "A1 notation range, e.g. Sheet1!A1:D10. A bare sheet name reads the whole sheet.",
+          "placeholder": "Sheet1!A:Z",
+          "default": "Sheet1"
+        },
+        "useHeaders": {
+          "type": "boolean",
+          "title": "Use Headers",
+          "description": "Treat the first row as property names, so each row arrives as an object",
+          "default": true
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "ingest",

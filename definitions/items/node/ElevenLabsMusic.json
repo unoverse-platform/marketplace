@@ -8,6 +8,91 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
   "whenToUse": "Compose MUSIC from a description: a backing track, a theme, a loop, a score for a video. It writes and performs a piece from words, so it is for music rather than for a one-off sound effect or for reading text aloud.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "string",
+        "required": true,
+        "description": "Text prompt describing the music to compose"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "audio",
+        "type": "object",
+        "description": "Generated audio: { data (base64), mimeType, fileName }"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "format, lengthSeconds, prompt"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elevenlabsCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "prompt"
+      ],
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "Describe the music, e.g. \"slow cinematic piano with strings, hopeful, building\".",
+          "default": "{{{input}}}",
+          "ui:field": "template"
+        },
+        "lengthSeconds": {
+          "type": "number",
+          "title": "Length (seconds)",
+          "description": "10 to 300. Leave blank to let the model choose.",
+          "minimum": 10,
+          "maximum": 300
+        },
+        "modelId": {
+          "type": "string",
+          "title": "Model",
+          "description": "Override the music model. Leave blank for the package default.",
+          "default": ""
+        },
+        "forceInstrumental": {
+          "type": "boolean",
+          "title": "Instrumental Only",
+          "description": "Compose without vocals",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "outputFormat": {
+          "type": "string",
+          "title": "Output Format",
+          "description": "Audio encoding, e.g. mp3_44100_128. Leave blank for the account default.",
+          "default": ""
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "elevenlabs",

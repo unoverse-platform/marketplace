@@ -8,6 +8,85 @@
   "category": "Search",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg",
   "whenToUse": "Search recent X (Twitter) posts by keyword, hashtag, user or language and get structured tweet data with engagement metrics; supports X query operators (from:, #hashtag, lang:, -is:retweet). It returns native posts with per-post engagement metrics, not crawled web pages and not scraped arbitrary sites.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query. Overrides the configured one when present.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tweets",
+        "type": "array",
+        "description": "The posts, as the X API returned them"
+      },
+      {
+        "name": "resultCount",
+        "type": "number",
+        "description": "How many posts came back"
+      },
+      {
+        "name": "raw",
+        "type": "string",
+        "description": "The whole X API response as JSON, for anything the shaped outputs drop"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "xCredential",
+        "required": true,
+        "displayName": "X API Credentials"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "title": "Search Query",
+          "description": "X search query. Supports from:user, #hashtag, -exclude, lang:en and OR without parentheses. Wrap phrases in quotes, e.g. \"Miro board\" lang:en -is:retweet",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxResults": {
+          "type": "number",
+          "title": "Max Results",
+          "description": "Number of posts to return",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "tweetFields": {
+          "type": "string",
+          "title": "Tweet Fields",
+          "description": "Comma-separated X API tweet fields to include",
+          "default": "created_at,public_metrics,author_id"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "x-search",

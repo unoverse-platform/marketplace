@@ -28,7 +28,10 @@ const out = join(pkg, "definitions");
 
 const release = JSON.parse(readFileSync(join(pkg, "package.json"), "utf8")).version;
 const full = await buildCatalogue();
-const catalogue = full.map(({ definition, ...rest }) => rest);
+// `detail` goes the way `definition` goes: it is what a node takes, gives back and needs
+// access to, read by ONE page, and its config schema outweighs every browse field in the
+// file. Both travel in the per-item file below.
+const catalogue = full.map(({ definition, detail, ...rest }) => rest);
 
 writeFileSync(join(out, "catalogue.json"), JSON.stringify({ release, items: catalogue }, null, 2) + "\n");
 

@@ -8,6 +8,156 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1782027963/gravity/icons/z.svg",
   "whenToUse": "Run a multi-turn agent on Z.AI's GLM-5.2 that calls tools, reasons, and streams its answer. Pick it specifically when you want the GLM model family — large context, strong coding and agentic reasoning. It consumes tools from MCP provider nodes attached via service edges.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "progress",
+        "type": "string",
+        "description": "Tool call log (emitted in real time)"
+      },
+      {
+        "name": "chunk",
+        "type": "string",
+        "description": "Streaming LLM text response (emitted in real time)"
+      },
+      {
+        "name": "reasoning",
+        "type": "string",
+        "description": "GLM reasoning/thinking stream (separate output)"
+      },
+      {
+        "name": "mcpResult",
+        "type": "object",
+        "description": "MCP tool results"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Final synthesized response"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "zaiApiKey",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Z.AI GLM model. GLM-5.2 gives the deepest agentic reasoning and honours all three Reasoning Effort settings. GLM-5-Turbo is faster and cheaper with 200K context, but reasoning_effort is GLM-5.2+ only, so High and Max behave identically on Turbo.",
+          "enum": [
+            "glm-5.2",
+            "glm-5-turbo"
+          ],
+          "enumNames": [
+            "GLM-5.2 (deepest reasoning)",
+            "GLM-5-Turbo (faster/cheaper)"
+          ],
+          "default": "glm-5.2"
+        },
+        "agentName": {
+          "type": "string",
+          "title": "Agent Name",
+          "description": "Name for this agent (for logs and traces)",
+          "default": "GravityAgent"
+        },
+        "maxTurns": {
+          "type": "number",
+          "title": "Max Turns",
+          "description": "Maximum agent loop iterations (tool calls plus responses)",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "title": "Reasoning Effort",
+          "description": "Depth of GLM-5.2's chain-of-thought. These are the only three settings that change behaviour: High is enhanced reasoning (the default, strong tool-calling at far fewer reasoning tokens), Max is the deepest, and Off disables thinking entirely. GLM collapses its other documented values internally (xhigh to max, low/medium to high, minimal to off), so exposing them would let someone pick Low and still get full High reasoning.",
+          "enum": [
+            "high",
+            "max",
+            "none"
+          ],
+          "enumNames": [
+            "High (enhanced reasoning, default)",
+            "Max (deepest reasoning, most tokens)",
+            "Off (no thinking, fastest/cheapest)"
+          ],
+          "default": "high"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Output Tokens",
+          "description": "Maximum output tokens. CRITICAL with thinking enabled: reasoning counts against this budget and the model only emits a tool call AFTER thinking closes, so set it too low and a long reasoning pass is truncated before any tool call — the agent then silently never calls a tool. GLM's model card recommends 65536 for agentic use.",
+          "default": 65536,
+          "minimum": 1,
+          "maximum": 131072
+        },
+        "temperature": {
+          "type": "number",
+          "title": "Temperature",
+          "description": "Sampling temperature (GLM-5.2 default 1.0)",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "topP": {
+          "type": "number",
+          "title": "Top P",
+          "description": "Nucleus sampling (GLM-5.2 default 0.95)",
+          "default": 0.95,
+          "minimum": 0.01,
+          "maximum": 1
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "Instructions",
+          "description": "Agent instructions. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Input",
+          "description": "The request to answer. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "zai",

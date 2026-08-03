@@ -8,6 +8,45 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Forward a signal downstream immediately without waiting on the normal dependency and join rules: a pass-through wire to fan a signal out, or to break a blocking dependency. It adds no transform, only unwrapping a single upstream output and re-timing the signal, so it exists for control-flow rewiring rather than for changing data.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Signal to relay to downstream nodes",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Relayed signal"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "properties": {
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

@@ -8,6 +8,99 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Single prompt to single completion, the plain one-shot text generator: summarise, rewrite, classify, answer. No streaming, no tools, no schema enforcement; reach for a heavier node only when a step genuinely needs token streaming, iterative tool use, or strict JSON output.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The generated text response"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "Token burn (prompt_tokens, completion_tokens, total_tokens)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "openAICredential",
+        "required": true,
+        "displayName": "OpenAI API",
+        "description": "OpenAI API credentials for authentication"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Select the OpenAI model to use",
+          "enum": [
+            "gpt-5.6",
+            "gpt-5.6-terra",
+            "gpt-5.6-luna"
+          ],
+          "enumNames": [
+            "Sol (Frontier, complex work)",
+            "Terra (Balanced intelligence/cost)",
+            "Luna (Cost-optimized, high-volume)"
+          ],
+          "default": "gpt-5.6-terra",
+          "resolve": "modelTier"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Tokens",
+          "description": "Hard ceiling on the reply. The model stops when it hits this, mid-sentence and without an error, so raise it for long output rather than leaving it to trim.",
+          "default": 1200,
+          "minimum": 1,
+          "maximum": 128000
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "Standing instructions for every run: the model's role, tone and limits. Optional. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "The request to answer. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai",

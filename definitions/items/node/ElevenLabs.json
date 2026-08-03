@@ -8,6 +8,99 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
   "whenToUse": "Read TEXT ALOUD in one voice: a narration, an announcement, a spoken reply. It performs words that are already written, so use it when the words exist and only the voice is needed. For several speakers in one clip use ElevenLabs Dialogue; for the sound of a thing rather than speech use Sound Effects.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "string",
+        "required": true,
+        "description": "The text to speak"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "audio",
+        "type": "object",
+        "description": "Generated audio: { data (base64), mimeType, fileName }"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "format, voiceId, characters"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elevenlabsCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The words to speak.",
+          "default": "{{{input}}}",
+          "ui:field": "template"
+        },
+        "voiceId": {
+          "type": "string",
+          "title": "Voice ID",
+          "description": "Any voice id from your ElevenLabs library. Leave blank for a default narrator voice — the same premade voice the code version fell back to, so an unset field keeps working.",
+          "default": ""
+        },
+        "modelId": {
+          "type": "string",
+          "title": "Model",
+          "description": "Override the TTS model. Leave blank for the package default.",
+          "default": ""
+        },
+        "stability": {
+          "type": "number",
+          "title": "Stability",
+          "description": "0 is most expressive, 0.5 natural, 1 most consistent. ElevenLabs accepts ONLY these three values on this model, so anything else falls back to 0.5.",
+          "enum": [
+            0,
+            0.5,
+            1
+          ],
+          "enumNames": [
+            "0 — expressive",
+            "0.5 — natural",
+            "1 — consistent"
+          ],
+          "default": 0.5
+        },
+        "outputFormat": {
+          "type": "string",
+          "title": "Output Format",
+          "description": "Audio encoding, e.g. mp3_44100_128. Leave blank for the account default.",
+          "default": ""
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "elevenlabs",

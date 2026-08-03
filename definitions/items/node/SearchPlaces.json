@@ -8,6 +8,81 @@
   "category": "Search",
   "icon": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   "whenToUse": "Pick to find local BUSINESSES or PLACES: each result carries address, rating, review count, phone, website and GPS coordinates (Google Maps). Use it when you need structured place or location data; it returns places, not arbitrary web pages, dated articles, or videos.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query, e.g. 'coffee shops'",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "placeResults",
+        "type": "array",
+        "description": "Place results (title, address, rating, reviews, type, phone, website, coordinates)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "searchapiCredential",
+        "required": true,
+        "displayName": "SearchAPI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "title": "Search Query",
+          "description": "What to search for on Maps, e.g. 'coffee shops', 'dentist'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "location": {
+          "type": "string",
+          "title": "Location",
+          "description": "Optional coordinate filter, SearchAPI 'll' format e.g. '@40.7009973,-73.994778,12z'. Leave blank to infer from the query.",
+          "default": ""
+        },
+        "numResults": {
+          "type": "number",
+          "title": "Number of Results",
+          "description": "Number of place results to return",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "Language code for results, e.g. 'en', 'ar'",
+          "default": "en"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "search",

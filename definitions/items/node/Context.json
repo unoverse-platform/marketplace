@@ -8,6 +8,45 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Read the current run's identity and session fields — userId, conversationId, chatId, workflowId, executionId — to scope, personalise or key a later step. It hands them over as one ready-to-use object rather than making a template dig through the raw execution context.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. Nothing is read from it — the ids come from the run itself.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "context",
+        "type": "object",
+        "description": "{ userId, conversationId, chatId, workflowId, executionId }"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "properties": {
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

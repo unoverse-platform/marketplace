@@ -1,0 +1,207 @@
+$schema: ../../../../_schema/unoverse.schema.json
+# TABBED body. Ungrouped material stays ABOVE the strip: what the offering is must never
+# be hidden behind a tab. Fine print is repeated into every tab by `toDocument`, so it is
+# never reachable from only one of them.
+type: Box
+style:
+  direction: column
+  gap: "5"
+  width: full
+children:
+  - type: Each
+    visibleWhen: lead
+    bind:
+      items: lead
+    style:
+      direction: column
+      gap: "6"
+      width: full
+    template:
+      $include: components/section
+  - type: Box
+    style:
+      direction: row
+      align: center
+      gap: "5"
+      width: full
+      borderBottom: thin subtle
+    children:
+          - type: Button
+            visibleWhen: tab0Label
+            action:
+              type: setValue
+              values:
+                - key: tab
+                  value: "0"
+            style:
+              direction: row
+              align: center
+              background: transparent
+              border: none
+              padding: [ "3", "0" ]
+              cursor: pointer
+              borderBottom: thick transparent
+              transition: all 150ms ease
+              when:
+                - field: tab
+                  eq: "0"
+                  apply:
+                    borderBottom: thick action.primary
+            children:
+              - type: Text
+                bind:
+                  value: tab0Label
+                style:
+                  font: body.sm
+                  weight: semibold
+                  color: text.tertiary
+                  when:
+                    - field: tab
+                      eq: "0"
+                      apply:
+                        color: action.primary
+          - type: Button
+            visibleWhen: tab1Label
+            action:
+              type: setValue
+              values:
+                - key: tab
+                  value: "1"
+            style:
+              direction: row
+              align: center
+              background: transparent
+              border: none
+              padding: [ "3", "0" ]
+              cursor: pointer
+              borderBottom: thick transparent
+              transition: all 150ms ease
+              when:
+                - field: tab
+                  eq: "1"
+                  apply:
+                    borderBottom: thick action.primary
+            children:
+              - type: Text
+                bind:
+                  value: tab1Label
+                style:
+                  font: body.sm
+                  weight: semibold
+                  color: text.tertiary
+                  when:
+                    - field: tab
+                      eq: "1"
+                      apply:
+                        color: action.primary
+          - type: Button
+            visibleWhen: tab2Label
+            action:
+              type: setValue
+              values:
+                - key: tab
+                  value: "2"
+            style:
+              direction: row
+              align: center
+              background: transparent
+              border: none
+              padding: [ "3", "0" ]
+              cursor: pointer
+              borderBottom: thick transparent
+              transition: all 150ms ease
+              when:
+                - field: tab
+                  eq: "2"
+                  apply:
+                    borderBottom: thick action.primary
+            children:
+              - type: Text
+                bind:
+                  value: tab2Label
+                style:
+                  font: body.sm
+                  weight: semibold
+                  color: text.tertiary
+                  when:
+                    - field: tab
+                      eq: "2"
+                      apply:
+                        color: action.primary
+          - type: Button
+            visibleWhen: tab3Label
+            action:
+              type: setValue
+              values:
+                - key: tab
+                  value: "3"
+            style:
+              direction: row
+              align: center
+              background: transparent
+              border: none
+              padding: [ "3", "0" ]
+              cursor: pointer
+              borderBottom: thick transparent
+              transition: all 150ms ease
+              when:
+                - field: tab
+                  eq: "3"
+                  apply:
+                    borderBottom: thick action.primary
+            children:
+              - type: Text
+                bind:
+                  value: tab3Label
+                style:
+                  font: body.sm
+                  weight: semibold
+                  color: text.tertiary
+                  when:
+                    - field: tab
+                      eq: "3"
+                      apply:
+                        color: action.primary
+  - type: Switch
+    on: tab
+    cases:
+          "0":
+            type: Each
+            bind:
+              items: tab0
+            style:
+              direction: column
+              gap: "6"
+              width: full
+            template:
+              $include: components/section
+          "1":
+            type: Each
+            bind:
+              items: tab1
+            style:
+              direction: column
+              gap: "6"
+              width: full
+            template:
+              $include: components/section
+          "2":
+            type: Each
+            bind:
+              items: tab2
+            style:
+              direction: column
+              gap: "6"
+              width: full
+            template:
+              $include: components/section
+          "3":
+            type: Each
+            bind:
+              items: tab3
+            style:
+              direction: column
+              gap: "6"
+              width: full
+            template:
+              $include: components/section

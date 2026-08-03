@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "Table",
-  "fingerprint": "815de14f85123bf7",
+  "fingerprint": "7cf0122d853f305b",
   "bundle": "design-system",
   "title": "Table",
   "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
@@ -60,6 +60,11 @@
           "children": [
             {
               "type": "Each",
+              "brief": {
+                "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+                "minItems": 2,
+                "maxItems": 5
+              },
               "bind": {
                 "items": "columns"
               },
@@ -86,6 +91,11 @@
         },
         {
           "type": "Each",
+          "brief": {
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20
+          },
           "bind": {
             "items": "rows"
           },

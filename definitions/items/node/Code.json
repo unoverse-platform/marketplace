@@ -8,6 +8,74 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
   "whenToUse": "Transform, reshape, compute or combine data inline with a JS expression: map or filter an array, build an object, derive a value from upstream outputs. Prefer it over routing data through an LLM node just to reformat or merge it, because it is deterministic and free. Toggle generateIds for content hashes, or saveToContext to keep the result reachable from later templates.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Upstream data. Nothing is read from it directly: the `code` field's template reaches {{ signal.… }} and the engine resolves it before this node runs, so by the time the node executes the answer is already in config.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "The value the expression produced"
+      },
+      {
+        "name": "ids",
+        "type": "object",
+        "description": "{ universalId, contentId } — only when Generate IDs is on"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "object",
+          "title": "Code",
+          "description": "JS expression to transform data. It is a template field, so the ENGINE evaluates it before this node runs and what arrives here is already the finished value. That is why this node makes no request and does no computing of its own beyond the optional id hashes.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "generateIds": {
+          "type": "boolean",
+          "title": "Generate IDs",
+          "description": "Also emit a universalId and a contentId derived from the value, for downstream dedup and ref hydration to join on.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "saveToContext": {
+          "type": "boolean",
+          "title": "Save to Context",
+          "description": "Keep the value for the rest of this run, so a later node's template can reach it as {{ saved.<this node's id> }} without an edge.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

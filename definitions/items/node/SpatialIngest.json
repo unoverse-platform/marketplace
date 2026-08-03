@@ -8,6 +8,94 @@
   "category": "Documents",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a message thread. It reads the text, pulls out the distinct needs or services it describes, embeds each one and stores it. It only WRITES to that map — searching it is a different job — and it takes text that is already in hand rather than fetching from anywhere.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Upstream data. The text itself is named in config, usually templated from here.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "success",
+        "type": "boolean",
+        "description": "Whether the ingestion job completed"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "How many entries were stored"
+      },
+      {
+        "name": "universalIds",
+        "type": "array",
+        "description": "Ids of the stored entries, when the engine reports them"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "rawContent",
+        "category"
+      ],
+      "properties": {
+        "rawContent": {
+          "type": "string",
+          "title": "Raw Content",
+          "description": "The text to read. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "category": {
+          "type": "string",
+          "title": "Category",
+          "description": "What the text describes — a need someone has, or a product or service on offer.",
+          "enum": [
+            "NEED",
+            "SERVICE"
+          ],
+          "enumNames": [
+            "Need",
+            "Product or service"
+          ],
+          "default": "NEED"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "title": "Source URL",
+          "description": "Where the text came from, kept for provenance. Optional.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxItems": {
+          "type": "number",
+          "title": "Max Items",
+          "description": "Cap on how many entries to store from this text. Leave blank for no cap.",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "ingest",

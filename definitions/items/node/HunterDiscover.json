@@ -8,6 +8,135 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
   "whenToUse": "Pick to BUILD a target-company list from criteria (industry, tech stack, size, location) or a natural-language query, the starting point for prospecting, with tech-stack and lookalike filters. Use it to discover unknown companies by criteria; if you already have a domain you do not need a discovery step.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. Filters may template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "companies",
+        "type": "array",
+        "description": "Matched companies with domain, organisation and email counts"
+      },
+      {
+        "name": "totalResults",
+        "type": "number",
+        "description": "How many companies came back"
+      },
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Page size used"
+      },
+      {
+        "name": "offset",
+        "type": "number",
+        "description": "Offset used"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hunterCredential",
+        "required": true,
+        "displayName": "Hunter.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "query": {
+          "type": "string",
+          "title": "Query",
+          "description": "A natural-language description of the companies you want. When set it REPLACES every filter below, which is Hunter's own rule rather than ours.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "industry": {
+          "type": "string",
+          "title": "Industry",
+          "description": "Comma-separated industries",
+          "default": "",
+          "ui:field": "template"
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "Comma-separated two-letter country codes, e.g. 'GB, US'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "headcount": {
+          "type": "string",
+          "title": "Headcount",
+          "description": "Comma-separated size bands, e.g. '1-10, 11-50'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "technology": {
+          "type": "string",
+          "title": "Technology",
+          "description": "Comma-separated technologies the company uses",
+          "default": "",
+          "ui:field": "template"
+        },
+        "keywords": {
+          "type": "string",
+          "title": "Keywords",
+          "description": "Comma-separated keywords to match",
+          "default": "",
+          "ui:field": "template"
+        },
+        "companyType": {
+          "type": "string",
+          "title": "Company Type",
+          "description": "Comma-separated types, e.g. 'privately held, public company'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "similarTo": {
+          "type": "string",
+          "title": "Similar To",
+          "description": "A domain to find lookalikes of",
+          "default": "",
+          "ui:field": "template"
+        },
+        "limit": {
+          "type": "number",
+          "title": "Limit",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "number",
+          "title": "Offset",
+          "default": 0,
+          "minimum": 0
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

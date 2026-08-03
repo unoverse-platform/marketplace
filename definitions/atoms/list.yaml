@@ -15,6 +15,10 @@ props:
         body: ""
 root:
   type: Each
+  brief:
+    description: The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.
+    minItems: 2
+    maxItems: 10
   bind:
     items: items
   style:
@@ -45,6 +49,9 @@ root:
           minWidth: "0"
         children:
           - type: Text
+            brief:
+              description: What the item is, in a few words. A noun phrase, not a sentence.
+              maxLength: 60
             bind:
               value: title
             style:
@@ -53,6 +60,10 @@ root:
               color: text.primary
               lineHeight: snug
           - type: Text
+            brief:
+              description: One line the source gives about this item. Empty when the title says it all.
+              optional: true
+              maxLength: 200
             visibleWhen: body
             bind:
               value: body

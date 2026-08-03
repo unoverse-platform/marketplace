@@ -8,6 +8,59 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Add a markdown comment, label or sticky onto the canvas to explain what a workflow does. It is annotation only: it has no inputs or outputs and never runs in the data flow, so it cannot transform anything or show anything to an end user.",
+  "detail": {
+    "inputs": [],
+    "outputs": [],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "content"
+      ],
+      "properties": {
+        "content": {
+          "type": "string",
+          "title": "Note Content",
+          "description": "Markdown shown on the canvas. Headings, lists, code blocks and emphasis all work.",
+          "default": "# Note\n\nAdd your documentation here...\n\n- Use markdown syntax\n- Add **bold** or *italic* text\n- Include `code` snippets\n",
+          "ui:field": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "backgroundColor": {
+          "type": "string",
+          "title": "Background Colour",
+          "description": "The colour of the sticky behind the text",
+          "default": "#fffbeb"
+        },
+        "fontSize": {
+          "type": "number",
+          "title": "Font Size",
+          "description": "Base size for the note's text",
+          "default": 14,
+          "minimum": 10,
+          "maximum": 24
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

@@ -8,6 +8,117 @@
   "category": "Search",
   "icon": "https://cdn-icons-png.flaticon.com/512/3128/3128287.png",
   "whenToUse": "Pick to find WEB PAGES and images for a keyword query: titles, URLs and snippets from across the open web (Google). Use it for general open-web results, any relevant page; it returns web pages, not specifically dated news, videos, places, or social posts.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "webResults",
+        "type": "array",
+        "description": "Web search results (title, url, source, snippet)"
+      },
+      {
+        "name": "imageResults",
+        "type": "array",
+        "description": "Image results (url, title, thumbnail, source). Empty when image search is off."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "searchapiCredential",
+        "required": true,
+        "displayName": "SearchAPI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "title": "Search Query",
+          "description": "Query to search for",
+          "default": "",
+          "ui:field": "template"
+        },
+        "numResults": {
+          "type": "number",
+          "title": "Number of Results",
+          "description": "Number of web results to return",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "searchImages": {
+          "type": "boolean",
+          "title": "Search Images",
+          "description": "Whether to also run a dedicated image search",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "numImages": {
+          "type": "number",
+          "title": "Number of Images",
+          "description": "Number of image results to return",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 50,
+          "ui:dependencies": {
+            "searchImages": true
+          }
+        },
+        "safeSearch": {
+          "type": "string",
+          "title": "Safe Search",
+          "enum": [
+            "active",
+            "off"
+          ],
+          "enumNames": [
+            "Active",
+            "Off"
+          ],
+          "default": "active"
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "Country code for localized results, e.g. 'us', 'uk', 'ae'",
+          "default": "us"
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "Language code for results, e.g. 'en', 'ar'",
+          "default": "en"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "search",

@@ -8,6 +8,102 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
   "whenToUse": "Turn RECORDED AUDIO into text: a meeting, a voice note, an interview, a video's soundtrack. It reads audio and returns words, which is the opposite direction to every other node in this package. Ask for diarization when you need to know who spoke.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "string",
+        "required": false,
+        "description": "Audio URL to transcribe, when not set in config"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The full transcript"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "languageCode, languageProbability, words (with timings)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elevenlabsCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "audioUrl": {
+          "type": "string",
+          "title": "Audio URL",
+          "description": "A URL ElevenLabs can fetch. Use this OR Audio (base64), not both — the URL wins if both are set.",
+          "default": "{{{input}}}",
+          "ui:field": "template"
+        },
+        "audioBase64": {
+          "type": "string",
+          "title": "Audio (base64)",
+          "description": "The audio itself, base64 encoded — what an upstream node emits as `audio.data`. Use it when the file is not reachable by URL.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "mimeType": {
+          "type": "string",
+          "title": "MIME Type",
+          "description": "Content type of the base64 audio, e.g. audio/mpeg. Ignored when using a URL.",
+          "default": "audio/mpeg"
+        },
+        "modelId": {
+          "type": "string",
+          "title": "Model",
+          "description": "Override the transcription model. Leave blank for the package default.",
+          "default": ""
+        },
+        "languageCode": {
+          "type": "string",
+          "title": "Language",
+          "description": "ISO code, e.g. en. Leave blank to auto-detect.",
+          "default": ""
+        },
+        "diarize": {
+          "type": "boolean",
+          "title": "Identify Speakers",
+          "description": "Label which speaker said each word",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "tagAudioEvents": {
+          "type": "boolean",
+          "title": "Tag Audio Events",
+          "description": "Mark laughter, applause and similar non-speech sounds",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "elevenlabs",

@@ -8,6 +8,76 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
   "whenToUse": "Pick when you have a specific object and need a way to get at it: its size and type, plus a time-limited link a later step can fetch without AWS credentials. Finding out what is in a bucket is a different job.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "The file to read, as { key } or a whole file object from S3 Files. Its bucket, size and id are carried through when present.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "file",
+        "type": "object",
+        "description": "key, bucket, size, contentType, lastModified, etag, universalId, downloadUrl"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "awsCredential",
+        "required": true,
+        "displayName": "AWS"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "bucket"
+      ],
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "title": "S3 Bucket",
+          "description": "The bucket the object lives in",
+          "default": "",
+          "ui:field": "template"
+        },
+        "key": {
+          "type": "string",
+          "title": "Key",
+          "description": "The object's key. Leave empty to take it from the incoming signal.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "downloadUrlExpiry": {
+          "type": "number",
+          "title": "Link Lifetime (seconds)",
+          "description": "How long the download link stays valid. The retired node always used seven days, which is the maximum AWS allows; a day is usually plenty.",
+          "default": 86400,
+          "minimum": 60,
+          "maximum": 604800
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-s3",

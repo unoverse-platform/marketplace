@@ -8,6 +8,175 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
   "whenToUse": "Reach for this when a step needs Claude to answer in ONE pass and the call must run in YOUR AWS account and region: summarise, analyse, classify, answer, including about an image or a document fetched alongside the prompt. It can be given a tool schema to return structured arguments instead of prose. Working through a problem across several tool calls is an agent's job, not this one's, and a step that needs a GPT model rather than Claude is not this node's job either.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes, referenceable in the prompt templates",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "{ text, toolUse, usage }. `toolUse` is present only when the model chose a tool, and carries its name and arguments. The tool's arguments are also hoisted to the top of the output, so a schema field like `faqs` reads as `output.faqs` directly."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "bedrockCredential",
+        "required": true,
+        "displayName": "AWS Bedrock"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Select the Claude model to use",
+          "enum": [
+            "anthropic.claude-opus-5",
+            "anthropic.claude-sonnet-5",
+            "anthropic.claude-haiku-4-5"
+          ],
+          "enumNames": [
+            "Claude Opus 5 (Frontier, complex work)",
+            "Claude Sonnet 5 (Balanced intelligence/cost)",
+            "Claude Haiku 4.5 (Cost-optimized, high-volume)"
+          ],
+          "default": "anthropic.claude-sonnet-5",
+          "resolve": "modelTier"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "The request to answer. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "Standing instructions for every run: the model's role, tone and limits. Optional. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Output Tokens",
+          "default": 4096,
+          "minimum": 1,
+          "maximum": 200000
+        },
+        "includeImageUrl": {
+          "type": "boolean",
+          "title": "Include an Image",
+          "description": "Fetch an image and let the model see it alongside the prompt",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "imageUrl": {
+          "type": "string",
+          "title": "Image URL",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "includeImageUrl": true
+          }
+        },
+        "includeDocumentUrl": {
+          "type": "boolean",
+          "title": "Include a Document",
+          "description": "Fetch a document and let the model read it alongside the prompt",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "documentUrl": {
+          "type": "string",
+          "title": "Document URL",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "includeDocumentUrl": true
+          }
+        },
+        "documentName": {
+          "type": "string",
+          "title": "Document Name",
+          "description": "What the model should call the document when referring to it",
+          "default": "document",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "includeDocumentUrl": true
+          }
+        },
+        "enableTools": {
+          "type": "boolean",
+          "title": "Enable Tools",
+          "description": "Offer the model a tool schema, so it can return structured arguments",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "toolSchema": {
+          "type": "object",
+          "title": "Tool Schema",
+          "description": "The tools to offer, as JSON Anthropic tool entries (name, description, input_schema)",
+          "default": [],
+          "ui:field": "template",
+          "ui:dependencies": {
+            "enableTools": true
+          }
+        },
+        "toolChoice": {
+          "type": "string",
+          "title": "Tool Choice",
+          "description": "Let the model decide, or force it to use one",
+          "enum": [
+            "auto",
+            "any"
+          ],
+          "enumNames": [
+            "Auto",
+            "Require a tool"
+          ],
+          "default": "auto",
+          "ui:dependencies": {
+            "enableTools": true
+          }
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-bedrock",

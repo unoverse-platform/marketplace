@@ -8,6 +8,135 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Hold a spoken, two-way conversation with Grok in real time: the person talks, Grok answers aloud, and either can interrupt the other. Pick it when the interaction is a VOICE CALL rather than text, and when you want xAI's model. It consumes tools from MCP provider nodes attached via service edges.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger. Starting the node opens the call.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "object",
+        "description": "The last completed turn: { query, response }"
+      },
+      {
+        "name": "conversation",
+        "type": "object",
+        "description": "The full conversation as it accumulates"
+      },
+      {
+        "name": "mcpResult",
+        "type": "object",
+        "description": "MCP tool results"
+      },
+      {
+        "name": "progress",
+        "type": "string",
+        "description": "Q/A log of the call"
+      },
+      {
+        "name": "sessionReady",
+        "type": "boolean",
+        "description": "True once the vendor accepted the handshake"
+      },
+      {
+        "name": "userTranscript",
+        "type": "string",
+        "description": "What the person said, per completed utterance"
+      },
+      {
+        "name": "assistantTranscript",
+        "type": "string",
+        "description": "What Grok said, accumulated as it speaks"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "xaiCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "System instructions for Grok. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "initialRequest": {
+          "type": "string",
+          "title": "Initial Request",
+          "description": "Text sent as a user message at call start — Grok answers it immediately.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "voice": {
+          "type": "string",
+          "title": "Voice",
+          "description": "The voice Grok speaks with",
+          "enum": [
+            "eve",
+            "ara",
+            "rex",
+            "sal",
+            "leo"
+          ],
+          "enumNames": [
+            "Eve",
+            "Ara",
+            "Rex",
+            "Sal",
+            "Leo"
+          ],
+          "default": "eve"
+        },
+        "turnDetection": {
+          "type": "string",
+          "title": "Turn Detection",
+          "description": "How Grok decides the person has finished speaking. Manual disables detection entirely, so nothing is answered unless something else commits the audio buffer.",
+          "enum": [
+            "server_vad",
+            "manual"
+          ],
+          "enumNames": [
+            "Server VAD (automatic)",
+            "Manual"
+          ],
+          "default": "server_vad"
+        },
+        "conversationHistory": {
+          "type": "object",
+          "title": "Conversation History",
+          "description": "Array of prior turns ({ role, content }), replayed into the session before the call starts",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "xai-grok",

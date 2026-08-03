@@ -8,6 +8,109 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg",
   "whenToUse": "Pick when you have an identifier for ONE KNOWN person (email, LinkedIn URL, or name plus company) and need their full Apollo profile: employment history and contact details. Use it to enrich one already-identified person; discovering unknown people, or only finding and verifying an email address, are different jobs.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The identifiers usually template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "person",
+        "type": "object",
+        "description": "The enriched profile, or null when Apollo has no match"
+      },
+      {
+        "name": "found",
+        "type": "boolean",
+        "description": "Whether a match was found. A miss is a normal result, not an error."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "apolloCredential",
+        "required": true,
+        "displayName": "Apollo.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "email": {
+          "type": "string",
+          "title": "Email",
+          "description": "Email address of the person. The strongest identifier.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "linkedinUrl": {
+          "type": "string",
+          "title": "LinkedIn URL",
+          "description": "LinkedIn profile URL, e.g. 'https://linkedin.com/in/johndoe'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "firstName": {
+          "type": "string",
+          "title": "First Name",
+          "default": "",
+          "ui:field": "template"
+        },
+        "lastName": {
+          "type": "string",
+          "title": "Last Name",
+          "default": "",
+          "ui:field": "template"
+        },
+        "domain": {
+          "type": "string",
+          "title": "Company Domain",
+          "description": "Domain of the person's company, e.g. 'google.com'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "organizationName": {
+          "type": "string",
+          "title": "Company Name",
+          "default": "",
+          "ui:field": "template"
+        },
+        "revealPersonalEmails": {
+          "type": "boolean",
+          "title": "Reveal Personal Emails",
+          "description": "Request personal email addresses. CONSUMES CREDITS.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "revealPhoneNumber": {
+          "type": "boolean",
+          "title": "Reveal Phone Number",
+          "description": "Request a phone number. CONSUMES CREDITS.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

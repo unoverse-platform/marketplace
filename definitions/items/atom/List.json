@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "List",
-  "fingerprint": "ca3a2bb01c4b9ccc",
+  "fingerprint": "505b1bffb9e79a67",
   "bundle": "design-system",
   "title": "List",
   "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -30,6 +30,11 @@
     },
     "root": {
       "type": "Each",
+      "brief": {
+        "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
+        "minItems": 2,
+        "maxItems": 10
+      },
       "bind": {
         "items": "items"
       },
@@ -74,6 +79,10 @@
             "children": [
               {
                 "type": "Text",
+                "brief": {
+                  "description": "What the item is, in a few words. A noun phrase, not a sentence.",
+                  "maxLength": 60
+                },
                 "bind": {
                   "value": "title"
                 },
@@ -86,6 +95,11 @@
               },
               {
                 "type": "Text",
+                "brief": {
+                  "description": "One line the source gives about this item. Empty when the title says it all.",
+                  "optional": true,
+                  "maxLength": 200
+                },
                 "visibleWhen": "body",
                 "bind": {
                   "value": "body"

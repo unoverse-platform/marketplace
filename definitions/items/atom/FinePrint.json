@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "FinePrint",
-  "fingerprint": "b8d9748934644cd0",
+  "fingerprint": "dcec45690d2832e2",
   "bundle": "design-system",
   "title": "FinePrint",
   "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
@@ -21,6 +21,9 @@
     },
     "root": {
       "type": "Markdown",
+      "brief": {
+        "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
+      },
       "bind": {
         "value": "body"
       },

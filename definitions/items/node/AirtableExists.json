@@ -8,6 +8,87 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
   "whenToUse": "Pick to answer \"is this already in Airtable?\" before writing: it looks for one record whose field equals a value and returns a boolean plus the record id. Use it as a guard on a branch; it checks one value rather than fetching rows.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger. The field and value usually template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "exists",
+        "type": "boolean",
+        "description": "Whether a matching record was found"
+      },
+      {
+        "name": "recordId",
+        "type": "string",
+        "description": "The matching record's Airtable id, or null when there was no match"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "airtableCredential",
+        "required": true,
+        "displayName": "Airtable"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "baseId",
+        "tableId",
+        "field",
+        "value"
+      ],
+      "properties": {
+        "baseId": {
+          "type": "string",
+          "title": "Base ID",
+          "default": "",
+          "ui:field": "template"
+        },
+        "tableId": {
+          "type": "string",
+          "title": "Table Name or ID",
+          "default": "",
+          "ui:field": "template"
+        },
+        "field": {
+          "type": "string",
+          "title": "Field Name",
+          "description": "The field to match on",
+          "default": "",
+          "ui:field": "template"
+        },
+        "value": {
+          "type": "string",
+          "title": "Value",
+          "description": "The value to look for",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "airtable",

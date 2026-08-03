@@ -8,6 +8,60 @@
   "category": "Documents",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Pick whenever an agent must author or revise a long document — report, plan, spec, article, brief. Writes and revises section by section and live-renders each edit; a one-shot generation can't be revised and blows the context window on every change. Attach via a service edge to an agent node, and route its markdown to a MarkdownRenderer to display.",
+  "detail": {
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "markdown",
+        "type": "string",
+        "description": "Current rendered markdown content"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "initialMarkdown": {
+          "type": "string",
+          "title": "Initial content",
+          "description": "Seeded into Redis when the node first executes. Parsed into sections on init (H1/H2 become sections; H3+ stays in bodies). Re-parsing a changed config does NOT reset an existing doc — the agent's resetDoc tool does, explicitly.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "sectionizeAt": {
+          "type": "number",
+          "title": "Sectionize at",
+          "description": "Which heading level starts a new section. 2 (default) = H1 and H2 are sections, H3+ stays in bodies. 1 = only H1 is a section.",
+          "default": 2,
+          "enum": [
+            1,
+            2
+          ],
+          "enumNames": [
+            "H1 only",
+            "H1 and H2"
+          ]
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "smart-document",

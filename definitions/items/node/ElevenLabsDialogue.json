@@ -8,6 +8,92 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
   "whenToUse": "Perform a SCRIPT with several speakers as a single clip, with the turn-taking and interruptions of real conversation. Give it lines with a voice each. Use it over TTS whenever more than one person speaks, because TTS reads everything in one voice.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "lines",
+        "type": "array",
+        "required": true,
+        "description": "Script lines: [{ text, voiceId } or { text, speaker }]"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "audio",
+        "type": "object",
+        "description": "Generated audio: { data (base64), mimeType, fileName }"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "format, lineCount, characters"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elevenlabsCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "lines"
+      ],
+      "properties": {
+        "lines": {
+          "type": "object",
+          "title": "Lines",
+          "description": "Array of { text, voiceId }, or { text, speaker } with the speaker named in Voice Map. Usually wired in from an upstream node as an expression, e.g. return signal.script1.lines",
+          "ui:field": "template"
+        },
+        "voiceMap": {
+          "type": "object",
+          "title": "Voice Map",
+          "description": "Maps a speaker name to a voice id, e.g. { \"NARRATOR\": \"onwK...\", \"GUEST\": \"pNIn...\" }. Only needed for lines that name a `speaker` instead of carrying their own voiceId.",
+          "ui:field": "template"
+        },
+        "modelId": {
+          "type": "string",
+          "title": "Model",
+          "description": "Override the dialogue model. Leave blank for the package default.",
+          "default": ""
+        },
+        "stability": {
+          "type": "number",
+          "title": "Stability",
+          "description": "0 is most expressive, 0.5 natural, 1 most consistent. Only these three are accepted.",
+          "enum": [
+            0,
+            0.5,
+            1
+          ],
+          "enumNames": [
+            "0 — expressive",
+            "0.5 — natural",
+            "1 — consistent"
+          ],
+          "default": 0.5
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "elevenlabs",

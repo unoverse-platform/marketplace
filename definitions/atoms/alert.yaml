@@ -2,8 +2,9 @@ $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
 name: Alert
+category: markdown
 description: "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only."
-whenToUse: A confirmation, warning, or error the user should read in place (form feedback, action results, notices). Compose via a Ref, mapping title/body to host fields and setting the tone with a style override.
+whenToUse: "Strictly what a reader must not miss to avoid harm or real surprise, such as a deadline that forfeits something or a condition that voids cover. Never a routine qualifier: a fee's applicability, a notice period or a processing time belongs with the fact it qualifies. Also the in-place confirmation, warning or error on an interface (form feedback, action results)."
 props:
   icon:
     type: string
@@ -40,6 +41,9 @@ root:
         gap: "1"
       children:
         - type: Text
+          brief:
+            description: The warning itself, in one line. State the consequence, not the topic.
+            maxLength: 90
           bind:
             value: title
           style:
@@ -47,6 +51,10 @@ root:
             weight: semibold
             color: text.primary
         - type: Text
+          brief:
+            description: What the reader should do or know about it, from the source. Empty when the warning stands alone.
+            optional: true
+            maxLength: 200
           visibleWhen: body
           bind:
             value: body

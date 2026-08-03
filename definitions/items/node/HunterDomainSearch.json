@@ -8,6 +8,153 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
   "whenToUse": "Pick to list EVERY known email address at one domain or company, for exhaustive coverage of a single known domain. Use it when you have a domain and want all its addresses; finding one person's address, verifying deliverability, full profiles, or role-filtered people across companies are different jobs.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The domain usually templates from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "emails",
+        "type": "array",
+        "description": "Found addresses with owner name, position, seniority and confidence"
+      },
+      {
+        "name": "organization",
+        "type": "object",
+        "description": "Company metadata for the domain (name, industry, location, socials)"
+      },
+      {
+        "name": "pattern",
+        "type": "string",
+        "description": "The detected address pattern, e.g. '{first}.{last}'"
+      },
+      {
+        "name": "totalResults",
+        "type": "number",
+        "description": "How many addresses Hunter holds for this domain, which may exceed the page"
+      },
+      {
+        "name": "limit",
+        "type": "number",
+        "description": "Page size used"
+      },
+      {
+        "name": "offset",
+        "type": "number",
+        "description": "Offset used"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hunterCredential",
+        "required": true,
+        "displayName": "Hunter.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "domain": {
+          "type": "string",
+          "title": "Domain",
+          "description": "The company domain, e.g. 'google.com'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "company": {
+          "type": "string",
+          "title": "Company",
+          "description": "The company name, when you do not have the domain",
+          "default": "",
+          "ui:field": "template"
+        },
+        "type": {
+          "type": "string",
+          "title": "Email Type",
+          "description": "Restrict to personal or generic addresses",
+          "enum": [
+            "",
+            "personal",
+            "generic"
+          ],
+          "enumNames": [
+            "Any",
+            "Personal",
+            "Generic"
+          ],
+          "default": ""
+        },
+        "department": {
+          "type": "string",
+          "title": "Department",
+          "description": "Restrict to a department, e.g. 'executive, it, sales'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "seniority": {
+          "type": "string",
+          "title": "Seniority",
+          "description": "Restrict to a seniority, e.g. 'junior, senior, executive'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "requiredField": {
+          "type": "string",
+          "title": "Required Field",
+          "description": "Only return addresses that carry this field",
+          "enum": [
+            "",
+            "full_name",
+            "position",
+            "phone_number"
+          ],
+          "enumNames": [
+            "None",
+            "Full name",
+            "Position",
+            "Phone number"
+          ],
+          "default": ""
+        },
+        "limit": {
+          "type": "number",
+          "title": "Limit",
+          "description": "Addresses per page",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "number",
+          "title": "Offset",
+          "description": "Where to start, for paging through a large domain",
+          "default": 0,
+          "minimum": 0
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

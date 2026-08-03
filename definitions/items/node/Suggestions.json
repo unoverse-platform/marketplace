@@ -8,6 +8,67 @@
   "category": "Output",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Show the guest clickable follow-up chips: push suggested FAQs, quick actions and recommendations into the live chat UI as the workflow runs. The dedicated path for chat suggestions — the object lands in template state where the template's own fragments pick it up, so a generic data emit will not render as chips. Reach for it whenever a step has computed what the guest might ask or do next.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Suggestions data from upstream — any of faqs, actions, recommendations. Keys the signal carries win over the static config values.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "suggestions",
+        "type": "object",
+        "description": "The normalized suggestions object that was published"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "faqs": {
+          "type": "object",
+          "title": "FAQs",
+          "description": "Static FAQs, shown when the signal carries none. Authors may write strings, { text } or { question } items — all normalize to the template's { text } shape. Example: return signal.extractor.faqs",
+          "default": "",
+          "ui:field": "template"
+        },
+        "actions": {
+          "type": "object",
+          "title": "Actions",
+          "description": "Static actions, shown when the signal carries none.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "recommendations": {
+          "type": "object",
+          "title": "Recommendations",
+          "description": "Static recommendations, shown when the signal carries none.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

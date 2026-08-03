@@ -8,6 +8,105 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png",
   "whenToUse": "Pick to CREATE an image from a description: a picture, illustration, photo or graphic that does not exist yet. Returns the rendered image data itself rather than a description of one, and can take a reference photo to keep a person recognisable across several generations. Editing an image that already exists, and producing a fixed branded template, are different jobs.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes, referenceable in the prompt and reference url",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "images",
+        "type": "array",
+        "description": "One entry per image: data (base64), mimeType, fileName. Index first when reading one, e.g. images.0.data"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "Anything the model said alongside the images, often empty"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "model, imageCount, generatedAt"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "geminiCredential",
+        "required": true,
+        "displayName": "Google Gemini API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Which Gemini image model to generate with",
+          "enum": [
+            "gemini-3.1-flash-image-preview",
+            "gemini-3-pro-image-preview",
+            "gemini-2.5-flash-image"
+          ],
+          "enumNames": [
+            "Gemini 3.1 Flash Image (best for character consistency)",
+            "Gemini 3 Pro (Nano Banana Pro)",
+            "Gemini 2.5 Flash Image (Nano Banana)"
+          ],
+          "default": "gemini-3.1-flash-image-preview"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Image Prompt",
+          "description": "Describe the image to generate. Shared blocks work here, e.g. {{prompt.geminiLikenessPreface}}.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "fileName": {
+          "type": "string",
+          "title": "File Name Prefix",
+          "description": "Prefixes each generated file name, which is then numbered and given an extension",
+          "default": "generated_image",
+          "ui:field": "template"
+        },
+        "referenceImageUrl": {
+          "type": "string",
+          "title": "Reference Image URL",
+          "description": "A photo to take facial likeness from. Leave empty to generate from the prompt alone. When set, the model is told the photo is a casting reference and the prompt still directs the scene.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gce-toolkit",

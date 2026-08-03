@@ -8,6 +8,137 @@
   "category": "Documents",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Read an existing document into text an Agent can work with: a PDF, Word file, slides, spreadsheet, scanned page or a photo of one. It handles digital text and OCR alike, and returns the document broken into titles, paragraphs and tables as well as one plain string. It only READS a file that already exists, so it cannot author or revise one.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "file",
+        "type": "object",
+        "description": "The document: { downloadUrl } or { content } base64, as S3 Files and Cloudinary emit",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The whole document as plain text, elements joined in reading order"
+      },
+      {
+        "name": "elements",
+        "type": "array",
+        "description": "Structured elements — each with type (Title, NarrativeText, Table), text and metadata"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "pageCount, elementCount, fileType, tables (as HTML when present)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "unstructuredCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "strategy"
+      ],
+      "properties": {
+        "fileUrl": {
+          "type": "string",
+          "title": "File URL",
+          "description": "A URL to fetch the document from. Use this OR File (base64). Usually wired from an upstream node, e.g. return signal.s3files1.files[0].downloadUrl",
+          "default": "",
+          "ui:field": "template"
+        },
+        "fileBase64": {
+          "type": "string",
+          "title": "File (base64)",
+          "description": "The document itself, base64 encoded, when it is not reachable by URL.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "fileName": {
+          "type": "string",
+          "title": "File Name",
+          "description": "Name including extension, e.g. report.pdf. Unstructured picks its parser from this, so a wrong or missing extension is the commonest cause of a poor parse.",
+          "default": "document.pdf",
+          "ui:field": "template"
+        },
+        "strategy": {
+          "type": "string",
+          "title": "Strategy",
+          "description": "How hard to work. `fast` reads digital text only and is cheapest. `hi_res` runs layout detection and OCR, which is what a SCANNED document needs. `ocr_only` forces OCR. `vlm` uses a vision model for the hardest layouts. `auto` picks per document.",
+          "enum": [
+            "auto",
+            "fast",
+            "hi_res",
+            "ocr_only",
+            "vlm"
+          ],
+          "enumNames": [
+            "Auto (pick per document)",
+            "Fast (digital text only, cheapest)",
+            "Hi-res (layout + OCR, for scans)",
+            "OCR only (force OCR)",
+            "VLM (vision model, hardest layouts)"
+          ],
+          "default": "auto"
+        },
+        "chunkingStrategy": {
+          "type": "string",
+          "title": "Chunking",
+          "description": "Group elements into larger chunks, which is what a RAG pipeline usually wants. Leave as none to get the raw elements.",
+          "enum": [
+            "",
+            "basic",
+            "by_title",
+            "by_page",
+            "by_similarity"
+          ],
+          "enumNames": [
+            "None",
+            "Basic",
+            "By title",
+            "By page",
+            "By similarity"
+          ],
+          "default": ""
+        },
+        "languages": {
+          "type": "string",
+          "title": "Languages",
+          "description": "Comma-separated OCR language codes, e.g. eng,fra. Only affects the OCR strategies. Leave blank to auto-detect.",
+          "default": ""
+        },
+        "includePageBreaks": {
+          "type": "boolean",
+          "title": "Include Page Breaks",
+          "description": "Mark page boundaries in the output",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "unstructured",

@@ -8,6 +8,93 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Pick when the output must be JSON that strictly matches a schema, so downstream nodes can rely on the shape instead of parsing defensively: schema-enforced extraction and structuring. Free-form prose or multi-turn tool use makes it the wrong, over-constrained choice. Wire the schema and the content in as inputs.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "content",
+        "type": "string",
+        "description": "Content to extract structured data from"
+      },
+      {
+        "name": "schema",
+        "type": "object",
+        "description": "JSON schema the output must match"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "Extracted structured data matching the schema"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "Token usage information"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "openAICredential",
+        "required": true,
+        "displayName": "OpenAI API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "GPT-5.6 model to use for structured extraction",
+          "enum": [
+            "gpt-5.6",
+            "gpt-5.6-terra",
+            "gpt-5.6-luna"
+          ],
+          "enumNames": [
+            "Sol (Frontier, complex work)",
+            "Terra (Balanced intelligence/cost)",
+            "Luna (Cost-optimized, high-volume)"
+          ],
+          "default": "gpt-5.6-terra",
+          "resolve": "modelTier"
+        },
+        "instructions": {
+          "type": "string",
+          "title": "Instructions",
+          "description": "How to read the content when it is ambiguous, such as which of two addresses to take. The schema already fixes the shape, so this is only about judgement.",
+          "default": "Extract structured information from the provided content.",
+          "ui:field": "template"
+        },
+        "schemaName": {
+          "type": "string",
+          "title": "Schema Name",
+          "description": "Name for the JSON schema, surfaced to the model",
+          "default": "extraction"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai",

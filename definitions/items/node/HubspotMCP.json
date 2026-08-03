@@ -8,6 +8,58 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1784461921/gravity/icons/Hubspot.svg",
   "whenToUse": "Pick to ground a conversation in the signed-in customer. It resolves the logged-in user (by their authenticated email) to their HubSpot contact and emits that identity profile, so downstream steps start already knowing who they are talking to. Wire it inline (trigger to contact profile out) to use the lookup as a step, or attach it via a service edge to an agent, which can also append a durable insight note to the contact. The user is read from the session, never from the input.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger to fire the node. Carries no lookup data: the user is resolved from the session, not from this input."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "The signed-in user's bounded contact profile { ok, found, contact }. `contact` is null when the user is not in the CRM, which is a normal result and not an error."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hubspotPrivateApp",
+        "required": true,
+        "displayName": "HubSpot"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "syncUser": {
+          "type": "boolean",
+          "title": "Sync user on trigger",
+          "description": "On trigger, drain any insight notes the memory server has queued for this contact and write them to the CRM. Leave off for a plain lookup that just outputs the contact. The identity snapshot is refreshed either way.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "hubspot",

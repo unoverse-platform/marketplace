@@ -8,6 +8,58 @@
   "category": "Communication",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1779530623/gravity/icons/Slack.svg",
   "whenToUse": "Pick to reach a Slack workspace: post a message or thread reply, search messages, read a channel's history, list channels, look up a user, or react to a post. Attach it to an agent so it can talk to a team, or trigger it directly to post to a default channel.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger. When the graph runs this node it posts a message, taking { channel, text } from here, falling back to the configured default channel."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "The Slack API response for whatever ran"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "slackBotToken",
+        "required": true,
+        "displayName": "Slack"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "defaultChannel": {
+          "type": "string",
+          "title": "Default Channel",
+          "description": "Channel ID used when the workflow triggers this node directly. Not used for MCP tool calls. A channel ID, e.g. C01ABC123, not a name.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "slack",

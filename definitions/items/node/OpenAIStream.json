@@ -8,6 +8,145 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Summarize, extract, answer or generate text with the reply arriving word by word as it is written, so a person watches it appear rather than waiting for a finished block. A single pass, plus a few bounded tool calls when MCP provider nodes are attached by service edge; it is not an iterative loop, so many sequential tool calls or multi-turn work needs more.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "reasoning",
+        "type": "string",
+        "description": "The reasoning/thinking process"
+      },
+      {
+        "name": "stream",
+        "type": "object",
+        "description": "Streaming LLM text response (emitted in real-time)"
+      },
+      {
+        "name": "mcpResult",
+        "type": "object",
+        "description": "MCP tool results"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The complete generated text (final output)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "openAICredential",
+        "required": true,
+        "displayName": "OpenAI API",
+        "description": "OpenAI API credentials for authentication"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Select the GPT-5.6 model variant",
+          "enum": [
+            "gpt-5.6",
+            "gpt-5.6-terra",
+            "gpt-5.6-luna"
+          ],
+          "enumNames": [
+            "Sol (Frontier, complex work)",
+            "Terra (Balanced intelligence/cost)",
+            "Luna (Cost-optimized, high-volume)"
+          ],
+          "default": "gpt-5.6-terra",
+          "resolve": "modelTier"
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "title": "Reasoning Effort",
+          "description": "Control reasoning depth. GPT-5.6 family: none/low/medium/high/xhigh/max. Older mini/nano models: none becomes minimal, xhigh/max become high automatically.",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "none"
+        },
+        "reasoningSummary": {
+          "type": "string",
+          "title": "Reasoning Summary",
+          "description": "Control reasoning summary visibility.",
+          "enum": [
+            "auto",
+            "concise",
+            "detailed"
+          ],
+          "default": "concise"
+        },
+        "verbosity": {
+          "type": "string",
+          "title": "Verbosity",
+          "description": "Control output length",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "default": "medium"
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "Standing instructions for every run: the model's role, tone and limits. Optional. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "The request to answer. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Output Tokens",
+          "description": "Maximum number of tokens to generate",
+          "default": 2048,
+          "minimum": 1,
+          "maximum": 128000
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai",

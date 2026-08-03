@@ -8,6 +8,83 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
   "whenToUse": "Ask the next question in a form-filling conversation: compare what the guest has already given against a schema and get back the single field to ask for next, with completion state alongside. Deterministic — required fields first, then schema order — so the dialog never relies on a model to decide what to ask. Reach for it when a workflow collects a fixed set of fields turn by turn; it validates presence only, never formats or types.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Incoming data object to validate",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "nextField",
+        "type": "string",
+        "description": "Next missing field name. Silent once everything is present."
+      },
+      {
+        "name": "nextFieldSchema",
+        "type": "object",
+        "description": "The schema definition for that field, when the schema carries one"
+      },
+      {
+        "name": "missingFields",
+        "type": "array",
+        "description": "Every field still missing, in schema order"
+      },
+      {
+        "name": "isComplete",
+        "type": "boolean",
+        "description": "True when every field is present"
+      },
+      {
+        "name": "completionPercentage",
+        "type": "number",
+        "description": "Fields present as a percentage of fields defined"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "requiredSchema",
+        "incomingData"
+      ],
+      "properties": {
+        "requiredSchema": {
+          "type": "object",
+          "title": "Required Schema",
+          "description": "The schema defining the fields to collect. Three shapes are accepted: a minted tool schema (inputSchema.json.properties), plain JSON Schema (properties/required), or a bare object whose keys are the field names. Example: return signal.toolSchema",
+          "default": "",
+          "ui:field": "template"
+        },
+        "incomingData": {
+          "type": "object",
+          "title": "Incoming Data",
+          "description": "The data gathered so far. A field counts as missing when absent, null or the empty string. Example: return signal.formData",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

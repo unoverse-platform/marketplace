@@ -8,6 +8,168 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Reach for this when a step needs the model to work through a problem using tools rather than answer in one pass: look something up, act on what it found, then decide what to do next. A single prompt with no tool use is cheaper and more predictable done elsewhere. Attach MCP provider nodes by service edge to give it capabilities.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "thinking",
+        "type": "string",
+        "description": "Short customer-safe status lines, emitted in real time"
+      },
+      {
+        "name": "stream",
+        "type": "object",
+        "description": "Streaming text response, emitted in real time"
+      },
+      {
+        "name": "reasoning",
+        "type": "string",
+        "description": "The model's own reasoning summary (not the narrator's status line)"
+      },
+      {
+        "name": "mcpResult",
+        "type": "object",
+        "description": "MCP tool results"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The complete generated text (final output)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "openAICredential",
+        "required": true,
+        "displayName": "OpenAI API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "maxTurns",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "enum": [
+            "gpt-5.6",
+            "gpt-5.6-terra",
+            "gpt-5.6-luna"
+          ],
+          "enumNames": [
+            "Sol (Frontier, complex work)",
+            "Terra (Balanced intelligence/cost)",
+            "Luna (Cost-optimized, high-volume)"
+          ],
+          "default": "gpt-5.6-terra",
+          "resolve": "modelTier"
+        },
+        "maxTurns": {
+          "type": "number",
+          "title": "Max Turns",
+          "description": "How many times the model may go round the tool loop. 1 answers in a single pass and never calls a tool. 5 to 10 suits an agent that looks things up and acts on what it finds. Higher costs more and takes longer.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "title": "Reasoning Effort",
+          "enum": [
+            "none",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "default": "medium"
+        },
+        "reasoningSummary": {
+          "type": "string",
+          "title": "Reasoning Summary",
+          "description": "Summaries must be requested or the API emits no reasoning events at all.",
+          "enum": [
+            "auto",
+            "concise",
+            "detailed"
+          ],
+          "default": "concise"
+        },
+        "verbosity": {
+          "type": "string",
+          "title": "Verbosity",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "default": "medium"
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "Standing instructions for the agent: its role, how to work, when to use its tools. Optional. Shared blocks work here, e.g. {{prompt.reactAgent}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "The task to work on. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Output Tokens",
+          "default": 4096,
+          "minimum": 1,
+          "maximum": 128000
+        },
+        "enableUserMemory": {
+          "type": "boolean",
+          "title": "User Memory",
+          "description": "Remember the user across conversations — the agent saves what it learns and can look it up later.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "enableAgentMemory": {
+          "type": "boolean",
+          "title": "Agent Memory",
+          "description": "Give the agent a working notebook for long-running tasks — it tracks its goal, progress and next steps between runs.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai",

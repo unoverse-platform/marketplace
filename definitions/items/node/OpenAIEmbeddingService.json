@@ -8,6 +8,70 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
   "whenToUse": "Turn text into vectors so records can be indexed for and retrieved by semantic search: the backend a vector store calls to embed both what it stores and what it later queries. Model and dimensions are selectable. Attach via a service edge to that consumer; it is not a data-flow step.",
+  "detail": {
+    "inputs": [],
+    "outputs": [],
+    "credentials": [
+      {
+        "name": "openAICredential",
+        "required": true,
+        "displayName": "OpenAI API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Embedding Model",
+          "description": "Select model and dimensions",
+          "enum": [
+            "text-embedding-3-small:512",
+            "text-embedding-3-small:1536",
+            "text-embedding-3-large:1024",
+            "text-embedding-3-large:1536",
+            "text-embedding-3-large:3072",
+            "text-embedding-ada-002:1536"
+          ],
+          "enumNames": [
+            "text-embedding-3-small (512D) - Fast",
+            "text-embedding-3-small (1536D) - Higher quality",
+            "text-embedding-3-large (1024D) - Balanced",
+            "text-embedding-3-large (1536D) - Best quality",
+            "text-embedding-3-large (3072D) - Maximum",
+            "text-embedding-ada-002 (1536D) - Legacy"
+          ],
+          "default": "text-embedding-3-large:1536"
+        },
+        "normalize": {
+          "type": "boolean",
+          "title": "Normalize Embeddings",
+          "description": "Normalize to unit length (recommended for cosine similarity)",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "openai",

@@ -11,6 +11,8 @@ props:
     default: Terms and conditions apply.
 root:
   type: Markdown
+  brief:
+    description: The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only.
   bind:
     value: body
   style:

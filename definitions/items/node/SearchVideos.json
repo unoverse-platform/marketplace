@@ -8,6 +8,81 @@
   "category": "Search",
   "icon": "https://cdn-icons-png.flaticon.com/512/1384/1384060.png",
   "whenToUse": "Pick to find YOUTUBE VIDEOS for a keyword: title, channel, views, length and thumbnail per result. Use it when you specifically want video content; it returns videos, not arbitrary web pages, dated articles, or places.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "Search query",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "videoResults",
+        "type": "array",
+        "description": "YouTube video results (title, url, channel, views, length, thumbnail)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "searchapiCredential",
+        "required": true,
+        "displayName": "SearchAPI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "title": "Search Query",
+          "description": "Keywords to search YouTube for",
+          "default": "",
+          "ui:field": "template"
+        },
+        "numResults": {
+          "type": "number",
+          "title": "Number of Results",
+          "description": "Number of video results to return",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "Country code for localized results, e.g. 'us', 'uk', 'ae'",
+          "default": "us"
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "Interface language code, e.g. 'en', 'ar'",
+          "default": "en"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "search",

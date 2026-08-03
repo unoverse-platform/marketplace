@@ -8,6 +8,149 @@
   "category": "Web Scraping",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg",
   "whenToUse": "Pick to FOLLOW LINKS from a seed URL across many pages of one site, bounded by a page limit and optional include or exclude patterns. It walks a site; reading one known page, pulling typed fields against a schema, and running a bulk offloaded actor are different jobs with their own nodes.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "string",
+        "description": "Seed URL to start crawling from",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "pages",
+        "type": "array",
+        "description": "Crawled pages, each with url, markdown, links and metadata"
+      },
+      {
+        "name": "links",
+        "type": "array",
+        "description": "Every link found across the crawled pages"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "Crawl statistics (seed url, total pages)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hyperbrowserCredential",
+        "required": true,
+        "displayName": "Hyperbrowser API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "Seed URL",
+          "description": "The URL to start crawling from",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxPages": {
+          "type": "number",
+          "title": "Max Pages",
+          "description": "Maximum number of pages to crawl",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "onlyMainContent": {
+          "type": "boolean",
+          "title": "Main Content Only",
+          "description": "Strip navigation, footers and boilerplate from each page",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "includePatterns": {
+          "type": "string",
+          "title": "Include Patterns",
+          "description": "Comma-separated URL glob patterns to include, e.g. /blog/*, /docs/*",
+          "placeholder": "/blog/*, /docs/*"
+        },
+        "excludePatterns": {
+          "type": "string",
+          "title": "Exclude Patterns",
+          "description": "Comma-separated URL glob patterns to skip, e.g. /login*, *.pdf",
+          "placeholder": "/login*, *.pdf"
+        },
+        "useStealth": {
+          "type": "boolean",
+          "title": "Stealth Mode",
+          "description": "Apply anti-bot fingerprinting to look like a real browser",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "useUltraStealth": {
+          "type": "boolean",
+          "title": "Ultra Stealth",
+          "description": "Maximum anti-detection profile. Slower, so use it only when stealth is blocked",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "useProxy": {
+          "type": "boolean",
+          "title": "Use Proxy",
+          "description": "Route the session through Hyperbrowser residential proxies",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "proxyCountry": {
+          "type": "string",
+          "title": "Proxy Country",
+          "description": "ISO country code for the proxy exit, e.g. US, GB, FR",
+          "placeholder": "US",
+          "ui:dependencies": {
+            "useProxy": true
+          }
+        },
+        "solveCaptchas": {
+          "type": "boolean",
+          "title": "Solve CAPTCHAs",
+          "description": "Automatically solve CAPTCHAs encountered during the session",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "adblock": {
+          "type": "boolean",
+          "title": "Block Ads",
+          "description": "Block advertisements and trackers while loading pages",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "acceptCookies": {
+          "type": "boolean",
+          "title": "Accept Cookies",
+          "description": "Auto-dismiss cookie-consent banners",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "hyperbrowser",

@@ -8,6 +8,107 @@
   "category": "Web Scraping",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751883548/gravity/icons/HyperBrowser.svg",
   "whenToUse": "Pick when you need TYPED FIELDS pulled out of pages: an object or array matching a schema you describe, read by a model rather than by you. Give it a schema, a prompt, or both. It returns structured data; raw page markdown and multi-page link-following are different jobs with their own nodes.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "URL or array of URLs to extract from",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "data",
+        "type": "object",
+        "description": "Extracted structured data. One URL returns the extracted object directly; several return an array of { url, data } so each page's result stays labelled."
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "Extraction metadata (the urls asked for, and any that failed)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hyperbrowserCredential",
+        "required": true,
+        "displayName": "Hyperbrowser API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "urls"
+      ],
+      "properties": {
+        "urls": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "title": "URLs",
+          "description": "URL or array of URLs to extract from. Use `return signal.<id>.<handle>.<field>` to take them from an upstream node.",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Extraction Prompt",
+          "description": "Natural-language description of what to extract",
+          "ui:field": "template"
+        },
+        "schema": {
+          "type": "object",
+          "title": "JSON Schema",
+          "description": "Optional JSON schema describing the shape to extract. Use `return { ... }`",
+          "ui:field": "template"
+        },
+        "useStealth": {
+          "type": "boolean",
+          "title": "Stealth Mode",
+          "description": "Apply anti-bot fingerprinting to look like a real browser",
+          "default": true,
+          "ui:widget": "toggle"
+        },
+        "useUltraStealth": {
+          "type": "boolean",
+          "title": "Ultra Stealth",
+          "description": "Maximum anti-detection profile. Slower, so use it only when stealth is blocked",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "solveCaptchas": {
+          "type": "boolean",
+          "title": "Solve CAPTCHAs",
+          "description": "Automatically solve CAPTCHAs encountered during the session",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "country": {
+          "type": "string",
+          "title": "Location Country",
+          "description": "ISO country code to load the page from, e.g. US, GB, FR",
+          "placeholder": "US"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "hyperbrowser",

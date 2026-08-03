@@ -8,6 +8,109 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
   "whenToUse": "Enrich a PERSON or a COMPANY from an email, a LinkedIn profile (handle or URL), or a domain, returning the full profile: job, employment, location, socials and company metrics. Use it for full enrichment; finding or verifying a single address, or listing a domain's emails, are different jobs.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The identifier usually templates from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "person",
+        "type": "object",
+        "description": "The person profile, or null when this run enriched a company or found nothing"
+      },
+      {
+        "name": "company",
+        "type": "object",
+        "description": "The company profile, or null when this run enriched a person or found nothing"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hunterCredential",
+        "required": true,
+        "displayName": "Hunter.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Enrichment Type",
+          "description": "combined returns both from an email. person takes an email or a LinkedIn profile. company takes a domain.",
+          "enum": [
+            "combined",
+            "person",
+            "company"
+          ],
+          "enumNames": [
+            "Combined",
+            "Person",
+            "Company"
+          ],
+          "default": "combined"
+        },
+        "email": {
+          "type": "string",
+          "title": "Email",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "type": [
+              "combined",
+              "person"
+            ]
+          }
+        },
+        "linkedinHandle": {
+          "type": "string",
+          "title": "LinkedIn Handle or URL",
+          "description": "A handle, or a full profile URL. The URL is reduced to the handle for you.",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "type": [
+              "person"
+            ]
+          }
+        },
+        "domain": {
+          "type": "string",
+          "title": "Domain",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "type": [
+              "company"
+            ]
+          }
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

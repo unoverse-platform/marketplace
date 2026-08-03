@@ -8,6 +8,97 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1768052235/gravity/icons/abyssale-picto-airtable.png",
   "whenToUse": "Pick to render branded images or PDFs from pre-built Abyssale TEMPLATES by mapping data to named layers. It is for on-brand assets with a fixed designed layout, not free-form AI-generated imagery and not a document designed from scratch.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "data",
+        "type": "object",
+        "description": "Data to populate template elements",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "object",
+        "description": "Generated asset with url, cdnUrl, fileType, filename, width, height, templateId, templateName"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "abyssaleCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "templateId"
+      ],
+      "properties": {
+        "templateId": {
+          "type": "string",
+          "title": "Template ID",
+          "description": "Abyssale template UUID (from your Abyssale dashboard)"
+        },
+        "multiPage": {
+          "type": "boolean",
+          "title": "Multi-Page PDF",
+          "description": "Generate a multi-page PDF document",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "pageCount": {
+          "type": "number",
+          "title": "Page Count",
+          "description": "Number of pages in the template",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 2,
+          "ui:dependencies": {
+            "multiPage": true
+          }
+        },
+        "compressionLevel": {
+          "type": "number",
+          "title": "Compression Level",
+          "description": "JPEG compression percentage (1-100)",
+          "default": 80,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "formatName": {
+          "type": "string",
+          "title": "Format Name",
+          "description": "Optional template format to render, when the template defines more than one.",
+          "default": ""
+        },
+        "elements": {
+          "type": "object",
+          "title": "Elements",
+          "description": "Map template layer names to values. A plain string becomes text; a URL becomes an image. JS: return { 'layer-name': { payload: signal.data.text } }",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "ingest",

@@ -8,6 +8,99 @@
   "category": "AI",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
   "whenToUse": "Single prompt to single completion from a GPT model, when the call must run in YOUR AWS account and region: summarise, rewrite, classify, answer. No streaming, no tools, no schema enforcement; reach for a heavier node when a step genuinely needs token streaming, iterative tool use, strict JSON output, or to read an image or document alongside the prompt.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The generated text response"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "Token burn (inputTokens, outputTokens, totalTokens)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "bedrockCredential",
+        "required": true,
+        "displayName": "AWS Bedrock"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Select the GPT model to use",
+          "enum": [
+            "openai.gpt-5.6-sol",
+            "openai.gpt-5.6-terra",
+            "openai.gpt-5.6-luna"
+          ],
+          "enumNames": [
+            "GPT-5.6 Sol (Frontier, complex work)",
+            "GPT-5.6 Terra (Balanced intelligence/cost)",
+            "GPT-5.6 Luna (Cost-optimized, high-volume)"
+          ],
+          "default": "openai.gpt-5.6-terra",
+          "resolve": "modelTier"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Tokens",
+          "description": "Hard ceiling on the reply. The model stops when it hits this, mid-sentence and without an error, so raise it for long output rather than leaving it to trim.",
+          "default": 1200,
+          "minimum": 1,
+          "maximum": 128000
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "System Prompt",
+          "description": "Standing instructions for every run: the model's role, tone and limits. Optional. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Prompt",
+          "description": "The request to answer. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-bedrock",

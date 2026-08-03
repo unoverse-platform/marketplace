@@ -8,6 +8,125 @@
   "category": "Media & Design",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png",
   "whenToUse": "Put a generated or fetched file into Cloudinary and get a durable hosted URL back. Reach for it whenever something downstream needs a LINK rather than bytes: base64 does not survive a chat message, an email or a browser page well, and a Cloudinary URL does.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Upstream data. The file itself is named in config, usually templated from here.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "The asset's http URL"
+      },
+      {
+        "name": "secureUrl",
+        "type": "string",
+        "description": "The asset's https URL — prefer this one"
+      },
+      {
+        "name": "publicId",
+        "type": "string",
+        "description": "Cloudinary's id for the asset, for later transformation or deletion"
+      },
+      {
+        "name": "format",
+        "type": "string",
+        "description": "The stored format, e.g. png"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "width, height, bytes, createdAt, tags"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "cloudinaryCredential",
+        "required": true
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "imageData",
+        "folder"
+      ],
+      "properties": {
+        "imageData": {
+          "type": "string",
+          "title": "File",
+          "description": "A URL Cloudinary can fetch, a data URI, or bare base64. Bare base64 is given a data:image/png;base64, prefix automatically, matching the code version.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "folder": {
+          "type": "string",
+          "title": "Folder",
+          "description": "Folder to store the asset in. Every upload belongs in one.",
+          "default": "generated"
+        },
+        "publicId": {
+          "type": "string",
+          "title": "Public ID",
+          "description": "Name for the asset. Any file extension is stripped and characters Cloudinary rejects become underscores, so a filename can be passed straight in. Leave blank for a generated id.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "tags": {
+          "type": "string",
+          "title": "Tags",
+          "description": "Comma-separated tags, e.g. \"cover,generated\"",
+          "default": ""
+        },
+        "resourceType": {
+          "type": "string",
+          "title": "Resource Type",
+          "description": "What kind of asset this is. Cloudinary treats each differently.",
+          "enum": [
+            "image",
+            "video",
+            "raw",
+            "auto"
+          ],
+          "enumNames": [
+            "Image",
+            "Video",
+            "Raw",
+            "Auto-detect"
+          ],
+          "default": "image"
+        },
+        "overwrite": {
+          "type": "boolean",
+          "title": "Overwrite",
+          "description": "Replace an existing asset with the same public id",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "cloudinary",

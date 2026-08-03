@@ -8,6 +8,127 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
   "whenToUse": "Pick to READ rows out of an Airtable table: filtered, sorted, from a named view, and paged automatically past the first hundred. Returns the records as plain objects with their Airtable id. Use it when the data lives in Airtable rather than a database.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "Trigger. Config values may template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "records",
+        "type": "array",
+        "description": "The records, each a plain object of its fields plus its Airtable `id`"
+      },
+      {
+        "name": "totalCount",
+        "type": "number",
+        "description": "How many records came back after paging and dedup"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "airtableCredential",
+        "required": true,
+        "displayName": "Airtable"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "baseId",
+        "tableId"
+      ],
+      "properties": {
+        "baseId": {
+          "type": "string",
+          "title": "Base ID",
+          "description": "Airtable Base ID, starts with 'app'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "tableId": {
+          "type": "string",
+          "title": "Table Name or ID",
+          "description": "Table name, e.g. 'Companies', or table ID starting with 'tbl'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "filterFormula": {
+          "type": "string",
+          "title": "Filter Formula (optional)",
+          "description": "An Airtable formula, e.g. NOT({Status}='Done')",
+          "default": "",
+          "ui:field": "template"
+        },
+        "fields": {
+          "type": "string",
+          "title": "Fields (optional)",
+          "description": "Comma-separated field names to return. Blank returns all fields.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "view": {
+          "type": "string",
+          "title": "View (optional)",
+          "description": "Name or ID of a view, which applies its own filters and sorts",
+          "default": "",
+          "ui:field": "template"
+        },
+        "sortField": {
+          "type": "string",
+          "title": "Sort Field (optional)",
+          "description": "Field name to sort by",
+          "default": "",
+          "ui:field": "template"
+        },
+        "sortDirection": {
+          "type": "string",
+          "title": "Sort Direction",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "asc",
+          "ui:dependencies": {
+            "sortField": true
+          }
+        },
+        "maxRecords": {
+          "type": "number",
+          "title": "Max Records",
+          "description": "Stop after this many. Pages are fetched automatically until reached.",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "dedupField": {
+          "type": "string",
+          "title": "Dedup Field (optional)",
+          "description": "Keep only the first record for each distinct value of this field",
+          "default": ""
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "airtable",

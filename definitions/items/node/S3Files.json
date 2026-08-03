@@ -8,6 +8,105 @@
   "category": "Storage & Data",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
   "whenToUse": "Pick to find out what is in a bucket or under a prefix: names, sizes and modified dates, filtered by extension. It can also mint a time-limited link per file, so a later step can fetch one without credentials. Reading a single known object is a different job.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The bucket and prefix come from config.",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "files",
+        "type": "array",
+        "description": "One entry per file: key, size, lastModified, etag, bucket, a stable universalId, and presignedUrl when links were asked for."
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "How many files matched"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "awsCredential",
+        "required": true,
+        "displayName": "AWS"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "bucket"
+      ],
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "title": "S3 Bucket",
+          "description": "The bucket to list",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prefix": {
+          "type": "string",
+          "title": "Prefix",
+          "description": "Only list keys starting with this, e.g. invoices/2026/",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxKeys": {
+          "type": "number",
+          "title": "Max Files",
+          "description": "Most files to return",
+          "default": 1000,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "fileExtensions": {
+          "type": "array",
+          "title": "File Extensions",
+          "description": "Only keep these extensions, e.g. pdf, csv. Empty keeps everything.",
+          "default": []
+        },
+        "generatePresignedUrls": {
+          "type": "boolean",
+          "title": "Generate Links",
+          "description": "Mint a temporary download link per file, so a later step can fetch it without AWS credentials. Anyone holding a link has the file until it expires.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "presignedUrlExpiry": {
+          "type": "number",
+          "title": "Link Lifetime (seconds)",
+          "description": "How long each link stays valid",
+          "default": 3600,
+          "minimum": 60,
+          "maximum": 604800,
+          "ui:dependencies": {
+            "generatePresignedUrls": true
+          }
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "aws-s3",

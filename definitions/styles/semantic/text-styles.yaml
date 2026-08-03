@@ -81,6 +81,19 @@ text:
       lineHeight: "{font.lineHeight.body}"
       letterSpacing: "{font.tracking.button}"
 
+  # An EYEBROW: the small label that names the group a section belongs to. Uppercase and
+  # tracked, which reads as a label rather than as a quiet heading. `textTransform` lives
+  # here because a text style resolves to CSS wholesale, and the closed style-key set
+  # deliberately has no text-transform of its own.
+  eyebrow:
+    $value:
+      fontFamily: "{font.family.sans}"
+      fontSize: "{font.size.caption}"
+      fontWeight: "{font.weight.semibold}"
+      lineHeight: "{font.lineHeight.label}"
+      letterSpacing: 0.08em
+      textTransform: uppercase
+
   # PROSE headings, the styles semantic/prose.json's heading map points at. Separate from
   # the UI scale above because the two want opposite things: a UI heading is placed by its
   # layout and must carry NO margins, while a heading inside a body of copy has nothing but

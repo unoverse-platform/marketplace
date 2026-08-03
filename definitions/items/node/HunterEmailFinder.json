@@ -8,6 +8,116 @@
   "category": "Go To Market",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
   "whenToUse": "Pick when you have a person's LinkedIn profile (handle or URL) or their name plus a company or domain, and need ONLY their work email and a confidence score. Use it to find one specific person's address; listing every address at a domain, verifying deliverability, or a full profile are different jobs.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Trigger. The identifiers usually template from upstream output."
+      }
+    ],
+    "outputs": [
+      {
+        "name": "email",
+        "type": "string",
+        "description": "The most likely address, or empty when none was found"
+      },
+      {
+        "name": "score",
+        "type": "number",
+        "description": "Confidence 0-100"
+      },
+      {
+        "name": "position",
+        "type": "string",
+        "description": "The person's job title, when known"
+      },
+      {
+        "name": "linkedin_url",
+        "type": "string",
+        "description": "Their LinkedIn profile, when known"
+      },
+      {
+        "name": "verification_status",
+        "type": "string",
+        "description": "Hunter's own verification status for the address, when available"
+      },
+      {
+        "name": "sources_count",
+        "type": "number",
+        "description": "How many public sources back the address"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "hunterCredential",
+        "required": true,
+        "displayName": "Hunter.io"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "linkedinHandle": {
+          "type": "string",
+          "title": "LinkedIn Handle or URL",
+          "description": "A handle, or a full profile URL. The URL is reduced to the handle for you.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "domain": {
+          "type": "string",
+          "title": "Domain",
+          "description": "The person's company domain, e.g. 'google.com'",
+          "default": "",
+          "ui:field": "template"
+        },
+        "company": {
+          "type": "string",
+          "title": "Company",
+          "description": "The company name, when you do not have the domain",
+          "default": "",
+          "ui:field": "template"
+        },
+        "fullName": {
+          "type": "string",
+          "title": "Full Name",
+          "description": "Takes precedence over first and last name when set",
+          "default": "",
+          "ui:field": "template"
+        },
+        "firstName": {
+          "type": "string",
+          "title": "First Name",
+          "default": "",
+          "ui:field": "template"
+        },
+        "lastName": {
+          "type": "string",
+          "title": "Last Name",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "gtm",

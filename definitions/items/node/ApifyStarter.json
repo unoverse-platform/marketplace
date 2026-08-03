@@ -8,6 +8,95 @@
   "category": "Web Scraping",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png",
   "whenToUse": "Pick to scrape a LARGE LIST of URLs in bulk: the whole list is handed to one Apify run rather than fetched a page per request. It hands back a run id and nothing else, so pair it with Apify Results to read what the run produced.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Array of URLs to scrape",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "runId",
+        "type": "string",
+        "description": "The id of the started Apify run, to feed Apify Results"
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "description": "The run's status as Apify reported it at start"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "apifyCredential",
+        "required": true,
+        "displayName": "Apify API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "actorId",
+        "urls"
+      ],
+      "properties": {
+        "actorId": {
+          "type": "string",
+          "title": "Actor or Task ID",
+          "description": "An actor id such as apify/web-scraper, or a saved task id such as username~my-scraper-task. A tilde means it is a task, which is a different endpoint.",
+          "default": "",
+          "placeholder": "username~my-scraper-task"
+        },
+        "urls": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "title": "URLs to Scrape",
+          "description": "The URLs to hand to the run, as a JSON array. Use `return signal.<id>.<handle>` to take them from an upstream node.",
+          "default": "[]",
+          "ui:field": "template"
+        },
+        "waitForCompletion": {
+          "type": "boolean",
+          "title": "Wait for Completion",
+          "description": "Hold the node until the run finishes, so downstream steps start on finished data. Off hands back the run id immediately and something later has to check.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "maxWaitTime": {
+          "type": "number",
+          "title": "Max Wait Time (seconds)",
+          "description": "How long to wait before giving up on the run",
+          "default": 300,
+          "minimum": 5,
+          "maximum": 3600,
+          "ui:dependencies": {
+            "waitForCompletion": true
+          }
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "apify",

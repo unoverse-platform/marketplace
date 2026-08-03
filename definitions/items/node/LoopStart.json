@@ -8,6 +8,67 @@
   "category": "Flow",
   "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
   "whenToUse": "Loop over an array, running a branch of nodes once per item: for-each or repeat-per-item processing where each item flows through real workflow steps such as API calls and agents, rather than an in-memory transform. It emits item, index and total on every pass. Always close it with exactly one LoopEnd whose loopStartNodeId points back here; it does nothing useful alone.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "items",
+        "type": "array",
+        "description": "Array of items to iterate over"
+      },
+      {
+        "name": "continue",
+        "type": "signal",
+        "signal": "CONTINUE",
+        "required": false,
+        "description": "Internal: next-iteration signal from the paired LoopEnd (do not wire manually)"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "item",
+        "type": "object",
+        "description": "Current item being processed"
+      },
+      {
+        "name": "index",
+        "type": "number",
+        "description": "0-based index of the current item"
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "description": "Total number of items in the array"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "object",
+          "title": "Items",
+          "description": "Array to loop through. A template, so it can be written over an upstream output instead of wiring the items connector. Whichever is set, config wins.",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only signed-in callers can run this step.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller must carry, like finance:approve.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
   "definition": {
     "package": {
       "name": "flow",

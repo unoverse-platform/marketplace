@@ -1,5 +1,5 @@
 {
-  "release": "0.1.10",
+  "release": "0.1.11",
   "items": [
     {
       "kind": "component",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "Document",
-      "fingerprint": "c78d0e06bfa40cea",
+      "fingerprint": "bbc60abba73c8de6",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -173,10 +173,11 @@
     {
       "kind": "atom",
       "name": "Alert",
-      "fingerprint": "18471832b4d78705",
+      "fingerprint": "e7db175decbc410e",
       "bundle": "design-system",
       "title": "Alert",
-      "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only."
+      "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
+      "category": "markdown"
     },
     {
       "kind": "atom",
@@ -277,7 +278,7 @@
     {
       "kind": "atom",
       "name": "Faq",
-      "fingerprint": "b75d2a10cd64262f",
+      "fingerprint": "3b73cb290e089574",
       "bundle": "design-system",
       "title": "Faq",
       "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -294,7 +295,7 @@
     {
       "kind": "atom",
       "name": "FinePrint",
-      "fingerprint": "b8d9748934644cd0",
+      "fingerprint": "dcec45690d2832e2",
       "bundle": "design-system",
       "title": "FinePrint",
       "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
@@ -320,7 +321,7 @@
     {
       "kind": "atom",
       "name": "List",
-      "fingerprint": "ca3a2bb01c4b9ccc",
+      "fingerprint": "505b1bffb9e79a67",
       "bundle": "design-system",
       "title": "List",
       "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -361,7 +362,7 @@
     {
       "kind": "atom",
       "name": "Prose",
-      "fingerprint": "c48ff42b87330891",
+      "fingerprint": "1ce83eb0dd5743e5",
       "bundle": "design-system",
       "title": "Prose",
       "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
@@ -387,7 +388,7 @@
     {
       "kind": "atom",
       "name": "Table",
-      "fingerprint": "815de14f85123bf7",
+      "fingerprint": "7cf0122d853f305b",
       "bundle": "design-system",
       "title": "Table",
       "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
