@@ -53,8 +53,12 @@ root:
           lineHeight: snug
       - type: Text
         brief:
-          description: The figure exactly as the source states it, including any symbol or unit attached to it. Never rounded, never converted, never a range.
-          maxLength: 16
+          description: >-
+            The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750',
+            '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to'
+            into the qualifier rather than shortening the figure to fit: a truncated number is WRONG,
+            where a longer qualifier is merely longer.
+          maxLength: 24
         bind:
           value: value
         style:
@@ -64,9 +68,12 @@ root:
           lineHeight: tight
       - type: Text
         brief:
-          description: The qualifier the figure carries, such as a period or a condition. Empty when the source attaches none.
+          description: >-
+            The condition or period the figure carries, short. Empty when the source attaches none.
+            It must be a COMPLETE phrase: if it will not fit, drop words until it does
+            ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').
           optional: true
-          maxLength: 32
+          maxLength: 72
         visibleWhen: qualifier
         bind:
           value: qualifier

@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: Alert
+name: Callout
 category: markdown
 description: "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only."
 whenToUse: "Strictly what a reader must not miss to avoid harm or real surprise, such as a deadline that forfeits something or a condition that voids cover. Never a routine qualifier: a fee's applicability, a notice period or a processing time belongs with the fact it qualifies. Also the in-place confirmation, warning or error on an interface (form feedback, action results)."
@@ -52,9 +52,9 @@ root:
             color: text.primary
         - type: Text
           brief:
-            description: What the reader should do or know about it, from the source. Empty when the warning stands alone.
+            description: What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.
             optional: true
-            maxLength: 200
+            maxLength: 320
           visibleWhen: body
           bind:
             value: body

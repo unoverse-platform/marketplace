@@ -1,5 +1,5 @@
 {
-  "release": "0.1.11",
+  "release": "0.1.12",
   "items": [
     {
       "kind": "component",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "Document",
-      "fingerprint": "bbc60abba73c8de6",
+      "fingerprint": "5bbb86995eb7c58c",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -172,15 +172,6 @@
     },
     {
       "kind": "atom",
-      "name": "Alert",
-      "fingerprint": "e7db175decbc410e",
-      "bundle": "design-system",
-      "title": "Alert",
-      "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
-      "category": "markdown"
-    },
-    {
-      "kind": "atom",
       "name": "Avatar",
       "fingerprint": "eff666c8aa017f12",
       "bundle": "design-system",
@@ -210,6 +201,15 @@
       "bundle": "design-system",
       "title": "CallButton",
       "description": "A round icon-only control button. Owns its full chrome (circle, size, centring) — references tokens only. The icon is a bound field; the Ref overrides `action` and overrides `style.background`/`style.color` per use (the icon inherits the button colour via currentColor)."
+    },
+    {
+      "kind": "atom",
+      "name": "Callout",
+      "fingerprint": "f264d7defbe42d28",
+      "bundle": "design-system",
+      "title": "Callout",
+      "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
+      "category": "markdown"
     },
     {
       "kind": "atom",
@@ -312,7 +312,7 @@
     {
       "kind": "atom",
       "name": "KeyFacts",
-      "fingerprint": "ed57a4e752a7f277",
+      "fingerprint": "b2ecd848b65af42f",
       "bundle": "design-system",
       "title": "KeyFacts",
       "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -321,7 +321,7 @@
     {
       "kind": "atom",
       "name": "List",
-      "fingerprint": "505b1bffb9e79a67",
+      "fingerprint": "9f21ab480582cdb1",
       "bundle": "design-system",
       "title": "List",
       "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",

@@ -61,9 +61,9 @@ root:
               lineHeight: snug
           - type: Text
             brief:
-              description: One line the source gives about this item. Empty when the title says it all.
+              description: One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.
               optional: true
-              maxLength: 200
+              maxLength: 320
             visibleWhen: body
             bind:
               value: body

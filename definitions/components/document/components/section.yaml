@@ -54,7 +54,7 @@ children:
         ref: table
       callout:
         type: Ref
-        ref: alert
+        ref: callout
       default:
         type: Ref
         ref: prose

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "List",
-  "fingerprint": "505b1bffb9e79a67",
+  "fingerprint": "9f21ab480582cdb1",
   "bundle": "design-system",
   "title": "List",
   "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -96,9 +96,9 @@
               {
                 "type": "Text",
                 "brief": {
-                  "description": "One line the source gives about this item. Empty when the title says it all.",
+                  "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
                   "optional": true,
-                  "maxLength": 200
+                  "maxLength": 320
                 },
                 "visibleWhen": "body",
                 "bind": {
