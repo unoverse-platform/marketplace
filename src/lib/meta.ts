@@ -55,6 +55,7 @@ const defPathIn = (dir: string, name: string): string | undefined => {
 };
 import { join, dirname } from "path";
 import { NodeInputType, inputPropKeys, type EnhancedNodeDefinition } from "@unoverse-platform/base/pluginBase.js";
+import { INSTALLED_HOME } from "@unoverse-platform/base/paths.js";
 
 export interface UnoverseDefinition {
   name: string;
@@ -324,6 +325,11 @@ export function findRxComponentsDir(): string | null {
       if (existsSync(candidate)) return candidate; // DISK rx/ wins (dev local-wins; image today)
     }
     dir = dirname(dir);
+  }
+  // The installed design system (rows unpacked to .installed) — a deployed universe has no rx/ on disk.
+  {
+    const installed = join(INSTALLED_HOME, "rx", "marketplace", "components");
+    if (existsSync(installed)) return installed;
   }
   // Self-contained FALLBACK: the definitions BUNDLED into this package (Phase 1 — see
   // docs/architecture/RX_ORG_MODEL.md). Ships with the npm package, so a box with NO rx/ on
