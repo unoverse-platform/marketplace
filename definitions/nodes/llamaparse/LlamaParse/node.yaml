@@ -1,0 +1,32 @@
+$schema: ../../../_schema/node.schema.json
+
+type: LlamaParse
+kind: PromiseNode
+
+name: LlamaParse
+category: Documents
+color: "#8B5CF6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1785840099/gravity/icons/lamaindex.png
+
+description: Parse any document into clean, LLM-ready Markdown with LlamaParse. PDF, Word, slides, spreadsheets, images.
+
+# Outcome first, then disqualify by PROPERTY. Doc 14: never name another node — the property that
+# distinguishes this parser is its OUTPUT SHAPE (one Markdown document, tables as Markdown tables),
+# so the meta says that rather than comparing.
+whenToUse: >-
+  Turn an existing document into clean Markdown an Agent can read directly: a PDF, Word file, slides,
+  spreadsheet, scanned page or a photo of one. Best when the consumer is a prompt or a RAG context —
+  it fixes reading order and renders tables as Markdown tables, and the top tiers read charts and
+  complex layouts. It only READS a file that already exists, so it cannot author or revise one, and
+  its output is a document, not a database of elements.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node. `required: false` adds no
+# requirement of its own: the trigger instance's publicEntry toggle still owns the door, and
+# requirements only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # The input is usually a URL whose contents can change, and a stale transcript of the wrong
+  # document is worse than parsing twice.
+  cacheable: false

@@ -24,6 +24,7 @@ description: Vector search over Pinecone, with embedding done by Pinecone
 # node types changed rather than being reused (see each node.yaml).
 
 category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749139513/gravity/icons/pinecone.png
 
 allowedHosts:
   # The control plane, where an index is looked up by name.

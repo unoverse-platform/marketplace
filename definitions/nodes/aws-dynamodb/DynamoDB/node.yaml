@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: DynamoDB
 category: Storage & Data
-color: "#4B61D1"
+color: "#FF9900"
 
 description: Write a record to an AWS DynamoDB table
 

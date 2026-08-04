@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: Bedrock GPT
 category: AI
-color: "#10a37f"
+color: "#FF9900"
 
 description: One prompt in, one GPT completion out, running in your AWS account
 

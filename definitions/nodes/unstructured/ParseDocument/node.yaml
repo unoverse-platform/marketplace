@@ -6,9 +6,9 @@ kind: PromiseNode
 name: Parse Document
 category: Documents
 color: "#09B29C"
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1785837705/gravity/icons/unstructured_logo.png
 
-description: Read any document into plain text and structured elements. PDF, Word, slides, spreadsheets, images.
+description: Read any document into plain text and structured elements with Unstructured. PDF, Word, slides, spreadsheets, images.
 
 # Outcome first, then disqualify by PROPERTY. Doc 14: never name another node — a cross-reference dates
 # the moment a node is added or renamed, and ranking surfaces the alternative on its own.

@@ -1,0 +1,75 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [tier]
+  properties:
+    fileUrl:
+      type: string
+      title: File URL
+      description: >-
+        A URL to fetch the document from. Use this OR File (base64). Usually wired from an upstream
+        node, e.g. return signal.s3files1.files[0].downloadUrl
+      default: ""
+      "ui:field": template
+    fileBase64:
+      type: string
+      title: File (base64)
+      description: The document itself, base64 encoded, when it is not reachable by URL.
+      default: ""
+      "ui:field": template
+    fileName:
+      type: string
+      title: File Name
+      description: >-
+        Name including extension, e.g. report.pdf. The parser picks its reader from this, so a wrong
+        or missing extension is the commonest cause of a poor parse.
+      default: document.pdf
+      "ui:field": template
+    tier:
+      type: string
+      title: Tier
+      # REQUIRED, because it is the COST dial as much as the quality one: `fast` is the cheapest path
+      # and `agentic_plus` runs chart reading on every page at a multiple of the price. Left unset the
+      # vendor picks, which is how a large batch quietly becomes expensive. It has a default, so
+      # requiring it costs an author nothing — it just makes the choice visible.
+      description: >-
+        How hard to work. `fast` is cheapest but produces plain text ONLY — no markdown, no items.
+        `cost_effective` balances price and quality. `agentic` handles hard layouts. `agentic_plus`
+        also reads charts.
+      enum: [fast, cost_effective, agentic, agentic_plus]
+      enumNames:
+        - Fast (cheapest, text only)
+        - Cost effective (balanced)
+        - Agentic (hard layouts)
+        - Agentic plus (also reads charts)
+      default: cost_effective
+    pageRanges:
+      type: string
+      title: Page Ranges
+      description: >-
+        Only parse these pages, e.g. 1-3,7. Leave blank for the whole document. Fewer pages is
+        directly less cost on every tier.
+      default: ""
+      "ui:field": template
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    #
+    # INSTANCE config, not the manifest's `auth`: the manifest is the node author's FLOOR, these are
+    # the builder's per box, because the same node type legitimately faces staff on one workflow and
+    # customers on another. The executor takes the STRICTER of the two.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order":
+  [authRequired, authRole, fileUrl, fileBase64, fileName, tier, pageRanges]

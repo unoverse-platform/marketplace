@@ -11,25 +11,29 @@ $schema: ../_schema/package.schema.json
 #                    staging and SigV4 signing. One node, four capabilities.
 #
 # Unstructured covers both jobs — `strategy: fast` reads a digital PDF the way pdf-parse did, and
-# `hi_res`/`ocr_only` reads a scanned one the way Textract did — over a SINGLE synchronous POST. So this
-# package is not just a migration of DocumentParser, it is the reason Textract can be retired rather
-# than migrated, and the reason the NextToken pagination never has to be built.
+# `hi_res`/`ocr_only` reads a scanned one the way Textract did. So this package is not just a migration
+# of DocumentParser, it is the reason Textract can be retired rather than migrated, and the reason the
+# NextToken pagination never has to be built.
 #
-# ONE CAPABILITY, ALREADY PRESENT: multipart, built for ElevenLabs speech-to-text. Nothing new here.
+# SECOND LIFE (2026-08-04): originally written against the serverless partition endpoint's single
+# synchronous POST, which Unstructured has since retired — keys are now issued by the TRANSFORM
+# platform (transform.unstructured.io) and refused by the old host. The node now runs the Transform
+# job flow (create, poll, download), which is why `poll` joined `multipart` in requires. The output
+# element array is unchanged, so nothing downstream noticed.
 
 name: unstructured
 displayName: Unstructured
 description: Parse documents of any format into text and structured elements
 version: 1.0.0
 category: ingest
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1785837705/gravity/icons/unstructured_logo.png
 
 features:
   - Parse PDF, DOCX, PPTX, XLSX, HTML, images and 20+ other formats into text
   - OCR scanned documents, replacing a dedicated OCR node
 
 allowedHosts:
-  - api.unstructuredapp.io
+  - platform-api.transform.unstructured.io
   # ANY HOST, for the UNAUTHENTICATED download only. The node reads a document from a url an upstream node
   # produced — an S3 presigned link, a Cloudinary delivery url — which cannot be declared in advance. That
   # call sends NO credential, and the executor refuses "*" the moment one does, so the wildcard cannot
@@ -43,6 +47,9 @@ allowedHosts:
 requires:
   executorVersion: ">=1.6.0"
   credential: [apiKeyHeader]
-  # `binary` for the optional download of a file given by url, `json` for the parse reply.
+  # `binary` for the optional download of a file given by url, `json` for the job and its output.
   transport: [json, binary]
   encoding: [multipart]
+  # A Transform parse is a JOB: without `poll` an executor would settle on the receipt and emit it
+  # as the answer, with nothing anywhere reporting a problem.
+  poll: true

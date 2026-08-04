@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: file
+    type: object
+    description: "The document: { downloadUrl } or { content } base64, as S3 Files and Cloudinary emit"
+    required: false
+
+outputs:
+  - name: markdown
+    type: string
+    description: The whole document as one Markdown string, tables rendered as Markdown tables
+  - name: text
+    type: string
+    description: The whole document as plain text
+  - name: items
+    type: array
+    description: Structured layout items — headings, paragraphs, tables — with type and content
+  - name: metadata
+    type: object
+    description: jobId, pageCount and the job's own metadata, for tracing and billing
+
+credentials:
+  - name: llamaCloudCredential
+    required: true

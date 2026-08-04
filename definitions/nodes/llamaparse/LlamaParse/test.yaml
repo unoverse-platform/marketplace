@@ -1,0 +1,25 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running it live needs LLAMACLOUD_API_KEY. It reaches the real API and bills per page, so the fixture
+# uses a ONE-PAGE public PDF and the cheapest tier — still proving the whole chain: the url becomes a
+# `source_url` job (LlamaCloud fetches it, nothing is uploaded), the job is polled to COMPLETED and
+# the expanded results come back.
+#
+# `tier: fast` deliberately, both as the cheap path and because it is the tier that produces NO
+# markdown and NO items — so those assertions below are about SHAPE ('' and [] are correct), and the
+# CONTENT assertion rides on `text`, which every tier returns.
+
+testData:
+  config:
+    fileUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+    fileName: dummy.pdf
+    tier: fast
+  inputs:
+    file:
+      downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+  expect:
+    # REAL CONTENT, not merely a string: an empty parse would still be "" and has to read as failure.
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    markdown: "return typeof output.markdown === 'string'"
+    items: "return Array.isArray(output.items)"
+    metadata: "return typeof output.metadata.jobId === 'string' && output.metadata.jobId.length > 0"

@@ -1,24 +1,27 @@
-# ONE SYNCHRONOUS POST — which is the whole argument for this node over AmazonTextract. Textract starts a
-# job, polls it, then pages its results; this hands over a file and gets elements back.
+# THE TRANSFORM PLATFORM API, because the synchronous partition endpoint is gone. This node was
+# written against api.unstructuredapp.io's one-POST /general/v0/general, and Unstructured retired that
+# product: a key issued today comes from transform.unstructured.io and is refused by the old host with
+# a 401 that looks like a wrong key rather than a wrong API. Transform is JOB-BASED — create a parsing
+# job, poll it, download its output — which is exactly the shape `poll` exists for, and the output that
+# comes back is the SAME element array the partition endpoint returned, so everything downstream of
+# these calls is unchanged.
 #
-# THE PARTITION ENDPOINT, not the Pipeline API. Unstructured recommends Pipeline for production batching
-# and embeddings, and it is the wrong shape here: it means creating a workflow, running a job and polling
-# it, for one file a workflow node already has in hand. Partition is the single-file synchronous call.
+# THE HOST COMES FROM THE CREDENTIAL, default below is Transform's published one. Any other host must
+# also be added to package.yaml allowedHosts, which is the boundary doing its job.
 #
-# THE HOST COMES FROM THE CREDENTIAL. Unstructured's docs say to "use the URL that was provided to you
-# when your account was created" — serverless accounts get their own host, and self-hosting gets another.
-# Defaulting silently would send documents somewhere the account never chose. The default below is their
-# published one, and any other host must also be added to package.yaml allowedHosts, which is the
-# boundary doing its job rather than an obstacle.
+# EVERY REQUEST SHAPE HERE WAS PROVED AGAINST THE LIVE API (2026-08-04), not read from docs: the docs
+# describe the job flow but not `request_data`, whose key is `job_nodes` and whose node shapes came
+# from GET /api/v1/templates/hi_res_partition and trial jobs.
 
 # THE DOWNLOAD, when a url was given rather than bytes.
 #
-# Unstructured's endpoint takes a FILE PART, not a link, so something has to fetch it — and doing it here
-# means a document already in hand as base64 skips this call entirely (`when` leaves no trace when false).
+# Transform's create-job takes a FILE PART, not a link, so something has to fetch it — and doing it
+# here means a document already in hand as base64 skips this call entirely (`when` leaves no trace
+# when false).
 #
-# NO `auth`, deliberately and necessarily. The url comes from an upstream node and cannot be declared in
-# advance, which is why package.yaml allows "*" — and the executor only permits that wildcard for a call
-# that sends no credential. Adding auth here would refuse the host rather than leak the key.
+# NO `auth`, deliberately and necessarily. The url comes from an upstream node and cannot be declared
+# in advance, which is why package.yaml allows "*" — and the executor only permits that wildcard for a
+# call that sends no credential. Adding auth here would refuse the host rather than leak the key.
 
 - name: download
   when: "return !!String(config.fileUrl || '').trim() && !config.fileBase64"
@@ -28,11 +31,15 @@
   transport: binary
   timeoutMs: 120000
 
-- name: partition
+# ONE CALL, A JOB. The start POST answers with a receipt ({ id, status: SCHEDULED }), and `poll` asks
+# GET /jobs/{id} until COMPLETED — so what this call's name holds is the FINISHED job's information,
+# input_file_ids and all, which is what the download below needs.
+
+- name: job
   method: POST
   url: >-
-    return (credentials.unstructuredCredential.apiUrl || 'https://api.unstructuredapp.io')
-      .replace(/\/+$/, '') + '/general/v0/general'
+    return (credentials.unstructuredCredential.apiUrl || 'https://platform-api.transform.unstructured.io')
+      .replace(/\/+$/, '') + '/api/v1/jobs/'
 
   credential:
     scheme: apiKeyHeader
@@ -47,9 +54,9 @@
     # without conversion.
     #
     # THE FILENAME MATTERS MORE THAN IT LOOKS. Unstructured chooses its parser from the extension, so a
-    # file called `document` with no suffix parses badly and reports no error. That is why `fileName` is a
-    # first-class config field rather than a constant.
-    files: >-
+    # file called `document` with no suffix parses badly and reports no error. That is why `fileName`
+    # is a first-class config field rather than a constant.
+    input_files: >-
       return (() => {
         const b64 = config.fileBase64 || (calls.download || {}).base64;
         if (!b64) return undefined;
@@ -58,25 +65,93 @@
                  filename: config.fileName || 'document.pdf' };
       })();
 
-    strategy: "{{ config.strategy }}"
-    chunking_strategy: "{{ config.chunkingStrategy }}"
-    # A comma list becomes a JSON array, which is what the parameter expects. Absent when blank, so OCR
-    # auto-detects rather than being told to expect nothing.
-    languages: >-
-      return String(config.languages || '').trim()
-        ? JSON.stringify(String(config.languages).split(',').map(l => l.trim()).filter(l => l))
-        : undefined
-    include_page_breaks: "return config.includePageBreaks ? 'true' : undefined"
-    output_format: application/json
+    # THE JOB'S DAG, as a JSON text field (a non-file object part is stringified by the executor,
+    # which is how Transform takes it). `job_nodes` builds an ephemeral single-run workflow; the
+    # alternative key, `template_id`, names a stock template and cannot carry settings.
+    #
+    # The node shapes are Transform's workflow vocabulary, proved by trial:
+    #   - every strategy except vlm is a `partition/unstructured_api` node whose `settings` take the
+    #     same parameters the old endpoint took as form fields (strategy, languages,
+    #     include_page_breaks);
+    #   - `vlm` is its own SUBTYPE, not a strategy value — `strategy: 'vlm'` inside unstructured_api
+    #     settings is refused. Its settings are the vendor's defaults, so languages and page breaks
+    #     do not apply on that path;
+    #   - chunking is a SECOND NODE in the DAG, not a parameter. The old `basic` behaviour is the
+    #     `chunk_by_character` subtype.
+    #
+    # `languages: undefined` when blank, so OCR auto-detects rather than being told to expect nothing
+    # (undefined keys drop out of the stringified part).
+    request_data: >-
+      return (() => {
+        const strat = config.strategy || 'auto';
+        const langs = String(config.languages || '').trim()
+          ? String(config.languages).split(',').map(l => l.trim()).filter(l => l)
+          : undefined;
+        const partition = strat === 'vlm'
+          ? { name: 'partition', type: 'partition', subtype: 'vlm', settings: {} }
+          : { name: 'partition', type: 'partition', subtype: 'unstructured_api',
+              settings: { strategy: strat,
+                          include_page_breaks: !!config.includePageBreaks,
+                          languages: langs } };
+        const chunkSubtype = ({ basic: 'chunk_by_character',
+                                by_title: 'chunk_by_title',
+                                by_page: 'chunk_by_page',
+                                by_similarity: 'chunk_by_similarity' })[config.chunkingStrategy];
+        const nodes = chunkSubtype
+          ? [partition, { name: 'chunk', type: 'chunk', subtype: chunkSubtype, settings: {} }]
+          : [partition];
+        return { job_nodes: nodes };
+      })();
 
-  # Parsing a long scanned PDF with hi_res is slow — minutes, not seconds.
-  timeoutMs: 600000
   transport: json
+  timeoutMs: 120000
 
   retry:
     attempts: 3
     backoff: exponential
     on: [429, 500, 502, 503, 504]
+
+  # The API reports refusal in `detail` — a wrong key, a malformed DAG — so it is judged by shape
+  # rather than status.
+  error:
+    when: "return !!response.detail"
+    message: >-
+      return typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail)
+
+  # Parsing a long scanned PDF with hi_res or vlm is slow — minutes, not seconds. 5s × 300 attempts
+  # is 25 minutes of patience, under the platform's own 300-poll ceiling.
+  poll:
+    until: "return response.status === 'COMPLETED'"
+    failed: "return ['FAILED', 'STOPPED', 'REJECTED'].indexOf(response.status) !== -1"
+    message: "return 'Unstructured job ' + response.id + ' ended ' + response.status"
+    url: >-
+      return (credentials.unstructuredCredential.apiUrl || 'https://platform-api.transform.unstructured.io')
+        .replace(/\/+$/, '') + '/api/v1/jobs/' + response.id
+    intervalMs: 5000
+    maxAttempts: 300
+
+# THE OUTPUT, a separate GET because a finished job holds its result rather than returning it.
+# `file_id` is the job's own name for the uploaded document (input_file_ids[0] — there is exactly one,
+# this node sends exactly one). No `node_id`: omitted, Transform serves the TERMINAL node's output,
+# which is the chunker when one was asked for and the partitioner otherwise.
+#
+# The reply is the element array itself — the same shape the retired partition endpoint returned —
+# and being the last call, it is what `events` reads as `response`.
+
+- name: result
+  method: GET
+  url: >-
+    return (credentials.unstructuredCredential.apiUrl || 'https://platform-api.transform.unstructured.io')
+      .replace(/\/+$/, '') + '/api/v1/jobs/' + calls.job.id
+      + '/download?file_id=' + encodeURIComponent((calls.job.input_file_ids || [])[0] || '')
+
+  credential:
+    scheme: apiKeyHeader
+    header: unstructured-api-key
+    value: "{{ credentials.unstructuredCredential.apiKey }}"
+
+  transport: json
+  timeoutMs: 120000
 
   error:
     when: "return !!response.detail && !Array.isArray(response)"

@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: Bedrock Chat
 category: AI
-color: "#10a37f"
+color: "#FF9900"
 
 description: Ask Claude on AWS Bedrock, optionally about an image or document
 

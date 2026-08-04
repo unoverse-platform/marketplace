@@ -1,0 +1,44 @@
+$schema: ../_schema/package.schema.json
+
+# LLAMAPARSE — document parsing whose OUTPUT IS MARKDOWN, which is the reason it exists alongside an
+# element-array parser. An element array is the right shape for chunking and vector stores; an Agent
+# prompt or a RAG context window usually wants one clean Markdown document, and LlamaParse's whole
+# product is producing that well (tables as Markdown tables, reading order fixed, charts read on the
+# top tier).
+#
+# THE v2 PARSE API (api.cloud.llamaindex.ai/api/v2/parse), which is a JOB: upload returns a receipt,
+# status is polled, results are fetched with `expand`. Same capability set the unstructured package
+# uses — multipart for the upload, poll for the wait, binary for fetching a document by url.
+
+name: llamaparse
+displayName: LlamaParse
+description: Parse documents into clean Markdown and structured items with LlamaParse
+version: 1.0.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1785840099/gravity/icons/lamaindex.png
+
+features:
+  - Parse PDF, Office and image documents into LLM-ready Markdown
+  - Four cost/quality tiers, from fast to agentic chart-reading
+
+# NO WILDCARD, deliberately. A url given to this node is handed to LlamaCloud as `source_url` and
+# THEY fetch it — this node never dials the document's host at all, so the "*"-for-downloads idiom
+# other document nodes need does not apply here.
+#
+# BOTH REGIONS, because a key belongs to exactly one and tells you only when the wrong host answers
+# "Invalid API Key. Please check your region" (seen live 2026-08-04 — a US key, an EU console, and an
+# activity page that swore nothing was happening). Declaring both means switching regions is ONLY the
+# credential's API URL field; a self-hosted deployment's host still has to be added here.
+allowedHosts:
+  - api.cloud.llamaindex.ai
+  - api.cloud.eu.llamaindex.ai
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [apiKeyHeader]
+  transport: [json]
+  # `multipart` only for the fileBase64 path — a url never uploads (see run.yaml).
+  encoding: [multipart]
+  # A parse is a JOB: without `poll` an executor would settle on the start receipt and emit it as
+  # the answer, with nothing anywhere reporting a problem.
+  poll: true

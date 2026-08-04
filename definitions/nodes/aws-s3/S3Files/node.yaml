@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: S3 Files
 category: Storage & Data
-color: "#569A31"
+color: "#FF9900"
 
 description: List files in an S3 bucket, optionally with shareable links
 

@@ -1,0 +1,170 @@
+# THE v2 PARSE API, a JOB. Grounded in the vendor's REST reference and results guide
+# (developers.llamaindex.ai/llamaparse/parse/guides/api-reference/ + retrieving-results/, 2026-08-04):
+#   POST /api/v2/parse               JSON { source_url | file_id, tier, version, page_ranges? }
+#   POST /api/v2/parse/upload        multipart `file` + `configuration` (a JSON text field)
+#   GET  /api/v2/parse/{job_id}      status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED
+#   GET  /api/v2/parse/{job_id}?expand=...   the results
+#
+# TWO WAYS IN, chosen by which input the box holds, and the difference is not style:
+#
+#   A URL becomes `source_url` and LLAMACLOUD fetches the document itself. The first build
+#   downloaded the url here and re-uploaded it as multipart — which put a 13MB document through the
+#   author's uplink at ~230KB/s, a minute of sending that the vendor's edge sometimes killed with a
+#   499 mid-body. `source_url` moves that transfer onto the vendor's own network and deletes this
+#   node's download call entirely.
+#
+#   Bytes in hand (fileBase64) still have to travel, so the upload endpoint stays for exactly that
+#   case, with the patience the slow path taught: a five-minute window and retries on the edge's
+#   give-up statuses.
+#
+# THE HOST COMES FROM THE CREDENTIAL: LlamaCloud is regional (the EU host is
+# api.cloud.eu.llamaindex.ai) and a key belongs to its region. The default below is the US host, and
+# any other must also be added to package.yaml allowedHosts.
+
+# START FROM A URL. `when` — exactly one of the two starts runs, and a skipped call leaves no trace.
+- name: jobUrl
+  when: "return !!String(config.fileUrl || '').trim() && !config.fileBase64"
+  method: POST
+  url: >-
+    return (credentials.llamaCloudCredential.apiUrl || 'https://api.cloud.llamaindex.ai')
+      .replace(/\/+$/, '') + '/api/v2/parse'
+
+  credential:
+    scheme: apiKeyHeader
+    header: Authorization
+    value: "return 'Bearer ' + credentials.llamaCloudCredential.apiKey"
+
+  body:
+    source_url: "{{ config.fileUrl }}"
+    tier: "return config.tier || 'cost_effective'"
+    # `latest` rather than a pinned date, because a manifest cannot be re-released every time the
+    # vendor ships.
+    version: latest
+    # Omitted when blank, which is "whole document" without saying so.
+    page_ranges: "return String(config.pageRanges || '').trim() || undefined"
+
+  transport: json
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  # LlamaCloud reports refusal in `detail` (FastAPI convention), judged by shape rather than status.
+  error:
+    when: "return !!response.detail"
+    message: >-
+      return typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail)
+
+  # An agentic parse of a long document is slow — minutes, not seconds. 5s × 300 attempts is 25
+  # minutes of patience, under the platform's own 300-poll ceiling.
+  # THE STATUS REPLY IS WRAPPED AND THE START REPLY IS NOT — seen live, not documented. POST
+  # /api/v2/parse answers { id, status } flat, while GET /api/v2/parse/{id} answers { job: { id,
+  # status }, text, markdown, ... }. `(response.job || response)` reads both, and without it the
+  # poll watched a status field that never existed and the first run only LOOKED stuck — the new
+  # poll logs said "(no status field)" on the first heartbeat, which is exactly this.
+  poll:
+    until: "return (response.job || response).status === 'COMPLETED'"
+    failed: "return ['FAILED', 'CANCELLED'].indexOf((response.job || response).status) !== -1"
+    message: "return (() => { const j = response.job || response; return 'LlamaParse job ' + (j.id || '') + ' ended ' + j.status + (j.error_message ? ': ' + j.error_message : ''); })()"
+    url: >-
+      return (credentials.llamaCloudCredential.apiUrl || 'https://api.cloud.llamaindex.ai')
+        .replace(/\/+$/, '') + '/api/v2/parse/' + response.id
+    intervalMs: 5000
+    maxAttempts: 300
+
+# START FROM BYTES — the document is already in hand as base64, so it has no url to give and must be
+# uploaded. One receipt shape either way: what this call's name holds is the FINISHED job's status
+# payload, same as jobUrl's.
+- name: jobUpload
+  when: "return !!config.fileBase64"
+  method: POST
+  url: >-
+    return (credentials.llamaCloudCredential.apiUrl || 'https://api.cloud.llamaindex.ai')
+      .replace(/\/+$/, '') + '/api/v2/parse/upload'
+
+  credential:
+    scheme: apiKeyHeader
+    header: Authorization
+    value: "return 'Bearer ' + credentials.llamaCloudCredential.apiKey"
+
+  encoding: multipart
+
+  body:
+    # THE FILE PART. `{ base64, mimeType, filename }` is the shape the executor turns back into
+    # bytes. The FILENAME matters more than it looks: the parser picks its reader from the
+    # extension, which is why `fileName` is a first-class config field rather than a constant.
+    file: >-
+      return { base64: config.fileBase64,
+               mimeType: 'application/octet-stream',
+               filename: config.fileName || 'document.pdf' };
+
+    # THE CONFIGURATION, a JSON text field (a non-file object part is stringified by the executor).
+    configuration: >-
+      return { tier: config.tier || 'cost_effective',
+               version: 'latest',
+               page_ranges: String(config.pageRanges || '').trim() || undefined };
+
+  transport: json
+  # FIVE MINUTES, most of which is the BODY leaving: a large document on a slow uplink takes a
+  # minute or more just to send, and the edge then thinks before it answers. 120s was tight enough
+  # to look like a vendor error.
+  timeoutMs: 300000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    # 499 and 408 are the edge giving up on a SLOW UPLOAD, seen live on a document that succeeded
+    # on retry — transient by demonstration, so they retry with the server errors.
+    on: [408, 429, 499, 500, 502, 503, 504]
+
+  error:
+    when: "return !!response.detail"
+    message: >-
+      return typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail)
+
+  # THE STATUS REPLY IS WRAPPED AND THE START REPLY IS NOT — seen live, not documented. POST
+  # /api/v2/parse answers { id, status } flat, while GET /api/v2/parse/{id} answers { job: { id,
+  # status }, text, markdown, ... }. `(response.job || response)` reads both, and without it the
+  # poll watched a status field that never existed and the first run only LOOKED stuck — the new
+  # poll logs said "(no status field)" on the first heartbeat, which is exactly this.
+  poll:
+    until: "return (response.job || response).status === 'COMPLETED'"
+    failed: "return ['FAILED', 'CANCELLED'].indexOf((response.job || response).status) !== -1"
+    message: "return (() => { const j = response.job || response; return 'LlamaParse job ' + (j.id || '') + ' ended ' + j.status + (j.error_message ? ': ' + j.error_message : ''); })()"
+    url: >-
+      return (credentials.llamaCloudCredential.apiUrl || 'https://api.cloud.llamaindex.ai')
+        .replace(/\/+$/, '') + '/api/v2/parse/' + response.id
+    intervalMs: 5000
+    maxAttempts: 300
+
+# THE RESULTS, the same status GET with `expand` — a separate call rather than expand on every poll,
+# because a full document in every status check is weight the wait does not need.
+#
+# `markdown_full`/`text_full` are the CONCATENATED strings (retrieving-results guide); `items` and
+# `metadata` come back as { pages: [...] }. The `fast` tier DOES NOT SUPPORT MARKDOWN — asking for a
+# markdown field on it is a validation error, not an empty answer — so the expand list is built from
+# the tier rather than written once.
+- name: result
+  method: GET
+  url: >-
+    return (credentials.llamaCloudCredential.apiUrl || 'https://api.cloud.llamaindex.ai')
+      .replace(/\/+$/, '') + '/api/v2/parse/'
+      + (() => { const r = calls.jobUrl || calls.jobUpload || {}; return (r.job || r).id; })()
+      + '?expand=' + (config.tier === 'fast'
+          ? 'text_full,items,metadata,job_metadata'
+          : 'markdown_full,text_full,items,metadata,job_metadata')
+
+  credential:
+    scheme: apiKeyHeader
+    header: Authorization
+    value: "return 'Bearer ' + credentials.llamaCloudCredential.apiKey"
+
+  transport: json
+  timeoutMs: 120000
+
+  error:
+    when: "return !!response.detail"
+    message: >-
+      return typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail)

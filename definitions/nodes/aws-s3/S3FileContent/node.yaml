@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: S3 File Content
 category: Storage & Data
-color: "#569A31"
+color: "#FF9900"
 
 description: Read one S3 object's details and mint a link to fetch it
 

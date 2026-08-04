@@ -6,7 +6,7 @@ template: service
 
 name: Bedrock Embedding Service
 category: AI
-color: "#10a37f"
+color: "#FF9900"
 
 description: Offer Titan embeddings to other nodes over a service edge
 

@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: DynamoDB Fetch
 category: Storage & Data
-color: "#4B61D1"
+color: "#FF9900"
 
 description: Fetch a record from an AWS DynamoDB table by key
 

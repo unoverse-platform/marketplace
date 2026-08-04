@@ -1,7 +1,8 @@
 # One row per output connector, in interface.yaml order.
 #
-# `response` IS THE ELEMENT ARRAY. The partition endpoint returns a bare JSON array, not an object
-# wrapping one, so every row here reads `response` directly rather than a field on it.
+# `response` IS THE ELEMENT ARRAY — the last call's reply, the job-output download, which returns a
+# bare JSON array exactly as the retired partition endpoint did. Every row here reads `response`
+# directly rather than a field on it, and nothing here changed when the API underneath did.
 
 - emit: text
   # THE WHOLE DOCUMENT AS ONE STRING, which is what an Agent prompt actually needs. Joined with blank

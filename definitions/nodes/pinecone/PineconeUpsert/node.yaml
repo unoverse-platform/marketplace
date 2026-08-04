@@ -14,6 +14,7 @@ kind: PromiseNode
 
 name: Pinecone Upsert
 category: Knowledge & Vectors
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749139513/gravity/icons/pinecone.png
 color: "#4B5563"
 
 description: Store text in a Pinecone index, letting Pinecone do the embedding

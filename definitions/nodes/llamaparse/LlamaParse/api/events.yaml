@@ -1,0 +1,39 @@
+# One row per output connector, in interface.yaml order.
+#
+# `response` is the LAST call's reply — the expanded results GET. Shapes are from the vendor's
+# retrieving-results guide: `markdown_full`/`text_full` are single strings; `markdown`/`text`,
+# `items` and `metadata` are `{ pages: [...] }`. The per-page fallbacks below matter on the `fast`
+# tier, which supports no markdown at all — there `markdown` honestly emits ''.
+
+- emit: markdown
+  value: >-
+    return response.markdown_full
+      || (((response.markdown || {}).pages || []).map(p => p.markdown || '').join('\n\n'))
+
+- emit: text
+  value: >-
+    return response.text_full
+      || (((response.text || {}).pages || []).map(p => p.text || '').join('\n\n'))
+
+- emit: items
+  # Flattened across pages, so a consumer sees one list of typed elements (heading, table, ...)
+  # each carrying its page_number. [] on the fast tier is the honest answer, not an error.
+  value: >-
+    return ((response.items || {}).pages || [])
+      .map(p => (p.items || []).map(i => Object.assign({ page_number: p.page_number }, i)))
+      .flat()
+
+- emit: metadata
+  # The job's own metadata plus the id, so a run can be traced in the LlamaCloud console.
+  # pageCount from the metadata pages, which every tier returns.
+  value: >-
+    return (() => {
+      const raw = calls.jobUrl || calls.jobUpload || {};
+      const job = raw.job || raw;
+      const pages = ((response.metadata || {}).pages || []);
+      return { jobId: job.id || '',
+               status: job.status || '',
+               pageCount: pages.length,
+               pages: pages,
+               jobMetadata: response.job_metadata || {} };
+    })();

@@ -8,7 +8,7 @@ template: service
 
 name: DynamoDB Service
 category: Storage & Data
-color: "#4B61D1"
+color: "#FF9900"
 
 description: Give an agent the full DynamoDB operation set on a table
 
