@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Avatar",
-  "fingerprint": "eff666c8aa017f12",
+  "name": "avatar",
+  "fingerprint": "eaaa2b8680bab05d",
   "bundle": "design-system",
   "title": "Avatar",
   "description": "A circular person avatar: the photo when there is one, initials on a sunken surface when there is not (the initials sit underneath and the photo overlays them). Owns its full style — references tokens only; resize via the Ref's style.",
@@ -67,6 +67,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "avatar.yaml"
   }
 }

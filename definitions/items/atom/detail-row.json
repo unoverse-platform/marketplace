@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "DetailRow",
-  "fingerprint": "edfa2f2b8c22ea3e",
+  "name": "detail-row",
+  "fingerprint": "952ce026d338460f",
   "bundle": "design-system",
   "title": "DetailRow",
   "description": "A key↔value row: a muted label on the left, a value on the right with an optional sub-line beneath it. A hairline bottom border (override to none on the last row). Owns its full style — references tokens only.",
@@ -80,6 +80,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "detail-row.yaml"
   }
 }

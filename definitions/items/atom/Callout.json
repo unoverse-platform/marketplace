@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Callout",
-  "fingerprint": "f264d7defbe42d28",
+  "name": "callout",
+  "fingerprint": "1c80fcf47af6aee6",
   "bundle": "design-system",
   "title": "Callout",
   "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
@@ -93,6 +93,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "callout.yaml"
   }
 }

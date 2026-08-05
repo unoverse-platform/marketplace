@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "FinePrint",
-  "fingerprint": "dcec45690d2832e2",
+  "name": "fine-print",
+  "fingerprint": "46a68d03f08a1241",
   "bundle": "design-system",
   "title": "FinePrint",
   "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
@@ -39,6 +39,7 @@
         ],
         "borderTop": "thin subtle"
       }
-    }
+    },
+    "file": "fine-print.yaml"
   }
 }

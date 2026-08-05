@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Pill",
-  "fingerprint": "e60cb553c154c88d",
+  "name": "pill",
+  "fingerprint": "e25a5b45040d55fe",
   "bundle": "design-system",
   "title": "Pill",
   "description": "A small rounded tag/chip: a single label on a sunken surface. Owns its full style — references tokens only. Override `background` via the Ref's style for other tones.",
@@ -41,6 +41,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "pill.yaml"
   }
 }

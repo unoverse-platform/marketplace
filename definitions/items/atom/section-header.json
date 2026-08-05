@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "SectionHeader",
-  "fingerprint": "867887a9a5cb155e",
+  "name": "section-header",
+  "fingerprint": "fae3de9c57778cef",
   "bundle": "design-system",
   "title": "SectionHeader",
   "description": "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only.",
@@ -53,6 +53,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "section-header.yaml"
   }
 }

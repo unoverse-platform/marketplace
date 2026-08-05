@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "OutlineButton",
-  "fingerprint": "4da2f778502a3481",
+  "name": "outline-button",
+  "fingerprint": "29ff23cc0d66980a",
   "bundle": "design-system",
   "title": "OutlineButton",
   "description": "Outline call-to-action button: a leading icon + bold label inside a transparent pill with an accent-coloured border. Border, icon and label all take action.primary, so a Ref style override recolours the whole set. References tokens only.",
@@ -67,6 +67,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "outline-button.yaml"
   }
 }

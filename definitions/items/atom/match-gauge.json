@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "MatchGauge",
-  "fingerprint": "6121daa1b0c93733",
+  "name": "match-gauge",
+  "fingerprint": "0247e0433d9710e3",
   "bundle": "design-system",
   "title": "MatchGauge",
   "description": "Circular score gauge: a conic radial ring filled to a percent, the value in the center, a label below. Composed from primitives (a circular Box with a `radial` fill) — not a chart leaf. Owns its full style — references tokens only.",
@@ -84,6 +84,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "match-gauge.yaml"
   }
 }

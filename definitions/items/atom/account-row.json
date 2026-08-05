@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "AccountRow",
-  "fingerprint": "6374ce0876bd286f",
+  "name": "account-row",
+  "fingerprint": "646ff453b8732c54",
   "bundle": "design-system",
   "title": "AccountRow",
   "description": "A selectable account/beneficiary card: a title with an optional masked-number sub-line, an optional right-aligned figure (e.g. balance), and an optional bank line below. A richer sibling of choice-row for money UIs. Owns its full style — references tokens only.",
@@ -119,6 +119,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "account-row.yaml"
   }
 }

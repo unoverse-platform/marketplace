@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "AgentAvatar",
-  "fingerprint": "1e1eadb51827f4e1",
+  "name": "agent-avatar",
+  "fingerprint": "1957ad2322dca5b0",
   "bundle": "design-system",
   "title": "AgentAvatar",
   "description": "Circular assistant avatar with concentric sonar rings that pulse calmly while a call is active and burst into a slower layered ripple while the assistant is speaking, plus a gentle breathe (scale) on the photo while speaking. Owns its full style — references tokens only; rings are DATA. The breathe is a transform, so it grows the photo visually without shifting layout. Reads the host's `callState` field directly (idle|active|agentSpeaking|userSpeaking).",
@@ -175,6 +175,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "agent-avatar.yaml"
   }
 }

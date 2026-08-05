@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "CheckboxRow",
-  "fingerprint": "6a9d562950b5547c",
+  "name": "checkbox-row",
+  "fingerprint": "c0756048667222d2",
   "bundle": "design-system",
   "title": "CheckboxRow",
   "description": "A selectable row with a real checkbox: a bordered square that fills with the brand color and a check glyph when the bound `checked` field is true, beside a label and optional description. Owns its full style — references tokens only.",
@@ -119,6 +119,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "checkbox-row.yaml"
   }
 }

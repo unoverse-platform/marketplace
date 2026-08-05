@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Divider",
-  "fingerprint": "1bb2657ad4dfdd51",
+  "name": "divider",
+  "fingerprint": "c6e3561e3b404593",
   "bundle": "design-system",
   "title": "Divider",
   "description": "A full-width hairline rule separating sections. Owns its full style — references tokens only.",
@@ -21,6 +21,7 @@
           "0"
         ]
       }
-    }
+    },
+    "file": "divider.yaml"
   }
 }

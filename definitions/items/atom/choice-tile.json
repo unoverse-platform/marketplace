@@ -1,16 +1,16 @@
 {
   "kind": "atom",
-  "name": "ChoiceRow",
-  "fingerprint": "7fa620ad5ae1a409",
+  "name": "choice-tile",
+  "fingerprint": "dc9982d25d624042",
   "bundle": "design-system",
-  "title": "ChoiceRow",
-  "description": "Selectable option row: an optional leading icon, a label and optional description, inside a bordered card button with a hover surface. Owns its full style — references tokens only.",
+  "title": "ChoiceTile",
+  "description": "Selectable option tile for a wrapping two-up grid: an optional leading icon beside a label and optional one-line description — the compact half-width sibling of ChoiceRow. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "ChoiceRow",
-    "description": "Selectable option row: an optional leading icon, a label and optional description, inside a bordered card button with a hover surface. Owns its full style — references tokens only.",
-    "whenToUse": "The repeated option inside a wizard step's Each (or any single-select list). Compose via a Ref as the Each `template`, and supply the per-step `action`. Reads per-item fields (label/description/icon) from the Each scope.",
+    "name": "ChoiceTile",
+    "description": "Selectable option tile for a wrapping two-up grid: an optional leading icon beside a label and optional one-line description — the compact half-width sibling of ChoiceRow. Owns its full style — references tokens only.",
+    "whenToUse": "The repeated option inside a wizard step's Each when the option set is large (6+) and a full-width row list would force scrolling. Compose via a Ref as the Each `template` (the Each styled as a wrap row), and supply the per-step `action`. Reads per-item fields (label/description/icon) from the Each scope. Keep descriptions short — they should never wrap.",
     "props": {
       "label": {
         "type": "string",
@@ -29,11 +29,16 @@
       "type": "Button",
       "action": "select",
       "style": {
-        "width": "full",
+        "flex": "1 1 40%",
+        "minWidth": "40",
+        "height": "20",
         "direction": "row",
         "align": "center",
         "gap": "3",
-        "padding": "3",
+        "padding": [
+          "3",
+          "4"
+        ],
         "textAlign": "start",
         "background": "surface.base",
         "border": "subtle",
@@ -41,7 +46,8 @@
         "cursor": "pointer",
         "transition": "all 150ms ease",
         "hover": {
-          "background": "surface.sunken"
+          "background": "surface.sunken",
+          "border": "strong"
         }
       },
       "children": [
@@ -73,8 +79,7 @@
                 "value": "label"
               },
               "style": {
-                "font": "body.md",
-                "weight": "semibold",
+                "font": "title",
                 "color": "text.primary"
               }
             },
@@ -92,6 +97,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "choice-tile.yaml"
   }
 }

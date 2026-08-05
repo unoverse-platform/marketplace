@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Field",
-  "fingerprint": "e404d4b230ade789",
+  "name": "field",
+  "fingerprint": "be82eb465336f78e",
   "bundle": "design-system",
   "title": "Field",
   "description": "A labeled text input: a small label above an Input, with an optional help line beneath. The standard form row. Owns its full style — references tokens only.",
@@ -80,6 +80,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "field.yaml"
   }
 }

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "EmptyState",
-  "fingerprint": "5b8712f868a206f7",
+  "name": "empty-state",
+  "fingerprint": "ae8a1e505cb427b0",
   "bundle": "design-system",
   "title": "EmptyState",
   "description": "A centered nothing-here block: a muted icon over a title and a hint line. Owns its full style — references tokens only.",
@@ -70,6 +70,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "empty-state.yaml"
   }
 }

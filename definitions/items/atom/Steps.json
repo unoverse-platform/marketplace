@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Steps",
-  "fingerprint": "e5c02efb0d19a252",
+  "name": "steps",
+  "fingerprint": "4a7e2efd83ec488c",
   "bundle": "design-system",
   "title": "Steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -129,6 +129,7 @@
           }
         ]
       }
-    }
+    },
+    "file": "steps.yaml"
   }
 }

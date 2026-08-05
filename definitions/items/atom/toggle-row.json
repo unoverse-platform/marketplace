@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "ToggleRow",
-  "fingerprint": "9039f645ee249c17",
+  "name": "toggle-row",
+  "fingerprint": "0f7d974f93eac556",
   "bundle": "design-system",
   "title": "ToggleRow",
   "description": "A settings row with a switch: label and optional description on the left, a pill track on the right whose knob slides and fills with the brand color when the bound `on` field is true. Owns its full style — references tokens only.",
@@ -119,6 +119,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "toggle-row.yaml"
   }
 }

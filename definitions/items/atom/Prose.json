@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Prose",
-  "fingerprint": "1ce83eb0dd5743e5",
+  "name": "prose",
+  "fingerprint": "0a494fa68df98331",
   "bundle": "design-system",
   "title": "Prose",
   "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
@@ -30,6 +30,7 @@
       "style": {
         "width": "full"
       }
-    }
+    },
+    "file": "prose.yaml"
   }
 }

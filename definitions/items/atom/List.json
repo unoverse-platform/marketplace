@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "List",
-  "fingerprint": "9f21ab480582cdb1",
+  "name": "list",
+  "fingerprint": "b9f6a012523ca68b",
   "bundle": "design-system",
   "title": "List",
   "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -114,6 +114,7 @@
           }
         ]
       }
-    }
+    },
+    "file": "list.yaml"
   }
 }

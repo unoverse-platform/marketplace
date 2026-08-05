@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Faq",
-  "fingerprint": "3b73cb290e089574",
+  "name": "faq",
+  "fingerprint": "2c972dc588e78706",
   "bundle": "design-system",
   "title": "Faq",
   "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -88,6 +88,7 @@
           }
         ]
       }
-    }
+    },
+    "file": "faq.yaml"
   }
 }

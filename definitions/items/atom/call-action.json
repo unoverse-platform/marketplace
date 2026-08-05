@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "CallAction",
-  "fingerprint": "0b68ac8205471bc1",
+  "name": "call-action",
+  "fingerprint": "7ab57e093ef164f8",
   "bundle": "design-system",
   "title": "CallAction",
   "description": "Pill call-to-action: a leading icon + label on a solid brand surface, sized as a primary tap target. Icon + label are bound fields and INHERIT the button colour, so a Ref tone override (style.background/color) recolours both. References tokens only.",
@@ -66,6 +66,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "call-action.yaml"
   }
 }

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "Progress",
-  "fingerprint": "cc3c8b3a8983a576",
+  "name": "progress",
+  "fingerprint": "d12cf88e06ed53f1",
   "bundle": "design-system",
   "title": "Progress",
   "description": "A determinate progress bar: a sunken full-width track with a brand-colored fill whose width is data-driven ({{pct}}, a percentage string like \"62%\"). Owns its full style — references tokens only.",
@@ -38,6 +38,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "progress.yaml"
   }
 }

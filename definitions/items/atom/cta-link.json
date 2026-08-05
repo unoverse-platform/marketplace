@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "CtaLink",
-  "fingerprint": "3326339429983a06",
+  "name": "cta-link",
+  "fingerprint": "293b0b73cdc3fc4a",
   "bundle": "design-system",
   "title": "CtaLink",
   "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here.",
@@ -61,6 +61,7 @@
           "inheritLinkColor": true
         }
       ]
-    }
+    },
+    "file": "cta-link.yaml"
   }
 }

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "CallButton",
-  "fingerprint": "41c379a530054dc2",
+  "name": "call-button",
+  "fingerprint": "d45d1310da8ef540",
   "bundle": "design-system",
   "title": "CallButton",
   "description": "A round icon-only control button. Owns its full chrome (circle, size, centring) — references tokens only. The icon is a bound field; the Ref overrides `action` and overrides `style.background`/`style.color` per use (the icon inherits the button colour via currentColor).",
@@ -50,6 +50,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "call-button.yaml"
   }
 }

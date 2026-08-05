@@ -1,7 +1,7 @@
 {
   "kind": "atom",
-  "name": "CloseButton",
-  "fingerprint": "ec2b54871996aae0",
+  "name": "close-button",
+  "fingerprint": "170d1a27d1881706",
   "bundle": "design-system",
   "title": "CloseButton",
   "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only.",
@@ -50,6 +50,7 @@
           }
         }
       ]
-    }
+    },
+    "file": "close-button.yaml"
   }
 }
