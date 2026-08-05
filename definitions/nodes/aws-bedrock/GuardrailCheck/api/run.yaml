@@ -1,0 +1,21 @@
+# APPLYGUARDRAIL, the standalone form. Grounded in the Bedrock Runtime API reference: the guardrail
+# is named in the PATH, the text and direction travel in the body, and the reply carries the
+# verdict, the transformed text when masking applied, and per-policy assessments.
+#
+#   POST /guardrail/{guardrailIdentifier}/version/{guardrailVersion}/apply
+#   body: { source: INPUT | OUTPUT, content: [ { text: { text } } ] }
+#
+# STANDALONE is the point: this call checks TEXT, not a Bedrock model invocation, so the text can
+# come from anywhere — an OpenAI completion, a parsed document, a form submission. It is the same
+# API the platform's coming clip-on enforcement will use, proved here first as an ordinary node.
+
+- $ref: bedrock#call
+  name: check
+  url: >-
+    return 'https://bedrock-runtime.' + (credentials.awsCredential.region || 'us-east-1')
+      + '.amazonaws.com/guardrail/' + encodeURIComponent(config.guardrailId)
+      + '/version/' + encodeURIComponent(config.guardrailVersion || 'DRAFT') + '/apply'
+  body:
+    source: "{{ config.source }}"
+    content: >-
+      return [ { text: { text: String(config.text || '') } } ]

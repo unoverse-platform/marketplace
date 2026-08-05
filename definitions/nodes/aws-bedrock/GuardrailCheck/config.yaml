@@ -1,0 +1,61 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  # `source` is required because the vendor requires it in the body and a blank template drops the
+  # key (the droppable-body guard caught exactly this); it has a default, so requiring it costs an
+  # author nothing.
+  required: [guardrailId, source]
+  properties:
+    text:
+      type: string
+      title: Text
+      description: >-
+        The text to check. Usually wired from an upstream node, e.g. return signal.llamaparse1.text
+      default: ""
+      "ui:field": template
+    guardrailId:
+      type: string
+      title: Guardrail ID
+      description: >-
+        The Bedrock guardrail's identifier from the AWS console (e.g. gr0abcd1234ef). The guardrail
+        lives in the AWS account and region of this node's credential — policy is authored there,
+        this node only applies it.
+      default: ""
+    guardrailVersion:
+      type: string
+      title: Guardrail Version
+      # DRAFT is the working copy and the right default for building; production workflows should
+      # pin a numbered version so a mid-edit policy never applies itself.
+      description: >-
+        A numbered version to pin, or DRAFT for the working copy. Pin a number in production —
+        DRAFT changes under editing.
+      default: DRAFT
+    source:
+      type: string
+      title: Checking As
+      description: >-
+        Which half of the guardrail's rules apply. INPUT treats the text as something a person or
+        upstream system submitted; OUTPUT treats it as something a model produced. The same
+        guardrail carries different rules for each.
+      enum: [INPUT, OUTPUT]
+      enumNames: [Input (submitted content), Output (model-generated content)]
+      default: INPUT
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
+    # The executor takes the stricter of this and the manifest's `auth`.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order":
+  [authRequired, authRole, text, guardrailId, guardrailVersion, source]

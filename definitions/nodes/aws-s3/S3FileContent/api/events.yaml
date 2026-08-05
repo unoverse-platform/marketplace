@@ -8,16 +8,20 @@
 # minted by S3 Files upstream is the join key other tables use, so losing it here would
 # break the link between this file and everything already recorded about it.
 
+# `calls.head`, NOT `response`: the LAST call here is the presign, so `response` is the minted
+# url list — the headers live under the head call's own name. Reading them off `response` was
+# authored before this node ever ran end-to-end (the presign-as-final-call path only started
+# working 2026-08-05) and produced a file whose size, type and dates were all silently empty.
 - emit: file
   from: response
   value: >-
     return {
       key: String(config.key || signal.key || ''),
       bucket: config.bucket,
-      size: Number(response['content-length']) || 0,
-      contentType: response['content-type'] || 'application/octet-stream',
-      lastModified: response['last-modified'] || signal.lastModified || '',
-      etag: String(response.etag || signal.etag || '').split('"').join(''),
+      size: Number((calls.head || {})['content-length']) || 0,
+      contentType: (calls.head || {})['content-type'] || 'application/octet-stream',
+      lastModified: (calls.head || {})['last-modified'] || signal.lastModified || '',
+      etag: String((calls.head || {}).etag || signal.etag || '').split('"').join(''),
       universalId: signal.universalId || sha256(config.bucket + '/' + String(config.key || signal.key || '')).substring(0, 12),
       downloadUrl: (calls.link || [])[0] || ''
     }

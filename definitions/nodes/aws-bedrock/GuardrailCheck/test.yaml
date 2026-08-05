@@ -1,0 +1,20 @@
+$schema: ../../../_schema/test.schema.json
+
+# Running it live needs AWS credentials AND a guardrail that exists in that account — there is no
+# public fixture guardrail, so guardrailId below must be EDITED to a real one before running (any
+# content policy will do; the id is on the guardrail's console page). Benign text, so the fixture
+# asserts the CLEAN path: action NONE, passed true, text carried through unchanged. The intervened
+# path is exercised by pointing the same node at text the guardrail's own policy rejects.
+
+testData:
+  config:
+    text: The quarterly report is attached. Please review the revenue figures on page three.
+    guardrailId: EDIT-ME-your-guardrail-id
+    guardrailVersion: DRAFT
+    source: INPUT
+  inputs: {}
+  expect:
+    passed: "return output.passed === true"
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    action: "return output.action === 'NONE'"
+    assessments: "return Array.isArray(output.assessments)"

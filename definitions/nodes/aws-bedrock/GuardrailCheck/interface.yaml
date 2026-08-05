@@ -1,0 +1,26 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: text
+    type: string
+    description: The text to check, usually wired from an upstream node's output
+    required: false
+
+outputs:
+  - name: passed
+    type: boolean
+    description: true when the guardrail found nothing — the clean-path signal to branch on
+  - name: text
+    type: string
+    description: The text to carry forward — the original when it passed, the masked version when the guardrail transformed it
+  - name: action
+    type: string
+    description: The guardrail's verdict verbatim — NONE or GUARDRAIL_INTERVENED
+  - name: assessments
+    type: array
+    description: What tripped and why — per-policy findings for logging or routing
+
+credentials:
+  - name: awsCredential
+    required: true
+    displayName: AWS

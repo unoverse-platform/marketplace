@@ -5,7 +5,7 @@ kind: PromiseNode
 
 name: Bedrock Embedding
 category: AI
-color: "#FF9900"
+color: "#01A88D"
 
 description: Turn text into a vector using AWS Bedrock Titan models
 

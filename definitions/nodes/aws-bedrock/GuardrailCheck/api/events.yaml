@@ -1,0 +1,24 @@
+# One row per output connector, in interface.yaml order.
+#
+# `response` is ApplyGuardrail's reply: { action, outputs: [{ text }], assessments, usage }.
+# `action` is NONE (clean) or GUARDRAIL_INTERVENED (blocked or masked).
+
+- emit: passed
+  value: "return response.action === 'NONE'"
+
+- emit: text
+  # THE TEXT TO CARRY FORWARD, which is the masked form when the guardrail transformed it —
+  # redact-and-proceed is what a document pipeline usually wants, and the caller still has
+  # `passed` and `assessments` to branch on when proceeding is wrong. When the guardrail
+  # intervened without producing output (a hard block), this is EMPTY, deliberately: carrying
+  # the original text past a block would defeat the check.
+  value: >-
+    return response.action === 'NONE'
+      ? String(config.text || '')
+      : (((response.outputs || [])[0] || {}).text || '')
+
+- emit: action
+  value: "return response.action || ''"
+
+- emit: assessments
+  value: "return response.assessments || []"

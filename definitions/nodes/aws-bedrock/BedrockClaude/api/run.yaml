@@ -41,8 +41,11 @@
   transport: json
 
   # Bounded, because an unbounded call that never answers hangs the whole step with no
-  # error anywhere. 120s clears a long completion.
-  timeoutMs: 120000
+  # error anywhere. TEN MINUTES, not the 120s this started with: that bound predated
+  # document attachments, and an Opus reading a whole PDF and writing a structured
+  # extraction is minutes of legitimate silence on a non-streaming call — seen live
+  # 2026-08-05, a 13MB document timing out at 120s while the model was still working.
+  timeoutMs: 600000
 
   # Bedrock throttles hard under load and answers 429; retrying is the difference between a
   # workflow that survives a burst and one that fails a step at random.

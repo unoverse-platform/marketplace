@@ -1,0 +1,34 @@
+$schema: ../../../_schema/node.schema.json
+
+type: GuardrailCheck
+kind: PromiseNode
+
+name: Guardrail Check
+category: Documents
+color: "#01A88D"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp
+
+description: Check text against an AWS Bedrock guardrail — block, flag or mask content by your organization's policy.
+
+# THE EXPLICIT VERB, not the safety net. The platform-level clip-on guardrail (the per-box policy
+# the executor enforces) is a separate, coming capability that will reuse this node's proven wire
+# format. This node exists for workflows where checking IS the step: moderate an upload before
+# storing it, screen scraped content before indexing, gate a user submission.
+#
+# Outcome first, then disqualify by PROPERTY (doc 14): never name another node.
+whenToUse: >-
+  Screen a piece of text against your organization's content policy before acting on it: user
+  submissions before they are stored, scraped pages before they are indexed, generated copy before
+  it is sent. It applies an AWS Bedrock guardrail your security team configured — denied topics,
+  PII rules, content filters — and answers with passed or intervened, plus the text with any
+  masking applied. It checks and transforms text only; it cannot generate content or decide policy
+  itself.
+
+auth:
+  required: false
+
+capabilities:
+  # The same text against the same guardrail VERSION is deterministic, but DRAFT guardrails
+  # change under editing and a cached "passed" outliving a policy tightening is the worst
+  # possible staleness.
+  cacheable: false

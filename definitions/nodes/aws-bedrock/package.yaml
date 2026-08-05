@@ -19,6 +19,7 @@ features:
   - Claude on Bedrock via the native Messages API, with images, documents and tools
   - GPT on Bedrock, one prompt to one completion
   - Titan text embeddings, inline or over a service edge
+  - Apply Bedrock guardrails to any text — screen, block or mask by your org's policy
 
 # Two labels deep at least: bedrock-runtime.eu-west-1.amazonaws.com.
 allowedHosts:

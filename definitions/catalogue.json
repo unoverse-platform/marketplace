@@ -1,5 +1,5 @@
 {
-  "release": "0.1.18",
+  "release": "0.1.19",
   "items": [
     {
       "kind": "component",
@@ -544,7 +544,7 @@
       "kind": "node",
       "name": "BedrockClaude",
       "pack": "aws-bedrock",
-      "fingerprint": "f2bb59d3297c0965",
+      "fingerprint": "c5863e3b963665c6",
       "title": "Bedrock Chat",
       "description": "Ask Claude on AWS Bedrock, optionally about an image or document",
       "category": "AI",
@@ -555,7 +555,7 @@
       "kind": "node",
       "name": "BedrockEmbedding",
       "pack": "aws-bedrock",
-      "fingerprint": "443ec2674ff1c0b3",
+      "fingerprint": "c6353c60048fd892",
       "title": "Bedrock Embedding",
       "description": "Turn text into a vector using AWS Bedrock Titan models",
       "category": "AI",
@@ -566,7 +566,7 @@
       "kind": "node",
       "name": "BedrockEmbeddingService",
       "pack": "aws-bedrock",
-      "fingerprint": "426baf28f899edfa",
+      "fingerprint": "50d82b337acc067b",
       "title": "Bedrock Embedding Service",
       "description": "Offer Titan embeddings to other nodes over a service edge",
       "category": "AI",
@@ -577,12 +577,23 @@
       "kind": "node",
       "name": "BedrockOpenAI",
       "pack": "aws-bedrock",
-      "fingerprint": "12bbffdbe68f15c0",
+      "fingerprint": "11e84ac1f3d64dcc",
       "title": "Bedrock GPT",
       "description": "One prompt in, one GPT completion out, running in your AWS account",
       "category": "AI",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
       "whenToUse": "Single prompt to single completion from a GPT model, when the call must run in YOUR AWS account and region: summarise, rewrite, classify, answer. No streaming, no tools, no schema enforcement; reach for a heavier node when a step genuinely needs token streaming, iterative tool use, strict JSON output, or to read an image or document alongside the prompt."
+    },
+    {
+      "kind": "node",
+      "name": "GuardrailCheck",
+      "pack": "aws-bedrock",
+      "fingerprint": "5de9cc19da32e0a3",
+      "title": "Guardrail Check",
+      "description": "Check text against an AWS Bedrock guardrail — block, flag or mask content by your organization's policy.",
+      "category": "Documents",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+      "whenToUse": "Screen a piece of text against your organization's content policy before acting on it: user submissions before they are stored, scraped pages before they are indexed, generated copy before it is sent. It applies an AWS Bedrock guardrail your security team configured — denied topics, PII rules, content filters — and answers with passed or intervened, plus the text with any masking applied. It checks and transforms text only; it cannot generate content or decide policy itself."
     },
     {
       "kind": "node",
@@ -621,7 +632,7 @@
       "kind": "node",
       "name": "S3FileContent",
       "pack": "aws-s3",
-      "fingerprint": "25d86524d9694cbb",
+      "fingerprint": "1f8d974e5bbe0bcf",
       "title": "S3 File Content",
       "description": "Read one S3 object's details and mint a link to fetch it",
       "category": "Storage & Data",
