@@ -12,7 +12,7 @@ root:
   type: Box
   style:
     direction: row
-    gap: sm
+    gap: "2"
     padding: [ "4", "8", "6", "8" ]
     background: transparent
     when:
@@ -26,7 +26,7 @@ root:
         flex: 1
         direction: row
         align: center
-        gap: sm
+        gap: "2"
         background: surface.raised
         border: none
         radius: full

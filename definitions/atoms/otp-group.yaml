@@ -1,0 +1,162 @@
+$schema: ../../_schema/unoverse.schema.json
+unoverse: "1.0"
+kind: atom
+name: OtpGroup
+description: "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only."
+whenToUse: Entering a one-time passcode sent by SMS or email (transfer verification, sign-in, card activation). Compose via a Ref, remapping d1..d6 onto the six host fields the code is written into; the digits stay in the HOST's slice, so the host reads the assembled code.
+# The six digits are the HOST's fields, remapped through `Ref props` — an atom expands
+# into the host's tree, so a wizard that needs to submit the code can still read it.
+# (A design-system COMPONENT would own its own slice and the code would be trapped there.)
+props:
+  d1:
+    type: string
+    default: ""
+  d2:
+    type: string
+    default: ""
+  d3:
+    type: string
+    default: ""
+  d4:
+    type: string
+    default: ""
+  d5:
+    type: string
+    default: ""
+  d6:
+    type: string
+    default: ""
+root:
+  type: Box
+  style:
+    direction: row
+    align: center
+    justify: center
+    gap: "2"
+    width: full
+  children:
+    # `maxLength: 1` + `inputMode: numeric` are the constraint: one character, 0-9 only.
+    # `advanceOnFill` moves focus on to the next box as each one fills.
+    # `autoComplete: one-time-code` is what these fields ARE — without it the browser
+    # guesses from the shape (a row of short numeric boxes) and offers to save the digits
+    # as a card or ID number. Enforced by the Input primitive, so none of it drifts per host.
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d1
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d2
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d3
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d4
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d5
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none
+    - type: Input
+      maxLength: 1
+      inputMode: numeric
+      advanceOnFill: true
+      autoComplete: one-time-code
+      bind:
+        value: d6
+      style:
+        flex: 0 0 auto
+        width: "16"
+        height: "16"
+        padding: "0"
+        textAlign: center
+        font: headline.lg
+        weight: bold
+        color: text.primary
+        background: surface.base
+        border: strong
+        radius: md
+        outline: none

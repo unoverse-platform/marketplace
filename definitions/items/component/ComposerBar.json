@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "ComposerBar",
-  "fingerprint": "74fdedb7c213bc83",
+  "fingerprint": "0a1460ffcc13760b",
   "bundle": "design-system",
   "title": "ComposerBar",
   "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -21,7 +21,7 @@
       "type": "Box",
       "style": {
         "direction": "row",
-        "gap": "sm",
+        "gap": "2",
         "padding": [
           "4",
           "8",
@@ -46,7 +46,7 @@
             "flex": 1,
             "direction": "row",
             "align": "center",
-            "gap": "sm",
+            "gap": "2",
             "background": "surface.raised",
             "border": "none",
             "radius": "full",

@@ -8,3 +8,6 @@ border:
       $value: 1px
     thick:
       $value: 2px
+    heavy:
+      $description: A deliberate outline that reads as a shape in its own right, not a hairline separator — the CtaLink pill's rule. Part of the shared scale so an atom in rx/marketplace can use it; every org inherits this width and may override it.
+      $value: 4px

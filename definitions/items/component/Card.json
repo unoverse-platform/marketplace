@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "Card",
-  "fingerprint": "dbe9f2b012b46352",
+  "fingerprint": "82da20b50cb001bb",
   "bundle": "design-system",
   "title": "Card",
   "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
@@ -73,7 +73,7 @@
           "type": "Box",
           "style": {
             "direction": "column",
-            "padding": "lg",
+            "padding": "6",
             "gap": "3",
             "align": "start"
           },

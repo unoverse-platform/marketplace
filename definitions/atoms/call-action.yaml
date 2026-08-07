@@ -18,7 +18,7 @@ root:
     direction: row
     align: center
     justify: center
-    gap: sm
+    gap: "2"
     minHeight: "12"
     padding: [ "3", "8" ]
     radius: full

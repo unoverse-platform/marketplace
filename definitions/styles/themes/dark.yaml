@@ -24,6 +24,9 @@ color:
       $value: "{color.gray.800}"
     strong:
       $value: "{color.gray.700}"
+    accent:
+      $description: The CTA outline colour. Defaults to this theme's strong border; a brand that wants its CTAs to stand out overrides THIS one token.
+      $value: "{color.border.strong}"
   action:
     primary:
       $value: "{color.primary.500}"

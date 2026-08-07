@@ -1,0 +1,10 @@
+$description: >-
+  Grid behaviour as DATA. `stackBelow` is the width at which a columns grid gives up and
+  stacks — every child goes full width, one per row. It lives here rather than in the SDK
+  because it is a value, and the SDK owns none: an org that wants its grids to hold their
+  shape longer overrides this ONE token. A grid may still override it per-instance with
+  `style.stackBelow`.
+grid:
+  stackBelow:
+    $type: dimension
+    $value: "{space.120}"

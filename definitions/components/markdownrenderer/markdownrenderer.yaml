@@ -80,12 +80,12 @@ root:
           style:
             direction: row
             align: center
-            gap: sm
+            gap: "2"
           children:
             - type: Box
               style:
                 direction: row
-                gap: xs
+                gap: "1"
                 align: center
               children:
                 - type: Box

@@ -1,5 +1,5 @@
 {
-  "release": "0.1.21",
+  "release": "0.1.22",
   "items": [
     {
       "kind": "component",
@@ -22,7 +22,7 @@
     {
       "kind": "component",
       "name": "Card",
-      "fingerprint": "dbe9f2b012b46352",
+      "fingerprint": "82da20b50cb001bb",
       "bundle": "design-system",
       "title": "Card",
       "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
@@ -49,7 +49,7 @@
     {
       "kind": "component",
       "name": "ComposerBar",
-      "fingerprint": "74fdedb7c213bc83",
+      "fingerprint": "0a1460ffcc13760b",
       "bundle": "design-system",
       "title": "ComposerBar",
       "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -94,7 +94,7 @@
     {
       "kind": "component",
       "name": "MarkdownRenderer",
-      "fingerprint": "150d7841c6c3b5b3",
+      "fingerprint": "c4b0e7b66257acb0",
       "bundle": "design-system",
       "title": "MarkdownRenderer",
       "description": "Static markdown document renderer: an optional titled header with a streaming indicator, then a full markdown body (headings, lists, tables, code, links, images) or a waiting placeholder.",
@@ -139,7 +139,7 @@
     {
       "kind": "component",
       "name": "StreamingText",
-      "fingerprint": "0272aa0682b3ee55",
+      "fingerprint": "5e5b9ce0cc48d447",
       "bundle": "design-system",
       "title": "StreamingText",
       "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -189,7 +189,7 @@
     {
       "kind": "atom",
       "name": "call-action",
-      "fingerprint": "7ab57e093ef164f8",
+      "fingerprint": "5570854a14df91b4",
       "bundle": "design-system",
       "title": "CallAction",
       "description": "Pill call-to-action: a leading icon + label on a solid brand surface, sized as a primary tap target. Icon + label are bound fields and INHERIT the button colour, so a Ref tone override (style.background/color) recolours both. References tokens only."
@@ -337,6 +337,14 @@
     },
     {
       "kind": "atom",
+      "name": "otp-group",
+      "fingerprint": "44ae2b40ed537c81",
+      "bundle": "design-system",
+      "title": "OtpGroup",
+      "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only."
+    },
+    {
+      "kind": "atom",
       "name": "outline-button",
       "fingerprint": "29ff23cc0d66980a",
       "bundle": "design-system",
@@ -405,7 +413,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "aa7fef900fa1b918",
+      "fingerprint": "5144a5ef98d04794",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."

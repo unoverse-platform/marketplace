@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "StreamingText",
-  "fingerprint": "0272aa0682b3ee55",
+  "fingerprint": "5e5b9ce0cc48d447",
   "bundle": "design-system",
   "title": "StreamingText",
   "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -57,7 +57,7 @@
           "style": {
             "direction": "row",
             "align": "center",
-            "gap": "sm",
+            "gap": "2",
             "padding": [
               "2",
               "0",
@@ -71,7 +71,7 @@
               "visibleWhen": "streaming",
               "style": {
                 "direction": "row",
-                "gap": "xs",
+                "gap": "1",
                 "align": "center"
               },
               "children": [
@@ -166,8 +166,8 @@
             "radius": "2xl",
             "radiusTopLeft": "0",
             "padding": [
-              "sm",
-              "md"
+              "2",
+              "4"
             ],
             "width": "fit-content",
             "maxWidth": "78%"

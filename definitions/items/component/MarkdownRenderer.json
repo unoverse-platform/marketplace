@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "MarkdownRenderer",
-  "fingerprint": "150d7841c6c3b5b3",
+  "fingerprint": "c4b0e7b66257acb0",
   "bundle": "design-system",
   "title": "MarkdownRenderer",
   "description": "Static markdown document renderer: an optional titled header with a streaming indicator, then a full markdown body (headings, lists, tables, code, links, images) or a waiting placeholder.",
@@ -78,14 +78,14 @@
               "style": {
                 "direction": "row",
                 "align": "center",
-                "gap": "sm"
+                "gap": "2"
               },
               "children": [
                 {
                   "type": "Box",
                   "style": {
                     "direction": "row",
-                    "gap": "xs",
+                    "gap": "1",
                     "align": "center"
                   },
                   "children": [

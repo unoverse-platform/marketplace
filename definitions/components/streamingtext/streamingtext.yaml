@@ -55,14 +55,14 @@ root:
       style:
         direction: row
         align: center
-        gap: sm
+        gap: "2"
         padding: [ "2", "0", "0", "0" ]
       children:
         - type: Box
           visibleWhen: streaming
           style:
             direction: row
-            gap: xs
+            gap: "1"
             align: center
           children:
             - type: Box
@@ -125,7 +125,7 @@ root:
         background: surface.sunken
         radius: 2xl
         radiusTopLeft: "0"
-        padding: [ sm, md ]
+        padding: [ "2", "4" ]
         width: fit-content
         maxWidth: 78%
       children:

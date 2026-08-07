@@ -1,0 +1,25 @@
+$description: >-
+  PAGE WIDTHS, named. These are aliases onto the same space scale, not a second scale: the
+  point is that a page-level cap reads as what it IS ("maxWidth: reading") instead of a
+  number you have to convert (40rem). The band starts at 30rem because that is where a
+  width stops being an element and starts being a page.
+
+  THE RULE, so one value never gets two spellings: a PAGE-level cap (maxWidth on a content
+  container, a hideBelow/stackBelow threshold) uses a NAME here; an ELEMENT's own size
+  (an image tile's height, a card's max) stays a scale step. Element sizes are not page
+  widths and must not borrow these words.
+layout:
+  $type: dimension
+  compact:
+    $description: 30rem / 480px — the narrowest a page column gets before it stacks.
+    $value: "{space.120}"
+  narrow:
+    $value: "{space.140}"
+  reading:
+    $description: 40rem / 640px — a comfortable measure for a column of prose.
+    $value: "{space.160}"
+  page:
+    $description: 45rem / 720px — the standard content container.
+    $value: "{space.180}"
+  wide:
+    $value: "{space.200}"
