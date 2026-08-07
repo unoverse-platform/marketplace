@@ -1,5 +1,5 @@
 {
-  "release": "0.1.19",
+  "release": "0.1.20",
   "items": [
     {
       "kind": "component",
@@ -139,7 +139,7 @@
     {
       "kind": "component",
       "name": "StreamingText",
-      "fingerprint": "8dcb3c8f33499e8d",
+      "fingerprint": "0272aa0682b3ee55",
       "bundle": "design-system",
       "title": "StreamingText",
       "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -1083,7 +1083,7 @@
       "kind": "node",
       "name": "OpenAIAgent",
       "pack": "openai",
-      "fingerprint": "20f8c029eb020785",
+      "fingerprint": "62fc42972b048d64",
       "title": "OpenAI Agent",
       "description": "Multi-turn agent that works through a problem using MCP tools",
       "category": "AI",

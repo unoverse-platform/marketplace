@@ -25,13 +25,22 @@
   throttleMs: 200
 
 # The MODEL's own reasoning summary. Only produced when reasoningEffort is above none
-# AND a reasoningSummary is requested; the API sends nothing otherwise.
+# AND a reasoningSummary is requested; the API sends nothing otherwise. The part-done
+# marker contributes the paragraph break between summary sections — without it the
+# sections concatenate ("**Ensuring X****Balancing Y**"), a legacy behaviour lost in
+# the first migration.
+#
+# Throttled by TIME, not characters. The legacy 150-char threshold held a summary
+# SHORTER than 150 chars until the end-of-run flush — whole turns produced no live
+# reasoning and it all arrived as one late lump (observed 2026-08-06). A time throttle
+# emits every delta within 200ms whatever its size, which is what makes the stream
+# lane feel live, and is the cadence this connector had in the legacy node's heyday.
 - emit: reasoning
   from: response
-  match: response.reasoning_summary_text.delta
-  value: "return response.delta"
+  match: [response.reasoning_summary_text.delta, response.reasoning_summary_part.done]
+  value: 'return response.type === "response.reasoning_summary_part.done" ? "\n\n" : response.delta'
   accumulate: true
-  throttleChars: 150
+  throttleMs: 200
 
 # The tool RESULT. It is never in the HTTP stream: our tool loop produced it, which is
 # why this cannot be a `from: response` row. Emitting the tool CALL here instead was a

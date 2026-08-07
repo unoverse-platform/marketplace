@@ -16,6 +16,13 @@ props:
     type: string
     input: true
     default: ""
+  # The MODEL'S OWN reasoning summary, streamed live from the agent's `reasoning`
+  # connector — distinct from `thinking` (the narrator's customer-safe status line).
+  # Markdown: the API writes bold section headers per summary part.
+  reasoning:
+    type: string
+    input: true
+    default: ""
   text:
     type: string
     input: true
@@ -93,6 +100,22 @@ root:
         - type: Markdown
           bind:
             value: thinking
+          style:
+            font: body.sm
+            color: text.tertiary
+    # The model's working notes, above the answer it produced them for. Quiet by
+    # design: sunken, small, tertiary — present when streamed, absent otherwise.
+    - type: Box
+      visibleWhen: reasoning
+      style:
+        background: surface.sunken
+        radius: lg
+        padding: [ "2", "3" ]
+        width: full
+      children:
+        - type: Markdown
+          bind:
+            value: reasoning
           style:
             font: body.sm
             color: text.tertiary

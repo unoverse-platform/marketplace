@@ -45,9 +45,12 @@ configSchema:
     reasoningSummary:
       type: string
       title: Reasoning Summary
-      description: Summaries must be requested or the API emits no reasoning events at all.
+      description: >-
+        Summaries must be requested or the API emits no reasoning events at all. auto
+        matches the legacy node and gives the fullest live reasoning stream; concise
+        summaries are often too short to stream visibly.
       enum: [auto, concise, detailed]
-      default: concise
+      default: auto
 
     verbosity:
       type: string

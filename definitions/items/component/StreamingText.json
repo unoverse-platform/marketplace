@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "StreamingText",
-  "fingerprint": "8dcb3c8f33499e8d",
+  "fingerprint": "0272aa0682b3ee55",
   "bundle": "design-system",
   "title": "StreamingText",
   "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -23,6 +23,11 @@
         "default": false
       },
       "thinking": {
+        "type": "string",
+        "input": true,
+        "default": ""
+      },
+      "reasoning": {
         "type": "string",
         "input": true,
         "default": ""
@@ -120,6 +125,31 @@
               "type": "Markdown",
               "bind": {
                 "value": "thinking"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.tertiary"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "visibleWhen": "reasoning",
+          "style": {
+            "background": "surface.sunken",
+            "radius": "lg",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Markdown",
+              "bind": {
+                "value": "reasoning"
               },
               "style": {
                 "font": "body.sm",
