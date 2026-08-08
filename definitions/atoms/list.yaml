@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: List
+name: list
 category: markdown
 description: "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only."
 whenToUse: Enumerable items the source gives in no particular order, such as what is included or what a service covers. A sequence that must be followed in order is steps.

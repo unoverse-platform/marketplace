@@ -1,15 +1,15 @@
 {
   "kind": "component",
-  "name": "Card2",
-  "fingerprint": "f596ce723618e1d2",
+  "name": "card2",
+  "fingerprint": "59a3a31c27aa25ee",
   "bundle": "design-system",
-  "title": "Card2",
+  "title": "card2",
   "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
     "kind": "component",
-    "name": "Card2",
+    "name": "card2",
     "category": "Content",
     "nodeSize": {
       "width": 760,

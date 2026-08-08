@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: DetailRow
+name: detail-row
 description: "A key↔value row: a muted label on the left, a value on the right with an optional sub-line beneath it. A hairline bottom border (override to none on the last row). Owns its full style — references tokens only."
 whenToUse: A line in a summary/details list (review, confirmation, receipt, spec sheet). Compose via a Ref, mapping label/value/sub to host fields; set style.borderBottom = "none" on the final row.
 props:

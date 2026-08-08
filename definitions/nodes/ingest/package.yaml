@@ -25,7 +25,7 @@ $schema: ../_schema/package.schema.json
 name: ingest
 displayName: Ingest
 description: Content ingestion, template rendering and data import
-version: 2.0.0
+version: 2.1.0
 category: ingest
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
 
@@ -35,6 +35,10 @@ features:
   - Read rows from a public Google Sheet
 
 allowedHosts:
+  # LOOPBACK, numeric form (the pattern rejects a bare "localhost"): SpatialIngest hands its
+  # text to the platform's own content engine over `scope.engineUrl` (127.0.0.1:4101), same
+  # declaration the spatial package carries for its searches.
+  - 127.0.0.1
   - api.abyssale.com
   # Plaid picks its host from the credential's environment, so all three are declared. A sandbox key
   # cannot reach production and vice versa, so listing them is not a widening.

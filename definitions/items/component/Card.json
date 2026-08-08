@@ -1,15 +1,15 @@
 {
   "kind": "component",
-  "name": "Card",
-  "fingerprint": "82da20b50cb001bb",
+  "name": "card",
+  "fingerprint": "908eaad8dc827cf6",
   "bundle": "design-system",
-  "title": "Card",
+  "title": "card",
   "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
     "kind": "component",
-    "name": "Card",
+    "name": "card",
     "category": "Content",
     "nodeSize": {
       "width": 480,

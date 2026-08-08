@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "steps",
-  "fingerprint": "4a7e2efd83ec488c",
+  "fingerprint": "e0cc3e6288f13b68",
   "bundle": "design-system",
-  "title": "Steps",
+  "title": "steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Steps",
+    "name": "steps",
     "category": "markdown",
     "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
     "whenToUse": "A sequence the source states in order, where doing them out of order would be wrong, such as how to book, apply, register or claim something. Not for a list of unordered benefits or features, which is prose or a plain list.",

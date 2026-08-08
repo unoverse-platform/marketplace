@@ -37,7 +37,7 @@ children:
       steps:
         type: Ref
         ref: steps
-      keyFacts:
+      key-facts:
         type: Ref
         ref: key-facts
       list:
@@ -46,7 +46,7 @@ children:
       faq:
         type: Ref
         ref: faq
-      finePrint:
+      fine-print:
         type: Ref
         ref: fine-print
       table:

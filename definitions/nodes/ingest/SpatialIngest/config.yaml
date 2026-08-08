@@ -6,7 +6,7 @@ $schema: ../../../_schema/config.schema.json
 
 configSchema:
   type: object
-  required: [rawContent, category]
+  required: [rawContent]
   properties:
     rawContent:
       type: string
@@ -14,20 +14,30 @@ configSchema:
       description: The text to read. Usually wired in from an upstream node.
       default: ""
       "ui:field": template
-    category:
-      type: string
-      title: Category
-      # The engine defines six, and only these two are what this node produces. IMAGE and DOCUMENT come
-      # from the Cloudinary and document connectors; MCP and SKILL from spatial discovery. Offering all
-      # six would be four options that quietly produce nothing useful.
-      description: What the text describes — a need someone has, or a product or service on offer.
-      enum: [NEED, SERVICE]
-      enumNames: [Need, Product or service]
-      default: NEED
+    # NO CATEGORY FIELD (removed 2026-08-07, platform owner's ruling). This node ingests
+    # NEEDS, full stop. Products and services are created by PROMOTING a page from the
+    # Content tree (POST /content/promote-page): that lane fetches the page fresh and
+    # whole, grounds the entry structurally in one page, refuses to promote the same URL
+    # twice, and stamps metadata.promoted for the tree. A raw-text SERVICE lane here was
+    # the same row kind minted with none of those guarantees — a duplicate door, strictly
+    # worse. IMAGE and DOCUMENT come from the Cloudinary and document connectors; MCP and
+    # SKILL from spatial discovery.
     sourceUrl:
       type: string
       title: Source URL
       description: Where the text came from, kept for provenance. Optional.
+      default: ""
+      "ui:field": template
+    metadata:
+      type: string
+      title: Metadata (JSON)
+      # FREE-FORM BY DESIGN (platform owner's ruling, 2026-08-07): the caller decides the
+      # vocabulary — documentTitle, client, quarter, whatever future search will filter by.
+      # Stored verbatim on every need extracted from this text (the extractor merges the
+      # source's metadata onto each entry). A template STRING holding JSON, not an object
+      # field, because the config form has no JSON field type yet (backlog 2026-08-01);
+      # run.yaml parses it and fails the run loudly on invalid JSON.
+      description: 'Optional JSON object stamped onto every need from this text, e.g. {"documentTitle": "Q3 Deck", "client": "Acme"}. You choose the keys; future search can filter by them.'
       default: ""
       "ui:field": template
     maxItems:
@@ -62,4 +72,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [authRequired, authRole, rawContent, category, sourceUrl, maxItems]
+"ui:order": [authRequired, authRole, rawContent, sourceUrl, metadata, maxItems]

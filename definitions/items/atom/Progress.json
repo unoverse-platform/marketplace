@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "progress",
-  "fingerprint": "d12cf88e06ed53f1",
+  "fingerprint": "11d4440c5f7d34e2",
   "bundle": "design-system",
-  "title": "Progress",
+  "title": "progress",
   "description": "A determinate progress bar: a sunken full-width track with a brand-colored fill whose width is data-driven ({{pct}}, a percentage string like \"62%\"). Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Progress",
+    "name": "progress",
     "description": "A determinate progress bar: a sunken full-width track with a brand-colored fill whose width is data-driven ({{pct}}, a percentage string like \"62%\"). Owns its full style — references tokens only.",
     "whenToUse": "Show completion of a known-length task or quota (upload, steps done, budget used). Compose via a Ref, remapping the pct binding to the host's percentage field; the data producer supplies a resolved percentage string.",
     "props": {

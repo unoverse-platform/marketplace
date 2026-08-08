@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: Steps
+name: steps
 category: markdown
 description: "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only."
 whenToUse: A sequence the source states in order, where doing them out of order would be wrong, such as how to book, apply, register or claim something. Not for a list of unordered benefits or features, which is prose or a plain list.

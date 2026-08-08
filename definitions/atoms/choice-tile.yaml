@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: ChoiceTile
+name: choice-tile
 description: "Selectable option tile for a wrapping two-up grid: an optional leading icon beside a label and optional one-line description — the compact half-width sibling of ChoiceRow. Owns its full style — references tokens only."
 whenToUse: The repeated option inside a wizard step's Each when the option set is large (6+) and a full-width row list would force scrolling. Compose via a Ref as the Each `template` (the Each styled as a wrap row), and supply the per-step `action`. Reads per-item fields (label/description/icon) from the Each scope. Keep descriptions short — they should never wrap.
 props:

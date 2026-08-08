@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "key-facts",
-  "fingerprint": "37657c437021f560",
+  "fingerprint": "5a2b574c91de4589",
   "bundle": "design-system",
-  "title": "KeyFacts",
+  "title": "key-facts",
   "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "KeyFacts",
+    "name": "key-facts",
     "category": "markdown",
     "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
     "whenToUse": "Two to four figures the source states plainly, which a reader would compare at a glance, such as an allowance, a duration and a limit. One figure alone belongs in the sentence it came from. A wall of tiles reads as a dashboard, not a document.",

@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "callout",
-  "fingerprint": "1c80fcf47af6aee6",
+  "fingerprint": "16b9e3aee67c4ab4",
   "bundle": "design-system",
-  "title": "Callout",
+  "title": "callout",
   "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Callout",
+    "name": "callout",
     "category": "markdown",
     "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
     "whenToUse": "Strictly what a reader must not miss to avoid harm or real surprise, such as a deadline that forfeits something or a condition that voids cover. Never a routine qualifier: a fee's applicability, a notice period or a processing time belongs with the fact it qualifies. Also the in-place confirmation, warning or error on an interface (form feedback, action results).",

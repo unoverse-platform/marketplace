@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "choice-row",
-  "fingerprint": "a6c68a0aec45620c",
+  "fingerprint": "e8c263e87b50f1b5",
   "bundle": "design-system",
-  "title": "ChoiceRow",
+  "title": "choice-row",
   "description": "Selectable option row: an optional leading icon, a label and optional description, inside a bordered card button with a hover surface. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "ChoiceRow",
+    "name": "choice-row",
     "description": "Selectable option row: an optional leading icon, a label and optional description, inside a bordered card button with a hover surface. Owns its full style — references tokens only.",
     "whenToUse": "The repeated option inside a wizard step's Each (or any single-select list). Compose via a Ref as the Each `template`, and supply the per-step `action`. Reads per-item fields (label/description/icon) from the Each scope.",
     "props": {

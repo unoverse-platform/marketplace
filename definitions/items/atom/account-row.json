@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "account-row",
-  "fingerprint": "646ff453b8732c54",
+  "fingerprint": "81ffd05d300e419b",
   "bundle": "design-system",
-  "title": "AccountRow",
+  "title": "account-row",
   "description": "A selectable account/beneficiary card: a title with an optional masked-number sub-line, an optional right-aligned figure (e.g. balance), and an optional bank line below. A richer sibling of choice-row for money UIs. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "AccountRow",
+    "name": "account-row",
     "description": "A selectable account/beneficiary card: a title with an optional masked-number sub-line, an optional right-aligned figure (e.g. balance), and an optional bank line below. A richer sibling of choice-row for money UIs. Owns its full style — references tokens only.",
     "whenToUse": "A bank account or beneficiary in a selectable list (transfers, payees). Compose via a Ref as an Each `template`, supplying the per-step `action`; reads per-item fields (label/sub/balance/meta) from the Each scope.",
     "props": {

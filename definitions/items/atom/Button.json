@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "button",
-  "fingerprint": "9d122ce8684a20c6",
+  "fingerprint": "2bb20c2ef1f31997",
   "bundle": "design-system",
-  "title": "Button",
+  "title": "button",
   "description": "Primary action button. Owns its full style — references tokens only (the theme's action colors carry the brand).",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Button",
+    "name": "button",
     "description": "Primary action button. Owns its full style — references tokens only (the theme's action colors carry the brand).",
     "whenToUse": "The standard call-to-action. Components COMPOSE this atom via a Ref node.",
     "props": {

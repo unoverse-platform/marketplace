@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: Faq
+name: faq
 category: markdown
 description: "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only."
 whenToUse: Question and answer pairs the source states as such. Not a way to reframe ordinary copy as questions.

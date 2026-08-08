@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "table",
-  "fingerprint": "504bf303ad755e45",
+  "fingerprint": "1ef39260d2d56a5f",
   "bundle": "design-system",
-  "title": "Table",
+  "title": "table",
   "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Table",
+    "name": "table",
     "category": "markdown",
     "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
     "whenToUse": "Anything the source states across two dimensions, such as rates by type or sizes by price. A single list of figures is keyFacts; a list of items is a list.",

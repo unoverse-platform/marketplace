@@ -8,13 +8,14 @@ category: Documents
 color: "#7C3AED"
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
 
-description: Turn raw text into needs or services in the spatial dictionary.
+description: Turn raw text into needs in the spatial dictionary.
 
 whenToUse: >-
   Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a
-  message thread. It reads the text, pulls out the distinct needs or services it describes, embeds each
-  one and stores it. It only WRITES to that map — searching it is a different job — and it takes text
-  that is already in hand rather than fetching from anywhere.
+  message thread. It reads the text, pulls out the distinct needs it describes — pain points, goals,
+  intentions — embeds each one and stores it. It only WRITES to that map — searching it is a different
+  job — and it takes text that is already in hand rather than fetching from anywhere. It does NOT
+  create products or services: those are made by promoting a page from the Content tree.
 
 # WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). `required: true`, unlike almost every other
 # node, because this one writes to the PLATFORM's own needs engine rather than to a

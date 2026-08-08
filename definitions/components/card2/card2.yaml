@@ -1,7 +1,7 @@
 $schema: ../../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: component
-name: Card2
+name: card2
 category: Content
 nodeSize:
   width: 760

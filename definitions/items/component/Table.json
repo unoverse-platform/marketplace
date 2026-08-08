@@ -1,15 +1,15 @@
 {
   "kind": "component",
-  "name": "Table",
-  "fingerprint": "c9f471af266d3ade",
+  "name": "table",
+  "fingerprint": "ae4fd9d2ccf34b03",
   "bundle": "design-system",
-  "title": "Table",
+  "title": "table",
   "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
   "category": "Charts",
   "definition": {
     "unoverse": "1.0",
     "kind": "component",
-    "name": "Table",
+    "name": "table",
     "category": "Charts",
     "nodeSize": {
       "width": 480,

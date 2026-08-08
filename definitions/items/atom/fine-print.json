@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "fine-print",
-  "fingerprint": "46a68d03f08a1241",
+  "fingerprint": "87acac1b06e90266",
   "bundle": "design-system",
-  "title": "FinePrint",
+  "title": "fine-print",
   "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "FinePrint",
+    "name": "fine-print",
     "category": "markdown",
     "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
     "whenToUse": "Terms, conditions and regulatory wording the source carries. Present and readable, never competing with the copy it qualifies.",

@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "otp-group",
-  "fingerprint": "44ae2b40ed537c81",
+  "fingerprint": "7ffb4d9bf9420e3b",
   "bundle": "design-system",
-  "title": "OtpGroup",
+  "title": "otp-group",
   "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "OtpGroup",
+    "name": "otp-group",
     "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
     "whenToUse": "Entering a one-time passcode sent by SMS or email (transfer verification, sign-in, card activation). Compose via a Ref, remapping d1..d6 onto the six host fields the code is written into; the digits stay in the HOST's slice, so the host reads the assembled code.",
     "props": {

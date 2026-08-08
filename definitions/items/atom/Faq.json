@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "faq",
-  "fingerprint": "2c972dc588e78706",
+  "fingerprint": "45dfddd419d6f3be",
   "bundle": "design-system",
-  "title": "Faq",
+  "title": "faq",
   "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Faq",
+    "name": "faq",
     "category": "markdown",
     "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
     "whenToUse": "Question and answer pairs the source states as such. Not a way to reframe ordinary copy as questions.",

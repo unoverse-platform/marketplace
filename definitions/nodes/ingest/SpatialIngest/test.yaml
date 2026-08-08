@@ -16,7 +16,6 @@ testData:
     rawContent: >-
       We need a way to track invoices that are overdue by more than 30 days. Separately, the support team
       needs a single place to see every open ticket for one customer.
-    category: NEED
     sourceUrl: https://example.com/notes/planning
   inputs:
     signal: {}

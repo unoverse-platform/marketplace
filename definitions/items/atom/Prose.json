@@ -1,15 +1,15 @@
 {
   "kind": "atom",
   "name": "prose",
-  "fingerprint": "0a494fa68df98331",
+  "fingerprint": "69d0b2ef4739738e",
   "bundle": "design-system",
-  "title": "Prose",
+  "title": "prose",
   "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Prose",
+    "name": "prose",
     "category": "markdown",
     "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
     "whenToUse": "The default block, and the one to reach for whenever the source is simply written. Prose carries anything Markdown carries. Choose a structured block only when the source itself is structured, never to make a plain passage look busier.",

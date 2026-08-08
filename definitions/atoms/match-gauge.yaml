@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: MatchGauge
+name: match-gauge
 description: "Circular score gauge: a conic radial ring filled to a percent, the value in the center, a label below. Composed from primitives (a circular Box with a `radial` fill) — not a chart leaf. Owns its full style — references tokens only."
 whenToUse: Show a match/score/progress percentage as a ring (e.g. a recommendation fit score). Compose via a Ref, mapping value (a percent string like "95%") and label to host fields.
 props:

@@ -1,7 +1,7 @@
 {
   "kind": "component",
-  "name": "Document",
-  "fingerprint": "daa527c70ccc497b",
+  "name": "document",
+  "fingerprint": "8243a53989fa83a3",
   "bundle": "design-system",
   "title": "Document",
   "description": "A record's structured body copy, drawn by the design system.",
@@ -9,7 +9,7 @@
   "definition": {
     "unoverse": "1.0",
     "kind": "component",
-    "name": "Document",
+    "name": "document",
     "category": "Content",
     "props": {
       "sections": {
@@ -17,7 +17,7 @@
         "input": true,
         "default": [
           {
-            "kind": "keyFacts",
+            "kind": "key-facts",
             "heading": "At a glance",
             "facts": [
               {
@@ -38,7 +38,7 @@
             "body": "A passage of body copy, with **inline marks** and links."
           },
           {
-            "kind": "finePrint",
+            "kind": "fine-print",
             "heading": "",
             "body": "Terms and conditions apply."
           }
@@ -268,7 +268,7 @@
                           ]
                         }
                       },
-                      "keyFacts": {
+                      "key-facts": {
                         "type": "Each",
                         "brief": {
                           "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -501,7 +501,7 @@
                           ]
                         }
                       },
-                      "finePrint": {
+                      "fine-print": {
                         "type": "Markdown",
                         "brief": {
                           "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
@@ -1111,7 +1111,7 @@
                               ]
                             }
                           },
-                          "keyFacts": {
+                          "key-facts": {
                             "type": "Each",
                             "brief": {
                               "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -1344,7 +1344,7 @@
                               ]
                             }
                           },
-                          "finePrint": {
+                          "fine-print": {
                             "type": "Markdown",
                             "brief": {
                               "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
@@ -1704,7 +1704,7 @@
                               ]
                             }
                           },
-                          "keyFacts": {
+                          "key-facts": {
                             "type": "Each",
                             "brief": {
                               "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -1937,7 +1937,7 @@
                               ]
                             }
                           },
-                          "finePrint": {
+                          "fine-print": {
                             "type": "Markdown",
                             "brief": {
                               "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
@@ -2297,7 +2297,7 @@
                               ]
                             }
                           },
-                          "keyFacts": {
+                          "key-facts": {
                             "type": "Each",
                             "brief": {
                               "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -2530,7 +2530,7 @@
                               ]
                             }
                           },
-                          "finePrint": {
+                          "fine-print": {
                             "type": "Markdown",
                             "brief": {
                               "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
@@ -2890,7 +2890,7 @@
                               ]
                             }
                           },
-                          "keyFacts": {
+                          "key-facts": {
                             "type": "Each",
                             "brief": {
                               "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -3123,7 +3123,7 @@
                               ]
                             }
                           },
-                          "finePrint": {
+                          "fine-print": {
                             "type": "Markdown",
                             "brief": {
                               "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
@@ -3487,7 +3487,7 @@
                       ]
                     }
                   },
-                  "keyFacts": {
+                  "key-facts": {
                     "type": "Each",
                     "brief": {
                       "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
@@ -3720,7 +3720,7 @@
                       ]
                     }
                   },
-                  "finePrint": {
+                  "fine-print": {
                     "type": "Markdown",
                     "brief": {
                       "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."

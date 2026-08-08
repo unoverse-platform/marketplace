@@ -1,7 +1,7 @@
 $schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
-name: SectionHeader
+name: section-header
 description: "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only."
 whenToUse: The heading for a step/section (e.g. a wizard question). Components COMPOSE this via a Ref, mapping title/subtitle to host fields.
 props:

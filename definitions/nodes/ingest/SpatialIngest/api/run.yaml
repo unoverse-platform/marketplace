@@ -15,14 +15,16 @@
 # Google Sheets, a scraper — and those are wired as their own nodes on the canvas. This node exists for
 # text a workflow already has.
 #
-# THE HOST IS DERIVED. `scope.platformUrl` is built from UNOVERSE_RUNTIME_PORT, which docker-compose
-# already sets: the node runs INSIDE this service, so it is calling itself and needs no configuration to
-# learn its own address. The code version read UNOVERSE_SERVICE_URL — a variable set nowhere in the repo
+# THE HOST IS DERIVED, and it is the ENGINE. `scope.engineUrl` is :4101, where the content
+# routes live (/content/ingest, /content/ingestion/:id) — NOT `scope.platformUrl` (:4106, the
+# unoverse runtime: /service-call, /execute, /skills). Same split SpatialSearch documents in
+# spatial/shared/search.yaml; picking the wrong listener is a 404 on every run (observed
+# 2026-08-07). The code version read UNOVERSE_SERVICE_URL — a variable set nowhere in the repo
 # — behind a hardcoded localhost fallback, so the fallback was the whole behaviour.
 
 - name: ingest
   method: POST
-  url: "return scope.platformUrl + '/content/ingest'"
+  url: "return scope.engineUrl + '/content/ingest'"
   transport: json
 
   body:
@@ -32,7 +34,16 @@
       config:
         text: "{{ config.rawContent }}"
         sourceUrl: "{{ config.sourceUrl }}"
-      mainCategory: "{{ config.category }}"
+        # Free-form caller metadata, stamped onto every extracted need (the caller owns the
+        # vocabulary — future search filters by these keys). A JSON string in config, parsed
+        # here: invalid JSON throws and fails the run loudly instead of storing garbage.
+        # Single expression starting with `return` — that prefix is what marks a body value
+        # as an expression rather than a template (resolveBody).
+        metadata: "return config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : undefined"
+      # NEED, always. The category field was removed (2026-08-07): this node ingests needs;
+      # products/services are created by promoting a page from the Content tree, which
+      # grounds the entry in the fetched page and guards against duplicates.
+      mainCategory: NEED
       # The engine keys everything by workflow, which is how a dictionary stays scoped to its universe.
       workflowId: "{{ scope.workflowId }}"
     maxItems: "return config.maxItems || undefined"
@@ -48,7 +59,7 @@
   # would emit "started" as though it meant "stored", so a downstream node would run against a dictionary
   # that has not been written yet.
   poll:
-    url: "return scope.platformUrl + '/content/ingestion/' + response.jobId"
+    url: "return scope.engineUrl + '/content/ingestion/' + response.jobId"
     # Done when it stops moving. The engine reports its stage as it goes (FETCHING, EXTRACTING,
     # EMBEDDING, SAVING), so the terminal states are named rather than the live ones.
     until: "return ['COMPLETED', 'FAILED', 'CANCELLED', 'INTERRUPTED'].includes(response.status)"

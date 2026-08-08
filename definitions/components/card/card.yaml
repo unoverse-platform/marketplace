@@ -3,7 +3,7 @@ $schema: ../../../_schema/unoverse.schema.json
 
 unoverse: "1.0"
 kind: component
-name: Card
+name: card
 category: Content
 nodeSize:
   width: 480

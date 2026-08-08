@@ -1,14 +1,14 @@
 {
   "kind": "atom",
   "name": "field",
-  "fingerprint": "be82eb465336f78e",
+  "fingerprint": "df84f426113f4a01",
   "bundle": "design-system",
-  "title": "Field",
+  "title": "field",
   "description": "A labeled text input: a small label above an Input, with an optional help line beneath. The standard form row. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
     "kind": "atom",
-    "name": "Field",
+    "name": "field",
     "description": "A labeled text input: a small label above an Input, with an optional help line beneath. The standard form row. Owns its full style — references tokens only.",
     "whenToUse": "Any single-line text entry in a form or wizard step. Compose via a Ref, mapping label/placeholder/help and binding value to the host field the input writes.",
     "props": {
