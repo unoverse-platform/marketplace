@@ -88,6 +88,8 @@ root:
           style:
             background: action.subtle
     - type: Input
+      inputType: tel
+      autoComplete: "tel"
       # THE PREFILL CHANNEL. A brief here compiles into the form's tool schema under the
       # field's OWN key, because the host remaps `value` before the schema is walked. That
       # is what lets a model propose a value at all. Per-field guidance belongs to the

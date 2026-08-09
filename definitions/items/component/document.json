@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "document",
-  "fingerprint": "def88d38aa64d440",
+  "fingerprint": "42edf0a1811ab523",
   "bundle": "design-system",
   "title": "Document",
   "description": "A record's structured body copy, drawn by the design system.",
@@ -1002,6 +1002,8 @@
                           },
                           {
                             "type": "Input",
+                            "inputType": "tel",
+                            "autoComplete": "tel",
                             "brief": {
                               "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                               "optional": true,
@@ -1343,6 +1345,7 @@
                           },
                           {
                             "type": "Input",
+                            "autoComplete": "off",
                             "brief": {
                               "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                               "optional": true,
@@ -1692,6 +1695,8 @@
                           },
                           {
                             "type": "Input",
+                            "inputType": "date",
+                            "autoComplete": "off",
                             "brief": {
                               "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                               "optional": true,
@@ -3309,6 +3314,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "tel",
+                                "autoComplete": "tel",
                                 "brief": {
                                   "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                                   "optional": true,
@@ -3650,6 +3657,7 @@
                               },
                               {
                                 "type": "Input",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                                   "optional": true,
@@ -3999,6 +4007,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "date",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                                   "optional": true,
@@ -5366,6 +5376,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "tel",
+                                "autoComplete": "tel",
                                 "brief": {
                                   "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                                   "optional": true,
@@ -5707,6 +5719,7 @@
                               },
                               {
                                 "type": "Input",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                                   "optional": true,
@@ -6056,6 +6069,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "date",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                                   "optional": true,
@@ -7423,6 +7438,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "tel",
+                                "autoComplete": "tel",
                                 "brief": {
                                   "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                                   "optional": true,
@@ -7764,6 +7781,7 @@
                               },
                               {
                                 "type": "Input",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                                   "optional": true,
@@ -8113,6 +8131,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "date",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                                   "optional": true,
@@ -9480,6 +9500,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "tel",
+                                "autoComplete": "tel",
                                 "brief": {
                                   "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                                   "optional": true,
@@ -9821,6 +9843,7 @@
                               },
                               {
                                 "type": "Input",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                                   "optional": true,
@@ -10170,6 +10193,8 @@
                               },
                               {
                                 "type": "Input",
+                                "inputType": "date",
+                                "autoComplete": "off",
                                 "brief": {
                                   "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                                   "optional": true,
@@ -11541,6 +11566,8 @@
                       },
                       {
                         "type": "Input",
+                        "inputType": "tel",
+                        "autoComplete": "tel",
                         "brief": {
                           "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
                           "optional": true,
@@ -11882,6 +11909,7 @@
                       },
                       {
                         "type": "Input",
+                        "autoComplete": "off",
                         "brief": {
                           "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
                           "optional": true,
@@ -12231,6 +12259,8 @@
                       },
                       {
                         "type": "Input",
+                        "inputType": "date",
+                        "autoComplete": "off",
                         "brief": {
                           "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
                           "optional": true,

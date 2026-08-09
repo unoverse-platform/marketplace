@@ -1,0 +1,131 @@
+unoverse: "1.0"
+kind: component
+name: avatar-orb
+category: Feedback
+description: An assistant avatar whose face and surrounding orb both change with the live call phase.
+whenToUse: The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, working something out, or answering. Reads the platform's own callState, so a voice app gets all four moments with nothing to wire. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.
+props:
+  # LOCKED STATE, declared here only so Studio can drive the preview. `callState` is
+  # projected into scope by the voice service (a template's `service: "voice"`), exactly
+  # as the agent-avatar atom reads it; inside a voice template the projected value is
+  # what this branches on and this default never applies. Never simulate it elsewhere.
+  callState:
+    type: string
+    default: idle
+    enum: [idle, active, userSpeaking, agentSpeaking]
+  size:
+    type: string
+    default: "200"
+  orbColor:
+    type: string
+    default: orb.ink-soft
+    enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
+  speed:
+    type: string
+    default: "1"
+root:
+  type: Box
+  style:
+    # inline-flex so the box SHRINK-WRAPS the orb: the face below is centred with
+    # inset + auto margins, which centres it on whatever this box measures. Left as a
+    # block it spans the full column and the face drifts to the column's centre instead.
+    display: inline-flex
+    direction: row
+    position: relative
+    align: center
+    justify: center
+    padding: "4"
+  children:
+    # THE HALO — one orb animation per call phase. The mapping lives here, in the ONE
+    # discriminant, because a definition holds no logic: `callState` is the platform's
+    # vocabulary, the orb states are the primitive's. `idle` falls to `default`.
+    - type: Switch
+      on: callState
+      cases:
+        # Connected, nobody speaking: considering. Luminance moving through a still ring.
+        active:
+          type: Orb
+          state: shimmer
+          bind:
+            speed: speed
+            size: size
+          style:
+            color: "{{orbColor}}"
+        # Rings arriving inward — the shape of sound reaching a listener.
+        userSpeaking:
+          type: Orb
+          state: sonar
+          bind:
+            speed: speed
+            size: size
+          style:
+            color: "{{orbColor}}"
+        # Rings leaving outward — the shape of a voice carrying.
+        agentSpeaking:
+          type: Orb
+          state: pulse
+          bind:
+            speed: speed
+            size: size
+          style:
+            color: "{{orbColor}}"
+        # Idle, and anything unrecognised: the calm breathing halo — present, not busy.
+        default:
+          type: Orb
+          state: halo
+          bind:
+            speed: speed
+            size: size
+          style:
+            color: "{{orbColor}}"
+    # THE FACE — the circular frame is fixed chrome, so it lives on this box; only the
+    # PORTRAIT changes, switched on the same discriminant. Centred over the halo with
+    # inset + auto margins.
+    - type: Box
+      style:
+        position: absolute
+        inset: "0"
+        margin: auto
+        width: "28"
+        height: "28"
+        radius: full
+        overflow: hidden
+        background: surface.sunken
+        zIndex: "1"
+        shadow: lg
+      children:
+        - type: Switch
+          on: callState
+          cases:
+            active:
+              type: Image
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg
+              alt: The assistant, thinking
+              style:
+                width: full
+                height: full
+                fit: cover
+            userSpeaking:
+              type: Image
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg
+              alt: The assistant, listening
+              style:
+                width: full
+                height: full
+                fit: cover
+            agentSpeaking:
+              type: Image
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg
+              alt: The assistant, responding
+              style:
+                width: full
+                height: full
+                fit: cover
+            default:
+              type: Image
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg
+              alt: The assistant, waiting
+              style:
+                width: full
+                height: full
+                fit: cover

@@ -1,0 +1,173 @@
+{
+  "kind": "component",
+  "name": "avatar-orb",
+  "fingerprint": "89d5e4d6c71828ac",
+  "bundle": "design-system",
+  "title": "avatar-orb",
+  "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+  "category": "Feedback",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "component",
+    "name": "avatar-orb",
+    "category": "Feedback",
+    "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+    "whenToUse": "The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, working something out, or answering. Reads the platform's own callState, so a voice app gets all four moments with nothing to wire. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.",
+    "props": {
+      "callState": {
+        "type": "string",
+        "default": "idle",
+        "enum": [
+          "idle",
+          "active",
+          "userSpeaking",
+          "agentSpeaking"
+        ]
+      },
+      "size": {
+        "type": "string",
+        "default": "200"
+      },
+      "orbColor": {
+        "type": "string",
+        "default": "orb.ink-soft",
+        "enum": [
+          "orb.ink-faint",
+          "orb.ink-soft",
+          "orb.ink",
+          "orb.brand"
+        ]
+      },
+      "speed": {
+        "type": "string",
+        "default": "1"
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "display": "inline-flex",
+        "direction": "row",
+        "position": "relative",
+        "align": "center",
+        "justify": "center",
+        "padding": "4"
+      },
+      "children": [
+        {
+          "type": "Switch",
+          "on": "callState",
+          "cases": {
+            "active": {
+              "type": "Orb",
+              "state": "shimmer",
+              "bind": {
+                "speed": "speed",
+                "size": "size"
+              },
+              "style": {
+                "color": "{{orbColor}}"
+              }
+            },
+            "userSpeaking": {
+              "type": "Orb",
+              "state": "sonar",
+              "bind": {
+                "speed": "speed",
+                "size": "size"
+              },
+              "style": {
+                "color": "{{orbColor}}"
+              }
+            },
+            "agentSpeaking": {
+              "type": "Orb",
+              "state": "pulse",
+              "bind": {
+                "speed": "speed",
+                "size": "size"
+              },
+              "style": {
+                "color": "{{orbColor}}"
+              }
+            },
+            "default": {
+              "type": "Orb",
+              "state": "halo",
+              "bind": {
+                "speed": "speed",
+                "size": "size"
+              },
+              "style": {
+                "color": "{{orbColor}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "Box",
+          "style": {
+            "position": "absolute",
+            "inset": "0",
+            "margin": "auto",
+            "width": "28",
+            "height": "28",
+            "radius": "full",
+            "overflow": "hidden",
+            "background": "surface.sunken",
+            "zIndex": "1",
+            "shadow": "lg"
+          },
+          "children": [
+            {
+              "type": "Switch",
+              "on": "callState",
+              "cases": {
+                "active": {
+                  "type": "Image",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg",
+                  "alt": "The assistant, thinking",
+                  "style": {
+                    "width": "full",
+                    "height": "full",
+                    "fit": "cover"
+                  }
+                },
+                "userSpeaking": {
+                  "type": "Image",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg",
+                  "alt": "The assistant, listening",
+                  "style": {
+                    "width": "full",
+                    "height": "full",
+                    "fit": "cover"
+                  }
+                },
+                "agentSpeaking": {
+                  "type": "Image",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg",
+                  "alt": "The assistant, responding",
+                  "style": {
+                    "width": "full",
+                    "height": "full",
+                    "fit": "cover"
+                  }
+                },
+                "default": {
+                  "type": "Image",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                  "alt": "The assistant, waiting",
+                  "style": {
+                    "width": "full",
+                    "height": "full",
+                    "fit": "cover"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

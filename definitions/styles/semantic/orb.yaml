@@ -1,10 +1,21 @@
-$description: The thinking-orb layer fills — sphere-shaded radial gradients on the brand hue, alpha baked in (`opacity` is not a style key). SEMANTIC, not per-theme, so every org inherits them; the alphas are tuned to read luminous on light and dark surfaces alike. An org re-hues its orb by overriding these three tokens (per theme if it wants different light/dark values). Consumed as `background:` by the thinking-orb components.
+$description: >-
+  The orb's INK — the colour the Orb primitive draws its light in, depth-shaded as it
+  paints. Graphite by deliberate default, because an orb is ambient presence rather than
+  an action and must never compete with the face or content it sits behind; a brand action
+  colour reads as an alarm at this size. Three weights are offered so a surface can pick
+  how present the orb should be, plus a brand tint for the rare surface that wants one.
+  SEMANTIC rather than per-theme, so every org inherits these and none has to redeclare
+  them (the theme contract binds theme files only), and one value serves both themes
+  because the primitive lightens the ink on dark substrates. An org retints every orb it
+  ships by overriding these names, with no effect on text or action colours.
 color:
   $type: color
   orb:
-    core:
-      $value: radial-gradient(circle at 35% 30%, rgba(165,180,252,0.95), rgba(99,102,241,0.85) 45%, rgba(67,56,202,0.9) 100%)
-    halo:
-      $value: radial-gradient(circle, rgba(99,102,241,0.4), rgba(99,102,241,0.14) 55%, transparent 72%)
-    accent:
-      $value: radial-gradient(circle at 65% 65%, rgba(34,211,238,0.7), rgba(34,211,238,0.25) 45%, transparent 70%)
+    ink:
+      $value: "{color.gray.500}"
+    ink-soft:
+      $value: "{color.gray.400}"
+    ink-faint:
+      $value: "{color.gray.300}"
+    brand:
+      $value: "{color.action.primary}"

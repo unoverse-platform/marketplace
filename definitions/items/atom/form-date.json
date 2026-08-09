@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-date",
-  "fingerprint": "cc1516da5d2e7d7b",
+  "fingerprint": "32c28bb3e318d2e3",
   "bundle": "design-system",
   "title": "form-date",
   "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
@@ -109,6 +109,8 @@
         },
         {
           "type": "Input",
+          "inputType": "date",
+          "autoComplete": "off",
           "brief": {
             "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
             "optional": true,

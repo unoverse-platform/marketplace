@@ -60,35 +60,3 @@ keyframes:
         transform: scale(1) translate(0, 0)
       50%:
         transform: scale(1.12) translate(-1.5%, 1%)
-  orbPulse:
-    $value:
-      0%,100%:
-        transform: scale(1)
-        opacity: "0.9"
-      50%:
-        transform: scale(1.06)
-        opacity: "1"
-  orbGlow:
-    $value:
-      0%,100%:
-        transform: scale(0.92)
-        opacity: "0.35"
-      50%:
-        transform: scale(1.12)
-        opacity: "0.7"
-  orbDrift:
-    $value:
-      0%,100%:
-        transform: translate(0, 0) scale(1) rotate(0deg)
-      25%:
-        transform: translate(14%, -10%) scale(1.18) rotate(40deg)
-      50%:
-        transform: translate(-8%, 12%) scale(0.92) rotate(-25deg)
-      75%:
-        transform: translate(-14%, -6%) scale(1.1) rotate(20deg)
-  orbSpin:
-    $value:
-      from:
-        transform: rotate(0deg)
-      to:
-        transform: rotate(360deg)

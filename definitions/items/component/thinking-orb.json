@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "thinking-orb",
-  "fingerprint": "52c46a7f5fb18fa2",
+  "fingerprint": "a0a7eb1ab007bcf8",
   "bundle": "design-system",
   "title": "thinking-orb",
   "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
@@ -12,7 +12,7 @@
     "name": "thinking-orb",
     "category": "Feedback",
     "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
-    "whenToUse": "The thinking indicator for an AI surface — a dotted-globe orb animation, no chrome, no words. Set orbState to match the activity. For a slow morphing ring use thinking-orb-calm; for particles in orbit use thinking-orb-swirl; for three-dot typing feedback keep the wave dots.",
+    "whenToUse": "The thinking indicator for an AI surface — a procedural orb animation on its own, no chrome and no words. Set orbState to match the activity. For the same animation behind an assistant's face use avatar-orb; for three-dot typing feedback keep the wave dots.",
     "props": {
       "orbState": {
         "type": "string",
@@ -26,16 +26,30 @@
           "weaving",
           "composing",
           "breathing",
-          "shaping"
+          "shaping",
+          "halo",
+          "sonar",
+          "shimmer",
+          "pulse"
         ]
       },
       "speed": {
         "type": "string",
-        "default": "0.5"
+        "default": "1"
       },
       "size": {
         "type": "string",
         "default": "150"
+      },
+      "orbColor": {
+        "type": "string",
+        "default": "orb.ink-soft",
+        "enum": [
+          "orb.ink-faint",
+          "orb.ink-soft",
+          "orb.ink",
+          "orb.brand"
+        ]
       }
     },
     "root": {
@@ -54,7 +68,7 @@
             "size": "size"
           },
           "style": {
-            "color": "action.primary"
+            "color": "{{orbColor}}"
           }
         }
       ]

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-phone",
-  "fingerprint": "a1900d9fa4e03545",
+  "fingerprint": "6b0ecaa7e635e24d",
   "bundle": "design-system",
   "title": "form-phone",
   "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
@@ -109,6 +109,8 @@
         },
         {
           "type": "Input",
+          "inputType": "tel",
+          "autoComplete": "tel",
           "brief": {
             "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
             "optional": true,

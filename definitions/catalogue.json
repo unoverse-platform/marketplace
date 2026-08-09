@@ -1,6 +1,15 @@
 {
-  "release": "0.1.24",
+  "release": "0.1.25",
   "items": [
+    {
+      "kind": "component",
+      "name": "avatar-orb",
+      "fingerprint": "89d5e4d6c71828ac",
+      "bundle": "design-system",
+      "title": "avatar-orb",
+      "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+      "category": "Feedback"
+    },
     {
       "kind": "component",
       "name": "bar-chart",
@@ -58,7 +67,7 @@
     {
       "kind": "component",
       "name": "document",
-      "fingerprint": "def88d38aa64d440",
+      "fingerprint": "42edf0a1811ab523",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -157,7 +166,7 @@
     {
       "kind": "component",
       "name": "thinking-orb",
-      "fingerprint": "52c46a7f5fb18fa2",
+      "fingerprint": "a0a7eb1ab007bcf8",
       "bundle": "design-system",
       "title": "thinking-orb",
       "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
@@ -313,7 +322,7 @@
     {
       "kind": "atom",
       "name": "form-date",
-      "fingerprint": "cc1516da5d2e7d7b",
+      "fingerprint": "32c28bb3e318d2e3",
       "bundle": "design-system",
       "title": "form-date",
       "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
@@ -376,7 +385,7 @@
     {
       "kind": "atom",
       "name": "form-phone",
-      "fingerprint": "a1900d9fa4e03545",
+      "fingerprint": "6b0ecaa7e635e24d",
       "bundle": "design-system",
       "title": "form-phone",
       "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
@@ -394,7 +403,7 @@
     {
       "kind": "atom",
       "name": "form-text",
-      "fingerprint": "5a194af66efe7234",
+      "fingerprint": "fcc4df48d45cdfc8",
       "bundle": "design-system",
       "title": "form-text",
       "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
@@ -521,7 +530,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "bca17dbcf4f40368",
+      "fingerprint": "8776febc90c7f8db",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
