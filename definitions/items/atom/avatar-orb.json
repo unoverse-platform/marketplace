@@ -1,18 +1,16 @@
 {
-  "kind": "component",
+  "kind": "atom",
   "name": "avatar-orb",
-  "fingerprint": "89d5e4d6c71828ac",
+  "fingerprint": "7b2a6aa3839de1e6",
   "bundle": "design-system",
   "title": "avatar-orb",
-  "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
-  "category": "Feedback",
+  "description": "An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
+    "kind": "atom",
     "name": "avatar-orb",
-    "category": "Feedback",
-    "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
-    "whenToUse": "The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, working something out, or answering. Reads the platform's own callState, so a voice app gets all four moments with nothing to wire. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.",
+    "description": "An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does.",
+    "whenToUse": "The animated avatar for a voice / live-agent surface whose host carries a `callState` field (idle|active|userSpeaking|agentSpeaking). Compose via a Ref, passing size/speed/colour as literals with `with`; the halo and portrait key off `callState` directly. At rest it is just the face — the orb appears when the call goes live. For a person's photo in a list or a review use the avatar atom instead.",
     "props": {
       "callState": {
         "type": "string",
@@ -51,7 +49,7 @@
         "position": "relative",
         "align": "center",
         "justify": "center",
-        "padding": "4"
+        "padding": "12"
       },
       "children": [
         {
@@ -60,12 +58,15 @@
           "cases": {
             "active": {
               "type": "Orb",
-              "state": "shimmer",
+              "state": "halo",
               "bind": {
                 "speed": "speed",
                 "size": "size"
               },
               "style": {
+                "position": "absolute",
+                "inset": "0",
+                "margin": "auto",
                 "color": "{{orbColor}}"
               }
             },
@@ -77,6 +78,9 @@
                 "size": "size"
               },
               "style": {
+                "position": "absolute",
+                "inset": "0",
+                "margin": "auto",
                 "color": "{{orbColor}}"
               }
             },
@@ -88,17 +92,9 @@
                 "size": "size"
               },
               "style": {
-                "color": "{{orbColor}}"
-              }
-            },
-            "default": {
-              "type": "Orb",
-              "state": "halo",
-              "bind": {
-                "speed": "speed",
-                "size": "size"
-              },
-              "style": {
+                "position": "absolute",
+                "inset": "0",
+                "margin": "auto",
                 "color": "{{orbColor}}"
               }
             }
@@ -107,15 +103,13 @@
         {
           "type": "Box",
           "style": {
-            "position": "absolute",
-            "inset": "0",
-            "margin": "auto",
+            "position": "relative",
+            "zIndex": "1",
             "width": "28",
             "height": "28",
             "radius": "full",
             "overflow": "hidden",
             "background": "surface.sunken",
-            "zIndex": "1",
             "shadow": "lg"
           },
           "children": [
@@ -125,8 +119,8 @@
               "cases": {
                 "active": {
                   "type": "Image",
-                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg",
-                  "alt": "The assistant, thinking",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                  "alt": "The assistant, ready",
                   "style": {
                     "width": "full",
                     "height": "full",
@@ -168,6 +162,7 @@
           ]
         }
       ]
-    }
+    },
+    "file": "avatar-orb.yaml"
   }
 }

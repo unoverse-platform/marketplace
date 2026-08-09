@@ -1,9 +1,8 @@
 unoverse: "1.0"
-kind: component
+kind: atom
 name: avatar-orb
-category: Feedback
-description: An assistant avatar whose face and surrounding orb both change with the live call phase.
-whenToUse: The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, working something out, or answering. Reads the platform's own callState, so a voice app gets all four moments with nothing to wire. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.
+description: An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does.
+whenToUse: The animated avatar for a voice / live-agent surface whose host carries a `callState` field (idle|active|userSpeaking|agentSpeaking). Compose via a Ref, passing size/speed/colour as literals with `with`; the halo and portrait key off `callState` directly. At rest it is just the face — the orb appears when the call goes live. For a person's photo in a list or a review use the avatar atom instead.
 props:
   # LOCKED STATE, declared here only so Studio can drive the preview. `callState` is
   # projected into scope by the voice service (a template's `service: "voice"`), exactly
@@ -26,30 +25,43 @@ props:
 root:
   type: Box
   style:
-    # inline-flex so the box SHRINK-WRAPS the orb: the face below is centred with
-    # inset + auto margins, which centres it on whatever this box measures. Left as a
-    # block it spans the full column and the face drifts to the column's centre instead.
+    # THE FACE SIZES THIS BOX, the halo floats over it. That order matters: the halo is
+    # absent at rest, so if IT were the in-flow child the box would collapse to its
+    # padding the moment a call ended and the absolutely-placed face would spill over
+    # whatever sits below. The face is the constant, so the face is the one in flow.
+    # The padding reserves the halo's footprint (face + 2x the padding step, close to the
+    # orb's own size), so the column keeps its spacing whether or not a call is live.
     display: inline-flex
     direction: row
     position: relative
     align: center
     justify: center
-    padding: "4"
+    padding: "12"
   children:
-    # THE HALO — one orb animation per call phase. The mapping lives here, in the ONE
-    # discriminant, because a definition holds no logic: `callState` is the platform's
-    # vocabulary, the orb states are the primitive's. `idle` falls to `default`.
+    # THE HALO — one orb animation per LIVE call phase. The mapping lives here, in the
+    # ONE discriminant, because a definition holds no logic: `callState` is the platform's
+    # vocabulary, the orb states are the primitive's.
+    #
+    # NO `default` CASE, deliberately: an unmatched Switch renders NOTHING, so before a
+    # call — `idle`, or no callState in scope at all — there is no orb and no canvas, just
+    # the face. The animation is the call being live; showing it at rest would announce an
+    # activity that isn't happening, and would burn a rAF loop on every idle surface.
     - type: Switch
       on: callState
       cases:
-        # Connected, nobody speaking: considering. Luminance moving through a still ring.
+        # Connected, nobody speaking: PRESENT and attentive, not busy. The calm aura —
+        # the assistant is here and the floor is yours. (`shimmer`, the considering one,
+        # is deliberately unused: callState has no processing phase to hang it on.)
         active:
           type: Orb
-          state: shimmer
+          state: halo
           bind:
             speed: speed
             size: size
           style:
+            position: absolute
+            inset: "0"
+            margin: auto
             color: "{{orbColor}}"
         # Rings arriving inward — the shape of sound reaching a listener.
         userSpeaking:
@@ -59,6 +71,9 @@ root:
             speed: speed
             size: size
           style:
+            position: absolute
+            inset: "0"
+            margin: auto
             color: "{{orbColor}}"
         # Rings leaving outward — the shape of a voice carrying.
         agentSpeaking:
@@ -68,39 +83,34 @@ root:
             speed: speed
             size: size
           style:
-            color: "{{orbColor}}"
-        # Idle, and anything unrecognised: the calm breathing halo — present, not busy.
-        default:
-          type: Orb
-          state: halo
-          bind:
-            speed: speed
-            size: size
-          style:
+            position: absolute
+            inset: "0"
+            margin: auto
             color: "{{orbColor}}"
     # THE FACE — the circular frame is fixed chrome, so it lives on this box; only the
     # PORTRAIT changes, switched on the same discriminant. Centred over the halo with
     # inset + auto margins.
     - type: Box
       style:
-        position: absolute
-        inset: "0"
-        margin: auto
+        # relative + zIndex so this static box paints ABOVE its absolutely-placed sibling
+        position: relative
+        zIndex: "1"
         width: "28"
         height: "28"
         radius: full
         overflow: hidden
         background: surface.sunken
-        zIndex: "1"
         shadow: lg
       children:
         - type: Switch
           on: callState
           cases:
+            # Attentive, facing you — NOT the thinking pose, which looks away and reads
+            # as distracted at the one moment the assistant should look most present.
             active:
               type: Image
-              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg
-              alt: The assistant, thinking
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg
+              alt: The assistant, ready
               style:
                 width: full
                 height: full
