@@ -7,7 +7,7 @@ $schema: ../../../_schema/config.schema.json
 # chooses what to ask for, the author decides what may come back. A model that could set its
 # own result cap or turn on a content type would route around the person who wired the node.
 #
-# `renderCards` is deliberately NOT here. It was a toggle until 2026-07-29 and was the wrong
+# `renderComponents` is deliberately NOT here. It was a toggle until 2026-07-29 and was the wrong
 # shape: a row only produces a card when it points at one, so "off" never meant cleaner
 # results, it meant a row that had authored a card silently not showing it.
 

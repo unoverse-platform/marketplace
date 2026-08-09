@@ -20,7 +20,7 @@ description: Semantic and spatial search over the platform's own knowledge base
 #    deployment that moved the port would have failed at DNS naming a host nobody configured.
 #    `scope.platformUrl` is derived from the port the runtime is actually listening on.
 #
-# What was genuinely missing was the CONTENT CARD lane, and that is now `renderCards` on a
+# What was genuinely missing was the ROW COMPONENT lane, and that is now `renderComponents` on a
 # service method.
 
 category: search
@@ -40,4 +40,4 @@ requires:
   # The card lane: a result row carrying a component renders it on the caller's live screen
   # the moment it surfaces. Declared because the executor implements it; a package naming it
   # on an older runtime would silently render nothing.
-  renderCards: true
+  renderComponents: true

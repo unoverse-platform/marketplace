@@ -1,5 +1,5 @@
 {
-  "release": "0.1.26",
+  "release": "0.1.27",
   "items": [
     {
       "kind": "component",
@@ -599,7 +599,7 @@
         "Spatial search",
         "Streaming"
       ],
-      "fingerprint": "923db928ca075995",
+      "fingerprint": "c90c2aeb5be486fc",
       "title": "Answer questions about your organisation",
       "description": "A chat agent that searches your own content for context, then streams its answer back.",
       "category": "Assistant",
@@ -1361,7 +1361,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "04a4f1bc1b4561b6",
+      "fingerprint": "33e34c1018fb62e1",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

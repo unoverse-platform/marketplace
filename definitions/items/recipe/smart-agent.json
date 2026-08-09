@@ -6,7 +6,7 @@
     "Spatial search",
     "Streaming"
   ],
-  "fingerprint": "923db928ca075995",
+  "fingerprint": "c90c2aeb5be486fc",
   "title": "Answer questions about your organisation",
   "description": "A chat agent that searches your own content for context, then streams its answer back.",
   "category": "Assistant",
@@ -90,7 +90,7 @@
             "maxResults": 8,
             "searchMode": "vector",
             "includeMcps": true,
-            "renderCards": true,
+            "renderComponents": true,
             "includeNeeds": true,
             "searchRadius": 280,
             "includeImages": false,

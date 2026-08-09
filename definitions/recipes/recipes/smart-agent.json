@@ -73,7 +73,7 @@
           "maxResults": 8,
           "searchMode": "vector",
           "includeMcps": true,
-          "renderCards": true,
+          "renderComponents": true,
           "includeNeeds": true,
           "searchRadius": 280,
           "includeImages": false,

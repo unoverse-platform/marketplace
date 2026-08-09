@@ -23,7 +23,7 @@ findIntent:
   # Unconditional on purpose. This was a config toggle until 2026-07-29 and it was the wrong
   # shape: a row only produces a card when it points at one, so "off" never meant cleaner
   # results, it meant a row that had authored a card silently not showing it.
-  renderCards: "return response.results"
+  renderComponents: "return response.results"
   returns: { $ref: search#lean }
 
 discoverRelated:
@@ -39,7 +39,7 @@ discoverRelated:
     - $ref: search#call
       body:
         mode: "return 'related'"
-  renderCards: "return response.results"
+  renderComponents: "return response.results"
   returns: { $ref: search#lean }
 
 readResult:
