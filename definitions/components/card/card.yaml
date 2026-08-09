@@ -1,5 +1,4 @@
 # $schema stripped on read — present for the editor only.
-$schema: ../../../_schema/unoverse.schema.json
 
 unoverse: "1.0"
 kind: component

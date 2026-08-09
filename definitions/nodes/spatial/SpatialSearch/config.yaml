@@ -23,6 +23,17 @@ configSchema:
       minimum: 5
       maximum: 30
 
+    sourceId:
+      type: string
+      title: Source ID
+      # OPT-IN, NEVER A DEFAULT (platform owner's ruling, 2026-08-08): blank searches the
+      # whole map, exactly as before. Set, it restricts every search this box runs to rows
+      # from ONE source — the standard source_id (migration 021) that SpatialIngest stamps
+      # (e.g. an S3 document's universalId, wired in from an upstream node).
+      description: Restrict searches to one source's entries (its source_id, e.g. from an upstream file node). Blank = whole map.
+      default: ""
+      "ui:field": template
+
     similarityThreshold:
       type: number
       title: Min Similarity (Intent)
@@ -108,4 +119,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 "ui:order":
-  [authRequired, authRole, maxResults, similarityThreshold, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]
+  [authRequired, authRole, maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]

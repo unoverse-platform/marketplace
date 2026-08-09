@@ -1,5 +1,5 @@
 {
-  "release": "0.1.23",
+  "release": "0.1.24",
   "items": [
     {
       "kind": "component",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "document",
-      "fingerprint": "8243a53989fa83a3",
+      "fingerprint": "def88d38aa64d440",
       "bundle": "design-system",
       "title": "Document",
       "description": "A record's structured body copy, drawn by the design system.",
@@ -76,7 +76,7 @@
     {
       "kind": "component",
       "name": "ken-burns-image",
-      "fingerprint": "a063fbc0c747c074",
+      "fingerprint": "d50de0fce286f258",
       "bundle": "design-system",
       "title": "ken-burns-image",
       "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
@@ -153,6 +153,15 @@
       "title": "table",
       "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
       "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "thinking-orb",
+      "fingerprint": "52c46a7f5fb18fa2",
+      "bundle": "design-system",
+      "title": "thinking-orb",
+      "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
+      "category": "Feedback"
     },
     {
       "kind": "atom",
@@ -238,7 +247,7 @@
     {
       "kind": "atom",
       "name": "close-button",
-      "fingerprint": "9bb7944af92de369",
+      "fingerprint": "0a1b726c52f7289c",
       "bundle": "design-system",
       "title": "close-button",
       "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only."
@@ -303,6 +312,105 @@
     },
     {
       "kind": "atom",
+      "name": "form-date",
+      "fingerprint": "cc1516da5d2e7d7b",
+      "bundle": "design-system",
+      "title": "form-date",
+      "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-dropdown",
+      "fingerprint": "78a7d9534f95ce6d",
+      "bundle": "design-system",
+      "title": "form-dropdown",
+      "description": "One collected choice from a long set: a label and the platform's own select, with a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-email",
+      "fingerprint": "a40a47055d2337ec",
+      "bundle": "design-system",
+      "title": "form-email",
+      "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-file",
+      "fingerprint": "0bc5ff9a664a7dba",
+      "bundle": "design-system",
+      "title": "form-file",
+      "description": "One collected document: a label, the platform's file chooser, and the name of whatever was chosen.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-long",
+      "fingerprint": "39cf0a00ea2b5ed8",
+      "bundle": "design-system",
+      "title": "form-long",
+      "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-number",
+      "fingerprint": "66c6f4e8281c6431",
+      "bundle": "design-system",
+      "title": "form-number",
+      "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-otp",
+      "fingerprint": "70419c712b662535",
+      "bundle": "design-system",
+      "title": "form-otp",
+      "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-phone",
+      "fingerprint": "a1900d9fa4e03545",
+      "bundle": "design-system",
+      "title": "form-phone",
+      "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-select",
+      "fingerprint": "ac66f340fced60f3",
+      "bundle": "design-system",
+      "title": "form-select",
+      "description": "One collected choice: a label, the options laid out as selectable rows, and a chip naming where a proposed value came from.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-text",
+      "fingerprint": "5a194af66efe7234",
+      "bundle": "design-system",
+      "title": "form-text",
+      "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
+      "name": "form-toggle",
+      "fingerprint": "31ecf3ddb7f984f4",
+      "bundle": "design-system",
+      "title": "form-toggle",
+      "description": "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines.",
+      "category": "markdown"
+    },
+    {
+      "kind": "atom",
       "name": "icon-button",
       "fingerprint": "7088447e7d6bdb55",
       "bundle": "design-system",
@@ -334,14 +442,6 @@
       "bundle": "design-system",
       "title": "match-gauge",
       "description": "Circular score gauge: a conic radial ring filled to a percent, the value in the center, a label below. Composed from primitives (a circular Box with a `radial` fill) — not a chart leaf. Owns its full style — references tokens only."
-    },
-    {
-      "kind": "atom",
-      "name": "otp-group",
-      "fingerprint": "7ffb4d9bf9420e3b",
-      "bundle": "design-system",
-      "title": "otp-group",
-      "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only."
     },
     {
       "kind": "atom",
@@ -405,15 +505,23 @@
     {
       "kind": "atom",
       "name": "toggle-row",
-      "fingerprint": "9c08f8b005e89925",
+      "fingerprint": "d3361e32c70782f4",
       "bundle": "design-system",
       "title": "toggle-row",
       "description": "A settings row with a switch: label and optional description on the left, a pill track on the right whose knob slides and fills with the brand color when the bound `on` field is true. Owns its full style — references tokens only."
     },
     {
+      "kind": "atom",
+      "name": "toggle-switch",
+      "fingerprint": "2006b3881a0e3d0f",
+      "bundle": "design-system",
+      "title": "toggle-switch",
+      "description": "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only."
+    },
+    {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "5144a5ef98d04794",
+      "fingerprint": "bca17dbcf4f40368",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
@@ -1058,7 +1166,7 @@
       "kind": "node",
       "name": "SpatialIngest",
       "pack": "ingest",
-      "fingerprint": "3b6ef5ae915aee7f",
+      "fingerprint": "dd379dbb700dbcff",
       "title": "Spatial Ingest",
       "description": "Turn raw text into needs in the spatial dictionary.",
       "category": "Documents",
@@ -1245,7 +1353,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "737bf044dfd6e4b0",
+      "fingerprint": "04a4f1bc1b4561b6",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -1,0 +1,141 @@
+unoverse: "1.0"
+kind: atom
+name: form-text
+category: markdown
+description: "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of."
+whenToUse: "Collect one line of text a person types or confirms: a name, an email, an amount, a reference. Use it in a form, or in any document that needs to collect something rather than only state it. Not for a choice between options, and not for a passage of writing."
+# HOW TO USE, because a Ref gets this wrong in two ways that fail silently.
+#
+#   1. REMAP `value` TO THE FIELD'S OWN KEY. A controlled Input writes
+#      `{ [boundField]: text }`, so the bound name IS the key the answer lands in.
+#        props: { value: full_name, source: full_nameSource }
+#      Leave it as `value` and every field on the page writes the same key.
+#
+#   2. PASS LABEL, PLACEHOLDER AND HELP AS LITERALS, through `with`, never `props`:
+#        with: { label: Full legal name, placeholder: As it appears on your passport }
+#      `props` remaps FIELDS, so a literal passed that way is read as a field name and
+#      renders empty.
+#
+#   3. `source` IS PROVENANCE, and it is the point of the atom. Fill it only when a value
+#      was proposed from somewhere ('From your profile', 'From the passport you
+#      uploaded'), in the reader's words. Empty means nobody proposed anything, which is
+#      what makes a suggestion look different from an empty box.
+#
+# THE INPUT IS SINGLE-LINE TEXT. The SDK's Input takes generic constraints as node
+# attributes (`maxLength`, `inputMode`, `multiline`, `autoComplete`), not as bound data,
+# so a numeric or multi-line field is a SIBLING ATOM rather than a prop on this one. A
+# choice between options is a different atom again, and needs the form compiler: its
+# option rows each write the same static key, which an atom composed many times cannot
+# carry.
+props:
+  label:
+    type: string
+    default: Label
+    preview: Full legal name
+  value:
+    type: string
+    default: ""
+    preview: Amelia Hartley
+  placeholder:
+    type: string
+    default: ""
+    preview: As it appears on your passport
+  help:
+    type: string
+    default: ""
+    preview: We check this against your identity documents.
+  # Where a proposed value came from, in the reader's words: 'From your profile',
+  # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
+  # what makes an empty box and a suggestion look different.
+  # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
+  # and a person deserves to know which before they start typing rather than when a button
+  # refuses them. The resolver reads the same flag to decide when a step is complete.
+  required:
+    type: boolean
+    default: false
+    preview: true
+  source:
+    type: string
+    default: ""
+    preview: From your profile
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "1.5"
+    width: full
+  children:
+    - type: Box
+      style:
+        direction: row
+        align: center
+        justify: space-between
+        gap: "3"
+        width: full
+      children:
+        - type: Box
+          style:
+            direction: row
+            align: center
+            gap: "1"
+          children:
+            - type: Text
+              bind:
+                value: label
+              style:
+                font: label
+                weight: medium
+                color: text.secondary
+            - type: Text
+              visibleWhen: required
+              value: "*"
+              style:
+                font: label
+                weight: bold
+                color: action.primary
+        # The provenance chip. A proposed value is a suggestion until a person accepts it,
+        # so the row says who suggested it rather than presenting it as already true.
+        # It is the design system's pill, tinted, because a chip is a chip.
+        - type: Ref
+          ref: pill
+          visibleWhen: source
+          props:
+            label: source
+          style:
+            background: action.subtle
+    - type: Input
+      # THE PREFILL CHANNEL. A brief here compiles into the form's tool schema under the
+      # field's OWN key, because the host remaps `value` before the schema is walked. That
+      # is what lets a model propose a value at all. Per-field guidance belongs to the
+      # authored form spec and reaches the schema through the compiler: an atom is one
+      # file and cannot carry a different description for every field that composes it.
+      brief:
+        description: >-
+          Propose this value ONLY from what the applicant's profile, the deal, or a
+          document they uploaded actually states. Never invent it, never infer it from a
+          similar field, and leave it out when nothing states it. An empty field is
+          correct and the applicant will fill it; a guessed one is a defect they may
+          confirm without noticing.
+        optional: true
+        maxLength: 120
+      # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
+      # input write that key back: the input action writes `{ [boundField]: text }`.
+      bind:
+        placeholder: placeholder
+        value: value
+      style:
+        width: full
+        font: body.md
+        color: text.primary
+        background: surface.base
+        border: subtle
+        radius: sm
+        padding: [ "2", "3" ]
+        minHeight: "10"
+    - type: Text
+      visibleWhen: help
+      bind:
+        value: help
+      style:
+        font: caption
+        color: text.tertiary

@@ -1,0 +1,122 @@
+unoverse: "1.0"
+kind: atom
+name: form-date
+category: markdown
+description: "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from."
+whenToUse: "Collect a date a person picks or confirms, such as a date of birth, a start date or a deadline. Not for a duration or a period, which are a number and a unit."
+# Same rules as form-text: remap `value` to the field's OWN key (the input writes
+# `{ [boundField]: text }`), and pass label, placeholder and help as literals via `with`.
+#
+# `inputType: date` hands the field to the PLATFORM, which is why there is no calendar
+# drawn here: the OS picker knows the locale, the keyboard and the accessibility rules
+# better than any calendar composed out of Boxes ever would.
+props:
+  label:
+    type: string
+    default: Label
+    preview: Full legal name
+  value:
+    type: string
+    default: ""
+    preview: Amelia Hartley
+  placeholder:
+    type: string
+    default: ""
+    preview: As it appears on your passport
+  help:
+    type: string
+    default: ""
+    preview: We check this against your identity documents.
+  # Where a proposed value came from, in the reader's words: 'From your profile',
+  # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
+  # what makes an empty box and a suggestion look different.
+  # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
+  # and a person deserves to know which before they start typing rather than when a button
+  # refuses them. The resolver reads the same flag to decide when a step is complete.
+  required:
+    type: boolean
+    default: false
+    preview: true
+  source:
+    type: string
+    default: ""
+    preview: From your profile
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "1.5"
+    width: full
+  children:
+    - type: Box
+      style:
+        direction: row
+        align: center
+        justify: space-between
+        gap: "3"
+        width: full
+      children:
+        - type: Box
+          style:
+            direction: row
+            align: center
+            gap: "1"
+          children:
+            - type: Text
+              bind:
+                value: label
+              style:
+                font: label
+                weight: medium
+                color: text.secondary
+            - type: Text
+              visibleWhen: required
+              value: "*"
+              style:
+                font: label
+                weight: bold
+                color: action.primary
+        # The provenance chip. A proposed value is a suggestion until a person accepts it,
+        # so the row says who suggested it rather than presenting it as already true.
+        # It is the design system's pill, tinted, because a chip is a chip.
+        - type: Ref
+          ref: pill
+          visibleWhen: source
+          props:
+            label: source
+          style:
+            background: action.subtle
+    - type: Input
+      # THE PREFILL CHANNEL. A brief here compiles into the form's tool schema under the
+      # field's OWN key, because the host remaps `value` before the schema is walked. That
+      # is what lets a model propose a value at all. Per-field guidance belongs to the
+      # authored form spec and reaches the schema through the compiler: an atom is one
+      # file and cannot carry a different description for every field that composes it.
+      brief:
+        description: >-
+          Propose the date ONLY when the profile or an uploaded document states it, as
+          YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and
+          leave it out when nothing states it.
+        optional: true
+        maxLength: 10
+      # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
+      # input write that key back: the input action writes `{ [boundField]: text }`.
+      bind:
+        placeholder: placeholder
+        value: value
+      style:
+        width: full
+        font: body.md
+        color: text.primary
+        background: surface.base
+        border: subtle
+        radius: sm
+        padding: [ "2", "3" ]
+        minHeight: "10"
+    - type: Text
+      visibleWhen: help
+      bind:
+        value: help
+      style:
+        font: caption
+        color: text.tertiary

@@ -34,6 +34,9 @@
       config:
         text: "{{ config.rawContent }}"
         sourceUrl: "{{ config.sourceUrl }}"
+        # The standard source identity, verbatim (migration 021). Blank renders empty and
+        # resolveBody omits the key; the write chokepoint then derives one from sourceUrl.
+        sourceId: "{{ config.sourceId }}"
         # Free-form caller metadata, stamped onto every extracted need (the caller owns the
         # vocabulary — future search filters by these keys). A JSON string in config, parsed
         # here: invalid JSON throws and fails the run loudly instead of storing garbage.

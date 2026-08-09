@@ -1,0 +1,108 @@
+{
+  "kind": "atom",
+  "name": "form-toggle",
+  "fingerprint": "31ecf3ddb7f984f4",
+  "bundle": "design-system",
+  "title": "form-toggle",
+  "description": "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-toggle",
+    "category": "markdown",
+    "description": "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines.",
+    "whenToUse": "Collect a yes or no a person decides: a consent, a preference, a declaration that something applies to them. Not for a choice between several options, and not for a fact they type.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Setting",
+        "preview": "Send me alerts about new deals"
+      },
+      "description": {
+        "type": "string",
+        "default": "",
+        "preview": "Occasional email, and never more than once a week."
+      },
+      "on": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      }
+    },
+    "root": {
+      "type": "Button",
+      "action": "toggle",
+      "style": {
+        "width": "full",
+        "direction": "row",
+        "align": "center",
+        "justify": "space-between",
+        "gap": "3",
+        "padding": "3",
+        "textAlign": "start",
+        "background": "surface.base",
+        "border": "subtle",
+        "radius": "lg",
+        "cursor": "pointer",
+        "transition": "all 150ms ease",
+        "hover": {
+          "background": "surface.sunken"
+        }
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "flex": "1",
+            "minWidth": "0",
+            "gap": "1",
+            "align": "start"
+          },
+          "children": [
+            {
+              "type": "Text",
+              "brief": {
+                "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+                "maxLength": 90
+              },
+              "bind": {
+                "value": "label"
+              },
+              "style": {
+                "font": "body.md",
+                "weight": "semibold",
+                "color": "text.primary"
+              }
+            },
+            {
+              "type": "Text",
+              "brief": {
+                "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+                "optional": true,
+                "maxLength": 160
+              },
+              "visibleWhen": "description",
+              "bind": {
+                "value": "description"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.secondary"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Ref",
+          "ref": "toggle-switch",
+          "props": {
+            "on": "on"
+          }
+        }
+      ]
+    },
+    "file": "form-toggle.yaml"
+  }
+}

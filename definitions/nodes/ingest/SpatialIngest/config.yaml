@@ -28,6 +28,16 @@ configSchema:
       description: Where the text came from, kept for provenance. Optional.
       default: ""
       "ui:field": template
+    sourceId:
+      type: string
+      title: Source ID
+      # THE standard source identity (migration 021): stored VERBATIM in the row's
+      # source_id column, so future search can scope to one source. Wire in the id the
+      # source node already mints — e.g. {{signal.s3filecontent1.file.universalId}} for
+      # an S3 document. Left blank, the platform derives one from the Source URL.
+      description: Stable id of the source this text came from (e.g. the S3 file's universalId). Blank = derived from the Source URL.
+      default: ""
+      "ui:field": template
     metadata:
       type: string
       title: Metadata (JSON)
@@ -72,4 +82,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [authRequired, authRole, rawContent, sourceUrl, metadata, maxItems]
+"ui:order": [authRequired, authRole, rawContent, sourceUrl, sourceId, metadata, maxItems]

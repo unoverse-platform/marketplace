@@ -1,0 +1,150 @@
+{
+  "kind": "atom",
+  "name": "form-text",
+  "fingerprint": "5a194af66efe7234",
+  "bundle": "design-system",
+  "title": "form-text",
+  "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-text",
+    "category": "markdown",
+    "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
+    "whenToUse": "Collect one line of text a person types or confirms: a name, an email, an amount, a reference. Use it in a form, or in any document that needs to collect something rather than only state it. Not for a choice between options, and not for a passage of writing.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Label",
+        "preview": "Full legal name"
+      },
+      "value": {
+        "type": "string",
+        "default": "",
+        "preview": "Amelia Hartley"
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "",
+        "preview": "As it appears on your passport"
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "We check this against your identity documents."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      },
+      "source": {
+        "type": "string",
+        "default": "",
+        "preview": "From your profile"
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "1.5",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "label"
+                  },
+                  "style": {
+                    "font": "label",
+                    "weight": "medium",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "required",
+                  "value": "*",
+                  "style": {
+                    "font": "label",
+                    "weight": "bold",
+                    "color": "action.primary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "pill",
+              "visibleWhen": "source",
+              "props": {
+                "label": "source"
+              },
+              "style": {
+                "background": "action.subtle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Input",
+          "brief": {
+            "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
+            "optional": true,
+            "maxLength": 120
+          },
+          "bind": {
+            "placeholder": "placeholder",
+            "value": "value"
+          },
+          "style": {
+            "width": "full",
+            "font": "body.md",
+            "color": "text.primary",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "sm",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "minHeight": "10"
+          }
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-text.yaml"
+  }
+}

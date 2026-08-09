@@ -1,0 +1,152 @@
+{
+  "kind": "atom",
+  "name": "form-number",
+  "fingerprint": "66c6f4e8281c6431",
+  "bundle": "design-system",
+  "title": "form-number",
+  "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-number",
+    "category": "markdown",
+    "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
+    "whenToUse": "Collect a count a person types or confirms: a number of years, a quantity, an age, a number of employees. Digits only, so not for an amount of money, a percentage or anything with a decimal point.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Label",
+        "preview": "Years at your current address"
+      },
+      "value": {
+        "type": "string",
+        "default": "",
+        "preview": "7"
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "",
+        "preview": "0"
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "Whole years, rounded down."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      },
+      "source": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "1.5",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "label"
+                  },
+                  "style": {
+                    "font": "label",
+                    "weight": "medium",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "required",
+                  "value": "*",
+                  "style": {
+                    "font": "label",
+                    "weight": "bold",
+                    "color": "action.primary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "pill",
+              "visibleWhen": "source",
+              "props": {
+                "label": "source"
+              },
+              "style": {
+                "background": "action.subtle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Input",
+          "brief": {
+            "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
+            "optional": true,
+            "maxLength": 12
+          },
+          "inputMode": "numeric",
+          "maxLength": 12,
+          "autoComplete": "off",
+          "bind": {
+            "placeholder": "placeholder",
+            "value": "value"
+          },
+          "style": {
+            "width": "full",
+            "font": "body.md",
+            "color": "text.primary",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "sm",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "minHeight": "10"
+          }
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-number.yaml"
+  }
+}

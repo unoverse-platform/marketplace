@@ -1,0 +1,31 @@
+unoverse: "1.0"
+kind: component
+name: thinking-orb
+category: Feedback
+description: A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's "I'm on it" presence.
+whenToUse: The thinking indicator for an AI surface — a dotted-globe orb animation, no chrome, no words. Set orbState to match the activity. For a slow morphing ring use thinking-orb-calm; for particles in orbit use thinking-orb-swirl; for three-dot typing feedback keep the wave dots.
+props:
+  orbState:
+    type: string
+    default: working
+    enum: [working, searching, solving, listening, connecting, weaving, composing, breathing, shaping]
+  speed:
+    type: string
+    default: "0.5"
+  size:
+    type: string
+    default: "150"
+root:
+  type: Box
+  style:
+    align: center
+    justify: center
+    padding: "4"
+  children:
+    - type: Orb
+      bind:
+        state: orbState
+        speed: speed
+        size: size
+      style:
+        color: action.primary

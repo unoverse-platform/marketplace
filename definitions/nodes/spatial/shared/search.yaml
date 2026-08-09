@@ -52,6 +52,11 @@ call:
     includeSkills: "return config.includeSkills"
     includeMcps: "return config.includeMcps"
 
+    # OPTIONAL source scope (migration 021): restrict the whole search to rows from ONE
+    # source ("only this doc's needs"). Author-set, never a default — unset resolves to
+    # undefined, resolveBody drops the key, the search stays map-wide.
+    sourceId: "return config.sourceId || undefined"
+
     # A single ask, several angles, or both. `queries` batches ONE embedding call and N
     # searches into a single round trip, each row tagged with the query it answered.
     #

@@ -1,4 +1,3 @@
-$schema: ../../../../_schema/unoverse.schema.json
 # TABBED body. Ungrouped material stays ABOVE the strip: what the offering is must never
 # be hidden behind a tab. Fine print is repeated into every tab by `toDocument`, so it is
 # never reachable from only one of them.

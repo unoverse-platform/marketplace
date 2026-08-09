@@ -1,4 +1,3 @@
-$schema: ../../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: component
 name: ken-burns-image
@@ -32,7 +31,10 @@ root:
         width: full
         height: full
         fit: cover
-        animation: kenBurns
+        animation:
+          name: kenBurns
+          duration: 40s
+          easing: ease-in-out
     - type: Box
       visibleWhen: overlay
       style:

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "ken-burns-image",
-  "fingerprint": "a063fbc0c747c074",
+  "fingerprint": "d50de0fce286f258",
   "bundle": "design-system",
   "title": "ken-burns-image",
   "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
@@ -47,7 +47,11 @@
             "width": "full",
             "height": "full",
             "fit": "cover",
-            "animation": "kenBurns"
+            "animation": {
+              "name": "kenBurns",
+              "duration": "40s",
+              "easing": "ease-in-out"
+            }
           }
         },
         {

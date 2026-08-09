@@ -1,4 +1,3 @@
-$schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
 name: close-button
@@ -6,10 +5,13 @@ description: "A circular close (✕) control — the floating dismiss for a focu
 whenToUse: The dismiss/close affordance on a focused component or modal, typically pinned to the top-right corner. Compose via a Ref; the host supplies the close action and the absolute placement.
 root:
   type: Button
+  # The default dismiss writes the public axis (`view`, STATE_MODEL v2 §2) back to
+  # inline. In template chrome the SDK reads this as "un-surface" (isViewField accepts
+  # both spellings during migration); component hosts override the action anyway.
   action:
     type: setValue
     values:
-      - key: defaultState
+      - key: view
         value: inline
   style:
     flex: 0 0 auto

@@ -1,0 +1,162 @@
+unoverse: "1.0"
+kind: atom
+name: form-select
+category: markdown
+description: "One collected choice: a label, the options laid out as selectable rows, and a chip naming where a proposed value came from."
+whenToUse: "Collect one answer from a SET the source defines: a class, a classification, a country, a frequency. Not for a yes or no, which is form-toggle, and not for an answer the person types in their own words."
+# Same rules as form-text: remap `value` to the field's OWN key, and pass the label and
+# help as literals via `with`.
+#
+# IT OPENS AND CLOSES OFF THE ANSWER ITSELF, with no extra state to key. Unanswered, the
+# options are shown, because an empty box that hides its choices is a box nobody can fill.
+# Answered, it collapses to the chosen option with a way back to the list. That is a
+# dropdown's behaviour without a dropdown's open flag: an open flag would need a key per
+# field, and a key per field is the one thing an atom composed many times cannot hold.
+#
+# ⚠ CHOOSING NEEDS THE HOST'S ACTION, and an atom cannot carry it. `setValue` writes its
+# key verbatim, so the write for "the option I clicked" has to name the field's real key,
+# which is the host's to know and not this file's. The compiler emits one action per option
+# against the field's slot (UNOVERSE_MCP_FORMS.md §3); until then a host authors them.
+# What this atom owns is the LOOK, including which option currently reads as chosen.
+props:
+  label:
+    type: string
+    default: Label
+    preview: Share class
+  value:
+    type: string
+    default: ""
+    preview: A
+  help:
+    type: string
+    default: ""
+    preview: Class I requires a commitment of £5m or more.
+  # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
+  # and a person deserves to know which before they choose rather than when a button
+  # refuses them. The resolver reads the same flag to decide when a step is complete.
+  required:
+    type: boolean
+    default: false
+    preview: true
+  source:
+    type: string
+    default: ""
+    preview: From the deal's terms
+  options:
+    type: array
+    default: []
+    preview:
+      - label: A
+        description: EUR, minimum €250k
+      - label: B
+        description: USD, minimum $300k
+      - label: I
+        description: EUR, minimum €5m
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "1.5"
+    width: full
+  children:
+    - type: Box
+      style:
+        direction: row
+        align: center
+        justify: space-between
+        gap: "3"
+        width: full
+      children:
+        - type: Box
+          style:
+            direction: row
+            align: center
+            gap: "1"
+          children:
+            - type: Text
+              brief:
+                description: >-
+                  What is being chosen, in a few words: 'Share class', 'Investor
+                  classification'. A noun phrase, never a question.
+                maxLength: 60
+              bind:
+                value: label
+              style:
+                font: label
+                weight: medium
+                color: text.secondary
+            - type: Text
+              visibleWhen: required
+              value: "*"
+              style:
+                font: label
+                weight: bold
+                color: action.primary
+        - type: Ref
+          ref: pill
+          visibleWhen: source
+          props:
+            label: source
+          style:
+            background: action.subtle
+    # CHOSEN. Collapsed, the way a closed select reads, with the option's own words.
+    - type: Box
+      visibleWhen:
+        field: value
+        ne: ""
+      style:
+        direction: row
+        align: center
+        justify: space-between
+        gap: "3"
+        width: full
+        padding: [ "3", "4" ]
+        background: surface.base
+        border: strong
+        radius: sm
+      children:
+        - type: Text
+          bind:
+            value: value
+          style:
+            font: body.md
+            weight: medium
+            color: text.primary
+        - type: Icon
+          icon: check
+          style:
+            flex: 0 0 auto
+            width: "4"
+            height: "4"
+            color: action.primary
+    # THE LIST. Shown while there is no answer, which is when a person needs to see it.
+    - type: Each
+      visibleWhen:
+        field: value
+        eq: ""
+      brief:
+        description: >-
+          The options the source defines, in its own order and its own words. Never invent
+          an option, never drop one because it seems unlikely, and never add 'Other' unless
+          the source offers it.
+        minItems: 2
+        maxItems: 8
+      bind:
+        items: options
+      style:
+        direction: column
+        gap: "2"
+        width: full
+      template:
+        type: Ref
+        ref: choice-row
+        props:
+          label: label
+          description: description
+    - type: Text
+      visibleWhen: help
+      bind:
+        value: help
+      style:
+        font: caption
+        color: text.tertiary

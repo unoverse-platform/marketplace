@@ -1,0 +1,128 @@
+unoverse: "1.0"
+kind: atom
+name: form-dropdown
+category: markdown
+description: "One collected choice from a long set: a label and the platform's own select, with a chip naming where a proposed value came from."
+whenToUse: "Collect one answer from a set too long to read at a glance: a country, a dialling code, a currency, a nationality. A set of two to six options belongs in form-select, which lays them out."
+# Same rules as form-text: remap `value` to the field's OWN key, and pass the label,
+# placeholder and help as literals via `with`.
+#
+# THE PLATFORM'S SELECT, NOT A DRAWN ONE. Two hundred countries cannot be laid out, and
+# filtering them is logic a definition may not carry. The real element brings the OS picker
+# on a phone, type-to-search on a keyboard and screen-reader semantics, none of which a
+# menu composed out of Boxes can offer.
+#
+# IT NEEDS NO HOST ACTION. A Select reports its change the way a controlled Input does, so
+# the bound field name IS the key the answer lands in. That is what separates it from
+# form-select, whose option rows each need a write the host has to name.
+props:
+  label:
+    type: string
+    default: Label
+    preview: Country of residence
+  value:
+    type: string
+    default: ""
+    preview: NL
+  placeholder:
+    type: string
+    default: ""
+    preview: Choose a country
+  help:
+    type: string
+    default: ""
+    preview: The country you are tax resident in, which may not be where you live.
+  required:
+    type: boolean
+    default: false
+    preview: true
+  source:
+    type: string
+    default: ""
+    preview: From your profile
+  options:
+    type: array
+    default: []
+    preview:
+      - value: BE
+        label: Belgium
+      - value: DK
+        label: Denmark
+      - value: DE
+        label: Germany
+      - value: LU
+        label: Luxembourg
+      - value: NL
+        label: Netherlands
+      - value: SE
+        label: Sweden
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "1.5"
+    width: full
+  children:
+    - type: Box
+      style:
+        direction: row
+        align: center
+        justify: space-between
+        gap: "3"
+        width: full
+      children:
+        - type: Box
+          style:
+            direction: row
+            align: center
+            gap: "1"
+          children:
+            - type: Text
+              bind:
+                value: label
+              style:
+                font: label
+                weight: medium
+                color: text.secondary
+            - type: Text
+              visibleWhen: required
+              value: "*"
+              style:
+                font: label
+                weight: bold
+                color: action.primary
+        - type: Ref
+          ref: pill
+          visibleWhen: source
+          props:
+            label: source
+          style:
+            background: action.subtle
+    - type: Select
+      brief:
+        description: >-
+          Propose this ONLY from what the person's profile or an uploaded document states,
+          and only as one of the option values offered. Never guess a country from a
+          language, an address or a name, and leave it out when nothing states it.
+        optional: true
+        maxLength: 60
+      bind:
+        value: value
+        options: options
+      style:
+        width: full
+        font: body.md
+        color: text.primary
+        background: surface.base
+        border: subtle
+        radius: sm
+        padding: [ "2", "3" ]
+        minHeight: "10"
+        cursor: pointer
+    - type: Text
+      visibleWhen: help
+      bind:
+        value: help
+      style:
+        font: caption
+        color: text.tertiary

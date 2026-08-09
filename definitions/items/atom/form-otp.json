@@ -1,0 +1,253 @@
+{
+  "kind": "atom",
+  "name": "form-otp",
+  "fingerprint": "70419c712b662535",
+  "bundle": "design-system",
+  "title": "form-otp",
+  "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-otp",
+    "category": "markdown",
+    "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
+    "whenToUse": "Entering a one-time passcode sent by SMS or email (transfer verification, sign-in, card activation). Compose via a Ref, remapping d1..d6 onto the six host fields the code is written into; the digits stay in the HOST's slice, so the host reads the assembled code.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "",
+        "preview": "Enter the code we sent to your phone"
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "The code expires in 10 minutes."
+      },
+      "d1": {
+        "type": "string",
+        "default": ""
+      },
+      "d2": {
+        "type": "string",
+        "default": ""
+      },
+      "d3": {
+        "type": "string",
+        "default": ""
+      },
+      "d4": {
+        "type": "string",
+        "default": ""
+      },
+      "d5": {
+        "type": "string",
+        "default": ""
+      },
+      "d6": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "align": "center",
+        "gap": "3",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Text",
+          "brief": {
+            "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
+            "maxLength": 80
+          },
+          "visibleWhen": "label",
+          "bind": {
+            "value": "label"
+          },
+          "style": {
+            "font": "label",
+            "weight": "medium",
+            "color": "text.secondary"
+          }
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "center",
+            "gap": "2",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d1"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            },
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d2"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            },
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d3"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            },
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d4"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            },
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d5"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            },
+            {
+              "type": "Input",
+              "maxLength": 1,
+              "inputMode": "numeric",
+              "advanceOnFill": true,
+              "autoComplete": "one-time-code",
+              "bind": {
+                "value": "d6"
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "width": "16",
+                "height": "16",
+                "padding": "0",
+                "textAlign": "center",
+                "font": "headline.lg",
+                "weight": "bold",
+                "color": "text.primary",
+                "background": "surface.base",
+                "border": "strong",
+                "radius": "md",
+                "outline": "none"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "brief": {
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "optional": true,
+            "maxLength": 120
+          },
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-otp.yaml"
+  }
+}

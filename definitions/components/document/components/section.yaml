@@ -1,4 +1,3 @@
-$schema: ../../../../_schema/unoverse.schema.json
 # ONE section, drawn by the atom its `kind` names, with its group label and heading above.
 # Included by every body in document.yaml: the scroll, the lead and each tab.
 type: Box
@@ -55,6 +54,47 @@ children:
       callout:
         type: Ref
         ref: callout
+      # A document may COLLECT, not only state. The kind is here so any document can carry
+      # a field, the same way it carries a table.
+      #
+      # ⚠ A field drawn from a repeated section cannot write its own key back yet:
+      # `setValue` writes the key verbatim and a controlled Input writes `{ [boundField]:
+      # text }`, so every row of an Each would write the same one. Authored forms compile
+      # to flat per-field nodes for exactly this reason (UNOVERSE_MCP_FORMS.md §3), and
+      # this case renders the field until that compiler lands.
+      form-dropdown:
+        type: Ref
+        ref: form-dropdown
+      form-file:
+        type: Ref
+        ref: form-file
+      form-phone:
+        type: Ref
+        ref: form-phone
+      form-select:
+        type: Ref
+        ref: form-select
+      form-text:
+        type: Ref
+        ref: form-text
+      form-email:
+        type: Ref
+        ref: form-email
+      form-number:
+        type: Ref
+        ref: form-number
+      form-date:
+        type: Ref
+        ref: form-date
+      form-long:
+        type: Ref
+        ref: form-long
+      form-otp:
+        type: Ref
+        ref: form-otp
+      form-toggle:
+        type: Ref
+        ref: form-toggle
       default:
         type: Ref
         ref: prose

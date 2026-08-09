@@ -1,0 +1,151 @@
+{
+  "kind": "atom",
+  "name": "form-long",
+  "fingerprint": "39cf0a00ea2b5ed8",
+  "bundle": "design-system",
+  "title": "form-long",
+  "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-long",
+    "category": "markdown",
+    "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
+    "whenToUse": "Collect several sentences a person writes or confirms, such as a reason, a description or a note. Not for a single line, which fits a plain text field.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Label",
+        "preview": "Why are you applying?"
+      },
+      "value": {
+        "type": "string",
+        "default": ""
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "",
+        "preview": "A few sentences in your own words"
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "Two or three sentences is plenty."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      },
+      "source": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "1.5",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "label"
+                  },
+                  "style": {
+                    "font": "label",
+                    "weight": "medium",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "required",
+                  "value": "*",
+                  "style": {
+                    "font": "label",
+                    "weight": "bold",
+                    "color": "action.primary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "pill",
+              "visibleWhen": "source",
+              "props": {
+                "label": "source"
+              },
+              "style": {
+                "background": "action.subtle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Input",
+          "brief": {
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "optional": true,
+            "maxLength": 600
+          },
+          "multiline": true,
+          "rows": 4,
+          "autoComplete": "off",
+          "bind": {
+            "placeholder": "placeholder",
+            "value": "value"
+          },
+          "style": {
+            "width": "full",
+            "font": "body.md",
+            "color": "text.primary",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "sm",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "minHeight": "10"
+          }
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-long.yaml"
+  }
+}

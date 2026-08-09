@@ -1,4 +1,3 @@
-$schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
 name: outline-button

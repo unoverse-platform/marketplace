@@ -1,0 +1,151 @@
+{
+  "kind": "atom",
+  "name": "form-email",
+  "fingerprint": "a40a47055d2337ec",
+  "bundle": "design-system",
+  "title": "form-email",
+  "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-email",
+    "category": "markdown",
+    "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
+    "whenToUse": "Collect an email address a person types or confirms. Not for a phone number, a name or any other contact detail.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Label",
+        "preview": "Email address"
+      },
+      "value": {
+        "type": "string",
+        "default": "",
+        "preview": "a.hartley@northbridge.example"
+      },
+      "placeholder": {
+        "type": "string",
+        "default": "",
+        "preview": "you@example.com"
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "Confirmations and statements go here."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      },
+      "source": {
+        "type": "string",
+        "default": "",
+        "preview": "From your profile"
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "1.5",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "label"
+                  },
+                  "style": {
+                    "font": "label",
+                    "weight": "medium",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "required",
+                  "value": "*",
+                  "style": {
+                    "font": "label",
+                    "weight": "bold",
+                    "color": "action.primary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "pill",
+              "visibleWhen": "source",
+              "props": {
+                "label": "source"
+              },
+              "style": {
+                "background": "action.subtle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Input",
+          "brief": {
+            "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
+            "optional": true,
+            "maxLength": 120
+          },
+          "autoComplete": "email",
+          "bind": {
+            "placeholder": "placeholder",
+            "value": "value"
+          },
+          "style": {
+            "width": "full",
+            "font": "body.md",
+            "color": "text.primary",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "sm",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "minHeight": "10"
+          }
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-email.yaml"
+  }
+}

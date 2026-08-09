@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "toggle-row",
-  "fingerprint": "9c08f8b005e89925",
+  "fingerprint": "d3361e32c70782f4",
   "bundle": "design-system",
   "title": "toggle-row",
   "description": "A settings row with a switch: label and optional description on the left, a pill track on the right whose knob slides and fills with the brand color when the bound `on` field is true. Owns its full style — references tokens only.",
@@ -81,42 +81,11 @@
           ]
         },
         {
-          "type": "Box",
-          "style": {
-            "flex": "0 0 auto",
-            "width": "10",
-            "height": "6",
-            "radius": "full",
-            "background": "surface.sunken",
-            "padding": "1",
-            "direction": "row",
-            "align": "center",
-            "justify": "start",
-            "transition": "all 150ms ease",
-            "when": [
-              {
-                "field": "on",
-                "eq": true,
-                "apply": {
-                  "background": "action.primary",
-                  "justify": "end"
-                }
-              }
-            ]
-          },
-          "children": [
-            {
-              "type": "Box",
-              "style": {
-                "width": "4",
-                "height": "4",
-                "radius": "full",
-                "background": "surface.base",
-                "shadow": "sm",
-                "transition": "all 150ms ease"
-              }
-            }
-          ]
+          "type": "Ref",
+          "ref": "toggle-switch",
+          "props": {
+            "on": "on"
+          }
         }
       ]
     },

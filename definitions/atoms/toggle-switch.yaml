@@ -1,0 +1,48 @@
+unoverse: "1.0"
+kind: atom
+name: toggle-switch
+description: "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only."
+whenToUse: The on/off control inside a row that supplies its own label and its own action, such as a settings row or a form's yes-or-no field. Compose via a Ref, remapping `on` to the field it reflects. A whole labelled settings row is toggle-row.
+# EXTRACTED FROM toggle-row so the switch is drawn in ONE place. Two rows now need it: the
+# settings row it came from, and the form field, which must carry its own briefs and so
+# cannot simply compose the whole row.
+props:
+  on:
+    type: boolean
+    default: false
+    preview: true
+root:
+  type: Box
+  style:
+    flex: 0 0 auto
+    width: "10"
+    height: "6"
+    radius: full
+    # OFF NEEDS AN EDGE. A sunken track on a sunken surface is the same tone as the page,
+    # so an unset switch read as an empty rounded box with a white dot in it. The border
+    # is what makes OFF look like a control rather than a gap; ON drops it, because a
+    # filled track needs no outline to be seen.
+    background: surface.sunken
+    border: strong
+    padding: "1"
+    direction: row
+    align: center
+    justify: start
+    transition: all 150ms ease
+    when:
+      - field: on
+        eq: true
+        apply:
+          background: action.primary
+          border: none
+          justify: end
+  children:
+    - type: Box
+      style:
+        width: "4"
+        height: "4"
+        radius: full
+        background: surface.base
+        border: subtle
+        shadow: sm
+        transition: all 150ms ease

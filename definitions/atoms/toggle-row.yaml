@@ -1,4 +1,3 @@
-$schema: ../../_schema/unoverse.schema.json
 unoverse: "1.0"
 kind: atom
 name: toggle-row
@@ -55,30 +54,9 @@ root:
           style:
             font: body.sm
             color: text.secondary
-    - type: Box
-      style:
-        flex: 0 0 auto
-        width: "10"
-        height: "6"
-        radius: full
-        background: surface.sunken
-        padding: "1"
-        direction: row
-        align: center
-        justify: start
-        transition: all 150ms ease
-        when:
-          - field: on
-            eq: true
-            apply:
-              background: action.primary
-              justify: end
-      children:
-        - type: Box
-          style:
-            width: "4"
-            height: "4"
-            radius: full
-            background: surface.base
-            shadow: sm
-            transition: all 150ms ease
+    # The switch is its own atom, so the form field draws the same one. Extracted rather
+    # than copied: two definitions of a control is how two controls start to differ.
+    - type: Ref
+      ref: toggle-switch
+      props:
+        on: on

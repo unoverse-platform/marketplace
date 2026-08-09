@@ -1,0 +1,91 @@
+unoverse: "1.0"
+kind: atom
+name: form-toggle
+category: markdown
+description: "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines."
+whenToUse: "Collect a yes or no a person decides: a consent, a preference, a declaration that something applies to them. Not for a choice between several options, and not for a fact they type."
+# THE MODEL ASKS THE QUESTION; THE PERSON ANSWERS IT. `label` and `description` carry
+# briefs, so a document can decide a yes or no belongs here and phrase it. `on` carries NO
+# brief and never will: a consent proposed by a model and waved through is worse than no
+# consent at all.
+#
+# ITS OWN LABEL, THE SHARED SWITCH. The briefs must sit on THIS atom's bound nodes, because
+# a brief is collected from a node's `bind` and one shared file cannot carry a different
+# description per field. So the copy is here and the control is `toggle-switch`, the same
+# one toggle-row draws.
+#
+# THE HOST SUPPLIES THE KEY AND THE ACTION. `on` remaps to the field's own key, and the flip
+# is the host's `action` override, which lands on this root because the root is the Button:
+#   { type: Ref, ref: form-toggle, props: { on: marketing_opt_in },
+#     action: { type: setValue, values: [ { key: marketing_opt_in, value: true } ] } }
+props:
+  label:
+    type: string
+    default: Setting
+    preview: Send me alerts about new deals
+  description:
+    type: string
+    default: ""
+    preview: Occasional email, and never more than once a week.
+  on:
+    type: boolean
+    default: false
+    preview: true
+root:
+  type: Button
+  action: toggle
+  style:
+    width: full
+    direction: row
+    align: center
+    justify: space-between
+    gap: "3"
+    padding: "3"
+    textAlign: start
+    background: surface.base
+    border: subtle
+    radius: lg
+    cursor: pointer
+    transition: all 150ms ease
+    hover:
+      background: surface.sunken
+  children:
+    - type: Box
+      style:
+        direction: column
+        flex: "1"
+        minWidth: "0"
+        gap: "1"
+        align: start
+      children:
+        - type: Text
+          brief:
+            description: >-
+              The question, written as the statement the person is agreeing to or
+              declining: 'Send me alerts about new deals'. Never phrase it so that OFF is
+              the agreeable answer, and never ask for a consent the source does not
+              require.
+            maxLength: 90
+          bind:
+            value: label
+          style:
+            font: body.md
+            weight: semibold
+            color: text.primary
+        - type: Text
+          brief:
+            description: >-
+              One line the source gives about what agreeing means in practice, such as how
+              often, or what it is used for. Empty when the question says it all.
+            optional: true
+            maxLength: 160
+          visibleWhen: description
+          bind:
+            value: description
+          style:
+            font: body.sm
+            color: text.secondary
+    - type: Ref
+      ref: toggle-switch
+      props:
+        on: on

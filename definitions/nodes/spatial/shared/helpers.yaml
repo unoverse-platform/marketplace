@@ -55,6 +55,7 @@ helpers:
               description: r.description,
               key_need: r.key_need,
               source_url: r.source_url,
+              source_id: r.source_id,
               hasImage: helpers.hasImage(r)
             },
             typeof r.similarity === 'number' ? { similarity: Math.round(r.similarity * 1000) / 1000 } : {},
@@ -131,6 +132,7 @@ helpers:
           description: r.description,
           key_need: r.key_need,
           source_url: r.source_url,
+          source_id: r.source_id,
           hasImage: helpers.hasImage(r)
         },
         (Array.isArray(r.needs) && r.needs.length) ? { needs: r.needs } : {},

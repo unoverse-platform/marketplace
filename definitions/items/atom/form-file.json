@@ -1,0 +1,149 @@
+{
+  "kind": "atom",
+  "name": "form-file",
+  "fingerprint": "0bc5ff9a664a7dba",
+  "bundle": "design-system",
+  "title": "form-file",
+  "description": "One collected document: a label, the platform's file chooser, and the name of whatever was chosen.",
+  "category": "markdown",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "atom",
+    "name": "form-file",
+    "category": "markdown",
+    "description": "One collected document: a label, the platform's file chooser, and the name of whatever was chosen.",
+    "whenToUse": "Collect a document a person must provide: proof of identity, proof of address, a signed form, a statement. Not for a value they type, and not for a document the platform already holds.",
+    "props": {
+      "label": {
+        "type": "string",
+        "default": "Label",
+        "preview": "Proof of address"
+      },
+      "value": {
+        "type": "string",
+        "default": "",
+        "preview": ""
+      },
+      "help": {
+        "type": "string",
+        "default": "",
+        "preview": "A utility bill or bank statement from the last three months."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "preview": true
+      },
+      "source": {
+        "type": "string",
+        "default": "",
+        "preview": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "1.5",
+        "width": "full"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "brief": {
+                    "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
+                    "maxLength": 60
+                  },
+                  "bind": {
+                    "value": "label"
+                  },
+                  "style": {
+                    "font": "label",
+                    "weight": "medium",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "required",
+                  "value": "*",
+                  "style": {
+                    "font": "label",
+                    "weight": "bold",
+                    "color": "action.primary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "pill",
+              "visibleWhen": "source",
+              "props": {
+                "label": "source"
+              },
+              "style": {
+                "background": "action.subtle"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Input",
+          "inputType": "file",
+          "bind": {
+            "value": "value"
+          },
+          "style": {
+            "width": "full",
+            "font": "body.md",
+            "color": "text.primary",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "sm",
+            "padding": [
+              "2",
+              "3"
+            ],
+            "minHeight": "10"
+          }
+        },
+        {
+          "type": "Text",
+          "brief": {
+            "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
+            "optional": true,
+            "maxLength": 160
+          },
+          "visibleWhen": "help",
+          "bind": {
+            "value": "help"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        }
+      ]
+    },
+    "file": "form-file.yaml"
+  }
+}
