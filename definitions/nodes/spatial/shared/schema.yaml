@@ -76,25 +76,28 @@ spatial:
           query:
             type: string
             description: >-
-              What the user is asking for NOW, FAITHFULLY, in the words they just used, with
-              references resolved ('what about dinner?' becomes the thing they mean). NEVER
-              compress, paraphrase, or strip it to a keyword stub: the catalog is indexed
-              against asks like the user's, so the ask's own phrasing IS the routing, and
-              losing its words loses the match. What they asked in an EARLIER turn is
-              background for phrasing this one, never an ask to send again: a search you
-              repeat surfaces everything it surfaced the first time, including any app it
-              opened. Never add remembered guest facts (name, hotel, memberships) because
-              background personalizes the answer, not the search.
+              What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
+              with references resolved ('what about dinner?' becomes the thing they mean).
+              NEVER compress, paraphrase, or strip it to a keyword stub: the catalog is
+              indexed against asks like the user's, so the ask's own phrasing IS the routing,
+              and losing its words loses the match. NEVER SEND A QUERY YOU HAVE ALREADY SENT
+              IN THIS CONVERSATION: it returns what it returned before, which is material you
+              already hold and an app you have already opened. When the user has since told
+              you more (they answered a form, named a subject, chose a route), THAT is what
+              this search is for, and their opening words are already spent. Never add
+              remembered guest facts (name, hotel, memberships) because background
+              personalizes the answer, not the search.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
-              Extra angles searched ALONGSIDE this turn's ask, never instead of it. The FIRST
-              entry is always the user's faithful ask FOR THIS TURN; add facets after it, one
-              per entry. Every entry is a SEPARATE search returning its own rows, so an
-              earlier turn's question does not belong here. One round trip, all the material;
-              each result carries forQuery.
+              Several angles on THIS search, one per entry, in one round trip; each result
+              carries forQuery. Every entry is a SEPARATE search returning its own rows, so a
+              wasted entry costs real result slots. Put nothing here that you have already
+              searched in this conversation, and nothing that a later answer has superseded:
+              an opening ask still sitting in slot 0 after the user has answered a form fills
+              half the results with what they wanted before they told you.
 
     discoverRelated:
       description: >-
@@ -113,23 +116,27 @@ spatial:
           query:
             type: string
             description: >-
-              What the user is asking for NOW, FAITHFULLY, in the words they just used, with
-              references resolved. NEVER compress, paraphrase, or strip it to a keyword stub:
-              the catalog is indexed against asks like the user's, so the ask's own phrasing
-              IS the routing, and losing its words loses the match. What they asked in an
-              EARLIER turn is background for phrasing this one, never an ask to send again: a
-              search you repeat surfaces everything it surfaced the first time, including any
-              app it opened. Never add remembered guest facts (name, hotel, memberships)
+              What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
+              with references resolved. NEVER compress, paraphrase, or strip it to a keyword
+              stub: the catalog is indexed against asks like the user's, so the ask's own
+              phrasing IS the routing, and losing its words loses the match. NEVER SEND A
+              QUERY YOU HAVE ALREADY SENT IN THIS CONVERSATION: it returns what it returned
+              before, which is material you already hold and an app you have already opened.
+              When the user has since told you more (they answered a form, named a subject,
+              chose a route), THAT is what this search is for, and their opening words are
+              already spent. Never add remembered guest facts (name, hotel, memberships)
               because they drag the placement to the wrong region.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
-              Extra facets explored ALONGSIDE this turn's ask, never instead of it. The FIRST
-              entry is always the user's faithful ask FOR THIS TURN; add facets after it, one
-              per entry. Every entry is a SEPARATE search returning its own rows, so an
-              earlier turn's question does not belong here. Each result carries forQuery.
+              Several facets of THIS search, one per entry; each result carries forQuery.
+              Every entry is a SEPARATE search returning its own rows, so a wasted entry costs
+              real result slots. Put nothing here that you have already searched in this
+              conversation, and nothing that a later answer has superseded: an opening ask
+              still sitting in slot 0 after the user has answered a form fills half the
+              results with what they wanted before they told you.
 
     readResult:
       description: >-
