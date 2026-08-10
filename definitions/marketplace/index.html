@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marketplace · unoverse</title>
+    <meta
+      name="description"
+      content="Components, atoms and styles, prompt blocks, skills and declarative nodes for the unoverse platform."
+    />
+    <link rel="icon" href="https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png" />
+    <script type="module" crossorigin src="../assets/marketplace-l36iBSfV.js"></script>
+    <link rel="modulepreload" crossorigin href="../assets/index-CZgBl2oz.js">
+    <link rel="stylesheet" crossorigin href="../assets/index-DHf_n5Br.css">
+  </head>
+  <!--
+    WHERE THE DATA IS. The catalogue and the item files are published at the site root; this
+    document is one folder down. `dataUrl()` in src/host.tsx reads this and nothing else.
+  -->
+  <body data-catalogue="../">
+    <!--
+      THE MARKETPLACE APP, ON ITS OWN DOCUMENT.
+      It is not prerendered and should not be: everything on it comes from `catalogue.json`
+      at runtime, so a build-time snapshot would only serve a stale catalogue that the
+      first fetch replaces. The marketing site next door is the part that has to be
+      indexable, and it is (see `../index.html`).
+    -->
+    <div id="root"></div>
+  </body>
+</html>

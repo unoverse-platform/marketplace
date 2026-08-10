@@ -64,8 +64,8 @@ spatial:
         Precision search. The user has NAMED what they want — a specific thing, place,
         category or task ("a Chinese restaurant", "book X", "how do I...", "recommend a good
         steakhouse") — and this pinpoints the matches for that named need, however the ask is
-        phrased (question, request, recommendation). Pass the user's EXACT words — do not
-        paraphrase. NOT for open desires with no named thing ("something romantic", "a fun
+        phrased (question, request, recommendation). Pass the user's EXACT words from THIS
+        turn — do not paraphrase, and do not re-send an earlier turn's question. NOT for open desires with no named thing ("something romantic", "a fun
         evening") — that is discovery (discoverRelated). If ANY result has
         object_type="skill", you MUST call readSkill before responding; check ALL results,
         not just the top one. Do not pair with discoverRelated in parallel.
@@ -76,20 +76,25 @@ spatial:
           query:
             type: string
             description: >-
-              The user's ask, FAITHFULLY — their words, with references from earlier turns
-              resolved ('what about dinner?' → the thing they mean). NEVER compress,
-              paraphrase, or strip it to a keyword stub: the catalog is indexed against asks
-              like the user's, so the ask's own phrasing IS the routing — losing its words
-              loses the match. Never add remembered guest facts (name, hotel, memberships —
-              background personalizes the answer, not the search).
+              What the user is asking for NOW, FAITHFULLY, in the words they just used, with
+              references resolved ('what about dinner?' becomes the thing they mean). NEVER
+              compress, paraphrase, or strip it to a keyword stub: the catalog is indexed
+              against asks like the user's, so the ask's own phrasing IS the routing, and
+              losing its words loses the match. What they asked in an EARLIER turn is
+              background for phrasing this one, never an ask to send again: a search you
+              repeat surfaces everything it surfaced the first time, including any app it
+              opened. Never add remembered guest facts (name, hotel, memberships) because
+              background personalizes the answer, not the search.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
-              Extra angles searched ALONGSIDE the ask, never instead of it — the FIRST entry
-              is always the user's faithful ask; add facets after it, one per entry. One
-              round trip, all the material; each result carries forQuery.
+              Extra angles searched ALONGSIDE this turn's ask, never instead of it. The FIRST
+              entry is always the user's faithful ask FOR THIS TURN; add facets after it, one
+              per entry. Every entry is a SEPARATE search returning its own rows, so an
+              earlier turn's question does not belong here. One round trip, all the material;
+              each result carries forQuery.
 
     discoverRelated:
       description: >-
@@ -108,19 +113,23 @@ spatial:
           query:
             type: string
             description: >-
-              The user's ask, FAITHFULLY — their words, with references from earlier turns
-              resolved. NEVER compress, paraphrase, or strip it to a keyword stub: the
-              catalog is indexed against asks like the user's, so the ask's own phrasing IS
-              the routing — losing its words loses the match. Never add remembered guest
-              facts (name, hotel, memberships — they drag the placement to the wrong region).
+              What the user is asking for NOW, FAITHFULLY, in the words they just used, with
+              references resolved. NEVER compress, paraphrase, or strip it to a keyword stub:
+              the catalog is indexed against asks like the user's, so the ask's own phrasing
+              IS the routing, and losing its words loses the match. What they asked in an
+              EARLIER turn is background for phrasing this one, never an ask to send again: a
+              search you repeat surfaces everything it surfaced the first time, including any
+              app it opened. Never add remembered guest facts (name, hotel, memberships)
+              because they drag the placement to the wrong region.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
-              Extra facets explored ALONGSIDE the ask, never instead of it — the FIRST entry
-              is always the user's faithful ask; add facets after it, one per entry. Each
-              result carries forQuery.
+              Extra facets explored ALONGSIDE this turn's ask, never instead of it. The FIRST
+              entry is always the user's faithful ask FOR THIS TURN; add facets after it, one
+              per entry. Every entry is a SEPARATE search returning its own rows, so an
+              earlier turn's question does not belong here. Each result carries forQuery.
 
     readResult:
       description: >-

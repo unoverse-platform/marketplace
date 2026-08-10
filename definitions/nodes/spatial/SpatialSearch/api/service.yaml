@@ -7,7 +7,8 @@ findIntent:
     Precision search. The user has NAMED what they want, a specific thing, place, category or
     task ("a Chinese restaurant", "book X", "how do I...", "recommend a good steakhouse"),
     and this pinpoints the matches for that named need, however the ask is phrased. Pass the
-    user's EXACT words, do not paraphrase. NOT for open desires with no named thing
+    user's EXACT words from THIS turn, do not paraphrase, and do not re-send an earlier
+    turn's question. NOT for open desires with no named thing
     ("something romantic", "a fun evening"), which is discoverRelated. If ANY result has
     object_type="skill" you MUST call readSkill before responding; check ALL results, not
     just the top one. Do not pair with discoverRelated in parallel.
