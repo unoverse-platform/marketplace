@@ -1,16 +1,18 @@
 {
-  "kind": "atom",
+  "kind": "component",
   "name": "avatar-orb",
-  "fingerprint": "7b2a6aa3839de1e6",
+  "fingerprint": "4b20168d81e85eca",
   "bundle": "design-system",
   "title": "avatar-orb",
-  "description": "An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does.",
+  "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+  "category": "Feedback",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
+    "kind": "component",
     "name": "avatar-orb",
-    "description": "An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does.",
-    "whenToUse": "The animated avatar for a voice / live-agent surface whose host carries a `callState` field (idle|active|userSpeaking|agentSpeaking). Compose via a Ref, passing size/speed/colour as literals with `with`; the halo and portrait key off `callState` directly. At rest it is just the face — the orb appears when the call goes live. For a person's photo in a list or a review use the avatar atom instead.",
+    "category": "Feedback",
+    "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+    "whenToUse": "The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, or answering. Reads the platform's own callState, so a voice app gets every moment with nothing to wire; at rest it is just the face, and the orb appears when the call goes live. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.",
     "props": {
       "callState": {
         "type": "string",
@@ -162,7 +164,6 @@
           ]
         }
       ]
-    },
-    "file": "avatar-orb.yaml"
+    }
   }
 }

@@ -1,6 +1,15 @@
 {
-  "release": "0.1.29",
+  "release": "0.1.30",
   "items": [
+    {
+      "kind": "component",
+      "name": "avatar-orb",
+      "fingerprint": "4b20168d81e85eca",
+      "bundle": "design-system",
+      "title": "avatar-orb",
+      "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
+      "category": "Feedback"
+    },
     {
       "kind": "component",
       "name": "bar-chart",
@@ -178,14 +187,6 @@
       "bundle": "design-system",
       "title": "agent-avatar",
       "description": "Circular assistant avatar with concentric sonar rings that pulse calmly while a call is active and burst into a slower layered ripple while the assistant is speaking, plus a gentle breathe (scale) on the photo while speaking. Owns its full style — references tokens only; rings are DATA. The breathe is a transform, so it grows the photo visually without shifting layout. Reads the host's `callState` field directly (idle|active|agentSpeaking|userSpeaking)."
-    },
-    {
-      "kind": "atom",
-      "name": "avatar-orb",
-      "fingerprint": "7b2a6aa3839de1e6",
-      "bundle": "design-system",
-      "title": "avatar-orb",
-      "description": "An assistant avatar whose face changes with the live call phase, ringed by a procedural orb while the call is active. Owns its full style — references tokens only. Reads the projected `callState` directly (idle|active|userSpeaking|agentSpeaking), exactly as agent-avatar does."
     },
     {
       "kind": "atom",
