@@ -7,6 +7,22 @@ nodeSize:
   height: 96
 description: "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org."
 whenToUse: The always-present text-entry bar at the bottom of a conversational app. Composed into a chat template as fixed chrome; binds its draft to the template's input field.
+props:
+  # THE LATCH FACTS, published into template state by the renderer (STATE_MODEL "The pill
+  # and the ✕"). Declared here so they have DEFAULTS: an unmatched Switch draws nothing, so
+  # without `latchState: none` the leading mark vanishes before anything is published — a
+  # fresh app, and every Studio preview. The `preview` values are what Studio draws, so the
+  # latched face is authorable without a live run.
+  latched:
+    type: boolean
+    default: false
+    preview: true
+    input: true
+  latchTitle:
+    type: string
+    default: ""
+    preview: Perfect Day
+    input: true
 root:
   type: Box
   style:
@@ -32,12 +48,82 @@ root:
         shadow: md
         padding: [ "3", "4" ]
       children:
-        - type: Icon
-          icon: chat
-          style:
-            width: "5"
-            height: "5"
-            color: text.tertiary
+        # THE LEADING MARK: one slot, two named states, ONE Switch on ONE discriminant
+        # (docs/design/state.md — "mutually exclusive views belong in one Switch; a case
+        # never re-guards its own discriminant"). A pair of opposite `visibleWhen`s here
+        # would be the boolean soup that rule exists to stop.
+        #
+        # The axis is a PROP, not `view`: this is fixed chrome, expanded into the template
+        # tree by `Ref`, so it has no slice of its own and `view` there would mean the
+        # template's business, not this bar's. (It also cannot be `view` mechanically — a
+        # faced component's root must switch on `view`, and Ref remapping does not touch a
+        # Switch's `on`, so a shared multi-FACE component is not expressible as chrome.)
+        - type: Switch
+          on: latched
+          cases:
+            # Resting: the bar is addressed at the CONVERSATION. `default` catches BOTH
+            # `false` and the unset case (selectCase stringifies, then falls back), so the
+            # bar always draws a leading mark — an unmatched Switch draws nothing, which is
+            # how the glyph vanished when this field had no value.
+            default:
+              type: Icon
+              icon: chat
+              style:
+                width: "5"
+                height: "5"
+                color: text.tertiary
+            # Latched: what the guest types is addressed AT a component on screen, and this
+            # pill is the ONLY sign of that — so it takes the leading mark's place, inside
+            # the bar, at the point of typing. Nothing here knows which component it is:
+            # the title is data.
+            "true":
+              type: Box
+              style:
+                direction: row
+                align: center
+                gap: "1"
+                flex: 0 0 auto
+                radius: full
+                padding: [ "1", "2" ]
+                background: action.primary
+              children:
+                # The name alone. The pill's colour and its place in the bar already say
+                # "you are in a mode"; a slash in front of a name nobody typed read as a
+                # command the guest could have issued, which it is not.
+                - type: Text
+                  bind:
+                    value: latchTitle
+                  style:
+                    font: body.sm
+                    color: action.primary-text
+                # THE ONLY EXIT. A latch never breaks on its own, so this is not decoration:
+                # without it the guest cannot get back to addressing the conversation. Writes
+                # a bare `true` because chrome cannot know WHICH instance holds the latch —
+                # the renderer resolves the flag to the holder's key and re-derives.
+                # `latchDismissed` is a platform-defined SHARED CHROME KEY (the allowlist in
+                # lint/rx/walk.mjs); this bar writes no other template state.
+                - type: Button
+                  action:
+                    type: setTemplateValue
+                    values:
+                      - key: latchDismissed
+                        value: true
+                  style:
+                    flex: 0 0 auto
+                    direction: row
+                    align: center
+                    justify: center
+                    background: transparent
+                    border: none
+                    padding: "0"
+                    cursor: pointer
+                  children:
+                    - type: Icon
+                      icon: close
+                      style:
+                        width: "3"
+                        height: "3"
+                        color: action.primary-text
         - type: Input
           placeholder: Ask me anything…
           action: sendMessage

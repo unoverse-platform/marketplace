@@ -2,6 +2,8 @@
 # tools, runs them, and puts the result back on the wire.
 #
 # Imported WHOLE from the package's shared/ — one file changes when OpenAI changes the wire format.
+# `realtimeTools`, not `tools`: this package holds BOTH OpenAI protocols now, and `tools.yaml` is the
+# Responses one an HTTP agent imports. Same vendor, two APIs, two files.
 # No local keys layer on top, because the two dials an HTTP agent sets (`maxTurns`,
 # `stuckAfterRepeats`) count TURNS, and a socket has none: the conversation never ended.
-$ref: tools
+$ref: realtimeTools

@@ -89,6 +89,23 @@ configSchema:
     #     (PlatformMemoryCore reads the node's config — no node-side code, ever)
     #   - the EXECUTOR hydrates the prompt with the user's context snapshot before the run
     #   - the EXECUTOR ingests each completed turn to the memory server after it
+    # THE CONVERSATION SWITCH. Off, so a run starts from nothing unless someone asks for
+    # continuity — the same default the two memory toggles below carry, and the one that
+    # makes a test reproducible.
+    #
+    # OFF DOES NOT MEAN NO CONVERSATION. The node still mints one per run (api/run.yaml):
+    # it is how turns chain inside the tool loop now that this node names a conversation
+    # instead of a previous_response_id. What the toggle gates is whether that id is
+    # REMEMBERED, so off is a fresh conversation every run rather than no conversation.
+    enableConversationMemory:
+      type: boolean
+      title: Conversation Memory
+      description: >-
+        Continue the same conversation across runs, so the agent remembers what was said
+        earlier in this chat. Off starts fresh each run.
+      default: false
+      "ui:widget": toggle
+
     enableUserMemory:
       type: boolean
       title: User Memory
@@ -132,4 +149,4 @@ configSchema:
       "ui:dependencies": { authRequired: true }
 
 ui:order:
-  [authRequired, authRole, model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, enableUserMemory, enableAgentMemory]
+  [authRequired, authRole, model, maxTurns, reasoningEffort, reasoningSummary, verbosity, systemPrompt, prompt, maxTokens, enableConversationMemory, enableUserMemory, enableAgentMemory]

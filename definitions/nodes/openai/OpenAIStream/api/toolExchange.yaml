@@ -10,6 +10,15 @@
 # OpenAI's tool protocol, imported whole. Local keys below layer on top.
 $ref: tools
 
+# HOW A TURN REACHES THE ONE BEFORE IT. Declared here rather than in shared/tools.yaml
+# because the vendor offers two mechanisms and refuses both together (see that file).
+# This node chains response to response: it holds no conversation, so there is no durable
+# id to name, and the chain lives only as long as the run does.
+continuity:
+  match: response.completed
+  from: "return response.response.id"
+  into: previous_response_id
+
 # The dial. 1 answers in a single pass and cannot use a tool at all; higher makes it
 # work through a problem.
 maxTurns: 1

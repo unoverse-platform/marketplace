@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "avatar-orb",
-  "fingerprint": "4b20168d81e85eca",
+  "fingerprint": "fd8ae8e19461c8ad",
   "bundle": "design-system",
   "title": "avatar-orb",
   "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -20,8 +20,9 @@
         "enum": [
           "idle",
           "active",
-          "userSpeaking",
-          "agentSpeaking"
+          "listening",
+          "speaking",
+          "thinking"
         ]
       },
       "size": {
@@ -72,7 +73,7 @@
                 "color": "{{orbColor}}"
               }
             },
-            "userSpeaking": {
+            "listening": {
               "type": "Orb",
               "state": "sonar",
               "bind": {
@@ -86,9 +87,23 @@
                 "color": "{{orbColor}}"
               }
             },
-            "agentSpeaking": {
+            "speaking": {
               "type": "Orb",
               "state": "pulse",
+              "bind": {
+                "speed": "speed",
+                "size": "size"
+              },
+              "style": {
+                "position": "absolute",
+                "inset": "0",
+                "margin": "auto",
+                "color": "{{orbColor}}"
+              }
+            },
+            "thinking": {
+              "type": "Orb",
+              "state": "shimmer",
               "bind": {
                 "speed": "speed",
                 "size": "size"
@@ -129,7 +144,7 @@
                     "fit": "cover"
                   }
                 },
-                "userSpeaking": {
+                "listening": {
                   "type": "Image",
                   "src": "https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg",
                   "alt": "The assistant, listening",
@@ -139,10 +154,20 @@
                     "fit": "cover"
                   }
                 },
-                "agentSpeaking": {
+                "speaking": {
                   "type": "Image",
                   "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg",
                   "alt": "The assistant, responding",
+                  "style": {
+                    "width": "full",
+                    "height": "full",
+                    "fit": "cover"
+                  }
+                },
+                "thinking": {
+                  "type": "Image",
+                  "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg",
+                  "alt": "The assistant, looking something up",
                   "style": {
                     "width": "full",
                     "height": "full",

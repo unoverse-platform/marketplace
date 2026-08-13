@@ -1,10 +1,10 @@
 {
-  "release": "0.1.30",
+  "release": "0.1.31",
   "items": [
     {
       "kind": "component",
       "name": "avatar-orb",
-      "fingerprint": "4b20168d81e85eca",
+      "fingerprint": "fd8ae8e19461c8ad",
       "bundle": "design-system",
       "title": "avatar-orb",
       "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "composer-bar",
-      "fingerprint": "a3958604a398f711",
+      "fingerprint": "bec06798a46b8d7d",
       "bundle": "design-system",
       "title": "composer-bar",
       "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -183,10 +183,10 @@
     {
       "kind": "atom",
       "name": "agent-avatar",
-      "fingerprint": "4b93d0109dee96d0",
+      "fingerprint": "edde74ba2cf459b2",
       "bundle": "design-system",
       "title": "agent-avatar",
-      "description": "Circular assistant avatar with concentric sonar rings that pulse calmly while a call is active and burst into a slower layered ripple while the assistant is speaking, plus a gentle breathe (scale) on the photo while speaking. Owns its full style — references tokens only; rings are DATA. The breathe is a transform, so it grows the photo visually without shifting layout. Reads the host's `callState` field directly (idle|active|agentSpeaking|userSpeaking)."
+      "description": "Circular assistant avatar with concentric sonar rings that pulse calmly while a call is active and burst into a slower layered ripple while the assistant is speaking, plus a gentle breathe (scale) on the photo while speaking. Owns its full style — references tokens only; rings are DATA. The breathe is a transform, so it grows the photo visually without shifting layout. Reads the host's `callState` field directly (idle|active|speaking|listening)."
     },
     {
       "kind": "atom",
@@ -1197,7 +1197,7 @@
       "kind": "node",
       "name": "OpenAI",
       "pack": "openai",
-      "fingerprint": "be7f199aedea9f81",
+      "fingerprint": "cd350c81fbf7238c",
       "title": "OpenAI",
       "description": "One prompt in, one completion out, with no streaming or tools",
       "category": "AI",
@@ -1208,7 +1208,7 @@
       "kind": "node",
       "name": "OpenAIAgent",
       "pack": "openai",
-      "fingerprint": "62fc42972b048d64",
+      "fingerprint": "dd9bcd3611f639c1",
       "title": "OpenAI Agent",
       "description": "Multi-turn agent that works through a problem using MCP tools",
       "category": "AI",
@@ -1219,7 +1219,7 @@
       "kind": "node",
       "name": "OpenAIEmbeddingService",
       "pack": "openai",
-      "fingerprint": "accf1b228adc4953",
+      "fingerprint": "5c60c7b10e8fe2d3",
       "title": "Embedding Service",
       "description": "Turns text into vector embeddings for semantic search",
       "category": "AI",
@@ -1228,9 +1228,20 @@
     },
     {
       "kind": "node",
+      "name": "OpenAIRealtimeVoice",
+      "pack": "openai",
+      "fingerprint": "c869c18aee76660a",
+      "title": "OpenAI Realtime Voice",
+      "description": "Live two-way voice conversation with OpenAI's realtime models",
+      "category": "Voice",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+      "whenToUse": "Pick when someone should TALK to the workflow and be spoken back to, in real time, with the model hearing them mid-sentence and able to be interrupted. Holds one continuous conversation for as long as the call lasts and emits both sides as transcripts while it runs. Reading a script aloud, and transcribing a recording that already exists, are different jobs, because neither needs a live listener."
+    },
+    {
+      "kind": "node",
       "name": "OpenAIStream",
       "pack": "openai",
-      "fingerprint": "c904a0ce29aadd52",
+      "fingerprint": "f7d69ee3fe0d7dab",
       "title": "OpenAI Stream",
       "description": "Text generation with tokens streamed live as they are produced",
       "category": "AI",
@@ -1241,23 +1252,12 @@
       "kind": "node",
       "name": "OpenAIStructuredOutput",
       "pack": "openai",
-      "fingerprint": "959ed10324c952e7",
+      "fingerprint": "f3f4cc9fd2c7e041",
       "title": "GPT-5 Structured Output",
       "description": "Extract structured data using the GPT-5 Responses API with a JSON schema",
       "category": "AI",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
       "whenToUse": "Pick when the output must be JSON that strictly matches a schema, so downstream nodes can rely on the shape instead of parsing defensively: schema-enforced extraction and structuring. Free-form prose or multi-turn tool use makes it the wrong, over-constrained choice. Wire the schema and the content in as inputs."
-    },
-    {
-      "kind": "node",
-      "name": "OpenAIRealtimeVoice",
-      "pack": "openai-realtime",
-      "fingerprint": "2a5df9163c64fb15",
-      "title": "OpenAI Realtime Voice",
-      "description": "Live two-way voice conversation with OpenAI's realtime models",
-      "category": "Voice",
-      "icon": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
-      "whenToUse": "Pick when someone should TALK to the workflow and be spoken back to, in real time, with the model hearing them mid-sentence and able to be interrupted. Holds one continuous conversation for as long as the call lasts and emits both sides as transcripts while it runs. Reading a script aloud, and transcribing a recording that already exists, are different jobs, because neither needs a live listener."
     },
     {
       "kind": "node",
@@ -1362,7 +1362,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "09c933c079b66f18",
+      "fingerprint": "e06d85f3d32bd934",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -12,7 +12,7 @@ props:
   callState:
     type: string
     default: idle
-    enum: [idle, active, userSpeaking, agentSpeaking]
+    enum: [idle, active, listening, speaking, thinking]
   size:
     type: string
     default: "200"
@@ -51,8 +51,7 @@ root:
       on: callState
       cases:
         # Connected, nobody speaking: PRESENT and attentive, not busy. The calm aura —
-        # the assistant is here and the floor is yours. (`shimmer`, the considering one,
-        # is deliberately unused: callState has no processing phase to hang it on.)
+        # the assistant is here and the floor is yours.
         active:
           type: Orb
           state: halo
@@ -65,7 +64,7 @@ root:
             margin: auto
             color: "{{orbColor}}"
         # Rings arriving inward — the shape of sound reaching a listener.
-        userSpeaking:
+        listening:
           type: Orb
           state: sonar
           bind:
@@ -77,9 +76,23 @@ root:
             margin: auto
             color: "{{orbColor}}"
         # Rings leaving outward — the shape of a voice carrying.
-        agentSpeaking:
+        speaking:
           type: Orb
           state: pulse
+          bind:
+            speed: speed
+            size: size
+          style:
+            position: absolute
+            inset: "0"
+            margin: auto
+            color: "{{orbColor}}"
+        # Looking something up: nobody speaking, answer not ready. `shimmer` is the primitive's
+        # considering motion and this is the phase it was drawn for; it sat unused because
+        # callState had nowhere to hang it.
+        thinking:
+          type: Orb
+          state: shimmer
           bind:
             speed: speed
             size: size
@@ -116,7 +129,7 @@ root:
                 width: full
                 height: full
                 fit: cover
-            userSpeaking:
+            listening:
               type: Image
               src: https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg
               alt: The assistant, listening
@@ -124,10 +137,20 @@ root:
                 width: full
                 height: full
                 fit: cover
-            agentSpeaking:
+            speaking:
               type: Image
               src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg
               alt: The assistant, responding
+              style:
+                width: full
+                height: full
+                fit: cover
+            # The pose that looks away — which is exactly why `active` refuses it. Distracted
+            # when the floor is yours, concentrating when the assistant has gone to find out.
+            thinking:
+              type: Image
+              src: https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg
+              alt: The assistant, looking something up
               style:
                 width: full
                 height: full

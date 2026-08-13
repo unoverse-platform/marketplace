@@ -13,9 +13,11 @@
 #   the call event   Responses says `response.output_item.done` and needs a `when` to tell a function
 #                    call from any other completed item. Realtime has a dedicated
 #                    `response.function_call_arguments.done`, so no `when` is needed.
-#   no toolsInto     Responses puts the tool list in each REQUEST. A realtime session declares it
-#                    ONCE in the handshake, so there is no request field to name; run.yaml reads
-#                    `services.mcpService.tools` into session.update itself.
+#   offer, not      Responses puts the tool list in each REQUEST, so a list that GREW since the
+#   toolsInto       last turn is re-sent for free and there is nothing to declare. A socket sends
+#                   it once at the handshake, so growth has to be announced on purpose — which is
+#                   what `offer` below is. Same fact, two shapes: `toolsInto` names a request
+#                   field, `offer` names a whole message.
 #   no continuity    Responses chains turns with previous_response_id. THE SOCKET IS THE CONTINUITY:
 #                    the conversation never ended, so there is nothing to chain.
 #
@@ -27,6 +29,16 @@
 tool: >-
   return { type: 'function', name: tool.name, description: tool.description,
            parameters: tool.parameters }
+
+# HOW THE LIST IS RE-OFFERED once it has grown. `tools` is the whole live list, already in the
+# envelope `tool` above produces.
+#
+# ONLY `tools`: session.update MERGES (verified live 2026-08-12), so instructions, modalities,
+# voice and turn detection survive untouched. Re-sending the whole session block would be a second
+# copy of the handshake, free to drift. Safe at any moment — the vendor gates `response.create` on
+# an idle conversation, never session.update.
+offer: >-
+  return { type: 'session.update', session: { type: 'realtime', tools: tools } }
 
 # How a call ARRIVES. `match` is what makes a stream tractable: events keep coming for the whole
 # conversation, and this says which of them is a tool call rather than a transcript or audio.

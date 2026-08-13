@@ -34,17 +34,13 @@ outputs:
     description: What the model said, accumulated as it speaks
 
 credentials:
-  # `openaiCredential`, the RETIRED NODE'S NAME, kept deliberately.
+  # The same OpenAI key every node in this package uses. The retired realtime package spelled it
+  # `openaiCredential`; nothing else ever did, and the two cannot coexist as files here anyway
+  # (macOS is case-insensitive, so the two filenames are one file).
   #
-  # I first "converged" this on the platform's `openAICredential`, since realtime was the only
-  # package ever to use the lower-case spelling. That broke the node outright: a node receives
-  # only its OWN declared credentials, and this node's saved config attaches the credential by the
-  # old type name, so the bag handed over contained `openaiCredential` while the manifest asked for
-  # `openAICredential`. The bearer token resolved to empty and every call failed.
-  #
-  # A credential name is part of the stored contract, exactly like an output name. Renaming one is
-  # a migration with a data change behind it, not a tidy-up.
-  - name: openaiCredential
+  # A workflow saved before this change still attaches the old key, so re-pick the credential
+  # once in Canvas. Selecting it writes the new key — no migration.
+  - name: openAICredential
     required: true
     displayName: OpenAI
 

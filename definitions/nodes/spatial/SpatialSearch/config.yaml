@@ -7,6 +7,26 @@ $schema: ../../../_schema/config.schema.json
 # chooses what to ask for, the author decides what may come back. A model that could set its
 # own result cap or turn on a content type would route around the person who wired the node.
 #
+# WIRABLE, STILL NEVER THE MODEL'S (2026-08-13). Each carries `ui:field: template`, so what a
+# box may return can be decided PER RUN by the workflow instead of once at design time. The
+# case that forced it: a turn addressed at a component already on screen must not have a
+# search hand back a component row, because that row renders a NEW card unconditionally
+# (`renderComponents` in api/service.yaml). The route sets `includeMcps: false` for that turn
+# and true otherwise.
+#
+# This does not weaken the line above, it keeps it. The value travels through CONFIG, whose
+# only roots are the workflow's own surroundings (`signal.<nodeId>.<output>.<field>`), never
+# through `params`, which on this node is the agent's tool arguments and nothing else. The
+# workflow decides deterministically by route; the model still cannot see these or set them.
+#
+# A template field must be EXACTLY one `{{ path }}` to keep its type (config-schema.md): a
+# `{{#if}}` produces the STRING "false", which is truthy. Carry a real boolean on the trigger
+# and reference it whole. An unset flag still resolves to undefined so the SERVER's default
+# applies, and those defaults are mostly TRUE — see the note in shared/search.yaml.
+#
+# COST, accepted: `ui:field: template` replaces the rendered control (FieldRenderer.jsx:82),
+# so these are typed fields rather than tick-boxes and steppers. Saved values are unaffected.
+#
 # `renderComponents` is deliberately NOT here. It was a toggle until 2026-07-29 and was the wrong
 # shape: a row only produces a card when it points at one, so "off" never meant cleaner
 # results, it meant a row that had authored a card silently not showing it.
@@ -22,6 +42,7 @@ configSchema:
       default: 10
       minimum: 5
       maximum: 30
+      "ui:field": template
 
     sourceId:
       type: string
@@ -44,6 +65,7 @@ configSchema:
       minimum: 0
       maximum: 0.9
       step: 0.05
+      "ui:field": template
 
     # The six type filters, matching the Spatial view panel's vocabulary. Each maps to one
     # flag on /spatial/search.
@@ -52,28 +74,28 @@ configSchema:
       title: Include Needs
       description: Fetch needs from results
       default: false
-      "ui:widget": toggle
+      "ui:field": template
 
     includeImages:
       type: boolean
       title: Include Images
       description: Fetch images from results
       default: false
-      "ui:widget": toggle
+      "ui:field": template
 
     includeServices:
       type: boolean
       title: Include Services
       description: Fetch services from results
       default: false
-      "ui:widget": toggle
+      "ui:field": template
 
     includeActions:
       type: boolean
       title: Include Actions
       description: Fetch actions from results
       default: false
-      "ui:widget": toggle
+      "ui:field": template
 
     includeSkills:
       type: boolean
@@ -83,7 +105,7 @@ configSchema:
       # agent behaves rather than just what it finds.
       description: Fetch skills (behavioural instructions)
       default: true
-      "ui:widget": toggle
+      "ui:field": template
 
     includeMcps:
       type: boolean
@@ -93,7 +115,7 @@ configSchema:
       # label named half of what the flag controls.
       description: Fetch apps and MCP workflows from results
       default: false
-      "ui:widget": toggle
+      "ui:field": template
 
     # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
     #

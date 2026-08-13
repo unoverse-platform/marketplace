@@ -12,7 +12,7 @@ $schema: ../_schema/package.schema.json
 name: openai
 displayName: OpenAI
 description: OpenAI integration for Unoverse
-version: 1.2.0
+version: 1.3.0
 category: ai
 # First-party. The marketplace shows this on every node the package registers, so
 # "who am I trusting with this credential" is answerable without leaving the screen.
@@ -21,11 +21,13 @@ logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons
 
 features:
   - GPT-5.6 models
+  - Live two-way voice, with the model interruptible mid-sentence
   - Streaming responses
   - Function/tool calling
   - Text embeddings
   - Structured JSON output
   - Vision (image inputs)
+  - Realtime voice calls with transcripts of both sides
 
 # The ONLY hosts this package's nodes may call. The executor refuses anything else.
 #
@@ -38,7 +40,13 @@ allowedHosts:
 # Executor capabilities every manifest node here depends on. Deploy REFUSES this
 # package if the target universe's executor cannot satisfy them, so a manifest can
 # never name a capability that only exists on a newer executor.
+# `ws` and the raised floor came with OpenAIRealtimeVoice (2026-08-12): a realtime session is a
+# SOCKET, and the duplex runtime that holds one open landed in executor 1.5.0.
 requires:
   credential: [bearer]
-  transport: [sse, json]
-  executorVersion: ">=1.0.0"
+  transport: [sse, json, ws]
+  # OpenAIAgent keeps its OpenAI conversation id between runs. A universe whose executor
+  # cannot do this would otherwise read a permanently cold cache and start a new
+  # conversation every turn: memory that silently never remembers.
+  state: [read, merge]
+  executorVersion: ">=1.5.0"

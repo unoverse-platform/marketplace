@@ -2,9 +2,9 @@ $schema: ../../../_schema/node.schema.json
 
 # The agent, as a manifest. Responses API + the tool loop. NO SDK.
 #
-# NOT AT PARITY with the retired TypeScript agent in ONE respect: no cross-execution
-# conversation. Memory (both toggles + lanes) restored 2026-07-30; the narrator IS here
-# (api/narrate.yaml). See the gap note at the bottom.
+# AT PARITY with the retired TypeScript agent as of 2026-08-12. Memory (both toggles +
+# lanes) restored 2026-07-30, the narrator is here (api/narrate.yaml), and cross-execution
+# conversation closed the last gap. See the note at the bottom.
 #
 # It takes the real type, because a type is the identity a saved graph stores and an
 # invented suffix would put an implementation detail on a name people read. There is no
@@ -43,11 +43,23 @@ capabilities:
   # through its tools. Reusing a prior answer would skip real side effects.
   cacheable: false
 
-# ── NOT AT PARITY with the TypeScript OpenAIAgent. One gap left: ─────────────────────
+# ── CROSS-EXECUTION CONVERSATION, closed 2026-08-12 ──────────────────────────────────
 #
-#   conversation  Redis-backed previous_response_id ACROSS executions, keyed by
-#                 conversationId, plus the "reset conversation" phrase. Multi-turn works
-#                 WITHIN one execution here; it does not survive between them.
+# The retired node kept a previous_response_id in Redis and replayed it. This one keeps
+# OpenAI's own CONVERSATION id instead (api/run.yaml), which is the same feature reached
+# the better way round: a previous_response_id is a new value every turn, minted only
+# AFTER the turn ends, and the streaming model call is this node's last call with nothing
+# running after it. A conversation id is known BEFORE the call and never changes, so the
+# whole thing is three ordinary entries in the call list and no platform change.
+#
+# Keyed by chat thread, not by user, because a guest has a thread and no user id. Still
+# open, deliberately, and neither is needed for the feature to work:
+#
+#   reset       the retired node's "reset conversation" phrase. Today a thread's memory
+#               runs until the key is cleared; there is no expiry on it.
+#   identity    memory follows the THREAD. Following a signed-in user across threads and
+#               workflows needs the key to fall back between user and thread, which a
+#               state key cannot express (it renders, it does not branch).
 #
 # memory CLOSED 2026-07-30: the toggles are back in config.yaml and the two lanes
 # (hydratePromptWithUserMemory before the run, ingestConversationTurn after) run in the

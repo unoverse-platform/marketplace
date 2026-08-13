@@ -9,7 +9,7 @@
   url: "return 'wss://api.openai.com/v1/realtime?model=' + config.model"
   credential:
     scheme: bearer
-    token: "{{ credentials.openaiCredential.apiKey }}"
+    token: "{{ credentials.openAICredential.apiKey }}"
 
   # THE HANDSHAKE. A list because it is a list for other vendors: Nova needs an ordered
   # sequence here. OpenAI needs exactly one message, so this is a list of one.

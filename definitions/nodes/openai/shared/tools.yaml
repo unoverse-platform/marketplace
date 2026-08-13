@@ -35,8 +35,16 @@ resultsInto: input
 choiceInto: tool_choice
 choice: auto
 
-# How a turn chains to the next without resending the transcript.
-continuity:
-  match: response.completed
-  from: "return response.response.id"
-  into: previous_response_id
+# NO `continuity` HERE, and that is deliberate. How a turn reaches the one before it is a
+# per-node CHOICE on this vendor, not one wire format, because OpenAI offers two and
+# REFUSES both at once:
+#
+#   previous_response_id   chains response to response. A new id every turn, known only
+#                          after the turn ends. Declared by OpenAIStream.
+#   conversation           a durable id, minted once and named on every turn, with the API
+#                          keeping the history. Declared by OpenAIAgent, which is what lets
+#                          its memory outlive a single execution.
+#
+# Sending both is `mutually_exclusive_parameters`, a hard 400 (confirmed against the live
+# API 2026-08-12). So a node that names a conversation must NOT inherit continuity, and
+# this file cannot decide for both. Each declares its own, next to the reason it chose it.

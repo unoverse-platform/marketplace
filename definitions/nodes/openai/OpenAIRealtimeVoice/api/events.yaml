@@ -1,0 +1,98 @@
+# One row per output connector, in interface.yaml order.
+#
+# EVERYTHING HERE REACHES THE CLIENT OVER MCP STREAMING by landing on an output connector. Only
+# audio needs the separate lane, and audio is not in this file.
+
+# THE RETIRED NODE'S SHAPE: { query, response } for the last completed turn.
+#
+# `from: complete` because ONE row sees ONE event, and this needs two: the person's transcript and
+# the model's arrive on different events. `complete` fires once at the end over everything already
+# emitted, which is the only place both are in scope together.
+#
+# The retired node emitted this once at the end too (`emitFinal`), so the timing matches.
+- emit: text
+  from: complete
+  value: >-
+    return {
+      query: (events.filter(e => e.emit === 'userTranscript').map(e => e.value).at(-1)) ?? '',
+      response: (events.filter(e => e.emit === 'assistantTranscript').map(e => e.value).at(-1)) ?? ''
+    }
+
+# `from: tool` — NOT from the socket. A tool result is produced by the platform running the tool and
+# never appears in the vendor's stream, so no `match` could catch it.
+- emit: mcpResult
+  from: tool
+  value: "return { name: call.name, args: call.args, output: call.output }"
+
+# The Q/A log, in the retired node's exact format ("Q1: …\nA1: …\n"), composed at the end
+# because the two halves of a turn arrive on different events.
+#
+# IT COUNTED EMISSIONS, NOT TURNS. `assistantTranscript` is accumulate + throttle, so one
+# sentence lands in `events` as a dozen longer snapshots of itself, and numbering by index gave
+# a line per snapshot ("A1: Hello / A1: Hello, you / A2: Hello, you're speaking…", 2026-08-12).
+# Two passes fix it: COLLAPSE a run of consecutive rows to the value it settled on, then UNPREFIX
+# (the accumulator grows across the call, so each value is a strict prefix of the next; guarded by
+# startsWith for barge-in, where it isn't). Q and A are counted separately because a call can open
+# with the assistant speaking and the two sides then never re-align.
+- emit: progress
+  from: complete
+  value: >-
+    return events.filter(e => e.emit === 'userTranscript' || e.emit === 'assistantTranscript')
+      .reduce((turns, e) => turns.length && turns.at(-1).emit === e.emit
+        ? turns.slice(0, -1).concat([e])
+        : turns.concat([e]), [])
+      .reduce((out, e) => {
+        const user = e.emit === 'userTranscript';
+        const value = String(e.value ?? '');
+        const said = !user && out.spoken && value.startsWith(out.spoken)
+          ? value.slice(out.spoken.length)
+          : value;
+        return {
+          spoken: user ? out.spoken : value,
+          q: user ? out.q + 1 : out.q,
+          a: user ? out.a : out.a + 1,
+          log: out.log + (user ? 'Q' + (out.q + 1) : 'A' + (out.a + 1)) + ': ' + said.trim() + '\n'
+        };
+      }, { spoken: '', q: 0, a: 0, log: '' })
+      .log
+
+# The handshake was accepted — the node's own liveness signal, and the one thing a fixture can prove
+# without a microphone. A REJECTED handshake would otherwise look exactly like a quiet call.
+- emit: sessionReady
+  match: session.updated
+  value: "return true"
+
+# AN EMPTY TRANSCRIPTION IS NOT A TURN, which is what `when` is here to say.
+#
+# The vendor sends `...transcription.completed` with an empty `transcript` when it heard
+# speech it could not resolve into words — the caller was cut off, the frames arrived as one
+# late burst, the room was noisy. Emitting that fired a user turn nobody took: `text` settled
+# as { query: "", response: … } and the Q/A log grew a blank question, so a downstream node
+# reading `text.query` saw a person who had said nothing rather than a turn that never
+# happened. Observed live 2026-08-12.
+#
+# `when` and not a `|| ''` inside `value`, because the two say different things. The value
+# expression answers "what did they say"; only skipping the row answers "they did not speak".
+- emit: userTranscript
+  match: conversation.item.input_audio_transcription.completed
+  when: "return String(response.transcript || '').trim().length > 0"
+  value: "return response.transcript"
+
+# ACCUMULATED, so a consumer gets the sentence so far rather than a syllable. The vendor sends one
+# delta per few characters; without this a downstream node is handed a word at a time.
+#
+# RESET AT THE END OF EACH TURN, which on a socket is not optional. Accumulation runs for the
+# length of the RUN, and this node's run is the whole CALL — so without `resetOn` the accumulator
+# never clears and every turn carries every turn before it. A live call showed exactly that: five
+# turns in, every single emission still read "Hello, you're speaking with the BPP virtual
+# assistant…", and `text.response` settled as the entire conversation concatenated (2026-08-12).
+#
+# `response.done` and not `response.output_audio_transcript.done`: the turn is over when the
+# RESPONSE is, and a response may carry more than one output item. Whatever the throttle is
+# holding is flushed before the clear, so the turn's closing words still arrive.
+- emit: assistantTranscript
+  match: response.output_audio_transcript.delta
+  value: "return response.delta || ''"
+  accumulate: true
+  throttleMs: 200
+  resetOn: response.done

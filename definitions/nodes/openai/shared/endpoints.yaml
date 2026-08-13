@@ -6,3 +6,9 @@
 
 responses: https://api.openai.com/v1/responses
 embeddings: https://api.openai.com/v1/embeddings
+
+# A CONVERSATION is OpenAI's own server-side memory: a durable id you mint once and then
+# name on every response. Items are prepended to the request and the turn's input and
+# output are appended back, so history never travels from here and is never stored here.
+# Minted with POST and an empty body; the reply carries the id.
+conversations: https://api.openai.com/v1/conversations

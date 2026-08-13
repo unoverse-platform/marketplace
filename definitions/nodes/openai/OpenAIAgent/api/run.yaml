@@ -8,6 +8,54 @@
 # A CALL is one thing: how it is made AND how its reply is framed. That is why transport,
 # terminator and error live here and not in a file of their own.
 
+# ── CONVERSATION MEMORY ──────────────────────────────────────────────────────────────
+#
+# Three cheap steps before the model call, and between them they are the whole feature:
+# read the id we minted last time, mint one if there is none, write it back.
+#
+# What is NOT here is the point. No history is read, assembled, injected or stored. The
+# only thing that crosses this boundary is an opaque id; OpenAI holds the turns against
+# it and prepends them itself. So this stays a memory feature with no memory in it.
+#
+# KEYED BY THE CHAT THREAD, not the user, because a signed-out guest HAS a thread and has
+# no user id. Keying on an absent user id would resolve every guest to one key and feed
+# them each other's history, which is a leak, not a degraded feature. The trade is that
+# memory lives as long as the thread: a new thread starts fresh.
+
+- name: cached
+  # Switched off, or no thread id: either way nothing is read. The run still gets a
+  # conversation below, it just does not outlive the execution. Skipped leaves NO
+  # `calls.cached` at all, which is what the next call tests.
+  when: "return !!config.enableConversationMemory && !!scope.conversationId"
+  state: read
+  key: "openai:conversation:{{ scope.conversationId }}"
+
+- name: conversation
+  # Cold, or no thread to key on. Either way this run needs an id, so mint one. A fresh
+  # conversation on every run of an unkeyed thread costs one small request and keeps the
+  # model call below identical in both cases, which is why `generate` needs no branch.
+  when: "return !calls.cached || !calls.cached.id"
+  method: POST
+  url: { $ref: endpoints#conversations }
+  transport: json
+  credential:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+  body: {}
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message"
+
+- name: remember
+  # Only when memory is ON, we minted one, AND there is somewhere to put it. `merge`
+  # rather than a replace because the key is shared: it is read-modify-write, so a future
+  # writer's fields survive. NOTE: no TTL, so a remembered conversation persists until
+  # something clears it.
+  when: "return !!config.enableConversationMemory && !!calls.conversation && !!scope.conversationId"
+  state: merge
+  key: "openai:conversation:{{ scope.conversationId }}"
+  value: "return { id: calls.conversation.id }"
+
 - name: generate
   method: POST
   url: { $ref: endpoints#responses }
@@ -19,6 +67,13 @@
   body:
     model: "{{ config.model }}"
     input: "{{ config.prompt }}"
+    # EXACTLY ONE of these is set: `conversation` is skipped when `cached` held an id, so
+    # the two are alternatives rather than a fallback chain. Written as an `if` and not a
+    # concatenation so a reader is not left working out why two ids side by side are safe.
+    #
+    # This is also why this node declares no `continuity`: naming a conversation and a
+    # previous_response_id together is a 400. See shared/tools.yaml.
+    conversation: "{{#if calls.cached.id}}{{ calls.cached.id }}{{else}}{{ calls.conversation.id }}{{/if}}"
     instructions: "{{ config.systemPrompt }}"
     max_output_tokens: "{{ config.maxTokens }}"
     stream: true

@@ -34,8 +34,19 @@ call:
     maxResults: "return config.maxResults != null ? Number(config.maxResults) : 10"
     workflowId: "return scope.workflowId"
 
+    # WHO IS ASKING. Sent so the platform can record which region of the map this query put
+    # them in — the person's journey through the named themes, written only when the region
+    # CHANGES, and never blocking the search. Undefined for an unauthenticated run, which the
+    # server treats as "do not record" rather than as an error.
+    userId: "return scope.userId"
+
     # PASSED THROUGH, NEVER COERCED. Each is `config.x` and nothing more, which is exactly
     # what the retired node did (`includeMcps: config?.includeMcps`).
+    #
+    # Still `config.x` after these became WIRABLE (2026-08-13, see config.yaml's header): the
+    # workflow may now decide any of them PER RUN through `ui:field: template`, but it does so
+    # by feeding CONFIG, so nothing here changes and `params` stays the agent's arguments
+    # alone. A flag must be exactly one `{{ path }}` to survive as a boolean.
     #
     # An UNSET flag must arrive as undefined so `resolveBody` drops the key and the SERVER's
     # own default applies — and those defaults are mostly TRUE (images, needs, services,
