@@ -11,7 +11,9 @@ findIntent:
     turn's question. NOT for open desires with no named thing
     ("something romantic", "a fun evening"), which is discoverRelated. If ANY result has
     object_type="skill" you MUST call readSkill before responding; check ALL results, not
-    just the top one. Do not pair with discoverRelated in parallel.
+    just the top one. Do not pair with discoverRelated in parallel. Pass includeApps: false when
+    this turn CONTINUES a conversation (a follow-up, a thing already on screen, refining)
+    rather than OPENS an ask — cards are for arriving options, not for mid-flow answers.
   calls:
     - $ref: search#call
       body:
@@ -35,7 +37,10 @@ discoverRelated:
     grouped by need, so nearby items are the adjacent choices), including options the user
     did not think to ask about, which is the awareness and upsell surface. NOT for a named
     thing or category, which is findIntent. Also the follow-up when findIntent came back
-    weak. Low similarity is normal here: these are neighbours, not exact matches.
+    weak. Low similarity is normal here: these are neighbours, not exact matches. Pass
+    includeApps: false when this turn CONTINUES a conversation (a follow-up, a thing
+    already on screen, refining) rather than OPENS an ask — cards are for arriving
+    options, not for mid-flow answers.
   calls:
     - $ref: search#call
       body:

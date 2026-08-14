@@ -45,8 +45,12 @@ call:
     #
     # Still `config.x` after these became WIRABLE (2026-08-13, see config.yaml's header): the
     # workflow may now decide any of them PER RUN through `ui:field: template`, but it does so
-    # by feeding CONFIG, so nothing here changes and `params` stays the agent's arguments
-    # alone. A flag must be exactly one `{{ path }}` to survive as a boolean.
+    # by feeding CONFIG, so nothing here changes. A flag must be exactly one `{{ path }}` to
+    # survive as a boolean.
+    #
+    # ONE EXCEPTION, and it is the last line of this block, not this one: `includeMcps` also
+    # reads `params.includeApps`, downwards only. Every other flag here is config alone, and
+    # `params` for them stays the agent's arguments — which it may not set.
     #
     # An UNSET flag must arrive as undefined so `resolveBody` drops the key and the SERVER's
     # own default applies — and those defaults are mostly TRUE (images, needs, services,
@@ -61,7 +65,18 @@ call:
     includeServices: "return config.includeServices"
     includeActions: "return config.includeActions"
     includeSkills: "return config.includeSkills"
-    includeMcps: "return config.includeMcps"
+    # THE ONE SETTING THE MODEL MAY TOUCH, AND ONLY DOWNWARDS (2026-08-14). Apps come back
+    # as CARDS — `renderComponents` in api/service.yaml is unconditional, so a row carrying
+    # a component renders the moment it surfaces. That is right when the guest is choosing
+    # between things they have not seen, and wrong when they are asking ABOUT something
+    # already named, or refining what is in front of them: another card is a step backwards.
+    # Only the caller knows which of those this turn is, so `includeApps` is a tool argument.
+    #
+    # NARROWING ONLY, which is why it does not break the law at the top of config.yaml: that
+    # rule objects to a model that could "turn ON a content type" and route around the
+    # author. The author's setting stays the CEILING — `false` here stays false whatever is
+    # asked — and the model may only decline what was already permitted.
+    includeMcps: "return config.includeMcps === false ? false : params.includeApps"
 
     # OPTIONAL source scope (migration 021): restrict the whole search to rows from ONE
     # source ("only this doc's needs"). Author-set, never a default — unset resolves to

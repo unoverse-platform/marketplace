@@ -59,10 +59,18 @@ prose:
   # between sections, a quoted term, a reference number set as code. Before these existed
   # the Markdown primitive had no recipe key for them, so they rendered at the browser's
   # default, which is the one way a definition's look escapes the token layer entirely.
+  # WEIGHT ONLY, NO COLOUR. An inline mark is drawn INSIDE whatever it emphasises, and the
+  # recipes are inline styles with no nesting context — so a colour asserted here beats the
+  # colour of the thing it sits in. Bolding a link's anchor text (`[**Applied Knowledge**](…)`
+  # — the shape the markdown guidelines ask for, since they bold product names AND link first
+  # mentions) turned the words `text.primary` while the link's arrow, a direct child of the
+  # anchor, stayed on the link colour: one bubble cobalt, the next one black, same theme
+  # (observed live 2026-08-14). Inheriting is also the correct answer everywhere else: bold
+  # in body copy takes the body's colour, bold in a quote takes the quote's. Colour belongs
+  # to the CONTEXT; an inline mark contributes weight.
   strong:
     $value:
       fontWeight: "{font.weight.semibold}"
-      color: "{color.text.primary}"
   emphasis:
     $value:
       fontStyle: italic

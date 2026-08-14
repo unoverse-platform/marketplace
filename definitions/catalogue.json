@@ -1,5 +1,5 @@
 {
-  "release": "0.1.31",
+  "release": "0.1.32",
   "items": [
     {
       "kind": "component",
@@ -530,7 +530,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "8776febc90c7f8db",
+      "fingerprint": "345d77770e9cb06e",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
@@ -1362,7 +1362,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "e06d85f3d32bd934",
+      "fingerprint": "cc2ac9eac4f7670f",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

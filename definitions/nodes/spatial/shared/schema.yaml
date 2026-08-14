@@ -29,6 +29,15 @@ spatial:
       recommendations); only a desire or occasion is named → discoverRelated. Do NOT call
       both in parallel. SEARCH before answering.
 
+    Phase 0a — Does this turn OPEN an ask, or CONTINUE one? Apps come back as cards, and a
+    card is an offer of options. An OPENING turn — a new ask, a new subject, the start of
+    choosing — wants cards: they are how options arrive. A CONTINUING turn — a follow-up,
+    a question about what is already on screen or already surfaced, refining, being walked
+    through something — wants text: a card mid-flow interrupts the exchange, and the
+    strongest case is asking about a thing already in front of them, where another card is
+    a step backwards. Pass includeApps: false on a continuing turn; leave it alone on an
+    opening one.
+
     Phase 0b — Weak results: if the search you chose comes back weak, follow up with the
     OTHER one before answering. Strong results → answer from them directly.
 
@@ -98,6 +107,12 @@ spatial:
               searched in this conversation, and nothing that a later answer has superseded:
               an opening ask still sitting in slot 0 after the user has answered a form fills
               half the results with what they wanted before they told you.
+          includeApps:
+            type: boolean
+            description: >-
+              Default true. False = no app cards from this search — for a turn that
+              CONTINUES the conversation rather than OPENS an ask (Phase 0a). Cannot turn
+              apps ON: the box's own setting is the ceiling.
 
     discoverRelated:
       description: >-
@@ -137,6 +152,12 @@ spatial:
               conversation, and nothing that a later answer has superseded: an opening ask
               still sitting in slot 0 after the user has answered a form fills half the
               results with what they wanted before they told you.
+          includeApps:
+            type: boolean
+            description: >-
+              Default true. False = no app cards from this search — for a turn that
+              CONTINUES the conversation rather than OPENS an ask (Phase 0a). Cannot turn
+              apps ON: the box's own setting is the ceiling.
 
     readResult:
       description: >-
