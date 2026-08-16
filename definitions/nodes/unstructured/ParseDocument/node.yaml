@@ -28,6 +28,11 @@ auth:
   required: false
 
 capabilities:
-  # Parsing IS deterministic for a given file, but the input is usually a URL whose contents can change,
-  # and a stale transcript of the wrong document is worse than parsing twice.
-  cacheable: false
+  # Parsing IS deterministic for a given file, so cache BY CONTENT IDENTITY, never by URL.
+  # `fileUrl` is usually a presigned link (new signature every run over the same bytes), so it
+  # is dropped from the fingerprint; the identity is the `etag` an upstream file node delivers.
+  # No etag on the inputs → nothing to key on → the run is not cached, which keeps the old
+  # caution: a stale transcript of the wrong document is worse than parsing twice.
+  cacheable:
+    ignore: [fileUrl]
+    key: [etag]

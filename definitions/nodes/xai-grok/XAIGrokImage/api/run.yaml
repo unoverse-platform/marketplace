@@ -1,0 +1,42 @@
+# One synchronous call. THE MODEL IS FIXED: grok-imagine-image-2.0 is the only image id the
+# vendor documents (docs.x.ai REST reference, 2026-08-15; shipped 2026-08-07), so there is no
+# choice to surface and a free-text field would only invite a value the endpoint rejects.
+# When xAI ships a second id, this becomes an enum in config.yaml exactly as the voice node's
+# model did.
+
+- name: generate
+  method: POST
+  url: https://api.x.ai/v1/images/generations
+  credential:
+    scheme: bearer
+    token: "{{ credentials.xaiCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  # Image generation is slow, and a multi-image request more so.
+  timeoutMs: 300000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    model: grok-imagine-image-2.0
+    prompt: "{{ config.prompt }}"
+    n: "return config.imageCount || 1"
+    # `auto` is a real value the vendor takes, not an omission — it means "pick the frame
+    # that suits the prompt", so it is sent rather than dropped.
+    aspect_ratio: "return config.aspectRatio || 'auto'"
+    resolution: "return config.resolution || '1k'"
+    # URLs, not b64_json: bytes through the graph would be megabytes of base64 per image,
+    # and every consumer of this node wants a link — a template to display, the video node
+    # to animate.
+    response_format: url
+
+  error:
+    # A refusal or empty result can come back as a 200 with no data entries, which would
+    # otherwise emit an empty array and look like success.
+    when: "return !((response.data || []).length)"
+    message: >-
+      return 'Grok returned no images.'
+        + (response.error ? ' ' + JSON.stringify(response.error) : '')

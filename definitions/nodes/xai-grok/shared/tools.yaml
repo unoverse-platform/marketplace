@@ -28,6 +28,16 @@ tool: >-
   return { type: 'function', name: tool.name, description: tool.description,
            parameters: tool.parameters }
 
+# HOW THE LIST IS RE-OFFERED once it has grown mid-call. A socket sends its tools once at the
+# handshake, so growth has to be announced on purpose — this message is that announcement.
+#
+# ONLY `tools` in the session block: session.update MERGES rather than replaces (verified live on
+# OpenAI 2026-08-12; xAI documents the same session.update semantics), so instructions, voice and
+# turn detection survive untouched. Re-sending the whole session would be a second copy of the
+# handshake, free to drift. No `type: realtime` key — xAI's session object does not carry one.
+offer: >-
+  return { type: 'session.update', session: { tools: tools } }
+
 # How a call ARRIVES. `match` is what makes a stream tractable: events keep coming for the whole
 # conversation, and this says which of them is a tool call rather than a transcript or audio.
 call:

@@ -4,13 +4,14 @@
 # The bearer token goes on the HANDSHAKE, resolved by the same auth code an HTTP call uses rather than a
 # second copy of it.
 #
-# THE MODEL IS FIXED, deliberately. xAI's realtime endpoint takes the model in the query string and the
-# code version hardcoded one id; exposing it as config would invite a value the endpoint rejects at
-# handshake time, which fails the whole call rather than one request.
+# THE MODEL COMES FROM CONFIG since the think-fast-2.0 upgrade (2026-08-15). The v1 manifest fixed it
+# because a free-text value the endpoint rejects fails the whole call at handshake time; config.yaml
+# now enum-constrains it to the vendor's own list, which removes that risk without hardcoding an id
+# that goes stale — exactly the OpenAI voice node's arrangement.
 
 - name: session
   transport: ws
-  url: "return 'wss://api.x.ai/v1/realtime?model=grok-voice-think-fast-1.0'"
+  url: "return 'wss://api.x.ai/v1/realtime?model=' + config.model"
   credential:
     scheme: bearer
     token: "{{ credentials.xaiCredential.apiKey }}"
@@ -26,19 +27,41 @@
       session:
         instructions: "{{ config.systemPrompt }}"
         voice: "{{ config.voice }}"
+        # THE THINKING DIAL, new with think-fast-2.0. `high` is the vendor default; `none` trades
+        # reasoning for latency. Sent even at the default so the session states what it runs at.
+        reasoning: "return { effort: config.reasoningEffort || 'high' }"
+        # HOW A PHRASE SOUNDS, not what it writes — the vendor's `replace` map, applied at the
+        # mouth. Transcripts and the conversation keep the written form.
+        replace: "return config.pronunciation || {}"
         # `null` DISABLES turn detection, which is the vendor's own spelling and not a template
         # accident. With it null nothing ever decides the person has finished speaking, so nothing is
         # answered unless something else commits the buffer.
         #
-        # The thresholds are the code version's own numbers (0.6 / 300ms / 600ms), which differ from
-        # the OpenAI node's — they are tuned per vendor and are not interchangeable.
+        # NO HAND-TUNED THRESHOLDS since 2.0. The v1 numbers (0.6 / 300ms / 600ms) were tuned against
+        # the v1 model; 2.0 ships its own defaults (threshold 0.85, prefix 333ms) tuned against
+        # itself, and re-sending v1's numbers would silently override them. Bare `server_vad` takes
+        # whatever the current model considers right.
         turn_detection: >-
-          return config.turnDetection === 'manual' ? null
-            : { type: 'server_vad', threshold: 0.6, prefix_padding_ms: 300, silence_duration_ms: 600 }
+          return config.turnDetection === 'manual' ? null : { type: 'server_vad' }
         audio:
           # 24 kHz both ways. The browser captures at 16 kHz and the executor resamples, named in
           # api/audio.yaml because interpolation is not something an expression can express.
-          input: { format: { type: audio/pcm, rate: 24000 } }
+          input:
+            format: { type: audio/pcm, rate: 24000 }
+            # GATES the streaming user transcript. v2 only emits the input transcription events when
+            # a transcription model is named; without the model line the person's words never come
+            # back and userTranscript stays silent for the whole call.
+            #
+            # The hint and the terms bias UNDERSTANDING of the caller, not what Grok speaks:
+            # `language_hint` says what language to expect (auto-detected when empty), `keyterms`
+            # (up to 100) are the domain words transcription would otherwise miss. `undefined`
+            # drops the key from the JSON, which is how "not set" stays unsent.
+            transcription: >-
+              return {
+                model: 'grok-transcribe',
+                language_hint: String(config.languageHint || '').trim() || undefined,
+                keyterms: (config.keyterms || []).length ? config.keyterms : undefined
+              }
           output: { format: { type: audio/pcm, rate: 24000 } }
 
         # TOOLS ARE DECLARED ONCE, HERE, because a realtime session has no per-request moment to offer
@@ -62,6 +85,18 @@
           content: [{ type: m.role === 'assistant' ? 'text' : 'input_text', text: String(m.content ?? '') }]
         }
       }))
+
+    # THE SCRIPTED LINE, spoken before anything conversational. The vendor's force_message item
+    # reads the text VERBATIM — no generation, so compliance wording cannot be paraphrased — and
+    # `interruptible: false` means it cannot be talked over. No `response.create` after it: a
+    # forced line is not a turn and asks for no answer. Before the opening prompt below, so a call
+    # with both plays script first, then the generated greeting. [] when empty.
+    - >-
+      return String(config.scriptedOpening || '').trim()
+        ? [{ type: 'conversation.item.create',
+             item: { type: 'force_message', role: 'assistant', interruptible: false,
+                     content: [{ type: 'output_text', text: String(config.scriptedOpening) }] } }]
+        : []
 
     # THE OPENING PROMPT. Two messages: the user's, then `response.create` so the model answers it at
     # once. Without the second the item sits in the conversation and Grok never speaks, which defeats

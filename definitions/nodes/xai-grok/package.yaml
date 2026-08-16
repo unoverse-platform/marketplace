@@ -12,13 +12,22 @@ $schema: ../_schema/package.schema.json
 
 name: xai-grok
 displayName: xAI Grok
-description: Realtime voice conversations with xAI's Grok
-version: 2.0.0
+description: Voice conversations, image generation and video generation with xAI's Grok
+# 2.1.0: grok-voice-think-fast-2.0 (model picker + reasoning dial + gated transcription), plus the
+# transcript-accumulation and Q/A-log fixes proven live on the sibling realtime voice node.
+# 2.2.0: Grok Imagine joins the package — XAIGrokImage (imagine-image-2.0, synchronous) and
+# XAIGrokVideo (imagine-video-1.5, an async job the poll capability waits on).
+# 2.3.0: XAIGrokVideoExtend — chained shots via /v1/videos/extensions, because one 15-second
+# generation compresses a construction-to-function arc too far (probed live 2026-08-15).
+version: 2.3.0
 category: ai
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
 
 features:
   - Realtime voice conversation with Grok, with MCP tool calling
+  - Image generation with Grok Imagine, typography-strong, hosted URLs back
+  - Short video generation from a prompt or a still image, with sound
+  - Video extension, continuing an existing clip shot by shot
 
 allowedHosts:
   - api.x.ai
@@ -26,4 +35,8 @@ allowedHosts:
 requires:
   executorVersion: ">=1.6.0"
   credential: [bearer]
-  transport: [ws]
+  # ws carries the voice session; json carries the Imagine REST calls.
+  transport: [ws, json]
+  # The video node waits on a render job. Without `poll` it would settle on the job RECEIPT
+  # and emit that as the answer, with nothing anywhere reporting a problem.
+  poll: true

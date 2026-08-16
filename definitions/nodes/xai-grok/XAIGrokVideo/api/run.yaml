@@ -1,0 +1,51 @@
+# One JOB: start the render, poll until done. THE MODEL IS FIXED at grok-imagine-video-1.5,
+# the current GA id (docs.x.ai REST reference, 2026-08-15); the bare `grok-imagine-video`
+# alias is deliberately not used, so a silent vendor re-route cannot change output under a
+# saved workflow. When a second id ships this becomes a config enum, as the voice node's did.
+
+- name: generate
+  method: POST
+  url: https://api.x.ai/v1/videos/generations
+  credential:
+    scheme: bearer
+    token: "{{ credentials.xaiCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  timeoutMs: 120000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    model: grok-imagine-video-1.5
+    # Optional with a starting image, required without one — the vendor enforces the second
+    # half, so an empty prompt on a text-only run fails at the API with its own message
+    # rather than being second-guessed here. `undefined` drops the key when serialised.
+    prompt: "return String(config.prompt || '').trim() || undefined"
+    # The still to animate. The vendor takes { url } with a public URL or a base64 data URL.
+    image: >-
+      return String(config.imageUrl || '').trim()
+        ? { url: String(config.imageUrl).trim() }
+        : undefined
+    duration: "return config.duration || 8"
+    aspect_ratio: "return config.aspectRatio || '16:9'"
+    resolution: "return config.resolution || '720p'"
+
+  # THE REPLY IS THE FINAL STATUS PAYLOAD, not the start receipt: the POST answers only
+  # { request_id }, and polling GET /v1/videos/{id} until `done` is what produces the video.
+  #
+  # `until` is asked of the start reply first (a receipt has no status, so it polls), and
+  # `failed` is written because without it a terminally failed render is polled to the
+  # attempt ceiling and reports a timeout instead of the reason.
+  #
+  # 5s x 240 = twenty minutes. A 720p render takes ~25 seconds, but 1080p at 15 seconds is
+  # the honest worst case and a bound set for the fast job fails exactly the slow one.
+  poll:
+    url: "return 'https://api.x.ai/v1/videos/' + response.request_id"
+    until: "return response.status === 'done'"
+    failed: "return response.status === 'failed'"
+    message: "return 'Video generation failed. ' + JSON.stringify(response.error || response)"
+    intervalMs: 5000
+    maxAttempts: 240

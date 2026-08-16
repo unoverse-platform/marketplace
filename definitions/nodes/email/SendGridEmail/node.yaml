@@ -45,3 +45,9 @@ capabilities:
   # send for a message that was never delivered, which is the worst possible lie for a node
   # whose entire purpose is that something left the building.
   cacheable: false
+
+  # The same fact, stated positively so the ENGINE can act on it: mail that has reached a
+  # mailbox has no inverse. Test runs withhold this node and trace what it would have sent,
+  # because a build calls runTest after every stage and each one would otherwise put a real
+  # message in a real person's inbox.
+  emitsExternally: true

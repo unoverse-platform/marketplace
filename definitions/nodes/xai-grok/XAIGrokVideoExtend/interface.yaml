@@ -1,0 +1,26 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt and video url
+    required: false
+
+# THE SAME THREE OUTPUTS AS THE GENERATION NODE, deliberately: an extension chain reads
+# `videoUrl` off whichever step came last, so the two node types have to be interchangeable
+# to whatever consumes them.
+outputs:
+  - name: videoUrl
+    type: string
+    description: The extended video, as a hosted URL
+  - name: video
+    type: object
+    description: "The full result: url, duration (seconds), respectModeration"
+  - name: metadata
+    type: object
+    description: model, generatedAt
+
+credentials:
+  - name: xaiCredential
+    required: true
+    displayName: xAI

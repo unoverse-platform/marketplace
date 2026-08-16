@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: XAIGrokVideo
+# PromiseNode WITH `poll`: generation is an async job (POST returns a request_id, GET reports
+# progress), but the node's answer is still one settled reply — the finished video. Only the
+# LAST call's transport decides kind, and poll changes nothing there.
+kind: PromiseNode
+
+name: Grok Video
+category: Media & Design
+color: "#000000"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
+
+description: Generate short videos from a prompt or a still image with Grok Imagine
+
+whenToUse: >-
+  Turn a description or a still image into a short video: motion, camera work, atmosphere and
+  sound generated together, one to fifteen seconds. Give it a starting image and it animates
+  that exact scene, so a picture made earlier in the workflow can be brought to life. A static
+  image, and a live spoken conversation, are different jobs.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: generation is non-deterministic, two runs are meant to differ.
+  cacheable: false

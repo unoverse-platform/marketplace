@@ -1,0 +1,26 @@
+# One row per output connector, in interface.yaml order — the generation node's rows, because
+# the poll endpoint is the same and the outputs are deliberately interchangeable.
+#
+# `calls.extend` is the FINAL poll payload (status done), not the start receipt.
+
+- emit: videoUrl
+  from: response
+  value: "return ((calls.extend || {}).video || {}).url || ''"
+
+- emit: video
+  from: response
+  value: >-
+    return {
+      url: ((calls.extend || {}).video || {}).url || '',
+      duration: ((calls.extend || {}).video || {}).duration || 0,
+      respectModeration: ((calls.extend || {}).video || {}).respect_moderation === true
+    }
+
+# `generatedAt` is epoch milliseconds: the sandbox exposes Date.now() and refuses `new`.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      model: (calls.extend || {}).model || 'grok-imagine-video',
+      generatedAt: Date.now()
+    }

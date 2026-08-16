@@ -1,0 +1,62 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    prompt:
+      type: string
+      title: Motion Prompt
+      description: >-
+        What happens in the video — the motion, camera and mood. Required when generating
+        from text alone; with a starting image it may be left empty and the model animates
+        the scene as it sees it.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    imageUrl:
+      type: string
+      title: Starting Image URL
+      description: >-
+        A still to animate — the video opens on this exact frame. Wire in an image made
+        upstream (e.g. images.0.url from an image step) or paste any public image URL.
+        Leave empty to generate from the prompt alone.
+      default: ""
+      "ui:field": template
+    duration:
+      type: number
+      title: Duration (seconds)
+      description: How long the video runs. Longer costs proportionally more.
+      default: 8
+      minimum: 1
+      maximum: 15
+    aspectRatio:
+      type: string
+      title: Aspect Ratio
+      description: The shape of the frame.
+      enum: ["16:9", "9:16", "1:1", "4:3", "3:4", "3:2", "2:3"]
+      default: "16:9"
+    resolution:
+      type: string
+      title: Resolution
+      description: 1080p renders sharpest and slowest; 480p is the fast draft.
+      enum: [480p, 720p, 1080p]
+      default: 720p
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (who-can-run-it.md).
+    # INSTANCE config, not the manifest's `auth`. The executor takes the STRICTER of the two.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [authRequired, authRole, prompt, imageUrl, duration, aspectRatio, resolution]

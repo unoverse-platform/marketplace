@@ -1,0 +1,22 @@
+$schema: ../../../_schema/test.schema.json
+
+# Text-to-video, short and small — the cheapest honest render (video bills per second).
+# Asserts the SHAPE: a hosted URL and a plausible duration, never anything about the scene.
+
+testData:
+  config:
+    prompt: >-
+      A paper boat drifting across a puddle in light rain, gentle ripples, soft ambient
+      sound, slow push-in
+    imageUrl: ""
+    duration: 4
+    aspectRatio: "16:9"
+    resolution: 480p
+  inputs:
+    signal: {}
+  expect:
+    videoUrl: "return output.videoUrl.startsWith('https://')"
+    video: >-
+      return output.video.url === output.videoUrl
+        && output.video.duration > 0
+    metadata: "return output.metadata.generatedAt > 0"

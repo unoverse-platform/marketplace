@@ -5,14 +5,11 @@ inputs:
     type: object
     description: Output from the last node in the loop body. Reaching this node is what ends a pass.
 
+# ONE DOT, and it is the one a builder actually wires. The next-iteration signal is NOT here:
+# it is a `send` row in api/events.yaml addressed to the node named in `loopStartNodeId`, so the
+# loop-back needs no connector and no edge (LOOP_NODES_SPEC.md). The pair still has no actor —
+# re-entry is a delivery the platform performs, not the node reaching into the engine.
 outputs:
-  # THE LOOP-BACK, and it is an ordinary output on an ordinary edge — routed to the paired LoopStart
-  # by loopStartNodeId. That is the whole reason this pair needs no actor: re-triggering is a signal
-  # travelling along the graph, not a node reaching into the engine to re-invoke itself. The retired
-  # single-node Loop did the latter, which is why it was replaced.
-  - name: continue
-    type: signal
-    description: "Internal: next-iteration signal to the paired LoopStart"
   - name: done
     type: object
     description: "Emitted once the array is exhausted: { done, collected, total }"

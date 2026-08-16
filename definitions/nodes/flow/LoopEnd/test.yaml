@@ -26,9 +26,17 @@ testData:
       body1:
         output: whatever the loop body produced
   expect:
-    # ADVANCED BY EXACTLY ONE. Asserting the index is what proves the increment happened in storage
-    # rather than the node merely answering on the right dot.
-    continue: "return output.continue.index === 1 && output.continue.total === 3"
-    # AND THE OTHER DOT IS SILENT. Emitting on both would run the loop body and the downstream branch
-    # together, which reads as working right up until the results are wrong.
+    # MID-LOOP SETTLES WITH NO OUTPUT AT ALL, and that is the assertion now.
+    #
+    # The next-iteration signal stopped being a connector: it is a `send` row addressed to the node
+    # in `loopStartNodeId`, so it never appears in `output`. What used to be proven by reading
+    # `output.continue.index` is therefore no longer visible to this bench, whose scope is the
+    # emitted connectors only.
+    #
+    # What this still proves is the part that breaks loudly if it regresses: on a continuing pass
+    # the node does NOT emit `done`. Emitting it here would run the downstream branch while the
+    # loop body is still going, which reads as working right up until the results are wrong.
+    #
+    # The increment itself is covered where it can actually be seen, over the loop capability
+    # directly: packages/base/tests/manifest-loop.test.ts.
     done: "return output.done === undefined"

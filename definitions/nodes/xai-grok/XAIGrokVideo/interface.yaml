@@ -1,0 +1,25 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt and image url
+    required: false
+
+outputs:
+  # The plain string first: a template shows a video by its URL, and reaching into an object
+  # for the one field everyone wants is friction with no information in it.
+  - name: videoUrl
+    type: string
+    description: The finished video, as a hosted URL
+  - name: video
+    type: object
+    description: "The full result: url, duration (seconds), respectModeration"
+  - name: metadata
+    type: object
+    description: model, generatedAt
+
+credentials:
+  - name: xaiCredential
+    required: true
+    displayName: xAI

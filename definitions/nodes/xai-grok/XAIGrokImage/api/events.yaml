@@ -1,0 +1,23 @@
+# One row per output connector, in interface.yaml order.
+#
+# The vendor's `usage` block (cost_in_usd_ticks + token counts) rides on the same response
+# and the executor's usage collector picks it up on its own — nothing here has to emit it.
+
+- emit: images
+  from: response
+  value: >-
+    return ((calls.generate || {}).data || []).map(d => ({
+      url: d.url || ((d.file_output || {}).public_url || ''),
+      mimeType: d.mime_type || 'image/png'
+    }))
+
+# `generatedAt` is epoch milliseconds: the sandbox exposes Date.now() and refuses `new`, so
+# there is no way to format an ISO date inside an expression.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      model: 'grok-imagine-image-2.0',
+      imageCount: ((calls.generate || {}).data || []).length,
+      generatedAt: Date.now()
+    }

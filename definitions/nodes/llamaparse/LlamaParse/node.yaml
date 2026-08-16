@@ -27,6 +27,13 @@ auth:
   required: false
 
 capabilities:
-  # The input is usually a URL whose contents can change, and a stale transcript of the wrong
-  # document is worse than parsing twice.
-  cacheable: false
+  # Parsing IS deterministic for a given file, so cache BY CONTENT IDENTITY, never by URL.
+  # `fileUrl` is usually a presigned link: a new signature every run over the same bytes, so
+  # it is transport, not identity — `ignore` drops it from the fingerprint. The identity is
+  # the `etag` an upstream file node (S3FileContent) delivers with the file. When no etag
+  # arrives (a bare hand-typed URL), the key collects nothing and the run is NOT cached —
+  # which keeps the old caution: a stale transcript of the wrong document is worse than
+  # parsing twice.
+  cacheable:
+    ignore: [fileUrl]
+    key: [etag]

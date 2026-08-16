@@ -1,0 +1,24 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt
+    required: false
+
+outputs:
+  # URLs rather than bytes, by choice: `response_format: url` keeps megabytes of base64 out
+  # of the graph, and a hosted URL is what every consumer here actually wants — a template
+  # displays it, and the video node takes it as its starting frame.
+  - name: images
+    type: array
+    description: >-
+      One entry per image: url, mimeType. Index first when reading one, e.g. images.0.url
+  - name: metadata
+    type: object
+    description: model, imageCount, generatedAt
+
+credentials:
+  - name: xaiCredential
+    required: true
+    displayName: xAI

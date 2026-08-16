@@ -2,8 +2,24 @@ $schema: ../../../_schema/config.schema.json
 
 configSchema:
   type: object
-  required: []
+  required: [model]
   properties:
+    # ENUM-CONSTRAINED, which is what makes exposing it safe: the v1 node fixed the model in
+    # run.yaml because a free-text value the endpoint rejects fails the whole call at handshake
+    # time. Both values are the vendor's own (docs.x.ai realtime schema, 2026-08-15), so a picker
+    # cannot produce a rejected handshake. `grok-voice-latest` is the vendor alias and has routed
+    # to 2.0 since 2026-08-05 — pinning 2.0 is the default so a future silent re-route is a
+    # choice here, not a surprise. think-fast-1.0 is deliberately NOT offered: superseded, and
+    # keeping it would only preserve a way to pick the worse call.
+    model:
+      type: string
+      title: Model
+      description: >-
+        Which model answers the call. Think Fast 2 is the flagship; Latest silently follows
+        whatever xAI promotes next, so pin the version when behavior must not change under you.
+      enum: [grok-voice-think-fast-2.0, grok-voice-latest]
+      enumNames: [Think Fast 2.0, Latest (xAI alias)]
+      default: grok-voice-think-fast-2.0
     systemPrompt:
       type: string
       title: System Prompt
@@ -15,6 +31,40 @@ configSchema:
       title: Initial Request
       description: Text sent as a user message at call start — Grok answers it immediately.
       default: ""
+      "ui:field": template
+    # DIFFERENT from initialRequest, and both can be set: initialRequest makes the model GENERATE
+    # an answer, this makes it READ a line verbatim. Verbatim is the point — compliance wording
+    # ("this call is recorded") must never be paraphrased, so it rides the vendor's force_message
+    # item, which speaks the text exactly and cannot be talked over.
+    scriptedOpening:
+      type: string
+      title: Scripted Opening
+      description: >-
+        Spoken word-for-word before the conversation starts, and cannot be interrupted. Use for
+        wording that must never be paraphrased, like a recording disclosure.
+      default: ""
+      "ui:field": template
+    languageHint:
+      type: string
+      title: Language Hint
+      description: >-
+        Biases what the caller is understood in, as a BCP-47 code like ar or ja. Leave empty and
+        the language is auto-detected per utterance.
+      default: ""
+      "ui:field": template
+    keyterms:
+      type: object
+      title: Key Terms
+      description: >-
+        Words the caller is likely to say that transcription would otherwise miss — product names,
+        acronyms, jargon. An array of up to 100 strings.
+      "ui:field": template
+    pronunciation:
+      type: object
+      title: Pronunciation
+      description: >-
+        Fixes how Grok SAYS a phrase without changing what it writes: a map from the written form
+        to how it should sound, like {"Yas Island": "Yahs Island"}.
       "ui:field": template
     voice:
       type: string
@@ -32,6 +82,17 @@ configSchema:
       enum: [server_vad, manual]
       enumNames: ["Server VAD (automatic)", Manual]
       default: server_vad
+    # v2 IS A THINKING MODEL — "think fast" is the product name, and effort is the one dial the
+    # vendor exposes. `none` trades reasoning for latency; the vendor default is high.
+    reasoningEffort:
+      type: string
+      title: Reasoning
+      description: >-
+        Whether Grok deliberates before speaking. None answers fastest at the cost of harder
+        questions; High is the vendor default.
+      enum: [high, none]
+      enumNames: [High (default), None (fastest)]
+      default: high
     conversationHistory:
       type: object
       title: Conversation History
@@ -71,4 +132,4 @@ configSchema:
 # now owns — see api/audio.yaml.
 
 "ui:order":
-  [authRequired, authRole, systemPrompt, initialRequest, voice, turnDetection, conversationHistory]
+  [authRequired, authRole, model, systemPrompt, scriptedOpening, initialRequest, voice, turnDetection, reasoningEffort, languageHint, keyterms, pronunciation, conversationHistory]

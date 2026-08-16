@@ -12,6 +12,7 @@ $schema: ../../../_schema/test.schema.json
 
 testData:
   config:
+    model: grok-voice-think-fast-2.0
     systemPrompt: You are a concise assistant. Keep answers to one sentence.
     initialRequest: Say hello and nothing else.
     voice: eve

@@ -6,9 +6,13 @@ type: XAIGrokVoice
 kind: CallbackNode
 
 name: xAI Grok Voice
-category: AI
+# The JOB is a voice call, and Voice is one of the twelve categories (node-discoverability.md).
+# `AI` pulled this toward text-model vocabulary and away from the work; the other realtime voice
+# node already sits in Voice.
+category: Voice
 color: "#000000"
-logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+# The X logo the legacy Grok node carried, shared with the x-search package.
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
 
 description: Realtime voice conversation with xAI's Grok
 

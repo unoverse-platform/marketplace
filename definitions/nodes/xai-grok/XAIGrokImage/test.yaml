@@ -1,0 +1,23 @@
+$schema: ../../../_schema/test.schema.json
+
+# Asserts the SHAPE, not the picture: a hosted https URL per image and a matching count.
+# Runs against the real service — one image at 1k, the cheapest honest request.
+
+testData:
+  config:
+    prompt: >-
+      A minimalist poster of a lighthouse at dusk, bold geometric shapes, the word
+      "NORTH" in clean sans-serif lettering at the bottom
+    imageCount: 1
+    aspectRatio: "2:3"
+    resolution: 1k
+  inputs:
+    signal: {}
+  expect:
+    images: >-
+      return output.images.length === 1
+        && output.images[0].url.startsWith('https://')
+        && output.images[0].mimeType.startsWith('image/')
+    metadata: >-
+      return output.metadata.imageCount === output.images.length
+        && output.metadata.generatedAt > 0

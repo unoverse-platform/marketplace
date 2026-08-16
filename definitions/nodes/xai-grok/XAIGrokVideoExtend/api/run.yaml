@@ -1,0 +1,45 @@
+# One JOB: start the extension, poll until done — the same shape as the generation node,
+# against the same status endpoint.
+#
+# NO `model` KEY, and that is a decision, not an omission. The field is optional here and the
+# vendor's own extensions example uses the floating alias; which pinned ids the endpoint
+# accepts is undocumented, so sending `grok-imagine-video-1.5` risks failing every call for
+# consistency's sake. The generation node pins because its model list IS documented; this
+# node takes the vendor default until the docs name ids for extensions.
+#
+# NO `output.upload_url`. The reference's field table calls it required, but the page's own
+# request example omits it, and the poll endpoint is the same GET /v1/videos/{request_id}
+# that hands generations a hosted video.url. This manifest follows the example; if the
+# vendor truly enforces the field, the POST fails with a 4xx naming it — loud, first run,
+# and the moment to decide where uploads should land.
+
+- name: extend
+  method: POST
+  url: https://api.x.ai/v1/videos/extensions
+  credential:
+    scheme: bearer
+    token: "{{ credentials.xaiCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  timeoutMs: 120000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    prompt: "{{ config.prompt }}"
+    video: >-
+      return { url: String(config.videoUrl || '').trim() }
+    duration: "return config.duration || 6"
+
+  # 5s x 240 = twenty minutes, the generation node's bound: an extension renders the same
+  # kind of work, and a bound set for the fast case fails exactly the slow one.
+  poll:
+    url: "return 'https://api.x.ai/v1/videos/' + response.request_id"
+    until: "return response.status === 'done'"
+    failed: "return response.status === 'failed'"
+    message: "return 'Video extension failed. ' + JSON.stringify(response.error || response)"
+    intervalMs: 5000
+    maxAttempts: 240

@@ -1,0 +1,53 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [prompt]
+  properties:
+    prompt:
+      type: string
+      title: Image Prompt
+      description: Describe the image to generate. Shared blocks work here.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    imageCount:
+      type: number
+      title: Images
+      description: How many variations come back for the one prompt.
+      default: 1
+      minimum: 1
+      maximum: 10
+    aspectRatio:
+      type: string
+      title: Aspect Ratio
+      description: >-
+        The shape of the frame. Auto lets the model pick whatever suits the prompt.
+      enum: ["auto", "1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "2:1", "1:2"]
+      default: auto
+    resolution:
+      type: string
+      title: Resolution
+      description: 2k renders sharper and costs the same per image; 1k returns faster.
+      enum: [1k, 2k]
+      enumNames: ["1K (1024px)", "2K (2048px)"]
+      default: 1k
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (who-can-run-it.md).
+    # INSTANCE config, not the manifest's `auth` — the builder's dial per box on the canvas.
+    # The executor takes the STRICTER of the two.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [authRequired, authRole, prompt, imageCount, aspectRatio, resolution]

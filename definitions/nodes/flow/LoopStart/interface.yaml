@@ -5,9 +5,12 @@ inputs:
     type: array
     description: Array of items to iterate over
 
-  # INTERNAL, and not wired by hand. LoopEnd routes its `continue` output back here by
-  # loopStartNodeId, and on that signal this node emits the item at the index LoopEnd just advanced.
-  # It is a separate connector rather than a flag on `items` because the two arrivals mean different
+  # WHERE THE NEXT PASS ARRIVES, and it is not wired by hand. LoopEnd has no `continue` output to
+  # wire: it addresses this node BY ID (`send: {{ config.loopStartNodeId }}` in its events table),
+  # so the platform delivers here directly and there is no edge to draw or to leave dangling. On
+  # that signal this node emits the item at the index LoopEnd just advanced.
+  #
+  # A separate connector rather than a flag on `items` because the two arrivals mean different
   # things: `items` opens a loop, `continue` resumes one.
   - name: continue
     type: signal

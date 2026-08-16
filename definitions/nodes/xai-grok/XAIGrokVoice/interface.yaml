@@ -6,14 +6,14 @@ inputs:
     description: Trigger. Starting the node opens the call.
     required: false
 
-# THE NAMES ARE THE CODE VERSION'S, unchanged, because a saved workflow references an output by name.
+# THE SAME SIX OUTPUTS AS THE OTHER REALTIME VOICE NODE, by decision (2026-08-15): the two nodes
+# are drop-in swaps for each other, and identical connectors is what makes the swap mechanical.
+# `conversation` (the accumulated full call) was the one extra and was removed for that parity —
+# `progress` carries the same turns as text.
 outputs:
   - name: text
     type: object
     description: "The last completed turn: { query, response }"
-  - name: conversation
-    type: object
-    description: The full conversation as it accumulates
   - name: mcpResult
     type: object
     description: MCP tool results
@@ -41,6 +41,7 @@ outputs:
 credentials:
   - name: xaiCredential
     required: true
+    displayName: xAI
 
 serviceConnectors:
   - name: mcpService

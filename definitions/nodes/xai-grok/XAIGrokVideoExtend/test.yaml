@@ -1,0 +1,21 @@
+$schema: ../../../_schema/test.schema.json
+
+# The source clip is a genuinely anonymous public URL AND ten seconds long — both learned
+# live (2026-08-15): Google's gtv-videos-bucket 403s a server-side fetch, and the vendor
+# rejects any input over 15 seconds ("got 52.2s" for the Sintel trailer). Two seconds of
+# extension — the cheapest honest run. Asserts the SHAPE: a hosted URL and a plausible
+# duration, never anything about the scene.
+
+testData:
+  config:
+    videoUrl: https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4
+    prompt: The camera slowly pulls back and the scene fades toward dusk
+    duration: 2
+  inputs:
+    signal: {}
+  expect:
+    videoUrl: "return output.videoUrl.startsWith('https://')"
+    video: >-
+      return output.video.url === output.videoUrl
+        && output.video.duration > 0
+    metadata: "return output.metadata.generatedAt > 0"

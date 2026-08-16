@@ -1,0 +1,28 @@
+$schema: ../../../_schema/node.schema.json
+
+type: XAIGrokImage
+# One call, one reply: the images endpoint is synchronous.
+kind: PromiseNode
+
+name: Grok Image
+category: Media & Design
+color: "#000000"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
+
+description: Generate images from a description with Grok Imagine
+
+whenToUse: >-
+  Create an image from a description: a picture, illustration, photo or graphic that does not
+  exist yet. Strong at legible typography and text inside the image, and returns finished
+  images as hosted URLs ready to display or hand to another step. Animating a still into
+  motion, and editing a photo that already exists, are different jobs.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody
+# thought about cannot look the same as one deliberately left open.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable. Generation is non-deterministic: asking twice is meant to produce two
+  # different images, and reusing the first would be a bug rather than a saving.
+  cacheable: false

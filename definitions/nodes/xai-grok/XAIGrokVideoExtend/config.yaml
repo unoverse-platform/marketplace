@@ -1,0 +1,50 @@
+$schema: ../../../_schema/config.schema.json
+
+configSchema:
+  type: object
+  required: [videoUrl, prompt]
+  properties:
+    videoUrl:
+      type: string
+      title: Video URL
+      description: >-
+        The clip to continue — the extension picks up from its final frame. Wire in the
+        videoUrl an earlier video step produced, or paste any public MP4 URL. The vendor
+        rejects clips longer than 15 seconds, so an already-extended clip usually needs
+        trimming before it can be extended again.
+      default: ""
+      "ui:field": template
+    prompt:
+      type: string
+      title: What Happens Next
+      description: >-
+        The next beat of the story — motion, camera and mood for the seconds being added,
+        not a re-description of what already happened.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    duration:
+      type: number
+      title: Extension (seconds)
+      description: How many seconds are added to the clip. Longer costs proportionally more.
+      default: 6
+      minimum: 2
+      maximum: 10
+
+    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (who-can-run-it.md).
+    # INSTANCE config, not the manifest's `auth`. The executor takes the STRICTER of the two.
+    authRequired:
+      type: boolean
+      title: Require sign-in
+      description: Only signed-in callers can run this step.
+      default: false
+      "ui:widget": toggle
+    authRole:
+      type: string
+      title: Require role
+      description: A claim the caller must carry, like finance:approve.
+      default: ""
+      "ui:dependencies": { authRequired: true }
+
+"ui:order": [authRequired, authRole, videoUrl, prompt, duration]

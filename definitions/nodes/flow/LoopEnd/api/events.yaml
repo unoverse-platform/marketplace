@@ -6,7 +6,14 @@
 # downstream branch at the same time — the same failure mode IfElse's fixture guards against, and the
 # reason each row's test asserts the other dot is silent.
 
-- emit: continue
+# THE LOOP-BACK, AND IT ADDRESSES A NODE RATHER THAN A DOT. The pair already names its partner
+# in `loopStartNodeId` — the same id this row's `advance` uses as its key — so declaring an output
+# and requiring an edge as well made one fact true in two places. They drifted: the canonical
+# ingest-enrich-loop pattern shipped WITHOUT the back-edge, which builds a loop that runs exactly
+# one pass and looks like it worked. There is now nothing on the canvas to wire and nothing to
+# leave dangling. Restores LOOP_NODES_SPEC.md, which always said no edge.
+- send: "{{ config.loopStartNodeId }}"
+  handle: continue
   when: "return !!response.continuing"
   value: "return { index: response.index, total: response.total }"
 

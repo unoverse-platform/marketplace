@@ -1,0 +1,29 @@
+$schema: ../../../_schema/node.schema.json
+
+type: XAIGrokVideoExtend
+# PromiseNode WITH `poll`, exactly like the generation node: the POST returns a job receipt
+# and GET /v1/videos/{request_id} — the same status endpoint generations poll — reports the
+# finished clip.
+kind: PromiseNode
+
+name: Grok Video Extend
+category: Media & Design
+color: "#000000"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
+
+description: Continue an existing video with the next few seconds of motion
+
+whenToUse: >-
+  Continue a video that already exists: describe what happens next and the clip grows by two
+  to ten seconds, picking up exactly where it left off. This is how a story longer than one
+  shot gets made — chain it after each render for staged scenes a single generation
+  compresses too much. Making a new video from scratch or from a still image is a different
+  job. Takes the video URL an earlier video step produced.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: generation is non-deterministic, two runs are meant to differ.
+  cacheable: false
