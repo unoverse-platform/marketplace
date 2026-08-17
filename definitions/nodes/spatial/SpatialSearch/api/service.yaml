@@ -4,16 +4,16 @@
 
 findIntent:
   description: >-
-    Precision search. The user has NAMED what they want, a specific thing, place, category or
-    task ("a Chinese restaurant", "book X", "how do I...", "recommend a good steakhouse"),
-    and this pinpoints the matches for that named need, however the ask is phrased. Pass the
-    user's EXACT words from THIS turn, do not paraphrase, and do not re-send an earlier
-    turn's question. NOT for open desires with no named thing
-    ("something romantic", "a fun evening"), which is discoverRelated. If ANY result has
+    Precision search. The user has NAMED what they want, a specific item, category or task
+    ("X", "how do I...", "which one covers Y?", "recommend a good Z"), and this pinpoints the
+    matches for that named need, however the ask is phrased. Pass the user's EXACT words from
+    THIS turn, do not paraphrase, and do not re-send an earlier turn's question. NOT for open
+    needs with no named thing ("where do I start?", "what are my options?"), which is
+    discoverRelated. If ANY result has
     object_type="skill" you MUST call readSkill before responding; check ALL results, not
-    just the top one. Do not pair with discoverRelated in parallel. Pass includeApps: false when
-    this turn CONTINUES a conversation (a follow-up, a thing already on screen, refining)
-    rather than OPENS an ask — cards are for arriving options, not for mid-flow answers.
+    just the top one. Do not pair with discoverRelated in parallel. Pass includeApps: false
+    only when this turn is about something ALREADY ON SCREEN (refining or asking about a card
+    they are reading) — a new subject gets cards however long the conversation has run.
   calls:
     - $ref: search#call
       body:
@@ -31,16 +31,16 @@ findIntent:
 
 discoverRelated:
   description: >-
-    Discovery search. For open desires where the user has NOT named the thing: an occasion, a
-    mood, a vague wish ("a romantic weekend", "something fun with the kids", "what's
-    available?"). Surfaces the NEIGHBOURHOOD of possibilities around the desire (content is
+    Discovery search. For open needs where the user has NOT named the thing: a goal, a
+    situation, a vague wish ("where should I start?", "what are my options?", "what's
+    available?"). Surfaces the NEIGHBOURHOOD of possibilities around the need (content is
     grouped by need, so nearby items are the adjacent choices), including options the user
-    did not think to ask about, which is the awareness and upsell surface. NOT for a named
+    did not think to ask about, which is the awareness surface. NOT for a named
     thing or category, which is findIntent. Also the follow-up when findIntent came back
     weak. Low similarity is normal here: these are neighbours, not exact matches. Pass
-    includeApps: false when this turn CONTINUES a conversation (a follow-up, a thing
-    already on screen, refining) rather than OPENS an ask — cards are for arriving
-    options, not for mid-flow answers.
+    includeApps: false only when this turn is about something ALREADY ON SCREEN (refining or
+    asking about a card they are reading) — a new subject gets cards however long the
+    conversation has run.
   calls:
     - $ref: search#call
       body:

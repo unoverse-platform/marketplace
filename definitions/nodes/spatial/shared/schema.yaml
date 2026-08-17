@@ -16,27 +16,52 @@ spatial:
 
     KNOWLEDGE PROTOCOL (MANDATORY — do not skip):
 
+    SEARCHING IS THE DEFAULT. Every turn gets a search. The question is only WHICH tool and
+    WHAT to send, never whether to call one, and you do not need a reason to search — you
+    need a reason NOT to. There are exactly three:
+      1. The user said something purely social with no ask in it ("thanks", "hi").
+      2. They asked you to act on something already in front of them, and answering needs no
+         new material.
+      3. You searched THIS EXACT WORDING earlier in THIS turn.
+    Nothing else qualifies. In particular: having answered them before is not a reason, the
+    subject feeling familiar is not a reason, and holding results from an earlier turn is not
+    a reason — those answered an earlier question, the user has since said more, and replying
+    from what you already hold is how a stale or invented answer reaches them. When in doubt,
+    search: an unnecessary search costs one call, a skipped one costs the answer.
+
     Phase 0 — Choose ONE search tool (think before calling):
-    - findIntent = PRECISION. The user has NAMED the thing they want — a place, a category,
-      a constraint, a task ("a Chinese restaurant", "book X", "how do I...", "recommend a
-      good steakhouse"). However it is phrased — question, request, recommendation — if the
-      WHAT is named, this is the search: it pinpoints the matches for that named need.
-    - discoverRelated = DISCOVERY. The user has NOT named the thing — an open desire,
-      occasion or mood ("a romantic weekend", "something fun tonight", "what's available?").
-      It surfaces the NEIGHBOURHOOD of possibilities around the desire, including adjacent
-      options they didn't think to ask about — the awareness and upsell surface.
+    - findIntent = PRECISION. The user has NAMED the thing they want — a specific item,
+      category, constraint or task ("X", "how do I...", "which one covers Y?", "recommend a
+      good Z"). However it is phrased — question, request, recommendation — if the WHAT is
+      named, this is the search: it pinpoints the matches for that named need.
+    - discoverRelated = DISCOVERY. The user has NOT named the thing — an open need, goal or
+      situation ("where should I start?", "what are my options?", "what's available?"). It
+      surfaces the NEIGHBOURHOOD of possibilities around the need, including adjacent options
+      they didn't think to ask about — the awareness surface.
     - Pick by SPECIFICITY of the ask: the thing is named → findIntent (even for
       recommendations); only a desire or occasion is named → discoverRelated. Do NOT call
       both in parallel. SEARCH before answering.
 
-    Phase 0a — Does this turn OPEN an ask, or CONTINUE one? Apps come back as cards, and a
-    card is an offer of options. An OPENING turn — a new ask, a new subject, the start of
-    choosing — wants cards: they are how options arrive. A CONTINUING turn — a follow-up,
-    a question about what is already on screen or already surfaced, refining, being walked
-    through something — wants text: a card mid-flow interrupts the exchange, and the
-    strongest case is asking about a thing already in front of them, where another card is
-    a step backwards. Pass includeApps: false on a continuing turn; leave it alone on an
-    opening one.
+    Phase 0a — Is the user asking for something NEW, or about what is ALREADY ON SCREEN?
+    Apps come back as cards, and a card is how a new option arrives. Ask which of these the
+    turn is:
+    - A NEW SUBJECT — anything they have not been shown yet, whether it is their first
+      message or their twentieth. This wants cards. Pass includeApps: true.
+    - THE THING IN FRONT OF THEM — asking about a card already on screen, refining it,
+      correcting it, or being walked through it. This wants text, because a second card
+      over the one they are reading is a step backwards. Pass includeApps: false.
+
+    This decides how the answer is DISPLAYED. It never decides whether to search — you search
+    either way, and includeApps only says whether that search may hand back a card.
+
+    JUDGE THE SUBJECT, NOT THE POSITION IN THE CONVERSATION. Having answered earlier turns
+    is not a reason to withhold cards: a user who has been talking for ten minutes and then
+    raises something new deserves the same options as one who opened with it. If you are
+    unsure, pass true — a card that was not needed costs far less than an option the user
+    never got to see.
+
+    SET includeApps ON EVERY SEARCH, true or false, never omitted. Several searches in one
+    turn each carry their own answer, so decide it per search rather than once per turn.
 
     Phase 0b — Weak results: if the search you chose comes back weak, follow up with the
     OTHER one before answering. Strong results → answer from them directly.
@@ -56,9 +81,9 @@ spatial:
       recommends something that came from a result, link it as [name](source_url) so the
       user can go straight there. Never invent or guess a URL — only link URLs present in
       results.
-    - SEARCH THE REQUEST, NOT THE PERSON: never mix remembered user facts (their name,
-      hotel, memberships, passes, family details) into a search query — they drag the match
-      toward the wrong content. Search what was ASKED; use what you know about the user when
+    - SEARCH THE REQUEST, NOT THE PERSON: never mix remembered facts about the user (their
+      name, account, entitlements, history) into a search query — they drag the match toward
+      the wrong content. Search what was ASKED; use what you know about the user when
       COMPOSING the answer.
     - A result with hasImage=true can be referenced by its universal_id wherever a
       composition field asks for an image ref — you never need (and never receive) raw image
@@ -70,14 +95,15 @@ spatial:
   methods:
     findIntent:
       description: >-
-        Precision search. The user has NAMED what they want — a specific thing, place,
-        category or task ("a Chinese restaurant", "book X", "how do I...", "recommend a good
-        steakhouse") — and this pinpoints the matches for that named need, however the ask is
-        phrased (question, request, recommendation). Pass the user's EXACT words from THIS
-        turn — do not paraphrase, and do not re-send an earlier turn's question. NOT for open desires with no named thing ("something romantic", "a fun
-        evening") — that is discovery (discoverRelated). If ANY result has
-        object_type="skill", you MUST call readSkill before responding; check ALL results,
-        not just the top one. Do not pair with discoverRelated in parallel.
+        Precision search. The user has NAMED what they want — a specific item, category or
+        task ("X", "how do I...", "which one covers Y?", "recommend a good Z") — and this
+        pinpoints the matches for that named need, however the ask is phrased (question,
+        request, recommendation). Pass the user's EXACT words from THIS turn — do not
+        paraphrase, and do not re-send an earlier turn's question. NOT for open needs with no
+        named thing ("where do I start?", "what are my options?") — that is discovery
+        (discoverRelated). If ANY result has object_type="skill", you MUST call readSkill
+        before responding; check ALL results, not just the top one. Do not pair with
+        discoverRelated in parallel.
       input:
         type: object
         required: []
@@ -86,44 +112,46 @@ spatial:
             type: string
             description: >-
               What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
-              with references resolved ('what about dinner?' becomes the thing they mean).
-              NEVER compress, paraphrase, or strip it to a keyword stub: the catalog is
-              indexed against asks like the user's, so the ask's own phrasing IS the routing,
-              and losing its words loses the match. NEVER SEND A QUERY YOU HAVE ALREADY SENT
-              IN THIS CONVERSATION: it returns what it returned before, which is material you
-              already hold and an app you have already opened. When the user has since told
-              you more (they answered a form, named a subject, chose a route), THAT is what
-              this search is for, and their opening words are already spent. Never add
-              remembered guest facts (name, hotel, memberships) because background
-              personalizes the answer, not the search.
+              with references resolved (a pronoun or "what about that one?" becomes the thing
+              they mean). NEVER compress, paraphrase, or strip it to a keyword stub: the
+              catalog is indexed against asks like the user's, so the ask's own phrasing IS
+              the routing, and losing its words loses the match. Search what is UNANSWERED:
+              when the user has since narrowed or changed what they want, THAT is this
+              search, and their earlier wording is spent. Never add remembered facts about
+              the user (name, account, entitlements) — background personalizes the answer,
+              not the search.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
               Several angles on THIS search, one per entry, in one round trip; each result
-              carries forQuery. Every entry is a SEPARATE search returning its own rows, so a
-              wasted entry costs real result slots. Put nothing here that you have already
-              searched in this conversation, and nothing that a later answer has superseded:
-              an opening ask still sitting in slot 0 after the user has answered a form fills
-              half the results with what they wanted before they told you.
+              carries forQuery. Every entry is a SEPARATE search returning its own rows, so
+              spend the entries on what THIS turn needs answered rather than on the ask the
+              user has already moved past — an opening question still sitting in slot 0 after
+              they have answered a form fills half the results with what they wanted before
+              they told you.
           includeApps:
             type: boolean
             description: >-
-              Default true. False = no app cards from this search — for a turn that
-              CONTINUES the conversation rather than OPENS an ask (Phase 0a). Cannot turn
-              apps ON: the box's own setting is the ceiling.
+              ALWAYS SET THIS EXPLICITLY, true or false, on every search — never omit it, so
+              the trace records the judgement you made. true = this search may return app
+              cards, for a NEW subject the user has not been shown. false = it may not, for a
+              turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
+              question about it), so no second card lands over what they are reading
+              (Phase 0a). Length of the conversation is irrelevant; only the subject matters.
+              true cannot turn apps ON by itself — the box's own setting is the ceiling and
+              false here only declines what that setting already permitted.
 
     discoverRelated:
       description: >-
-        Discovery search. For open desires where the user has NOT named the thing — an
-        occasion, a mood, a vague wish ("a romantic weekend", "something fun with the kids",
-        "what's available?"). Surfaces the NEIGHBOURHOOD of possibilities around the desire
-        (content is grouped by need; nearby items are the adjacent choices), including
-        options the user didn't think to ask about — the awareness and upsell surface. NOT
-        for a named thing or category ("a Chinese restaurant" is findIntent). Also the
-        follow-up when findIntent's results came back weak. Low similarity is normal — these
-        are neighbours, not exact matches.
+        Discovery search. For open needs where the user has NOT named the thing — a goal, a
+        situation, a vague wish ("where should I start?", "what are my options?", "what's
+        available?"). Surfaces the NEIGHBOURHOOD of possibilities around the need (content is
+        grouped by need; nearby items are the adjacent choices), including options the user
+        didn't think to ask about — the awareness surface. NOT for a named thing or category,
+        which is findIntent. Also the follow-up when findIntent's results came back weak. Low
+        similarity is normal — these are neighbours, not exact matches.
       input:
         type: object
         required: []
@@ -134,30 +162,32 @@ spatial:
               What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
               with references resolved. NEVER compress, paraphrase, or strip it to a keyword
               stub: the catalog is indexed against asks like the user's, so the ask's own
-              phrasing IS the routing, and losing its words loses the match. NEVER SEND A
-              QUERY YOU HAVE ALREADY SENT IN THIS CONVERSATION: it returns what it returned
-              before, which is material you already hold and an app you have already opened.
-              When the user has since told you more (they answered a form, named a subject,
-              chose a route), THAT is what this search is for, and their opening words are
-              already spent. Never add remembered guest facts (name, hotel, memberships)
-              because they drag the placement to the wrong region.
+              phrasing IS the routing, and losing its words loses the match. Search what is
+              UNANSWERED: when the user has since narrowed or changed what they want, THAT is
+              this search, and their earlier wording is spent. Never add remembered facts
+              about the user (name, account, entitlements) because they drag the placement to
+              the wrong region.
           queries:
             type: array
             items: { type: string }
             maxItems: 8
             description: >-
               Several facets of THIS search, one per entry; each result carries forQuery.
-              Every entry is a SEPARATE search returning its own rows, so a wasted entry costs
-              real result slots. Put nothing here that you have already searched in this
-              conversation, and nothing that a later answer has superseded: an opening ask
-              still sitting in slot 0 after the user has answered a form fills half the
-              results with what they wanted before they told you.
+              Every entry is a SEPARATE search returning its own rows, so spend the entries on
+              what THIS turn needs answered rather than on the ask the user has already moved
+              past — an opening question still sitting in slot 0 after they have answered a
+              form fills half the results with what they wanted before they told you.
           includeApps:
             type: boolean
             description: >-
-              Default true. False = no app cards from this search — for a turn that
-              CONTINUES the conversation rather than OPENS an ask (Phase 0a). Cannot turn
-              apps ON: the box's own setting is the ceiling.
+              ALWAYS SET THIS EXPLICITLY, true or false, on every search — never omit it, so
+              the trace records the judgement you made. true = this search may return app
+              cards, for a NEW subject the user has not been shown. false = it may not, for a
+              turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
+              question about it), so no second card lands over what they are reading
+              (Phase 0a). Length of the conversation is irrelevant; only the subject matters.
+              true cannot turn apps ON by itself — the box's own setting is the ceiling and
+              false here only declines what that setting already permitted.
 
     readResult:
       description: >-

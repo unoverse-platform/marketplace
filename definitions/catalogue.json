@@ -1,5 +1,5 @@
 {
-  "release": "0.1.34",
+  "release": "0.1.35",
   "items": [
     {
       "kind": "component",
@@ -1362,7 +1362,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "ef07761c51dcb1de",
+      "fingerprint": "39781c6de16a450e",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",
