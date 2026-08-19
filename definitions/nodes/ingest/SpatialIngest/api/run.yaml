@@ -42,11 +42,24 @@
         # here: invalid JSON throws and fails the run loudly instead of storing garbage.
         # Single expression starting with `return` — that prefix is what marks a body value
         # as an expression rather than a template (resolveBody).
-        metadata: "return config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : undefined"
-      # NEED, always. The category field was removed (2026-08-07): this node ingests needs;
-      # products/services are created by promoting a page from the Content tree, which
-      # grounds the entry in the fetched page and guards against duplicates.
-      mainCategory: NEED
+        # THE MODE GUARANTEES LIVE HERE, in the node's own body, where wiring cannot
+        # lose them. Product mode stamps `promoted: true` LAST (over any caller key) —
+        # the governance guarantee the category toggle's return was conditioned on
+        # (SPATIAL_INGEST_NODE.md, 2026-08-18). Component mode (the completion
+        # contract) additionally stamps the row's three captured faces: `bodyCopy` =
+        # the component's typed document VERBATIM (the uploader spreads caller
+        # metadata LAST, so this overrides the LLM-generated body — verified against
+        # prepareMetadata), `state` = the render payload, `app` = the component URI.
+        # JSON.parse fails the run LOUDLY when a component field is unwired or empty —
+        # a captured product with no state or document is a mis-wiring, never a row.
+        metadata: "return config.category === 'component' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true, app: config.componentUri, state: JSON.parse(config.componentState), bodyCopy: JSON.parse(config.componentDocument) }) : config.category === 'product' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true }) : (config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : undefined)"
+      # `need` → NEED (many rows, one per distinct need). `product` AND `component` →
+      # SERVICE, the engine's 1:1 strict-grounded lane — the SAME extraction path
+      # promote-page uses, one offering row for the whole text. The toggle returned
+      # 2026-08-18 and grew component mode 2026-08-19 (owner rulings, decision record in
+      # SPATIAL_INGEST_NODE.md); web pages still become products via promote-page — these
+      # lanes are for material a workflow already holds whole.
+      mainCategory: "return config.category === 'product' || config.category === 'component' ? 'SERVICE' : 'NEED'"
       # The engine keys everything by workflow, which is how a dictionary stays scoped to its universe.
       workflowId: "{{ scope.workflowId }}"
     maxItems: "return config.maxItems || undefined"

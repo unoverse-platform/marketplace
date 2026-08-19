@@ -8,23 +8,31 @@ category: Documents
 color: "#7C3AED"
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
 
-description: Turn raw text into needs in the spatial dictionary.
+description: Turn raw text into needs — or one product row — in the spatial dictionary.
 
 whenToUse: >-
   Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a
-  message thread. It reads the text, pulls out the distinct needs it describes — pain points, goals,
-  intentions — embeds each one and stores it. It only WRITES to that map — searching it is a different
-  job — and it takes text that is already in hand rather than fetching from anywhere. It does NOT
-  create products or services: those are made by promoting a page from the Content tree.
+  message thread, a parsed document pack. It reads the text, pulls out the distinct needs it describes —
+  pain points, goals, intentions — embeds each one and stores it. Switched to Product, it instead stores
+  ONE offering row for the whole text, for when the text in hand IS a complete offering's material; give
+  it a source identity so the product and its needs stay linked. Switched to Component, it captures a
+  FILLED component's completion output as that one product row — the page's document stored verbatim,
+  its state kept for re-rendering. It only WRITES to that map — searching it is a different job — and it
+  takes material that is already in hand rather than fetching from anywhere. Web pages become products
+  by promoting them from the Content tree instead.
 
-# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). `required: true`, unlike almost every other
-# node, because this one writes to the PLATFORM's own needs engine rather than to a
-# third-party account the workflow owns. The write is attributed to the caller, and a guest
-# has no identity to attribute it to.
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). `required: false`, like almost every
+# other node: the trigger already decided who was let in. This WAS `required: true`
+# ("the write is attributed to the caller") — but the claim was never true: the ingest
+# route carries no user and the dictionary row stores none; rows are scoped to the
+# WORKFLOW. A floor that demands identity for an attribution never made is theater, and
+# it also made the per-box "Require sign-in" toggle a silent no-op (owner ruling
+# 2026-08-19). If per-user attribution is ever added to dictionary writes, the floor
+# comes back WITH the attribution, not before it.
 #
 # No `role` yet: no deployment issues a spatial claim, so naming one would fail every run.
 auth:
-  required: true
+  required: false
 
 capabilities:
   # NOT cacheable: it WRITES. A reused answer would report a store that never happened.

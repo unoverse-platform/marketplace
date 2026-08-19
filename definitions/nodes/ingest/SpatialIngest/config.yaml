@@ -14,14 +14,57 @@ configSchema:
       description: The text to read. Usually wired in from an upstream node.
       default: ""
       "ui:field": template
-    # NO CATEGORY FIELD (removed 2026-08-07, platform owner's ruling). This node ingests
-    # NEEDS, full stop. Products and services are created by PROMOTING a page from the
-    # Content tree (POST /content/promote-page): that lane fetches the page fresh and
-    # whole, grounds the entry structurally in one page, refuses to promote the same URL
-    # twice, and stamps metadata.promoted for the tree. A raw-text SERVICE lane here was
-    # the same row kind minted with none of those guarantees — a duplicate door, strictly
-    # worse. IMAGE and DOCUMENT come from the Cloudinary and document connectors; MCP and
-    # SKILL from spatial discovery.
+    # THE CATEGORY TOGGLE, back and SCOPED (owner ruling 2026-08-18, reversing the
+    # 2026-08-07 removal — the decision record is SPATIAL_INGEST_NODE.md, amended first).
+    # The 7 Aug objection was a raw-text product lane WITHOUT the promote lane's
+    # guarantees; product mode here carries them: whole-source grounding (the SERVICE
+    # extraction path, 1:1, strict grounding — the same path promote-page uses), the
+    # standard source identity (set Source URL or Source ID so the product row and its
+    # need rows share one source_id), and a metadata.promoted stamp (run.yaml adds it)
+    # so the Content tree governs the row. Web PAGES still become products via
+    # promote-page; this mode is for text a workflow already holds whole — e.g. a parsed
+    # document pack whose offering row must join its needs on the map.
+    category:
+      type: string
+      title: Creates
+      description: >-
+        What this text becomes. Needs: the distinct needs the text describes, one row
+        each. Product: ONE offering row for the whole text — use only when the text is a
+        source's complete material, and set a Source URL or Source ID so the product and
+        its needs share one source identity. Component: ONE product row CAPTURED from a
+        filled component's completion output — wire Raw Content to its markdown and the
+        three component fields below to its state, document and URI; the document is
+        stored VERBATIM as the row's body and the state as its render payload.
+      enum: [need, product, component]
+      enumNames: [Needs, Product (from text), Product (from component)]
+      default: need
+    # COMPONENT MODE (the completion contract, UNOVERSE_MCP_TEMPLATE_PROTOCOL.md §The
+    # completion contract): these three wire from the Component node's exit output,
+    # which fires ONCE when the filler calls `complete`. The mode's guarantees live in
+    # run.yaml's own body — bodyCopy verbatim, state + app + promoted stamped — so a
+    # builder cannot mis-wire them away. All three are REQUIRED in component mode:
+    # run.yaml JSON-parses state and document, so an unwired field fails the run loudly.
+    componentState:
+      type: string
+      title: Component State
+      description: The completed component's state — wire the completion output's `state` (the row's render payload, stored on metadata.state).
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { category: component }
+    componentDocument:
+      type: string
+      title: Component Document
+      description: The completed component's document — typed unoverse-markdown sections, stored VERBATIM as the row's bodyCopy.
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { category: component }
+    componentUri:
+      type: string
+      title: Component URI
+      description: The component's URI from the completion output — stored as metadata.app so the row renders as this component.
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { category: component }
     sourceUrl:
       type: string
       title: Source URL
@@ -82,4 +125,4 @@ configSchema:
       default: ""
       "ui:dependencies": { authRequired: true }
 
-"ui:order": [authRequired, authRole, rawContent, sourceUrl, sourceId, metadata, maxItems]
+"ui:order": [authRequired, authRole, category, rawContent, componentState, componentDocument, componentUri, sourceUrl, sourceId, metadata, maxItems]

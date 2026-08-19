@@ -1,5 +1,5 @@
 {
-  "release": "0.1.36",
+  "release": "0.1.37",
   "items": [
     {
       "kind": "component",
@@ -1175,12 +1175,12 @@
       "kind": "node",
       "name": "SpatialIngest",
       "pack": "ingest",
-      "fingerprint": "dd379dbb700dbcff",
+      "fingerprint": "b1bf98fba31c1ea4",
       "title": "Spatial Ingest",
-      "description": "Turn raw text into needs in the spatial dictionary.",
+      "description": "Turn raw text into needs — or one product row — in the spatial dictionary.",
       "category": "Documents",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
-      "whenToUse": "Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a message thread. It reads the text, pulls out the distinct needs it describes — pain points, goals, intentions — embeds each one and stores it. It only WRITES to that map — searching it is a different job — and it takes text that is already in hand rather than fetching from anywhere. It does NOT create products or services: those are made by promoting a page from the Content tree."
+      "whenToUse": "Put raw text INTO the spatial map so it can be found later: notes, a transcript, a scraped page, a message thread, a parsed document pack. It reads the text, pulls out the distinct needs it describes — pain points, goals, intentions — embeds each one and stores it. Switched to Product, it instead stores ONE offering row for the whole text, for when the text in hand IS a complete offering's material; give it a source identity so the product and its needs stay linked. Switched to Component, it captures a FILLED component's completion output as that one product row — the page's document stored verbatim, its state kept for re-rendering. It only WRITES to that map — searching it is a different job — and it takes material that is already in hand rather than fetching from anywhere. Web pages become products by promoting them from the Content tree instead."
     },
     {
       "kind": "node",
