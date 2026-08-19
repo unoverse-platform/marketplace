@@ -1,5 +1,5 @@
 {
-  "release": "0.1.37",
+  "release": "0.1.38",
   "items": [
     {
       "kind": "component",
@@ -955,7 +955,7 @@
       "kind": "node",
       "name": "Note",
       "pack": "flow",
-      "fingerprint": "fc83be51fde77566",
+      "fingerprint": "869796a7e97af8d6",
       "title": "Note",
       "description": "Add notes, documentation and comments to your workflow",
       "category": "Flow",

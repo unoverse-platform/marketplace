@@ -16,9 +16,14 @@ configSchema:
         - Use markdown syntax
         - Add **bold** or *italic* text
         - Include `code` snippets
-      "ui:field": textarea
+      # `ui:widget`, NOT `ui:field`. FieldRenderer.jsx branches on ui:field only for
+      # `template` (:99) and `JSON` (:140); the multi-line box lives on ui:widget (:313).
+      # Declaring `ui:field: textarea` lints clean against config.schema.json and falls
+      # through to a single-line TextField — the same silent-fallthrough trap the
+      # backgroundColor comment below describes.
+      "ui:widget": textarea
       "ui:options":
-        rows: 10
+        rows: 12
     backgroundColor:
       type: string
       title: Background Colour
