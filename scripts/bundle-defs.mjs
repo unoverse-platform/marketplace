@@ -4,7 +4,7 @@
  * Copies the rx marketplace definitions INTO this package so it ships self-contained
  * (`definitions/`), instead of scraping `rx/components` off the host filesystem at boot.
  * Runs on `prepack` (so the published tarball always carries current defs) and can be run
- * by hand (`npm run sync-defs`). `findRxComponentsDir()` prefers a real on-disk `rx/` (dev
+ * by hand (`npm run sync-defs`). `findDesignComponentsDir()` prefers a real on-disk `rx/` (dev
  * local-wins) and falls back to this bundle when none exists (the purged-image future).
  */
 import { cpSync, existsSync, rmSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync } from "node:fs";
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url)); // packages/marketplace/scripts
 const pkg = dirname(here); // packages/marketplace
 const home = join(pkg, "..", "..", "apps", "unoverse"); // the content home
-const rx = join(home, "rx");
+const rx = join(home, "design");
 const prompts = join(home, "prompts");
 const nodesHome = join(home, "nodes");
 const out = join(pkg, "definitions");
