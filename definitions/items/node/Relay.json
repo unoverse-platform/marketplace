@@ -2,7 +2,7 @@
   "kind": "node",
   "name": "Relay",
   "pack": "flow",
-  "fingerprint": "ae74efe0722a74d2",
+  "fingerprint": "3770a3caadf81086",
   "title": "Relay",
   "description": "Instantly forwards any signal without waiting for dependencies",
   "category": "Flow",
@@ -31,14 +31,14 @@
         "authRequired": {
           "type": "boolean",
           "title": "Require sign-in",
-          "description": "Only signed-in callers can run this step.",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
           "default": false,
           "ui:widget": "toggle"
         },
         "authRole": {
           "type": "string",
           "title": "Require role",
-          "description": "A claim the caller must carry, like finance:approve.",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
           "default": "",
           "ui:dependencies": {
             "authRequired": true
@@ -59,7 +59,6 @@
     "dir": "Relay",
     "files": {
       "api/events.yaml": "# NO CALLS. This node reaches no host: it forwards a signal, and `events` is the whole of it.\n#\n# THE UNWRAP, transcribed from the retired executor rather than reinvented. An incoming signal is\n# nested twice — by INPUT PORT, then by SOURCE NODE ID, then by that source's OUTPUT HANDLE:\n#\n#     { signal: { upstream1: { output: { message: \"relay me\" } } } }\n#\n# The retired node peeled that down to the innermost payload so a downstream node received the DATA\n# rather than the envelope, and the three branches below are its three branches:\n#\n#   one source, ONE output handle    forward the inner payload            { message: \"relay me\" }\n#   one source, SEVERAL handles      forward the source's whole object    { a: …, b: … }\n#   no `signal` port at all          forward the inputs untouched\n#\n# Peeling only a single handle is deliberate: with two handles there is no single payload to choose,\n# so keeping the object is the only answer that loses nothing.\n\n- emit: signal\n  value: >-\n    return !response.signal\n      ? response\n      : (Object.keys(response.signal).length === 0\n          ? {}\n          : (Object.keys(Object.values(response.signal)[0] || {}).length === 1\n              ? Object.values(Object.values(response.signal)[0])[0]\n              : Object.values(response.signal)[0]))\n",
-      "config.yaml": "$schema: ../../../_schema/config.schema.json\n\n# This node has no settings of its own. It still carries the two run-authorization fields,\n# which every node has: they are the workflow builder's control over who may run this box.\n\nconfigSchema:\n  type: object\n  properties:\n    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).\n    #\n    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.\n    # The manifest is the node author's FLOOR: \"this node is inherently privileged\". These\n    # are the builder's, per box on the canvas, because the same node type legitimately\n    # faces staff on one workflow and customers on another.\n    #\n    # A role especially has to live here: `finance:approve` is a claim THIS deployment's\n    # identity provider mints, and a node published to the marketplace cannot know the role\n    # vocabulary of every universe that installs it.\n    #\n    # The executor takes the STRICTER of the two. Neither can loosen the other.\n    authRequired:\n      type: boolean\n      title: Require sign-in\n      description: Only signed-in callers can run this step.\n      default: false\n      \"ui:widget\": toggle\n    authRole:\n      type: string\n      title: Require role\n      description: A claim the caller must carry, like finance:approve.\n      default: \"\"\n      \"ui:dependencies\": { authRequired: true }\n\n\"ui:order\": [authRequired, authRole]\n",
       "interface.yaml": "$schema: ../../../_schema/interface.schema.json\n\ninputs:\n  - name: signal\n    type: object\n    description: Signal to relay to downstream nodes\n    required: false\n\noutputs:\n  - name: signal\n    type: object\n    description: Relayed signal\n",
       "node.yaml": "$schema: ../../../_schema/node.schema.json\n\ntype: Relay\nkind: PromiseNode\n\nname: Relay\ncategory: Flow\ncolor: \"#10B981\"\n\ndescription: Instantly forwards any signal without waiting for dependencies\n\nwhenToUse: >-\n  Forward a signal downstream immediately without waiting on the normal dependency and join rules: a\n  pass-through wire to fan a signal out, or to break a blocking dependency. It adds no transform,\n  only unwrapping a single upstream output and re-timing the signal, so it exists for control-flow\n  rewiring rather than for changing data.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node\n# nobody thought about cannot look the same as one deliberately left open.\n#\n# `required: false` adds no requirement of its own: the node runs for whoever the trigger\n# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements\n# only ever narrow.\nauth:\n  required: false\n\ncapabilities:\n  # NOT cacheable: it forwards whatever arrived, and what arrives differs every run.\n  cacheable: false\n",
       "test.yaml": "$schema: ../../../_schema/test.schema.json\n\n# The retired node's own fixture, unchanged, because it documents the nesting: the payload arrives\n# under the input PORT, then the SOURCE NODE, then that source's OUTPUT HANDLE.\n#\n# Asserting `message` at the TOP of the output is the whole point — it proves the envelope was peeled\n# off. A relay that forwarded `{ upstream1: { output: … } }` would look like it worked while handing\n# every downstream node the wrapper instead of the data.\n\ntestData:\n  config: {}\n  inputs:\n    signal:\n      upstream1:\n        output:\n          message: relay me\n  expect:\n    signal: \"return output.signal.message === 'relay me'\"\n"

@@ -33,21 +33,4 @@ configSchema:
       enum: [1k, 2k]
       enumNames: ["1K (1024px)", "2K (2048px)"]
       default: 1k
-
-    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (who-can-run-it.md).
-    # INSTANCE config, not the manifest's `auth` — the builder's dial per box on the canvas.
-    # The executor takes the STRICTER of the two.
-    authRequired:
-      type: boolean
-      title: Require sign-in
-      description: Only signed-in callers can run this step.
-      default: false
-      "ui:widget": toggle
-    authRole:
-      type: string
-      title: Require role
-      description: A claim the caller must carry, like finance:approve.
-      default: ""
-      "ui:dependencies": { authRequired: true }
-
-"ui:order": [authRequired, authRole, prompt, imageCount, aspectRatio, resolution]
+"ui:order": [prompt, imageCount, aspectRatio, resolution]

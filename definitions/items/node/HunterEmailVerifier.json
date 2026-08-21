@@ -2,7 +2,7 @@
   "kind": "node",
   "name": "HunterEmailVerifier",
   "pack": "gtm",
-  "fingerprint": "ad0bc084ff3dc12c",
+  "fingerprint": "e61b209dad61666c",
   "title": "Hunter Email Verifier",
   "description": "Check whether one email address is real and deliverable",
   "category": "Go To Market",
@@ -71,14 +71,14 @@
         "authRequired": {
           "type": "boolean",
           "title": "Require sign-in",
-          "description": "Only signed-in callers can run this step.",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
           "default": false,
           "ui:widget": "toggle"
         },
         "authRole": {
           "type": "string",
           "title": "Require role",
-          "description": "A claim the caller must carry, like finance:approve.",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
           "default": "",
           "ui:dependencies": {
             "authRequired": true
@@ -104,7 +104,7 @@
     "files": {
       "api/events.yaml": "# Hunter wraps everything in `data`. Each row reads through it, so a shape change shows up\n# as an empty field rather than a crash.\n\n- emit: email\n  from: response\n  value: \"return (response.data || {}).email || String(config.email || '').trim()\"\n\n- emit: status\n  from: response\n  value: \"return (response.data || {}).status || 'unknown'\"\n\n- emit: result\n  from: response\n  value: \"return (response.data || {}).result || ''\"\n\n- emit: score\n  from: response\n  value: \"return (response.data || {}).score || 0\"\n\n- emit: accept_all\n  from: response\n  value: \"return !!(response.data || {}).accept_all\"\n\n- emit: disposable\n  from: response\n  value: \"return !!(response.data || {}).disposable\"\n",
       "api/run.yaml": "- name: verify\n  method: GET\n  url: https://api.hunter.io/v2/email-verifier\n  credential: { $ref: hunter#queryCredential }\n  query:\n    email: \"return String(config.email || '').trim()\"\n  transport: json\n  error: { $ref: hunter#error }\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n",
-      "config.yaml": "$schema: ../../../_schema/config.schema.json\n\nconfigSchema:\n  type: object\n  required: [email]\n  properties:\n    email:\n      type: string\n      title: Email\n      description: The address to verify\n      default: \"\"\n      \"ui:field\": template\n\n    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).\n    #\n    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.\n    # The manifest is the node author's FLOOR: \"this node is inherently privileged\". These\n    # are the builder's, per box on the canvas, because the same node type legitimately\n    # faces staff on one workflow and customers on another.\n    #\n    # A role especially has to live here: `finance:approve` is a claim THIS deployment's\n    # identity provider mints, and a node published to the marketplace cannot know the role\n    # vocabulary of every universe that installs it.\n    #\n    # The executor takes the STRICTER of the two. Neither can loosen the other.\n    authRequired:\n      type: boolean\n      title: Require sign-in\n      description: Only signed-in callers can run this step.\n      default: false\n      \"ui:widget\": toggle\n    authRole:\n      type: string\n      title: Require role\n      description: A claim the caller must carry, like finance:approve.\n      default: \"\"\n      \"ui:dependencies\": { authRequired: true }\n\n\"ui:order\": [authRequired, authRole, email]\n",
+      "config.yaml": "$schema: ../../../_schema/config.schema.json\n\nconfigSchema:\n  type: object\n  required: [email]\n  properties:\n    email:\n      type: string\n      title: Email\n      description: The address to verify\n      default: \"\"\n      \"ui:field\": template\n\"ui:order\": [email]\n",
       "interface.yaml": "$schema: ../../../_schema/interface.schema.json\n\ninputs:\n  - name: signal\n    type: object\n    description: Trigger. The email usually templates from upstream output.\n\noutputs:\n  - name: email\n    type: string\n    description: The address that was verified\n  - name: status\n    type: string\n    description: valid, invalid, accept_all, webmail, disposable or unknown\n  - name: result\n    type: string\n    description: deliverable, undeliverable or risky\n  - name: score\n    type: number\n    description: Confidence 0-100\n  - name: accept_all\n    type: boolean\n    description: True when the domain accepts every address, which makes the result less certain\n  - name: disposable\n    type: boolean\n    description: True when the address is from a disposable provider\n\ncredentials:\n  - name: hunterCredential\n    required: true\n    displayName: Hunter.io\n",
       "node.yaml": "$schema: ../../../_schema/node.schema.json\n\ntype: HunterEmailVerifier\nkind: PromiseNode\nname: Hunter Email Verifier\ncategory: Go To Market\ncolor: \"#FF5500\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png\ndescription: Check whether one email address is real and deliverable\nwhenToUse: >\n  Pick to CHECK that a single email address is real and deliverable before sending. Use it\n  to verify an address you already have; discovering an unknown address is a separate,\n  upstream step.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node\n# nobody thought about cannot look the same as one deliberately left open.\n#\n# `required: false` adds no requirement of its own: the node runs for whoever the trigger\n# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements\n# only ever narrow.\nauth:\n  required: false\n\ncapabilities:\n  cacheable: true\n\n# One vendor. The package allows Apollo too, for its other four nodes.\nallowedHosts: [api.hunter.io]\n",
       "test.yaml": "$schema: ../../../_schema/test.schema.json\n\ntestData:\n  config:\n    email: steli@close.io\n  inputs:\n    signal: {}\n  expect:\n    email: \"return output.email.indexOf('@') > 0\"\n    status: \"return typeof output.status === 'string' && output.status.length > 0\"\n    score: \"return typeof output.score === 'number'\"\n"

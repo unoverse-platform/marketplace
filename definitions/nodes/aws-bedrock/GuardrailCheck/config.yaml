@@ -41,21 +41,5 @@ configSchema:
       enum: [INPUT, OUTPUT]
       enumNames: [Input (submitted content), Output (model-generated content)]
       default: INPUT
-
-    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
-    # The executor takes the stricter of this and the manifest's `auth`.
-    authRequired:
-      type: boolean
-      title: Require sign-in
-      description: Only signed-in callers can run this step.
-      default: false
-      "ui:widget": toggle
-    authRole:
-      type: string
-      title: Require role
-      description: A claim the caller must carry, like finance:approve.
-      default: ""
-      "ui:dependencies": { authRequired: true }
-
 "ui:order":
-  [authRequired, authRole, text, guardrailId, guardrailVersion, source]
+  [text, guardrailId, guardrailVersion, source]

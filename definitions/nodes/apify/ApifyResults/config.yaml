@@ -10,30 +10,4 @@ configSchema:
       description: The Apify run to read. Comes from Apify Starter's runId output.
       default: ""
       "ui:field": template
-
-    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
-    #
-    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
-    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
-    # are the builder's, per box on the canvas, because the same node type legitimately
-    # faces staff on one workflow and customers on another.
-    #
-    # A role especially has to live here: `finance:approve` is a claim THIS deployment's
-    # identity provider mints, and a node published to the marketplace cannot know the role
-    # vocabulary of every universe that installs it.
-    #
-    # The executor takes the STRICTER of the two. Neither can loosen the other.
-    authRequired:
-      type: boolean
-      title: Require sign-in
-      description: Only signed-in callers can run this step.
-      default: false
-      "ui:widget": toggle
-    authRole:
-      type: string
-      title: Require role
-      description: A claim the caller must carry, like finance:approve.
-      default: ""
-      "ui:dependencies": { authRequired: true }
-
-"ui:order": [authRequired, authRole, runId]
+"ui:order": [runId]

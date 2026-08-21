@@ -114,29 +114,5 @@ configSchema:
       # label named half of what the flag controls.
       description: Fetch apps and MCP workflows from results
       default: false
-
-    # WHO MAY RUN THIS BOX, set by whoever builds the workflow (15-who-can-run-it.md).
-    #
-    # INSTANCE config, not the manifest's `auth`, and the two answer different questions.
-    # The manifest is the node author's FLOOR: "this node is inherently privileged". These
-    # are the builder's, per box on the canvas, because the same node type legitimately
-    # faces staff on one workflow and customers on another.
-    #
-    # It matters more here than on most nodes: this searches the platform's OWN knowledge
-    # base, so a workflow that should only answer signed-in staff says so with this toggle
-    # rather than by hoping the trigger was set correctly.
-    authRequired:
-      type: boolean
-      title: Require sign-in
-      description: Only signed-in callers can run this step.
-      default: false
-      "ui:widget": toggle
-    authRole:
-      type: string
-      title: Require role
-      description: A claim the caller must carry, like finance:approve.
-      default: ""
-      "ui:dependencies": { authRequired: true }
-
 "ui:order":
-  [authRequired, authRole, maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]
+  [maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]
