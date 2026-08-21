@@ -1,5 +1,5 @@
 {
-  "release": "0.1.48",
+  "release": "0.1.49",
   "items": [
     {
       "kind": "component",
@@ -1175,7 +1175,7 @@
       "kind": "node",
       "name": "SpatialIngest",
       "pack": "ingest",
-      "fingerprint": "7caaa3de8022e9bf",
+      "fingerprint": "214d20a0317d3b25",
       "title": "Spatial Ingest",
       "description": "Turn raw text into needs — or one product row — in the spatial dictionary.",
       "category": "Documents",

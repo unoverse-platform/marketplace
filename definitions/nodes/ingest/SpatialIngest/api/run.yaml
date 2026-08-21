@@ -46,13 +46,20 @@
         # lose them. Product mode stamps `promoted: true` LAST (over any caller key) —
         # the governance guarantee the category toggle's return was conditioned on
         # (SPATIAL_INGEST_NODE.md, 2026-08-18). Component mode (the completion
-        # contract) additionally stamps the row's three captured faces: `bodyCopy` =
-        # the component's typed document VERBATIM (the uploader spreads caller
-        # metadata LAST, so this overrides the LLM-generated body — verified against
-        # prepareMetadata), `state` = the render payload, `app` = the component URI.
+        # contract) additionally stamps the row's captured faces: `bodyCopy` = the
+        # flat MARKDOWN verbatim (rawContent — a STRING, because every bodyCopy
+        # reader renders it as markdown text; the typed document in there crashed
+        # the Canvas content detail, seen live 2026-08-21), `sections` = the typed
+        # sections VERBATIM — `sections` and not some private key, because that is
+        # THE render key: every SDUI reader (ServiceRenderer, the editors) draws
+        # `metadata.sections` through toDocument, so the captured page renders as
+        # a designed document instead of falling back to flat markdown — `state` =
+        # the render payload, `app` = the component URI. The uploader spreads
+        # caller metadata LAST, so these override the LLM-generated body —
+        # verified against prepareMetadata.
         # JSON.parse fails the run LOUDLY when a component field is unwired or empty —
         # a captured product with no state or document is a mis-wiring, never a row.
-        metadata: "return config.category === 'component' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true, app: config.componentUri, state: JSON.parse(config.componentState), bodyCopy: JSON.parse(config.componentDocument) }) : config.category === 'product' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true }) : (config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : undefined)"
+        metadata: "return config.category === 'component' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true, app: config.componentUri, state: JSON.parse(config.componentState), sections: JSON.parse(config.componentDocument), bodyCopy: String(config.rawContent || '') }) : config.category === 'product' ? Object.assign({}, config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : {}, { promoted: true }) : (config.metadata && String(config.metadata).trim() ? JSON.parse(config.metadata) : undefined)"
       # `need` → NEED (many rows, one per distinct need). `product` AND `component` →
       # SERVICE, the engine's 1:1 strict-grounded lane — the SAME extraction path
       # promote-page uses, one offering row for the whole text. The toggle returned
