@@ -20,8 +20,8 @@ configSchema:
       type: string
       title: Source Type
       description: Whether to pull the bytes from a url or take base64 already in hand
-      enum: [url, base64]
-      enumNames: [URL, Base64 Data]
+      enum: [url, base64, text]
+      enumNames: [URL, Base64 Data, Text]
       default: base64
     sourceUrl:
       type: string
@@ -39,6 +39,17 @@ configSchema:
       "ui:field": template
       "ui:dependencies":
         sourceType: base64
+    textData:
+      type: string
+      title: Text
+      description: >-
+        The file's content as plain text, written verbatim as UTF-8 — for markdown or any
+        text a workflow already holds whole. Content Type defaults to text/markdown here;
+        set it for anything else.
+      default: ""
+      "ui:field": template
+      "ui:dependencies":
+        sourceType: text
     contentType:
       type: string
       title: Content Type
@@ -58,4 +69,4 @@ configSchema:
       minimum: 60
       maximum: 604800
 "ui:order":
-  [bucket, key, sourceType, sourceUrl, base64Data, contentType, downloadUrlExpiry]
+  [bucket, key, sourceType, sourceUrl, base64Data, textData, contentType, downloadUrlExpiry]

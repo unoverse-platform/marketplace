@@ -7,14 +7,15 @@ name: S3 Upload
 category: Storage & Data
 color: "#FF9900"
 
-description: Write a file into S3 from a URL or base64 data
+description: Write a file into S3 from a URL, base64 data, or plain text
 
 whenToUse: >-
   Pick to STORE a file in your own S3 bucket and get back a link to it: an image a model
-  generated, a document a step produced, or anything fetched from a url that needs to
-  persist somewhere you control. Takes the bytes either as a url to pull from or as base64
-  already in hand, and returns the object's key alongside a time-limited download link.
-  Reading a file already in a bucket is a different job.
+  generated, a document a step produced, markdown a step wrote, or anything fetched from a
+  url that needs to persist somewhere you control. Takes the content as a url to pull
+  from, as base64 already in hand, or as plain text written verbatim, and returns the
+  object's key alongside a time-limited download link. Reading a file already in a bucket
+  is a different job.
 
 # WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
 # nobody thought about cannot look the same as one deliberately left open.
