@@ -16,6 +16,16 @@ configSchema:
       description: The object's key. Leave empty to take it from the incoming signal.
       default: ""
       "ui:field": template
+    includeContent:
+      type: boolean
+      title: Include Content
+      description: >-
+        Also fetch the object's body and return it as `content`, read as text. For a
+        markdown, CSV or JSON object this hands the words straight to the next step with
+        no second fetch. Leave off for binary or very large objects; the link is the way
+        to move those.
+      default: false
+      "ui:widget": toggle
     downloadUrlExpiry:
       type: number
       title: Link Lifetime (seconds)
@@ -25,4 +35,4 @@ configSchema:
       default: 86400
       minimum: 60
       maximum: 604800
-"ui:order": [bucket, key, downloadUrlExpiry]
+"ui:order": [bucket, key, includeContent, downloadUrlExpiry]

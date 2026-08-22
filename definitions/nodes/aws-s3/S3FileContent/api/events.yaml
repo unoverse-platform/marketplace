@@ -23,5 +23,6 @@
       lastModified: (calls.head || {})['last-modified'] || signal.lastModified || '',
       etag: String((calls.head || {}).etag || signal.etag || '').split('"').join(''),
       universalId: signal.universalId || sha256(config.bucket + '/' + String(config.key || signal.key || '')).substring(0, 12),
-      downloadUrl: (calls.link || [])[0] || ''
+      downloadUrl: (calls.link || [])[0] || '',
+      content: String(calls.body || '')
     }

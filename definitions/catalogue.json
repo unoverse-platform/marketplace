@@ -1,5 +1,5 @@
 {
-  "release": "0.1.49",
+  "release": "0.1.50",
   "items": [
     {
       "kind": "component",
@@ -757,18 +757,18 @@
       "kind": "node",
       "name": "S3FileContent",
       "pack": "aws-s3",
-      "fingerprint": "533713da7c53f00b",
+      "fingerprint": "05b55989ff89525e",
       "title": "S3 File Content",
-      "description": "Read one S3 object's details and mint a link to fetch it",
+      "description": "Read one S3 object's details, mint a link to fetch it, and optionally read its text",
       "category": "Storage & Data",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
-      "whenToUse": "Pick when you have a specific object and need a way to get at it: its size and type, plus a time-limited link a later step can fetch without AWS credentials. Finding out what is in a bucket is a different job."
+      "whenToUse": "Pick when you have a specific object and need a way to get at it: its size and type, plus a time-limited link a later step can fetch without AWS credentials. Switched on, it also reads the object's body as text, so a stored markdown or CSV file lands straight in the next step. Finding out what is in a bucket is a different job."
     },
     {
       "kind": "node",
       "name": "S3Files",
       "pack": "aws-s3",
-      "fingerprint": "57df814180aebca3",
+      "fingerprint": "5684b976ed003f2e",
       "title": "S3 Files",
       "description": "List files in an S3 bucket, optionally with shareable links",
       "category": "Storage & Data",
@@ -779,7 +779,7 @@
       "kind": "node",
       "name": "S3Upload",
       "pack": "aws-s3",
-      "fingerprint": "80cef049c030c111",
+      "fingerprint": "f725160e4cdad3e9",
       "title": "S3 Upload",
       "description": "Write a file into S3 from a URL, base64 data, or plain text",
       "category": "Storage & Data",

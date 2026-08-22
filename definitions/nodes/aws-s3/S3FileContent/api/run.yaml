@@ -11,6 +11,18 @@
   # and nothing else does. `transport: headers` is what makes them reachable.
   transport: headers
 
+# The body itself, only when asked for. Read as TEXT: this is the lane for reaching into a
+# stored markdown/CSV/JSON object, not for moving binaries — those travel by the link.
+- $ref: s3#call
+  name: body
+  when: "return !!config.includeContent"
+  method: GET
+  url: >-
+    return 'https://' + config.bucket + '.s3.'
+      + (credentials.awsCredential.region || 'us-east-1') + '.amazonaws.com/'
+      + String(config.key || signal.key || '').split('/').map(s => encodeURIComponent(s)).join('/')
+  transport: text
+
 - name: link
   presign:
     for: "return [String(config.key || signal.key || '')]"

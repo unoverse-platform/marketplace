@@ -11,7 +11,9 @@ inputs:
 outputs:
   - name: file
     type: object
-    description: key, bucket, size, contentType, lastModified, etag, universalId, downloadUrl
+    description: >-
+      key, bucket, size, contentType, lastModified, etag, universalId, downloadUrl, and
+      content (the body as text, when Include Content is on)
 
 credentials:
   - name: awsCredential

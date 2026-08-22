@@ -15,7 +15,7 @@ objects: &objects >-
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
-           .includes(String(o.Key).split('.').pop().toLowerCase()))
+           .includes(String(o.Key).split('.').at(-1).toLowerCase()))
 
 # Just the keys, for `presign.for`. Same filters, same order.
 keys: &keys >-
@@ -24,7 +24,7 @@ keys: &keys >-
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
-           .includes(String(o.Key).split('.').pop().toLowerCase()))
+           .includes(String(o.Key).split('.').at(-1).toLowerCase()))
     .map(o => String(o.Key))
 
 # The output shape, links folded in by index.
@@ -40,7 +40,7 @@ files: &files >-
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
-           .includes(String(o.Key).split('.').pop().toLowerCase()))
+           .includes(String(o.Key).split('.').at(-1).toLowerCase()))
     .map((o, i) => Object.assign({
       key: String(o.Key),
       size: Number(o.Size) || 0,

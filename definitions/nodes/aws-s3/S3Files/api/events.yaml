@@ -16,5 +16,5 @@
       .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
       .filter(o => !(config.fileExtensions || []).length
         || (config.fileExtensions || []).map(e => String(e).toLowerCase())
-             .includes(String(o.Key).split('.').pop().toLowerCase()))
+             .includes(String(o.Key).split('.').at(-1).toLowerCase()))
       .length

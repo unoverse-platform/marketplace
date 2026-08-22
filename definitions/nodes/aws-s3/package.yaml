@@ -41,7 +41,7 @@ allowedHosts:
 
 requires:
   credential: [awsSigV4]
-  transport: [xml, headers, binary]
+  transport: [xml, headers, binary, text]
   # NOTE: `encoding: binary`, which the PUT in S3Upload depends on, has no field in `requires`
   # to declare it, so it is gated only by executorVersion below. Same gap `aws-dynamodb` has
   # with `dynamodbJson`.
