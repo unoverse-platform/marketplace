@@ -1,5 +1,5 @@
 {
-  "release": "0.1.51",
+  "release": "0.1.52",
   "items": [
     {
       "kind": "component",
@@ -66,15 +66,6 @@
     },
     {
       "kind": "component",
-      "name": "document",
-      "fingerprint": "42edf0a1811ab523",
-      "bundle": "design-system",
-      "title": "Document",
-      "description": "A record's structured body copy, drawn by the design system.",
-      "category": "Content"
-    },
-    {
-      "kind": "component",
       "name": "image-block",
       "fingerprint": "bb6068862221deca",
       "bundle": "design-system",
@@ -103,10 +94,10 @@
     {
       "kind": "component",
       "name": "markdown-renderer",
-      "fingerprint": "2be6ede99d115fe6",
+      "fingerprint": "7c7b5086ecadcdf8",
       "bundle": "design-system",
       "title": "markdown-renderer",
-      "description": "Static markdown document renderer: an optional titled header with a streaming indicator, then a full markdown body (headings, lists, tables, code, links, images) or a waiting placeholder.",
+      "description": "The Universal Markdown renderer: draws a markdown string (headings, lists, tables, code, links, images) or a typed-block document (prose, key facts, steps, lists, tables, fine print — tabbed when its groups call for it), under an optional titled header with a streaming indicator.",
       "category": "Content"
     },
     {
