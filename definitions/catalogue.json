@@ -1,5 +1,5 @@
 {
-  "release": "0.1.52",
+  "release": "0.1.53",
   "items": [
     {
       "kind": "component",
@@ -162,6 +162,15 @@
       "title": "thinking-orb",
       "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
       "category": "Feedback"
+    },
+    {
+      "kind": "component",
+      "name": "voice-chat",
+      "fingerprint": "149fcdd270fb802c",
+      "bundle": "design-system",
+      "title": "Voice Call",
+      "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
+      "category": "Communication"
     },
     {
       "kind": "atom",

@@ -1,0 +1,31 @@
+# THE CALL IS LIVE AND THE ASSISTANT IS LOOKING SOMETHING UP.
+#
+# A step of its own because a lookup takes 8 to 9 seconds and `active` reads as
+# "the floor is yours" — the opposite of what is happening. A call has no cursor
+# and no spinner, so this surface is the only progress indicator there is.
+type: Box
+style:
+  direction: column
+  align: center
+  gap: "4"
+  width: full
+children:
+  - type: Box
+    style:
+      minHeight: "12"
+      direction: row
+      align: center
+      justify: center
+    children:
+      - $include: components/lookup-indicator
+  - type: Box
+    style:
+      minHeight: "20"
+      direction: row
+      align: center
+      justify: center
+    children:
+      - $include: components/call-controls
+  - type: Box
+    style:
+      minHeight: "16"

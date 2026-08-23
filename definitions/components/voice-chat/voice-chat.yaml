@@ -1,0 +1,72 @@
+unoverse: "1.0"
+kind: component
+name: voice-chat
+category: Communication
+nodeSize:
+  width: 480
+  height: 400
+props:
+  # LOCKED STATE, declared here only so Studio can drive the preview. `callState`
+  # is projected into scope by the voice service (a template's
+  # `service: "voice"`); inside a voice template the projected value is what the steps
+  # branch on and this default never applies. Never simulate it elsewhere.
+  callState:
+    type: string
+    input: false
+    default: idle
+    enum: [idle, active, listening, speaking, thinking]
+  # Per-placement literals: the hosting core passes these via `Ref with`.
+  # Defaults are the Studio preview. `input: false` — no workflow fills them.
+  assistantName:
+    type: string
+    input: false
+    default: Assistant
+  tagline:
+    type: string
+    input: false
+    default: Your AI Voice Assistant
+  orbSize:
+    type: string
+    input: false
+    default: "200"
+  orbColor:
+    type: string
+    input: false
+    default: orb.ink-soft
+    enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
+# THE STATE TREE (STATE MODEL v2): ONE public state — the single-state permanent
+# component (docs/design/03): it lives in a voice template's core, cannot leave it,
+# and templates never rearrange around it. The steps of the call NEST beneath it as
+# PRIVATE substates (the rearrange rule: the template wouldn't move, so they nest),
+# which is also what makes them visible in Studio — the state switcher reads the
+# tree: `call` on top, the five steps beneath by state name.
+#
+# The nested axis is `callState` — LOCKED state: live, the voice service projects
+# the value into scope (STATE_MODEL §4) and the write IS the transition. No
+# `initial` keys: order IS the priority (the course-application rule) — the first
+# declared name is the arrival, so `call` arrives and the call rests in `idle`.
+state:
+  view:
+    states:
+      call:
+        on: callState
+        states:
+          idle:
+            layout: callState-idle
+          active:
+            layout: callState-active
+          listening:
+            layout: callState-listening
+          speaking:
+            layout: callState-speaking
+          thinking:
+            layout: callState-thinking
+root:
+  type: Switch
+  on: view
+  cases:
+    call: { $include: layouts/call }
+    # Ref placement: embedded in a template's core the component has no spawned
+    # instance slice, so `view` is absent from scope — the call is still the one
+    # thing to draw.
+    default: { $include: layouts/call }

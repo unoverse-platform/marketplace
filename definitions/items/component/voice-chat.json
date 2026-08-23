@@ -1,0 +1,1840 @@
+{
+  "kind": "component",
+  "name": "voice-chat",
+  "fingerprint": "149fcdd270fb802c",
+  "bundle": "design-system",
+  "title": "Voice Call",
+  "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
+  "category": "Communication",
+  "definition": {
+    "unoverse": "1.0",
+    "kind": "component",
+    "name": "voice-chat",
+    "category": "Communication",
+    "nodeSize": {
+      "width": 480,
+      "height": 400
+    },
+    "props": {
+      "callState": {
+        "type": "string",
+        "input": false,
+        "default": "idle",
+        "enum": [
+          "idle",
+          "active",
+          "listening",
+          "speaking",
+          "thinking"
+        ]
+      },
+      "assistantName": {
+        "type": "string",
+        "input": false,
+        "default": "Assistant"
+      },
+      "tagline": {
+        "type": "string",
+        "input": false,
+        "default": "Your AI Voice Assistant"
+      },
+      "orbSize": {
+        "type": "string",
+        "input": false,
+        "default": "200"
+      },
+      "orbColor": {
+        "type": "string",
+        "input": false,
+        "default": "orb.ink-soft",
+        "enum": [
+          "orb.ink-faint",
+          "orb.ink-soft",
+          "orb.ink",
+          "orb.brand"
+        ]
+      }
+    },
+    "state": {
+      "view": "call",
+      "callState": "idle"
+    },
+    "root": {
+      "type": "Switch",
+      "on": "view",
+      "cases": {
+        "call": {
+          "type": "Box",
+          "style": {
+            "flex": 1,
+            "height": "full",
+            "direction": "column",
+            "align": "center",
+            "justify": "center",
+            "gap": "6",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "display": "inline-flex",
+                "direction": "row",
+                "position": "relative",
+                "align": "center",
+                "justify": "center",
+                "padding": "12"
+              },
+              "children": [
+                {
+                  "type": "Switch",
+                  "on": "callState",
+                  "cases": {
+                    "active": {
+                      "type": "Orb",
+                      "state": "halo",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "listening": {
+                      "type": "Orb",
+                      "state": "sonar",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "speaking": {
+                      "type": "Orb",
+                      "state": "pulse",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "thinking": {
+                      "type": "Orb",
+                      "state": "shimmer",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "position": "relative",
+                    "zIndex": "1",
+                    "width": "28",
+                    "height": "28",
+                    "radius": "full",
+                    "overflow": "hidden",
+                    "background": "surface.sunken",
+                    "shadow": "lg"
+                  },
+                  "children": [
+                    {
+                      "type": "Switch",
+                      "on": "callState",
+                      "cases": {
+                        "active": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                          "alt": "The assistant, ready",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "listening": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg",
+                          "alt": "The assistant, listening",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "speaking": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg",
+                          "alt": "The assistant, responding",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "thinking": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg",
+                          "alt": "The assistant, looking something up",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "default": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                          "alt": "The assistant, waiting",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "assistantName"
+                  },
+                  "style": {
+                    "font": "headline.lg",
+                    "color": "text.primary",
+                    "align": "center"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "tagline"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "color": "text.secondary",
+                    "align": "center"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Switch",
+              "on": "callState",
+              "cases": {
+                "idle": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "style": {
+                            "font": "body.sm",
+                            "color": "text.tertiary",
+                            "align": "center"
+                          },
+                          "value": "Ready to call"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Button",
+                          "action": "startCall",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "2",
+                            "minHeight": "12",
+                            "padding": [
+                              "3",
+                              "8"
+                            ],
+                            "radius": "full",
+                            "background": "action.primary",
+                            "color": "action.primary-text",
+                            "shadow": "md",
+                            "cursor": "pointer",
+                            "outline": "none",
+                            "transition": "all 150ms ease",
+                            "hover": {
+                              "background": "action.primary-hover"
+                            }
+                          },
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "style": {
+                                "width": "6",
+                                "height": "6"
+                              },
+                              "icon": "phone"
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "button"
+                              },
+                              "value": "Start Call"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "style": {
+                            "font": "body.sm",
+                            "color": "text.tertiary",
+                            "align": "center",
+                            "maxWidth": "90"
+                          },
+                          "value": "Tap the button above to start a voice conversation."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "active": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "listening": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Box",
+                              "style": {
+                                "width": "2",
+                                "height": "2",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "animation": {
+                                  "name": "dotPulse",
+                                  "duration": "1.4s",
+                                  "easing": "ease-in-out"
+                                }
+                              }
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "action.primary"
+                              },
+                              "value": "You are speaking…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "speaking": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "thinking": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "default": {
+          "type": "Box",
+          "style": {
+            "flex": 1,
+            "height": "full",
+            "direction": "column",
+            "align": "center",
+            "justify": "center",
+            "gap": "6",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "display": "inline-flex",
+                "direction": "row",
+                "position": "relative",
+                "align": "center",
+                "justify": "center",
+                "padding": "12"
+              },
+              "children": [
+                {
+                  "type": "Switch",
+                  "on": "callState",
+                  "cases": {
+                    "active": {
+                      "type": "Orb",
+                      "state": "halo",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "listening": {
+                      "type": "Orb",
+                      "state": "sonar",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "speaking": {
+                      "type": "Orb",
+                      "state": "pulse",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    },
+                    "thinking": {
+                      "type": "Orb",
+                      "state": "shimmer",
+                      "bind": {
+                        "speed": "speed",
+                        "size": "orbSize"
+                      },
+                      "style": {
+                        "position": "absolute",
+                        "inset": "0",
+                        "margin": "auto",
+                        "color": "{{orbColor}}"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "position": "relative",
+                    "zIndex": "1",
+                    "width": "28",
+                    "height": "28",
+                    "radius": "full",
+                    "overflow": "hidden",
+                    "background": "surface.sunken",
+                    "shadow": "lg"
+                  },
+                  "children": [
+                    {
+                      "type": "Switch",
+                      "on": "callState",
+                      "cases": {
+                        "active": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                          "alt": "The assistant, ready",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "listening": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260875/gravity/listening.jpg",
+                          "alt": "The assistant, listening",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "speaking": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/responding.jpg",
+                          "alt": "The assistant, responding",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "thinking": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/thinking.jpg",
+                          "alt": "The assistant, looking something up",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        },
+                        "default": {
+                          "type": "Image",
+                          "src": "https://res.cloudinary.com/sonik/image/upload/v1786260874/gravity/waiting.jpg",
+                          "alt": "The assistant, waiting",
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "align": "center",
+                "gap": "1"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "assistantName"
+                  },
+                  "style": {
+                    "font": "headline.lg",
+                    "color": "text.primary",
+                    "align": "center"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "tagline"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "color": "text.secondary",
+                    "align": "center"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Switch",
+              "on": "callState",
+              "cases": {
+                "idle": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "style": {
+                            "font": "body.sm",
+                            "color": "text.tertiary",
+                            "align": "center"
+                          },
+                          "value": "Ready to call"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Button",
+                          "action": "startCall",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "2",
+                            "minHeight": "12",
+                            "padding": [
+                              "3",
+                              "8"
+                            ],
+                            "radius": "full",
+                            "background": "action.primary",
+                            "color": "action.primary-text",
+                            "shadow": "md",
+                            "cursor": "pointer",
+                            "outline": "none",
+                            "transition": "all 150ms ease",
+                            "hover": {
+                              "background": "action.primary-hover"
+                            }
+                          },
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "style": {
+                                "width": "6",
+                                "height": "6"
+                              },
+                              "icon": "phone"
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "button"
+                              },
+                              "value": "Start Call"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "style": {
+                            "font": "body.sm",
+                            "color": "text.tertiary",
+                            "align": "center",
+                            "maxWidth": "90"
+                          },
+                          "value": "Tap the button above to start a voice conversation."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "active": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "listening": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Box",
+                              "style": {
+                                "width": "2",
+                                "height": "2",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "animation": {
+                                  "name": "dotPulse",
+                                  "duration": "1.4s",
+                                  "easing": "ease-in-out"
+                                }
+                              }
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "action.primary"
+                              },
+                              "value": "You are speaking…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "speaking": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                },
+                "thinking": {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "align": "center",
+                    "gap": "4",
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "12",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "visibleWhen": {
+                            "field": "isLookingUp",
+                            "eq": true
+                          },
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "gap": "4",
+                            "padding": [
+                              "3",
+                              "5"
+                            ],
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Each",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "gap": "1"
+                              },
+                              "template": {
+                                "type": "Box",
+                                "style": {
+                                  "width": "1.5",
+                                  "height": "1.5",
+                                  "radius": "full",
+                                  "background": "action.primary",
+                                  "animation": {
+                                    "name": "wave",
+                                    "duration": "1.2s",
+                                    "easing": "ease-in-out"
+                                  },
+                                  "animationDelay": "{{delay}}"
+                                }
+                              },
+                              "items": [
+                                {
+                                  "delay": "0s"
+                                },
+                                {
+                                  "delay": "0.15s"
+                                },
+                                {
+                                  "delay": "0.3s"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Text",
+                              "style": {
+                                "font": "body.sm",
+                                "weight": "medium",
+                                "color": "text.secondary"
+                              },
+                              "value": "Searching BPP’s knowledge base…"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "20",
+                        "direction": "row",
+                        "align": "center",
+                        "justify": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Box",
+                          "style": {
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "gap": "6"
+                          },
+                          "children": [
+                            {
+                              "type": "Button",
+                              "action": "endCall",
+                              "style": {
+                                "direction": "row",
+                                "align": "center",
+                                "justify": "center",
+                                "width": "20",
+                                "height": "20",
+                                "radius": "full",
+                                "background": "action.primary",
+                                "border": "subtle",
+                                "color": "action.primary-text",
+                                "cursor": "pointer",
+                                "outline": "none",
+                                "shadow": "md",
+                                "transition": "all 150ms ease",
+                                "hover": {
+                                  "background": "action.subtle"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "type": "Icon",
+                                  "style": {
+                                    "width": "7",
+                                    "height": "7"
+                                  },
+                                  "icon": "phoneOff"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "minHeight": "16"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
+    "whenToUse": "Talk to the assistant on a live voice call and see the call itself, the assistant's face and orb, a button to start the call, and clear signs of who is speaking, when it is listening and when it is looking something up. It shows the whole call from resting to hung up. Not for the conversation transcript and not for typing a message, it renders the call and nothing else.",
+    "title": "Voice Call",
+    "version": "1.0.0",
+    "spatial": true,
+    "publicStates": [
+      "call"
+    ],
+    "initialView": "call",
+    "stateTree": [
+      {
+        "name": "call",
+        "on": "callState",
+        "states": [
+          {
+            "name": "idle",
+            "layout": "callState-idle"
+          },
+          {
+            "name": "active",
+            "layout": "callState-active"
+          },
+          {
+            "name": "listening",
+            "layout": "callState-listening"
+          },
+          {
+            "name": "speaking",
+            "layout": "callState-speaking"
+          },
+          {
+            "name": "thinking",
+            "layout": "callState-thinking"
+          }
+        ]
+      }
+    ]
+  }
+}

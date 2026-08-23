@@ -1,0 +1,51 @@
+# THE SHELL of the one public state: always on for the whole call. The assistant is
+# present in every step, so the avatar and its captions live here, and only the step
+# strip at the bottom switches — the steps are the private substates, each owning the
+# same-name drawing beside this file. avatar-orb branches on the same projected
+# callState, so portrait and halo track the call with nothing wired here.
+type: Box
+style:
+  # `flex: 1` fills a flex column (the template's core); `height: full` fills a block
+  # parent with a real height (the standalone preview). Both, so the call is centred
+  # in its space either way rather than sitting at the top.
+  flex: 1
+  height: full
+  direction: column
+  align: center
+  justify: center
+  gap: "6"
+  width: full
+children:
+  - type: Ref
+    ref: avatar-orb
+    props:
+      size: orbSize
+      orbColor: orbColor
+  - type: Box
+    style:
+      direction: column
+      align: center
+      gap: "1"
+    children:
+      - type: Text
+        bind:
+          value: assistantName
+        style:
+          font: headline.lg
+          color: text.primary
+          align: center
+      - type: Text
+        bind:
+          value: tagline
+        style:
+          font: body.md
+          color: text.secondary
+          align: center
+  - type: Switch
+    on: callState
+    cases:
+      idle: { $include: layouts/callState-idle }
+      active: { $include: layouts/callState-active }
+      listening: { $include: layouts/callState-listening }
+      speaking: { $include: layouts/callState-speaking }
+      thinking: { $include: layouts/callState-thinking }
