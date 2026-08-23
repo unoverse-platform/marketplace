@@ -48,32 +48,6 @@ discoverRelated:
   renderComponents: "return response.results"
   returns: { $ref: search#lean }
 
-readResult:
-  description: >-
-    Read the FULL content of one search result: its complete authored copy (bodyCopy), every
-    detail the lean search row summarises. Use when answering needs specifics the summary
-    does not carry (levels, figures, requirements, routes). Pass the result's universal_id
-    verbatim.
-  calls:
-    - name: entry
-      method: GET
-      url: >-
-        return scope.engineUrl + '/dictionary/entry/'
-          + encodeURIComponent(String(params.universal_id || '').trim())
-      transport: json
-      # A miss is an ANSWER: the engine 404s on an unknown id, and the projection turns
-      # that into the "copy the id verbatim" message. Without this the transport throws
-      # first and the model sees an empty result instead of the correction.
-      okOn: [404]
-  # EDITORIAL FIELDS ONLY. Crawler bookkeeping (jsonLd, openGraph, timestamps, paths) never
-  # reaches a model, the same rule the lean projection applies to a search row.
-  #
-  # A miss returns a MESSAGE rather than throwing: the model has usually mistyped or invented
-  # an id, and "copy one verbatim from the conversation" is a recoverable instruction where an
-  # exception would end the turn. That is why it is not the call's `error` block.
-  returns: { $ref: entry#project }
-
-
 readSkill:
   description: >-
     Read a skill's full instructions. MANDATORY whenever a search result has

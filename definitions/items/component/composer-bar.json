@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "composer-bar",
-  "fingerprint": "bec06798a46b8d7d",
+  "fingerprint": "c65cbd4139ca0cb1",
   "bundle": "design-system",
   "title": "composer-bar",
   "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -16,7 +16,7 @@
       "height": 96
     },
     "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
-    "whenToUse": "The always-present text-entry bar at the bottom of a conversational app. Composed into a chat template as fixed chrome; binds its draft to the template's input field.",
+    "whenToUse": "The always-present text-entry bar at the bottom of a conversational app. Composed into a chat app as fixed chrome; binds its draft to the app's input field.",
     "props": {
       "latched": {
         "type": "boolean",
@@ -112,7 +112,7 @@
                     {
                       "type": "Button",
                       "action": {
-                        "type": "setTemplateValue",
+                        "type": "setAppValue",
                         "values": [
                           {
                             "key": "latchDismissed",

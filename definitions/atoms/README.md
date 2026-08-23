@@ -28,8 +28,8 @@ not as a recipe in `rx/styles` and not in the SDK.
 
 **Atoms are NOT served to channels — or shown anywhere.** There is no
 `unoverse://atoms/{name}` resource and no Studio view. Atoms are *authoring-time
-only* — they exist to be **composed/inlined into components + templates**; a channel
-only ever receives fully-expanded component/template definitions.
+only* — they exist to be **composed/inlined into components + apps**; a channel
+only ever receives fully-expanded component/app definitions.
 
 ## Atoms vs primitives vs components
 

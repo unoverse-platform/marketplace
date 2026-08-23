@@ -6,7 +6,7 @@ whenToUse: The dismiss/close affordance on a focused component or modal, typical
 root:
   type: Button
   # The default dismiss writes the public axis (`view`, STATE_MODEL v2 §2) back to
-  # inline. In template chrome the SDK reads this as "un-surface" (isViewField accepts
+  # inline. In app chrome the SDK reads this as "un-surface" (isViewField accepts
   # both spellings during migration); component hosts override the action anyway.
   action:
     type: setValue

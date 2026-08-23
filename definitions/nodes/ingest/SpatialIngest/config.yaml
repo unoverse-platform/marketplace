@@ -38,7 +38,7 @@ configSchema:
       enum: [need, product, component]
       enumNames: [Needs, Product (from text), Product (from component)]
       default: need
-    # COMPONENT MODE (the completion contract, UNOVERSE_MCP_TEMPLATE_PROTOCOL.md §The
+    # COMPONENT MODE (the completion contract, UNOVERSE_MCP_APP_PROTOCOL.md §The
     # completion contract): these three wire from the Component node's exit output,
     # which fires ONCE when the filler calls `complete`. The mode's guarantees live in
     # run.yaml's own body — bodyCopy verbatim, state + app + promoted stamped — so a

@@ -6,7 +6,7 @@ style:
   gap: "2"
   width: full
 children:
-  # The GROUP label, shown once where the group changes. A template cannot see the
+  # The GROUP label, shown once where the group changes. An app cannot see the
   # section before it, so `groupStart` is derived where the sections are read and the
   # component simply honours it.
   - type: Text

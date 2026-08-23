@@ -5,7 +5,7 @@
 # callState, so portrait and halo track the call with nothing wired here.
 type: Box
 style:
-  # `flex: 1` fills a flex column (the template's core); `height: full` fills a block
+  # `flex: 1` fills a flex column (the app's core); `height: full` fills a block
   # parent with a real height (the standalone preview). Both, so the call is centred
   # in its space either way rather than sitting at the top.
   flex: 1

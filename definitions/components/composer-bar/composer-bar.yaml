@@ -6,9 +6,9 @@ nodeSize:
   width: 640
   height: 96
 description: "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org."
-whenToUse: The always-present text-entry bar at the bottom of a conversational app. Composed into a chat template as fixed chrome; binds its draft to the template's input field.
+whenToUse: The always-present text-entry bar at the bottom of a conversational app. Composed into a chat app as fixed chrome; binds its draft to the app's input field.
 props:
-  # THE LATCH FACTS, published into template state by the renderer (STATE_MODEL "The pill
+  # THE LATCH FACTS, published into app state by the renderer (STATE_MODEL "The pill
   # and the ✕"). Declared here so they have DEFAULTS: an unmatched Switch draws nothing, so
   # without `latchState: none` the leading mark vanishes before anything is published — a
   # fresh app, and every Studio preview. The `preview` values are what Studio draws, so the
@@ -53,9 +53,9 @@ root:
         # never re-guards its own discriminant"). A pair of opposite `visibleWhen`s here
         # would be the boolean soup that rule exists to stop.
         #
-        # The axis is a PROP, not `view`: this is fixed chrome, expanded into the template
+        # The axis is a PROP, not `view`: this is fixed chrome, expanded into the app
         # tree by `Ref`, so it has no slice of its own and `view` there would mean the
-        # template's business, not this bar's. (It also cannot be `view` mechanically — a
+        # app's business, not this bar's. (It also cannot be `view` mechanically — a
         # faced component's root must switch on `view`, and Ref remapping does not touch a
         # Switch's `on`, so a shared multi-FACE component is not expressible as chrome.)
         - type: Switch
@@ -101,10 +101,10 @@ root:
                 # a bare `true` because chrome cannot know WHICH instance holds the latch —
                 # the renderer resolves the flag to the holder's key and re-derives.
                 # `latchDismissed` is a platform-defined SHARED CHROME KEY (the allowlist in
-                # lint/rx/walk.mjs); this bar writes no other template state.
+                # lint/rx/walk.mjs); this bar writes no other app state.
                 - type: Button
                   action:
-                    type: setTemplateValue
+                    type: setAppValue
                     values:
                       - key: latchDismissed
                         value: true

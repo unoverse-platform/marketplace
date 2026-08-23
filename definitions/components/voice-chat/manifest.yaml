@@ -5,6 +5,6 @@ category: Communication
 version: 1.0.0
 
 # The app-level LOAD MODE (docs/design/03 §The manifest): absent, a component app
-# would load in `focus`. Arrival inside a template is the tree's `initial` (call,
+# would load in `focus`. Arrival inside an app is the tree's `initial` (call,
 # the one public state); this key keeps the app load honest to it.
 defaultState: call

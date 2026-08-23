@@ -39,9 +39,10 @@ helpers:
 
   # ONE SEARCH RESULT, projected. Used by findIntent and discoverRelated alike.
   #
-  # NO bodyCopy: the full authored copy stays server-side and is fetched on demand by
-  # readResult(universal_id). Lean by default, depth only when an answer needs it — the same
-  # outline/readSection split SmartDocument uses.
+  # NO bodyCopy: the full authored copy stays SERVER-SIDE and never reaches a model. The
+  # platform dereferences a row on the card's behalf (getDetail, or a brief's `hydrate:`
+  # field) — the model only ever holds the universal_id. `readResult` used to hand the copy
+  # to the model directly and was removed for exactly that reason.
   searchRow:
     args: [r]
     body: >-
@@ -112,31 +113,3 @@ helpers:
     args: []
     body: "return ['action']"
 
-  ENTRY_KEEP:
-    args: []
-    body: >-
-      return ['tagline', 'shortDescription', 'introParagraph', 'callToAction', 'actionPrompt',
-              'bodyCopy', 'mainCategory', 'section']
-
-  # ONE ROW'S FULL AUTHORED CONTENT, for readResult. The complement of searchRow: same shape,
-  # a wider keep-list, plus the row's own needs. Crawler bookkeeping (jsonLd, openGraph,
-  # timestamps, paths) never reaches a model on either path.
-  entryRow:
-    args: [r]
-    body: >-
-      return Object.assign(
-        {
-          universal_id: r.universal_id,
-          object_type: r.object_type,
-          title: r.title,
-          description: r.description,
-          key_need: r.key_need,
-          source_url: r.source_url,
-          source_id: r.source_id,
-          hasImage: helpers.hasImage(r)
-        },
-        (Array.isArray(r.needs) && r.needs.length) ? { needs: r.needs } : {},
-        ((meta) => Object.keys(meta).length ? { metadata: meta } : {})(
-          helpers.keptMeta(r.metadata, helpers.ENTRY_KEEP())
-        )
-      )

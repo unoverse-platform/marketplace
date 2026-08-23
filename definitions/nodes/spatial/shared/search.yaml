@@ -116,8 +116,8 @@ call:
 # THE NODE PROJECTS. Legacy did — `{ ...result, results: projectResultsForModel(result.results) }`
 # — and the agent harness ALSO leans the reply afterwards. Two projections, and that is not an
 # accident to be tidied away: the harness's is a generic floor for any search-shaped tool, and
-# this one is spatial's own contract, which knows `bodyCopy` belongs behind readResult and that
-# a plain need keeps no metadata at all.
+# this one is spatial's own contract, which knows `bodyCopy` belongs to the platform's own
+# dereference (getDetail), never to a model, and that a plain need keeps no metadata at all.
 #
 # Removing this on 2026-07-29, on the theory that the harness could own it alone, put the FULL
 # rows into the reply: jsonLd, openGraph, UMAP coordinates, every bodyCopy in full. Roughly

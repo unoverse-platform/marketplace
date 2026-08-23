@@ -2,7 +2,7 @@ unoverse: "1.0"
 kind: atom
 name: outline-button
 description: "Outline call-to-action button: a leading icon + bold label inside a transparent pill with an accent-coloured border. Border, icon and label all take action.primary, so a Ref style override recolours the whole set. References tokens only."
-whenToUse: The standard outline CTA (e.g. Explore, Request callback). Components and templates COMPOSE this atom via a Ref, mapping `icon` + `label` to fields plus an `action`; override `style` for a non-default tone.
+whenToUse: The standard outline CTA (e.g. Explore, Request callback). Components and apps COMPOSE this atom via a Ref, mapping `icon` + `label` to fields plus an `action`; override `style` for a non-default tone.
 props:
   icon:
     type: string

@@ -6,8 +6,8 @@ description: An assistant avatar whose face and surrounding orb both change with
 whenToUse: The assistant's face on a live voice surface, where its activity should read at a glance — waiting for you, hearing you, or answering. Reads the platform's own callState, so a voice app gets every moment with nothing to wire; at rest it is just the face, and the orb appears when the call goes live. For an activity animation with no face use thinking-orb; for a person's photo in a list or a review use the avatar atom.
 props:
   # LOCKED STATE, declared here only so Studio can drive the preview. `callState` is
-  # projected into scope by the voice service (a template's `service: "voice"`), exactly
-  # as the agent-avatar atom reads it; inside a voice template the projected value is
+  # projected into scope by the voice service (an app's `service: "voice"`), exactly
+  # as the agent-avatar atom reads it; inside a voice app the projected value is
   # what this branches on and this default never applies. Never simulate it elsewhere.
   callState:
     type: string

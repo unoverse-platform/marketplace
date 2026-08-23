@@ -88,9 +88,11 @@ spatial:
     - A result with hasImage=true can be referenced by its universal_id wherever a
       composition field asks for an image ref — you never need (and never receive) raw image
       URLs.
-    - Results are LEAN summaries. When an answer needs specifics a summary doesn't carry
-      (levels, figures, requirements), call readResult(universal_id) for that result's full
-      authored copy — never guess details.
+    - Results are LEAN summaries, and that is all you get. Full authored copy NEVER travels
+      through you: a card carries the result's universal_id and the PLATFORM dereferences it
+      (getDetail / a brief's `hydrate:` field). Your job is to CHOOSE the item and hand over
+      its id; you never read, carry or retype its content. Answer from the summary, or
+      surface the item and let it show its own detail.
 
   methods:
     findIntent:
@@ -188,20 +190,6 @@ spatial:
               (Phase 0a). Length of the conversation is irrelevant; only the subject matters.
               true cannot turn apps ON by itself — the box's own setting is the ceiling and
               false here only declines what that setting already permitted.
-
-    readResult:
-      description: >-
-        Read the FULL content of one search result — its complete authored copy (bodyCopy),
-        every detail the lean search row summarizes. Use when answering needs specifics the
-        summary doesn't carry (levels, figures, requirements, routes). Pass the result's
-        universal_id verbatim.
-      input:
-        type: object
-        required: [universal_id]
-        properties:
-          universal_id:
-            type: string
-            description: The universal_id of a search result from this conversation, verbatim.
 
     readSkill:
       description: >-

@@ -1,5 +1,5 @@
 {
-  "release": "0.1.54",
+  "release": "0.1.55",
   "items": [
     {
       "kind": "component",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "composer-bar",
-      "fingerprint": "bec06798a46b8d7d",
+      "fingerprint": "c65cbd4139ca0cb1",
       "bundle": "design-system",
       "title": "composer-bar",
       "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -455,7 +455,7 @@
     {
       "kind": "atom",
       "name": "outline-button",
-      "fingerprint": "cfe21cd84fa59029",
+      "fingerprint": "ca7a6521fe832b33",
       "bundle": "design-system",
       "title": "outline-button",
       "description": "Outline call-to-action button: a leading icon + bold label inside a transparent pill with an accent-coloured border. Border, icon and label all take action.primary, so a Ref style override recolours the whole set. References tokens only."
@@ -530,7 +530,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "345d77770e9cb06e",
+      "fingerprint": "0e895649b5536287",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
@@ -1175,7 +1175,7 @@
       "kind": "node",
       "name": "SpatialIngest",
       "pack": "ingest",
-      "fingerprint": "214d20a0317d3b25",
+      "fingerprint": "3738329bc6981a0f",
       "title": "Spatial Ingest",
       "description": "Turn raw text into needs — or one product row — in the spatial dictionary.",
       "category": "Documents",
@@ -1362,7 +1362,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "dfa069c434381e3f",
+      "fingerprint": "e0aeb387e8497127",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -7,8 +7,8 @@ nodeSize:
   height: 400
 props:
   # LOCKED STATE, declared here only so Studio can drive the preview. `callState`
-  # is projected into scope by the voice service (a template's
-  # `service: "voice"`); inside a voice template the projected value is what the steps
+  # is projected into scope by the voice service (an app's
+  # `service: "voice"`); inside a voice app the projected value is what the steps
   # branch on and this default never applies. Never simulate it elsewhere.
   callState:
     type: string
@@ -35,9 +35,9 @@ props:
     default: orb.ink-soft
     enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
 # THE STATE TREE (STATE MODEL v2): ONE public state — the single-state permanent
-# component (docs/design/03): it lives in a voice template's core, cannot leave it,
-# and templates never rearrange around it. The steps of the call NEST beneath it as
-# PRIVATE substates (the rearrange rule: the template wouldn't move, so they nest),
+# component (docs/design/03): it lives in a voice app's core, cannot leave it,
+# and apps never rearrange around it. The steps of the call NEST beneath it as
+# PRIVATE substates (the rearrange rule: the app wouldn't move, so they nest),
 # which is also what makes them visible in Studio — the state switcher reads the
 # tree: `call` on top, the five steps beneath by state name.
 #
@@ -66,7 +66,7 @@ root:
   on: view
   cases:
     call: { $include: layouts/call }
-    # Ref placement: embedded in a template's core the component has no spawned
+    # Ref placement: embedded in an app's core the component has no spawned
     # instance slice, so `view` is absent from scope — the call is still the one
     # thing to draw.
     default: { $include: layouts/call }
