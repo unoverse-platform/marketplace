@@ -1,5 +1,5 @@
 {
-  "release": "0.1.60",
+  "release": "0.1.61",
   "items": [
     {
       "kind": "component",
@@ -534,6 +534,15 @@
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
+    },
+    {
+      "kind": "skill",
+      "name": "complaints-handling",
+      "fingerprint": "70e44f09357652b9",
+      "title": "Complaints Handling",
+      "description": "Guide for handling customer complaints professionally, with empathy and clear escalation paths.",
+      "category": "ai",
+      "whenToUse": "Handle an unhappy customer — a complaint, frustration, dissatisfaction, or a request to escalate or speak to a manager. Acknowledges feelings first, then resolves or escalates with a clear path."
     },
     {
       "kind": "skill",
