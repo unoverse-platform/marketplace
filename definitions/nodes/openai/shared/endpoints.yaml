@@ -11,4 +11,10 @@ embeddings: https://api.openai.com/v1/embeddings
 # name on every response. Items are prepended to the request and the turn's input and
 # output are appended back, so history never travels from here and is never stored here.
 # Minted with POST and an empty body; the reply carries the id.
+#
+# NO CALLER SINCE 2026-08-23. OpenAIAgent was the only one and now chains with
+# previous_response_id instead. Kept because the URL is a fact about the vendor rather
+# than about any node, and re-deriving it is the sort of small cost that argues for
+# leaving a one-line constant alone. Nothing here decides which mechanism a node uses —
+# each declares that next to its own reason (shared/tools.yaml).
 conversations: https://api.openai.com/v1/conversations

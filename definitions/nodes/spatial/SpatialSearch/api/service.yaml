@@ -1,19 +1,24 @@
-# THE FIVE TOOLS an attached agent gets. Descriptions transcribed VERBATIM from the retired
-# SPATIAL_SCHEMA: they are what the model reads when choosing a tool, so their wording is the
-# routing. Rephrasing them is a behaviour change, not a tidy-up.
+# THE FIVE TOOLS an attached agent gets. These are what the model reads when choosing a tool,
+# so their wording IS the routing: rephrasing them is a behaviour change, never a tidy-up.
+#
+# Trimmed 2026-08-24 (v2.1). They were transcribed verbatim from the retired SPATIAL_SCHEMA
+# and had accumulated restatements of the protocol in shared/schema.yaml. A rule now lives in
+# exactly ONE place: the search rule and the skill rule in the protocol, the display rule on
+# the `includeApps` field. Measured cause: a repeated question was being read as a reason not
+# to search (33% search rate on repeats vs 100% on a first turn). See §Memory vs fresh search
+# in docs/SPATIAL_SEARCH_GUIDE.md.
 
 findIntent:
   description: >-
     Precision search. The user has NAMED what they want, a specific item, category or task
     ("X", "how do I...", "which one covers Y?", "recommend a good Z"), and this pinpoints the
     matches for that named need, however the ask is phrased. Pass the user's EXACT words from
-    THIS turn, do not paraphrase, and do not re-send an earlier turn's question. NOT for open
-    needs with no named thing ("where do I start?", "what are my options?"), which is
-    discoverRelated. If ANY result has
-    object_type="skill" you MUST call readSkill before responding; check ALL results, not
-    just the top one. Do not pair with discoverRelated in parallel. Pass includeApps: false
-    only when this turn is about something ALREADY ON SCREEN (refining or asking about a card
-    they are reading) — a new subject gets cards however long the conversation has run.
+    THIS turn: not paraphrased, and not carried over from an earlier turn. If they repeat
+    themselves, those repeated words ARE this turn's question and this search still runs. NOT
+    for open needs with no named thing ("where do I start?", "what are my options?"), which
+    is discoverRelated. If ANY result has object_type="skill" you MUST call readSkill before
+    responding; check ALL results, not just the top one. Do not pair with discoverRelated in
+    parallel.
   calls:
     - $ref: search#call
       body:
@@ -37,10 +42,7 @@ discoverRelated:
     grouped by need, so nearby items are the adjacent choices), including options the user
     did not think to ask about, which is the awareness surface. NOT for a named
     thing or category, which is findIntent. Also the follow-up when findIntent came back
-    weak. Low similarity is normal here: these are neighbours, not exact matches. Pass
-    includeApps: false only when this turn is about something ALREADY ON SCREEN (refining or
-    asking about a card they are reading) — a new subject gets cards however long the
-    conversation has run.
+    weak. Low similarity is normal here: these are neighbours, not exact matches.
   calls:
     - $ref: search#call
       body:

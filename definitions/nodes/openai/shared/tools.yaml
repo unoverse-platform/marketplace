@@ -40,10 +40,12 @@ choice: auto
 # REFUSES both at once:
 #
 #   previous_response_id   chains response to response. A new id every turn, known only
-#                          after the turn ends. Declared by OpenAIStream.
+#                          after the turn ends. Declared by OpenAIStream, and since
+#                          2026-08-23 by OpenAIAgent too — which now outlives a single
+#                          execution by REMEMBERING that id (continuity.remember) rather
+#                          than by holding a durable one.
 #   conversation           a durable id, minted once and named on every turn, with the API
-#                          keeping the history. Declared by OpenAIAgent, which is what lets
-#                          its memory outlive a single execution.
+#                          keeping the history. No caller today.
 #
 # Sending both is `mutually_exclusive_parameters`, a hard 400 (confirmed against the live
 # API 2026-08-12). So a node that names a conversation must NOT inherit continuity, and

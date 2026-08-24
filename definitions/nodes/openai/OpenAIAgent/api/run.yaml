@@ -10,8 +10,10 @@
 
 # ── CONVERSATION MEMORY ──────────────────────────────────────────────────────────────
 #
-# Three cheap steps before the model call, and between them they are the whole feature:
-# read the id we minted last time, mint one if there is none, write it back.
+# ONE step here, and it is the READ. The write is the tool loop's, declared as
+# `continuity.remember` in toolExchange.yaml, because the id this feature stores does not
+# exist until the model has finished speaking. See that file for why the two halves live
+# apart.
 #
 # What is NOT here is the point. No history is read, assembled, injected or stored. The
 # only thing that crosses this boundary is an opaque id; OpenAI holds the turns against
@@ -23,38 +25,11 @@
 # memory lives as long as the thread: a new thread starts fresh.
 
 - name: cached
-  # Switched off, or no thread id: either way nothing is read. The run still gets a
-  # conversation below, it just does not outlive the execution. Skipped leaves NO
-  # `calls.cached` at all, which is what the next call tests.
+  # Switched off, or no thread id: either way nothing is read and the run starts a fresh
+  # chain. Skipped leaves NO `calls.cached` at all, which is what `generate` tests.
   when: "return !!config.enableConversationMemory && !!scope.conversationId"
   state: read
   key: "openai:conversation:{{ scope.conversationId }}"
-
-- name: conversation
-  # Cold, or no thread to key on. Either way this run needs an id, so mint one. A fresh
-  # conversation on every run of an unkeyed thread costs one small request and keeps the
-  # model call below identical in both cases, which is why `generate` needs no branch.
-  when: "return !calls.cached || !calls.cached.id"
-  method: POST
-  url: { $ref: endpoints#conversations }
-  transport: json
-  credential:
-    scheme: bearer
-    token: "{{ credentials.openAICredential.apiKey }}"
-  body: {}
-  error:
-    when: "return !!response.error"
-    message: "return response.error.message"
-
-- name: remember
-  # Only when memory is ON, we minted one, AND there is somewhere to put it. `merge`
-  # rather than a replace because the key is shared: it is read-modify-write, so a future
-  # writer's fields survive. NOTE: no TTL, so a remembered conversation persists until
-  # something clears it.
-  when: "return !!config.enableConversationMemory && !!calls.conversation && !!scope.conversationId"
-  state: merge
-  key: "openai:conversation:{{ scope.conversationId }}"
-  value: "return { id: calls.conversation.id }"
 
 - name: generate
   method: POST
@@ -67,14 +42,22 @@
   body:
     model: "{{ config.model }}"
     input: "{{ config.prompt }}"
-    # EXACTLY ONE of these is set: `conversation` is skipped when `cached` held an id, so
-    # the two are alternatives rather than a fallback chain. Written as an `if` and not a
-    # concatenation so a reader is not left working out why two ids side by side are safe.
+    # THE SEED, and only on turn one. Cold (memory off, no thread, or a chain older than
+    # OpenAI's 30 days) renders empty and is dropped, which starts a new chain rather than
+    # failing — the same outcome as a page reload, and the reason no fallback is written
+    # here. From turn two the loop supplies this key itself from the id the last turn
+    # settled on, and the loop's value wins.
+    previous_response_id: "{{ calls.cached.id }}"
+    # THE ROLE, THEN WHATEVER APPLIES WHERE THE CONVERSATION IS STANDING.
     #
-    # This is also why this node declares no `continuity`: naming a conversation and a
-    # previous_response_id together is a 400. See shared/tools.yaml.
-    conversation: "{{#if calls.cached.id}}{{ calls.cached.id }}{{else}}{{ calls.conversation.id }}{{/if}}"
-    instructions: "{{ config.systemPrompt }}"
+    # `skillsText` is the loop's, rendered from the skills attached to the region this
+    # conversation's last search anchored in. Empty until one applies, so an agent that never
+    # reaches an attached region sends exactly what it always did.
+    #
+    # ROLE FIRST is not cosmetic: `instructions` is the cached prefix, so the stable text has
+    # to come before the part that changes or a skill loading would throw away the whole
+    # cached prefix instead of just its tail.
+    instructions: "{{ config.systemPrompt }}{{ skillsText }}"
     max_output_tokens: "{{ config.maxTokens }}"
     stream: true
     reasoning:

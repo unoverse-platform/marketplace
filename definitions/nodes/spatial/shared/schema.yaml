@@ -1,8 +1,26 @@
 # TOOL DISCOVERY, as DATA.
 #
-# Transcribed VERBATIM from the retired SPATIAL_SCHEMA. This is the KNOWLEDGE PROTOCOL an
-# attached agent follows and the argument shapes it fills in, so the wording IS the routing:
-# rephrasing any of it changes how agents behave, and is never a tidy-up.
+# This is the KNOWLEDGE PROTOCOL an attached agent follows and the argument shapes it fills
+# in, so the wording IS the routing: rephrasing any of it changes how agents behave, and is
+# never a tidy-up.
+#
+# TRIMMED 2026-08-24 (v2.1), from ~916 words to ~450. It was transcribed verbatim from the
+# retired SPATIAL_SCHEMA and had grown ten hedged restatements of "search anyway", each added
+# after an incident and none ever removed. Ten restatements read weaker than one flat rule,
+# and the measurement said so: 100% search rate on a conversation's first turn, 33% when the
+# user asked the SAME question again.
+#
+# THE FIX WAS EXEMPTION 3. It read "You searched THIS EXACT WORDING earlier in THIS turn" and
+# was being applied across the whole CONVERSATION, so a repeated question got no search. It
+# now says what it meant and says what a repeat is.
+#
+# ONE RULE, ONE PLACE. The search rule and the skill rule live here; the display rule
+# (includeApps / the old Phase 0a) lives on the field's own description, because twenty lines
+# of "already on screen" sitting inside the search decision taught exactly the frame that
+# suppresses a search. Rationale prose ("an unnecessary search costs one call...") is gone:
+# the model needs the rule, not the argument for it.
+#
+# See §Memory vs fresh search in docs/SPATIAL_SEARCH_GUIDE.md for the measurement.
 #
 # Written as plain YAML rather than a `return { ... }` expression. A constant is data, and
 # encoding a document this size inside a JavaScript string meant escaping every inner quote
@@ -16,95 +34,63 @@ spatial:
 
     KNOWLEDGE PROTOCOL (MANDATORY — do not skip):
 
-    SEARCHING IS THE DEFAULT. Every turn gets a search. The question is only WHICH tool and
-    WHAT to send, never whether to call one, and you do not need a reason to search — you
-    need a reason NOT to. There are exactly three:
+    SEARCH EVERY TURN. You need a reason NOT to search, and there are exactly three:
       1. The user said something purely social with no ask in it ("thanks", "hi").
       2. They asked you to act on something already in front of them, and answering needs no
          new material.
-      3. You searched THIS EXACT WORDING earlier in THIS turn.
-    Nothing else qualifies. In particular: having answered them before is not a reason, the
-    subject feeling familiar is not a reason, and holding results from an earlier turn is not
-    a reason — those answered an earlier question, the user has since said more, and replying
-    from what you already hold is how a stale or invented answer reaches them. When in doubt,
-    search: an unnecessary search costs one call, a skipped one costs the answer.
+      3. You have ALREADY CALLED a search tool during THIS SAME TURN with this exact wording.
+         This covers ONE turn only. A question the user asks AGAIN is a NEW turn and gets its
+         own search, however many times they have asked it and however recently.
+    Nothing else qualifies. Having answered before, the subject feeling familiar, and holding
+    results from an earlier turn are NOT reasons.
 
-    Phase 0 — Choose ONE search tool (think before calling):
+    WHICH TOOL:
     - findIntent = PRECISION. The user has NAMED the thing they want — a specific item,
       category, constraint or task ("X", "how do I...", "which one covers Y?", "recommend a
       good Z"). However it is phrased — question, request, recommendation — if the WHAT is
-      named, this is the search: it pinpoints the matches for that named need.
+      named, this is the search.
     - discoverRelated = DISCOVERY. The user has NOT named the thing — an open need, goal or
-      situation ("where should I start?", "what are my options?", "what's available?"). It
-      surfaces the NEIGHBOURHOOD of possibilities around the need, including adjacent options
-      they didn't think to ask about — the awareness surface.
-    - Pick by SPECIFICITY of the ask: the thing is named → findIntent (even for
-      recommendations); only a desire or occasion is named → discoverRelated. Do NOT call
-      both in parallel. SEARCH before answering.
+      situation ("where should I start?", "what are my options?"). It surfaces the
+      NEIGHBOURHOOD of possibilities around the need, including adjacent options they didn't
+      think to ask about. Low similarity is normal here; these are neighbours.
+    Pick by SPECIFICITY of the ask. Never call both in parallel. If the one you chose comes
+    back weak, follow up with the OTHER before answering.
 
-    Phase 0a — Is the user asking for something NEW, or about what is ALREADY ON SCREEN?
-    Apps come back as cards, and a card is how a new option arrives. Ask which of these the
-    turn is:
-    - A NEW SUBJECT — anything they have not been shown yet, whether it is their first
-      message or their twentieth. This wants cards. Pass includeApps: true.
-    - THE THING IN FRONT OF THEM — asking about a card already on screen, refining it,
-      correcting it, or being walked through it. This wants text, because a second card
-      over the one they are reading is a step backwards. Pass includeApps: false.
+    DISPLAY: set includeApps on EVERY search, true or false, never omitted, and decide it per
+    search rather than once per turn. It governs only how the answer is DISPLAYED, never
+    whether to search. The rule is on the field's own description.
 
-    This decides how the answer is DISPLAYED. It never decides whether to search — you search
-    either way, and includeApps only says whether that search may hand back a card.
+    SKILLS: if ANY result has object_type="skill" you MUST call readSkill(skillName) BEFORE
+    responding. Check ALL results, not just the top one. Skills contain behavioural
+    instructions that OVERRIDE your general behaviour — treat them as authoritative and follow
+    them exactly. Use readSkillFile when a skill references additional files. Results may also
+    include MCP apps — callable tools you can invoke to run that app.
 
-    JUDGE THE SUBJECT, NOT THE POSITION IN THE CONVERSATION. Having answered earlier turns
-    is not a reason to withhold cards: a user who has been talking for ten minutes and then
-    raises something new deserves the same options as one who opened with it. If you are
-    unsure, pass true — a card that was not needed costs far less than an option the user
-    never got to see.
-
-    SET includeApps ON EVERY SEARCH, true or false, never omitted. Several searches in one
-    turn each carry their own answer, so decide it per search rather than once per turn.
-
-    Phase 0b — Weak results: if the search you chose comes back weak, follow up with the
-    OTHER one before answering. Strong results → answer from them directly.
-
-    Phase 1 — MANDATORY skill follow-up: if ANY result has object_type="skill", you MUST
-    call readSkill(skillName) BEFORE responding. Skills contain behavioural instructions
-    that OVERRIDE your general behaviour — treat them as authoritative and follow them
-    exactly. Check ALL results for skills, not just the top one. Use readSkillFile when a
-    skill references additional files. Results may also include MCP apps — callable tools
-    you can invoke to run that app.
-
-    Golden Rules:
-    - Search FIRST, build understanding SECOND, answer THIRD.
-    - NEVER skip reading a skill when one appears in results.
-    - NEVER make up information — use only what the tools return.
-    - Every result carries its page URL (source_url). When your answer mentions or
-      recommends something that came from a result, link it as [name](source_url) so the
-      user can go straight there. Never invent or guess a URL — only link URLs present in
-      results.
+    RULES:
+    - Search FIRST, answer SECOND, using only what the tools return. Never make anything up.
+    - Link what you mention or recommend as [name](source_url), using only URLs present in
+      results. Never invent or guess one.
     - SEARCH THE REQUEST, NOT THE PERSON: never mix remembered facts about the user (their
       name, account, entitlements, history) into a search query — they drag the match toward
       the wrong content. Search what was ASKED; use what you know about the user when
       COMPOSING the answer.
-    - A result with hasImage=true can be referenced by its universal_id wherever a
-      composition field asks for an image ref — you never need (and never receive) raw image
-      URLs.
     - Results are LEAN summaries, and that is all you get. Full authored copy NEVER travels
       through you: a card carries the result's universal_id and the PLATFORM dereferences it
-      (getDetail / a brief's `hydrate:` field). Your job is to CHOOSE the item and hand over
-      its id; you never read, carry or retype its content. Answer from the summary, or
-      surface the item and let it show its own detail.
+      (getDetail / a brief's `hydrate:` field). CHOOSE the item and hand over its id; never
+      read, carry or retype its content.
+    - A result with hasImage=true can be referenced by its universal_id wherever a
+      composition field asks for an image ref — you never need raw image URLs.
 
   methods:
     findIntent:
       description: >-
         Precision search. The user has NAMED what they want — a specific item, category or
         task ("X", "how do I...", "which one covers Y?", "recommend a good Z") — and this
-        pinpoints the matches for that named need, however the ask is phrased (question,
-        request, recommendation). Pass the user's EXACT words from THIS turn — do not
-        paraphrase, and do not re-send an earlier turn's question. NOT for open needs with no
-        named thing ("where do I start?", "what are my options?") — that is discovery
-        (discoverRelated). If ANY result has object_type="skill", you MUST call readSkill
-        before responding; check ALL results, not just the top one. Do not pair with
+        pinpoints the matches for that named need, however the ask is phrased. Pass the
+        user's EXACT words from THIS turn: not paraphrased, and not carried over from an
+        earlier turn. If they repeat themselves, those repeated words ARE this turn's
+        question and this search still runs. NOT for open needs with no named thing ("where
+        do I start?", "what are my options?") — that is discoverRelated. Do not pair with
         discoverRelated in parallel.
       input:
         type: object
@@ -141,7 +127,7 @@ spatial:
               cards, for a NEW subject the user has not been shown. false = it may not, for a
               turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
               question about it), so no second card lands over what they are reading
-              (Phase 0a). Length of the conversation is irrelevant; only the subject matters.
+              Length of the conversation is irrelevant; only the SUBJECT matters.
               true cannot turn apps ON by itself — the box's own setting is the ceiling and
               false here only declines what that setting already permitted.
 
@@ -187,7 +173,7 @@ spatial:
               cards, for a NEW subject the user has not been shown. false = it may not, for a
               turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
               question about it), so no second card lands over what they are reading
-              (Phase 0a). Length of the conversation is irrelevant; only the subject matters.
+              Length of the conversation is irrelevant; only the SUBJECT matters.
               true cannot turn apps ON by itself — the box's own setting is the ceiling and
               false here only declines what that setting already permitted.
 

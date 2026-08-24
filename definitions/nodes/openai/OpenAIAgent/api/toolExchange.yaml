@@ -4,6 +4,41 @@
 # OpenAI's tool protocol, imported whole. Local keys below layer on top.
 $ref: tools
 
+# HOW A TURN REACHES THE ONE BEFORE IT. Declared here rather than in shared/tools.yaml
+# because the vendor offers two mechanisms and refuses both together (see that file).
+#
+# THIS NODE USED THE CONVERSATIONS API UNTIL 2026-08-23 and now chains response to
+# response. The two are not interchangeable, and the difference is one of ORDER: a
+# conversation id exists BEFORE the call, so the old code minted one, named it, and wrote
+# it to Redis in three steps that all ran ahead of the model. A response id only exists
+# AFTER the call, which is why `remember` below is the loop's job and not a step in
+# run.yaml.
+#
+# What it costs: a response is kept for 30 days (a conversation object has no TTL), so a
+# thread left alone for longer resumes cold instead of resuming. `run.yaml` handles that
+# by simply not naming an id it does not have — the seed is absent and the run starts
+# fresh, which is the same thing that happens on a page reload.
+continuity:
+  match: response.completed
+  from: "return response.response.id"
+  into: previous_response_id
+  # KEYED BY THE THREAD, exactly as the conversation id was, and for the same reason: the
+  # key has to be stable across turns or each run writes somewhere the next never looks.
+  # `conversationId` is the thread (one per page load, shared by every call in it) — NOT
+  # `chatId`, which is minted per turn to address components and would give every turn its
+  # own dead key.
+  remember:
+    when: "return !!config.enableConversationMemory && !!scope.conversationId"
+    key: "openai:conversation:{{ scope.conversationId }}"
+
+# SKILLS IN FORCE, held against the CONVERSATION for the same reason the chain id is: a new
+# user message is a new execution, and a skill that lived only in memory would be re-applied
+# from nothing on every message. Keyed on `conversationId` (the thread), never `chatId`
+# (minted per turn) — a per-turn key would hold a set nothing ever reads back.
+skills:
+  remember:
+    key: "openai:skills:{{ scope.conversationId }}"
+
 # The dial. 1 answers in a single pass and cannot use a tool at all; higher makes it
 # work through a problem.
 maxTurns: "{{ config.maxTurns }}"
