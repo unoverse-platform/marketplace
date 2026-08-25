@@ -40,6 +40,25 @@ tool: >-
 offer: >-
   return { type: 'session.update', session: { type: 'realtime', tools: tools } }
 
+# HOW THE INSTRUCTIONS ARE RE-SENT when a region skill comes into force or is cleared.
+#
+# The same shape and the same reason as `offer` above, for the other thing the handshake sent
+# once. A request/response vendor rebuilds its prompt every turn, so a skill absorbed on one
+# turn is in the next request for free and there is nothing to declare. A socket sent
+# `instructions` at the handshake and would otherwise never mention it again, so the model
+# would keep working to a prompt that no longer describes where the conversation is.
+#
+# ONLY `instructions`: session.update MERGES, so voice, modalities, tools and turn detection
+# survive untouched. `skillsText` is the platform's rendering of what is in force — it decides
+# WHICH skills apply, this decides where the vendor puts them.
+#
+# The config prompt is repeated rather than sent alone, because a merge REPLACES the field it
+# names: sending only the skills would drop the role the node was configured with.
+reinstruct: >-
+  return { type: 'session.update',
+           session: { type: 'realtime',
+                      instructions: config.systemPrompt + skillsText } }
+
 # How a call ARRIVES. `match` is what makes a stream tractable: events keep coming for the whole
 # conversation, and this says which of them is a tool call rather than a transcript or audio.
 call:
