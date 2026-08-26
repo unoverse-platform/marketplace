@@ -1,5 +1,5 @@
 {
-  "release": "0.1.66",
+  "release": "0.1.67",
   "items": [
     {
       "kind": "component",
@@ -537,12 +537,93 @@
     },
     {
       "kind": "skill",
+      "name": "accountancy-career-coach",
+      "fingerprint": "6757499adbbc681d",
+      "title": "Accountancy Career Coach",
+      "description": "Explains accountancy careers and qualifications in plain English, places the person, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Become an accountant or progress in accounting and finance, or work out how. They may not know what AAT, ACCA, CIMA or chartered means, whether they need a degree, or what accountants actually do. Covers starting out with no experience, choosing between the professional bodies, apprenticeship versus self-funded study, planning exams, fees and sittings around work, and moving from bookkeeping or finance-adjacent roles into the profession. Explains the qualification ladder in plain English before recommending anything, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "digital-marketing-career-coach",
+      "fingerprint": "9b12cee1b3d6ead7",
+      "title": "Digital Marketing Career Coach",
+      "description": "Explains digital marketing careers and study in plain English, places the person, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Build or advance a career in digital marketing, or get certified in it. They may not know which qualification level fits them, what a certification is worth versus a degree, or how to move from general marketing into digital and specialist roles. Covers getting into marketing, formalising self-taught digital skills with a recognised certification, stepping up to senior or strategic marketing roles, and choosing between certification, postgraduate diploma and master's routes. Explains the landscape in plain English before recommending anything, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "enrolment-advisor",
+      "fingerprint": "493baec292cddc82",
+      "title": "Enrolment Advisor",
+      "description": "Works through eligibility, funding and fitting study around life, and converts the answer into an enquiry.",
+      "category": "ai",
+      "whenToUse": "Work out whether study is actually possible — do I meet the entry requirements, can I afford it, and can I fit it around my job and family. Covers checking eligibility for a course or apprenticeship before applying, scholarships, postgraduate loans and other ways to fund study, understanding what a course really costs, comparing study modes and time commitments, and weighing part-time or flexible routes against life's constraints. For the person who mostly knows what they want to study and needs the practical doubts settled, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "finance-cpd-advisor",
+      "fingerprint": "452b44755035dbe9",
+      "title": "Finance CPD Advisor",
+      "description": "Finds qualified finance professionals the right update course fast, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Keep finance, accounting and tax knowledge current — a qualified professional needing an update or refresher on financial reporting standards, tax changes, VAT, payroll, audit quality, financial markets, Excel and financial modelling, ESG reporting, or client money compliance. They know their field; what they need is what's changed and which course covers it, in a format that fits a working week. Covers CPD requirements, technical updates ahead of regulatory change, refreshers after time away from a topic, and building adjacent technical skills. Efficient and precise rather than introductory, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "financial-services-career-coach",
+      "fingerprint": "a51f0be74ba3e9ea",
+      "title": "Financial Services Career Coach",
+      "description": "Explains financial services career routes in plain English, places the person, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Start or progress a career in financial services — banking, insurance, investment, mortgages, compliance and risk, or customer-facing finance roles. They may not know which part of the industry fits them, what CII or CISI qualifications mean, or that apprenticeship routes exist from administrator up to senior professional. Covers entering the industry, moving from customer service into advice roles, progressing toward senior insurance or investment positions, and building compliance and risk expertise. Explains the landscape in plain English before recommending anything, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "healthcare-career-coach",
+      "fingerprint": "9191eac47f656413",
+      "title": "Healthcare Career Coach",
+      "description": "Explains nursing and healthcare career routes in plain English, places the person, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Start or advance a career in nursing, health and social care, or healthcare leadership. They may not know the difference between a nursing associate and a registered nurse, that degree apprenticeships let them qualify while earning, or how to move from clinical practice into leadership. Covers getting into nursing, qualifying as a nursing associate, topping up an existing qualification to a degree, moving into mental health nursing, and stepping from clinical roles into healthcare leadership and management. Explains the landscape in plain English before recommending anything, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
       "name": "hr-education-coach",
-      "fingerprint": "8b2584e6dd03a39c",
+      "fingerprint": "0690b5100594a145",
       "title": "HR Education Coach",
-      "description": "Explains HR careers and study in plain English, places the person, and closes on an enquiry.",
+      "description": "Explains HR careers and study in plain English, places the person, and closes on a callback request.",
       "category": "ai",
       "whenToUse": "Understand how a career in HR and people work actually goes, and what to study to get there. They may not know what CIPD is, what the levels mean, or what an HR job involves day to day. Covers moving into HR from another job, choosing a first qualification, deciding what comes next, and weighing an apprenticeship against studying. Explains the landscape in plain English before recommending anything, and stays on for the whole conversation rather than answering one question."
+    },
+    {
+      "kind": "skill",
+      "name": "leadership-coach",
+      "fingerprint": "ba6cb2ed0b8c84ac",
+      "title": "Leadership Coach",
+      "description": "Helps managers and professionals pick the right leadership development, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Lead people, teams and change with more impact — become a better manager, handle conflict, present with confidence, lead through change and uncertainty, coach a team, or build personal resilience and influence at work. Covers first-time managers finding their feet, experienced leaders sharpening specific skills like delegation or feedback, professionals building presence and communication, and organisations developing their managers. Matches the person to focused, practical development and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "legal-career-coach",
+      "fingerprint": "47ddab42f87af6bb",
+      "title": "Legal Career Coach",
+      "description": "Explains routes into law in plain English, places the person on one, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Become a solicitor, barrister or paralegal, or work out how. They may not know what the SQE is, whether they need a law degree, what a training contract or pupillage involves, or how the LPC fits in. Covers converting to law from another degree or career, choosing between SQE preparation routes, law apprenticeships versus university, becoming a barrister, and what qualifying work experience means. Explains the landscape in plain English before recommending anything, handles cost and fitting-study-around-work worries itself, and stays on for the whole conversation."
+    },
+    {
+      "kind": "skill",
+      "name": "legal-cpd-advisor",
+      "fingerprint": "2583c2bad8066fd5",
+      "title": "Legal CPD Advisor",
+      "description": "Finds practising lawyers the right practical course fast, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Sharpen practical legal skills or stay current in practice — a practising solicitor, barrister, paralegal or in-house lawyer building capability in commercial contracts, drafting and negotiation, litigation and dispute resolution, courtroom advocacy, or keeping up with changes in the law. Also serves non-lawyers who work with contracts and need to understand them. Covers CPD and skills courses for legal professionals, advocacy training from first hearings to specialist courts, litigation skills from evidence to costs, and contract law from foundations to advanced drafting. Efficient and collegial rather than introductory, and stays on for the whole conversation."
     },
     {
       "kind": "skill",
@@ -552,6 +633,15 @@
       "description": "How the assistant responds when a customer is unhappy, from first reply to escalation",
       "category": "ai",
       "whenToUse": "Handle an unhappy customer — a complaint, frustration with the product or service, a request for a refund, or a demand to speak to a person. Not for neutral questions or how-to requests."
+    },
+    {
+      "kind": "skill",
+      "name": "tech-career-coach",
+      "fingerprint": "a9e6f7555d8758d1",
+      "title": "Tech Career Coach",
+      "description": "Explains tech, data, AI and cyber career routes in plain English, places the person, and closes on an enquiry.",
+      "category": "ai",
+      "whenToUse": "Get into or progress in technology — software, data, AI, cyber security, IT support or networks — or build those capabilities in a team. They may not know which tech role fits them, what an apprenticeship at their age looks like, or where to start with AI. Covers first steps into IT, moving between tech disciplines, leaders who need their organisation to adopt AI safely, and choosing between apprenticeship levels from technician to master's. Explains the landscape in plain English before recommending anything, and stays on for the whole conversation."
     },
     {
       "kind": "skill",
