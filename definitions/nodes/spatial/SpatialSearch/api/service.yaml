@@ -30,8 +30,19 @@ findIntent:
   #
   # Unconditional on purpose. This was a config toggle until 2026-07-29 and it was the wrong
   # shape: a row only produces a card when it points at one, so "off" never meant cleaner
-  # results, it meant a row that had authored a card silently not showing it.
+  # results, it meant a row that had authored a card silently not showing it. (Briefly
+  # re-conditioned on includeApps 2026-08-26 and reverted the same day: content cards ride
+  # need/service rows that return regardless of includeApps, so gating the RENDER lost
+  # cards on every narrowing turn.)
   renderComponents: "return response.results"
+  # THE EMPTY DELIVERY (STATE_MODEL §5 rule 5, amended 2026-08-26): when this turn surfaced
+  # NO components, does that emptiness OWN the screen? A new-subject turn (the model left
+  # includeApps alone — its per-turn subject judgment, Phase 0a in shared/schema.yaml) says
+  # yes → COMPONENTS_CLEAR, so a subject change never leaves last subject's cards up as
+  # stale recommendations. A refinement turn (includeApps: false — the guest is talking
+  # about the thing on screen) or an author ceiling of includeMcps: false says hands off.
+  clearComponentsWhen: >-
+    return !(config.includeMcps === false || params.includeApps === false)
   returns: { $ref: search#lean }
 
 discoverRelated:
@@ -47,7 +58,10 @@ discoverRelated:
     - $ref: search#call
       body:
         mode: "return 'related'"
+  # Same card lane + empty-delivery contract as findIntent above.
   renderComponents: "return response.results"
+  clearComponentsWhen: >-
+    return !(config.includeMcps === false || params.includeApps === false)
   returns: { $ref: search#lean }
 
 readSkill:
