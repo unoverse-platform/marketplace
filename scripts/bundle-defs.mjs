@@ -32,6 +32,11 @@ mkdirSync(out, { recursive: true });
 const parts = [
   ["marketplace/components", "components"],
   ["marketplace/atoms", "atoms"],
+  // TEMPLATES — the Template Model kind (2026-08-28). Forgetting a new design kind
+  // here ships a package that LOOKS current while every deployed universe resolves
+  // an empty shelf (observed live: /dev/templates answered [] on the BPP droplet
+  // the day the kind launched).
+  ["marketplace/templates", "templates"],
   ["marketplace/styles", "styles"],
 ];
 let n = 0;

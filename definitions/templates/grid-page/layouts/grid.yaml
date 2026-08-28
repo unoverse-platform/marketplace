@@ -1,0 +1,33 @@
+# The grid SHAPE: the `items` slot as a RESPONSIVE grid — column count per breakpoint
+# band (served container widths, semantic/breakpoints): stacked on mobile, two across
+# on tablet, three on desktop, four at full. The OUTER box is the measuring context
+# (`container`): the bands read the width this shape actually has, wherever it is
+# placed — a grid in a narrow rail stacks on a wide screen.
+type: Box
+style:
+  width: full
+  container: inline-size
+children:
+  - type: Box
+    style:
+      columns:
+        mobile: "1"
+        tablet: "2"
+        desktop: "3"
+        full: "4"
+      gap: "4"
+      width: full
+      # The browse shape's own top breathing room — the mount frame deliberately
+      # carries no top padding (it would break the page shape's sticky header).
+      padding: [ "4", "0", "0", "0" ]
+    children:
+      - type: ComponentSlot
+        # NAME-SYNC (the page shape's own law, applied here too): the browse shape
+        # holds instances IN ITS OWN FACE. A bare select grabbed everything in the
+        # store — observed live 2026-08-28: the agent's streaming-text thinking
+        # rendered as a shelf item.
+        select:
+          from: all
+          where:
+            field: view
+            eq: grid

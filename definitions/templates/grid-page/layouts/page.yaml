@@ -1,0 +1,15 @@
+# The detail SHAPE (`page` state): claims the ONE interface whose face is `page`
+# — the standard reaction surface select. Its occupant fills it; the ✕ writing the
+# face back releases the claim and the grid returns.
+type: Box
+style:
+  direction: column
+  width: full
+children:
+  - type: ComponentSlot
+    select:
+      from: all
+      where:
+        field: view
+        eq: page
+      limit: 1
