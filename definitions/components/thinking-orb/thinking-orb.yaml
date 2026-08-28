@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: component
+type: component
 name: thinking-orb
 category: Feedback
 description: A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's "I'm on it" presence.

@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-long",
     "category": "markdown",
     "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
@@ -146,6 +145,7 @@
         }
       ]
     },
-    "file": "form-long.yaml"
+    "file": "form-long.yaml",
+    "kind": "atom"
   }
 }

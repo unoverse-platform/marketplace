@@ -1,0 +1,17 @@
+$schema: ../../../_schema/interface.schema.json
+
+inputs:
+  - name: query
+    type: string
+    description: The search query. Usually templated into the Query setting from here.
+    required: false
+
+outputs:
+  - name: results
+    type: array
+    description: The matching rows, lean-projected (a handle plus the editorial essentials)
+  - name: count
+    type: number
+    description: How many rows matched
+
+credentials: []

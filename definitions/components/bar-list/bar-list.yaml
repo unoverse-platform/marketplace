@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: component
+type: component
 name: bar-list
 category: Charts
 nodeSize:

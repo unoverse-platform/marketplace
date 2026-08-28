@@ -1,132 +1,820 @@
 {
   "kind": "component",
   "name": "card",
-  "fingerprint": "908eaad8dc827cf6",
+  "fingerprint": "51ac55f5921c310d",
   "bundle": "design-system",
   "title": "card",
-  "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
+  "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "card",
     "category": "Content",
     "nodeSize": {
       "width": 480,
       "height": 700
     },
-    "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
+    "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
     "whenToUse": "Present a single rich item as an upright stacked card — an image on top with a heading, supporting text and a primary action beneath it. Pick for one item shown on its own in a narrow column, rather than a wide side-by-side banner or a scrollable set of items.",
     "props": {
       "title": {
         "type": "string",
+        "input": true,
         "default": "Lightsaber Combat Training"
       },
       "description": {
         "type": "string",
+        "input": true,
         "default": "Master the seven forms of lightsaber combat with guidance from Jedi Masters."
       },
       "image": {
         "type": "string",
+        "input": true,
         "default": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg"
       },
       "callToAction": {
         "type": "string",
+        "input": true,
         "default": "Begin Training"
       }
+    },
+    "state": {
+      "view": "grid",
+      "step": "detail"
     },
     "root": {
       "type": "Box",
       "style": {
         "width": "full",
-        "direction": "column",
-        "background": "surface.base",
-        "border": "subtle",
-        "shadow": "lg",
-        "overflow": "hidden"
+        "container": "inline-size"
       },
       "children": [
         {
-          "type": "Box",
-          "visibleWhen": "image",
-          "style": {
-            "width": "full",
-            "height": "50",
-            "overflow": "hidden"
-          },
-          "children": [
-            {
-              "type": "Image",
-              "bind": {
-                "src": "image",
-                "alt": "title"
+          "type": "Switch",
+          "on": "view",
+          "cases": {
+            "grid": {
+              "type": "Button",
+              "action": {
+                "type": "setValue",
+                "values": [
+                  {
+                    "key": "view",
+                    "value": "page"
+                  }
+                ]
               },
               "style": {
                 "width": "full",
-                "height": "full",
-                "fit": "cover"
-              }
-            }
-          ]
-        },
-        {
-          "type": "Box",
-          "style": {
-            "direction": "column",
-            "padding": "6",
-            "gap": "3",
-            "align": "start"
-          },
-          "children": [
-            {
-              "type": "Text",
-              "bind": {
-                "value": "title"
-              },
-              "style": {
-                "font": "headline.sm",
-                "weight": "semibold",
-                "color": "text.primary"
-              }
-            },
-            {
-              "type": "Text",
-              "visibleWhen": "description",
-              "bind": {
-                "value": "description"
-              },
-              "style": {
-                "font": "body.md",
-                "color": "text.secondary"
-              }
-            },
-            {
-              "type": "Button",
-              "bind": {
-                "label": "callToAction"
-              },
-              "action": "click",
-              "style": {
-                "display": "inline-flex",
-                "align": "center",
-                "justify": "center",
+                "direction": "column",
+                "background": "surface.base",
+                "border": "subtle",
+                "shadow": "lg",
+                "overflow": "hidden",
+                "padding": "0",
                 "cursor": "pointer",
-                "border": "none",
-                "font": "button",
-                "background": "action.primary",
-                "color": "action.primary-text",
-                "padding": [
-                  "3",
-                  "6"
-                ],
-                "minHeight": "10",
-                "radius": "sm"
+                "textAlign": "start"
               },
-              "visibleWhen": "callToAction"
+              "children": [
+                {
+                  "type": "Box",
+                  "visibleWhen": "image",
+                  "style": {
+                    "width": "full",
+                    "height": "50",
+                    "overflow": "hidden"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "bind": {
+                        "src": "image",
+                        "alt": "title"
+                      },
+                      "style": {
+                        "width": "full",
+                        "height": "full",
+                        "fit": "cover"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "padding": "6",
+                    "gap": "3",
+                    "align": "start"
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "bind": {
+                        "value": "title"
+                      },
+                      "style": {
+                        "font": "headline.sm",
+                        "weight": "semibold",
+                        "color": "text.primary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "visibleWhen": "description",
+                      "bind": {
+                        "value": "description"
+                      },
+                      "style": {
+                        "font": "body.md",
+                        "color": "text.secondary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "visibleWhen": "callToAction",
+                      "bind": {
+                        "value": "callToAction"
+                      },
+                      "style": {
+                        "font": "button",
+                        "weight": "semibold",
+                        "color": "action.primary"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "page": {
+              "type": "Switch",
+              "on": "step",
+              "cases": {
+                "detail": {
+                  "type": "Box",
+                  "style": {
+                    "position": "relative",
+                    "direction": "column",
+                    "width": "full",
+                    "minHeight": "full",
+                    "background": "surface.base",
+                    "textAlign": "start"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "position": "sticky",
+                        "top": "0",
+                        "zIndex": 10,
+                        "flex": "0 0 auto",
+                        "height": "16",
+                        "direction": "row",
+                        "align": "center",
+                        "gap": "3",
+                        "width": "full",
+                        "padding": [
+                          "0",
+                          "6"
+                        ],
+                        "background": "surface.base",
+                        "border": "subtle"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "headline.sm",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "tight",
+                            "flex": 1,
+                            "minWidth": 0
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "view",
+                                "value": "grid"
+                              }
+                            ]
+                          },
+                          "style": {
+                            "flex": "0 0 auto",
+                            "cursor": "pointer",
+                            "width": "8",
+                            "height": "8",
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm",
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "transition": "all 150ms ease",
+                            "hover": {
+                              "background": "surface.sunken"
+                            }
+                          },
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "icon": "close",
+                              "style": {
+                                "width": "4",
+                                "height": "4",
+                                "color": "text.secondary"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "visibleWhen": "image",
+                      "style": {
+                        "flex": "0 0 auto",
+                        "height": "75",
+                        "width": "full",
+                        "overflow": "hidden"
+                      },
+                      "children": [
+                        {
+                          "type": "Image",
+                          "bind": {
+                            "src": "image",
+                            "alt": "title"
+                          },
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "direction": "column",
+                        "gap": "5",
+                        "padding": [
+                          "8",
+                          "8"
+                        ],
+                        "width": "full",
+                        "maxWidth": "reading",
+                        "margin": [
+                          "0",
+                          "auto"
+                        ]
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "headline.lg",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "tight"
+                          }
+                        },
+                        {
+                          "type": "Text",
+                          "visibleWhen": "description",
+                          "bind": {
+                            "value": "description"
+                          },
+                          "style": {
+                            "font": "body.lg",
+                            "color": "text.secondary",
+                            "lineHeight": "relaxed"
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "bind": {
+                            "label": "callToAction"
+                          },
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "step",
+                                "value": "thanks"
+                              }
+                            ]
+                          },
+                          "visibleWhen": "callToAction",
+                          "style": {
+                            "display": "inline-flex",
+                            "align": "center",
+                            "justify": "center",
+                            "cursor": "pointer",
+                            "border": "none",
+                            "font": "button",
+                            "background": "action.primary",
+                            "color": "action.primary-text",
+                            "padding": [
+                              "3",
+                              "6"
+                            ],
+                            "minHeight": "10",
+                            "radius": "sm"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "thanks": {
+                  "type": "Box",
+                  "style": {
+                    "position": "relative",
+                    "direction": "column",
+                    "width": "full",
+                    "minHeight": "full",
+                    "background": "surface.base",
+                    "textAlign": "start"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "position": "sticky",
+                        "top": "0",
+                        "zIndex": 10,
+                        "flex": "0 0 auto",
+                        "height": "16",
+                        "direction": "row",
+                        "align": "center",
+                        "gap": "3",
+                        "width": "full",
+                        "padding": [
+                          "0",
+                          "6"
+                        ],
+                        "background": "surface.base",
+                        "border": "subtle"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "headline.sm",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "tight",
+                            "flex": 1,
+                            "minWidth": 0
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "view",
+                                "value": "grid"
+                              }
+                            ]
+                          },
+                          "style": {
+                            "flex": "0 0 auto",
+                            "cursor": "pointer",
+                            "width": "8",
+                            "height": "8",
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm",
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "transition": "all 150ms ease",
+                            "hover": {
+                              "background": "surface.sunken"
+                            }
+                          },
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "icon": "close",
+                              "style": {
+                                "width": "4",
+                                "height": "4",
+                                "color": "text.secondary"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "direction": "column",
+                        "align": "center",
+                        "justify": "center",
+                        "gap": "4",
+                        "padding": [
+                          "16",
+                          "8"
+                        ],
+                        "width": "full",
+                        "maxWidth": "reading",
+                        "margin": [
+                          "0",
+                          "auto"
+                        ],
+                        "textAlign": "center"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "value": "Thank you",
+                          "style": {
+                            "font": "headline.lg",
+                            "weight": "semibold",
+                            "color": "text.primary"
+                          }
+                        },
+                        {
+                          "type": "Text",
+                          "value": "We look forward to seeing you.",
+                          "style": {
+                            "font": "body.lg",
+                            "color": "text.secondary"
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "step",
+                                "value": "detail"
+                              }
+                            ]
+                          },
+                          "style": {
+                            "display": "inline-flex",
+                            "align": "center",
+                            "justify": "center",
+                            "cursor": "pointer",
+                            "border": "subtle",
+                            "font": "button",
+                            "background": "surface.base",
+                            "color": "text.primary",
+                            "padding": [
+                              "3",
+                              "6"
+                            ],
+                            "minHeight": "10",
+                            "radius": "sm"
+                          },
+                          "children": [
+                            {
+                              "type": "Text",
+                              "value": "Back",
+                              "style": {
+                                "font": "button",
+                                "weight": "semibold"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "default": {
+                  "type": "Box",
+                  "style": {
+                    "position": "relative",
+                    "direction": "column",
+                    "width": "full",
+                    "minHeight": "full",
+                    "background": "surface.base",
+                    "textAlign": "start"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "position": "sticky",
+                        "top": "0",
+                        "zIndex": 10,
+                        "flex": "0 0 auto",
+                        "height": "16",
+                        "direction": "row",
+                        "align": "center",
+                        "gap": "3",
+                        "width": "full",
+                        "padding": [
+                          "0",
+                          "6"
+                        ],
+                        "background": "surface.base",
+                        "border": "subtle"
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "headline.sm",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "tight",
+                            "flex": 1,
+                            "minWidth": 0
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "view",
+                                "value": "grid"
+                              }
+                            ]
+                          },
+                          "style": {
+                            "flex": "0 0 auto",
+                            "cursor": "pointer",
+                            "width": "8",
+                            "height": "8",
+                            "radius": "full",
+                            "background": "surface.base",
+                            "border": "subtle",
+                            "shadow": "sm",
+                            "direction": "row",
+                            "align": "center",
+                            "justify": "center",
+                            "transition": "all 150ms ease",
+                            "hover": {
+                              "background": "surface.sunken"
+                            }
+                          },
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "icon": "close",
+                              "style": {
+                                "width": "4",
+                                "height": "4",
+                                "color": "text.secondary"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "visibleWhen": "image",
+                      "style": {
+                        "flex": "0 0 auto",
+                        "height": "75",
+                        "width": "full",
+                        "overflow": "hidden"
+                      },
+                      "children": [
+                        {
+                          "type": "Image",
+                          "bind": {
+                            "src": "image",
+                            "alt": "title"
+                          },
+                          "style": {
+                            "width": "full",
+                            "height": "full",
+                            "fit": "cover"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "direction": "column",
+                        "gap": "5",
+                        "padding": [
+                          "8",
+                          "8"
+                        ],
+                        "width": "full",
+                        "maxWidth": "reading",
+                        "margin": [
+                          "0",
+                          "auto"
+                        ]
+                      },
+                      "children": [
+                        {
+                          "type": "Text",
+                          "bind": {
+                            "value": "title"
+                          },
+                          "style": {
+                            "font": "headline.lg",
+                            "weight": "semibold",
+                            "color": "text.primary",
+                            "lineHeight": "tight"
+                          }
+                        },
+                        {
+                          "type": "Text",
+                          "visibleWhen": "description",
+                          "bind": {
+                            "value": "description"
+                          },
+                          "style": {
+                            "font": "body.lg",
+                            "color": "text.secondary",
+                            "lineHeight": "relaxed"
+                          }
+                        },
+                        {
+                          "type": "Button",
+                          "bind": {
+                            "label": "callToAction"
+                          },
+                          "action": {
+                            "type": "setValue",
+                            "values": [
+                              {
+                                "key": "step",
+                                "value": "thanks"
+                              }
+                            ]
+                          },
+                          "visibleWhen": "callToAction",
+                          "style": {
+                            "display": "inline-flex",
+                            "align": "center",
+                            "justify": "center",
+                            "cursor": "pointer",
+                            "border": "none",
+                            "font": "button",
+                            "background": "action.primary",
+                            "color": "action.primary-text",
+                            "padding": [
+                              "3",
+                              "6"
+                            ],
+                            "minHeight": "10",
+                            "radius": "sm"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "default": {
+              "type": "Button",
+              "action": {
+                "type": "setValue",
+                "values": [
+                  {
+                    "key": "view",
+                    "value": "page"
+                  }
+                ]
+              },
+              "style": {
+                "width": "full",
+                "direction": "column",
+                "background": "surface.base",
+                "border": "subtle",
+                "shadow": "lg",
+                "overflow": "hidden",
+                "padding": "0",
+                "cursor": "pointer",
+                "textAlign": "start"
+              },
+              "children": [
+                {
+                  "type": "Box",
+                  "visibleWhen": "image",
+                  "style": {
+                    "width": "full",
+                    "height": "50",
+                    "overflow": "hidden"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "bind": {
+                        "src": "image",
+                        "alt": "title"
+                      },
+                      "style": {
+                        "width": "full",
+                        "height": "full",
+                        "fit": "cover"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "padding": "6",
+                    "gap": "3",
+                    "align": "start"
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "bind": {
+                        "value": "title"
+                      },
+                      "style": {
+                        "font": "headline.sm",
+                        "weight": "semibold",
+                        "color": "text.primary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "visibleWhen": "description",
+                      "bind": {
+                        "value": "description"
+                      },
+                      "style": {
+                        "font": "body.md",
+                        "color": "text.secondary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "visibleWhen": "callToAction",
+                      "bind": {
+                        "value": "callToAction"
+                      },
+                      "style": {
+                        "font": "button",
+                        "weight": "semibold",
+                        "color": "action.primary"
+                      }
+                    }
+                  ]
+                }
+              ]
             }
-          ]
+          }
         }
       ]
-    }
+    },
+    "kind": "component",
+    "publicStates": [
+      "grid",
+      "page"
+    ],
+    "initialView": "grid",
+    "stateTree": [
+      {
+        "name": "grid"
+      },
+      {
+        "name": "page",
+        "on": "step",
+        "states": [
+          {
+            "name": "detail",
+            "layout": "page-detail"
+          },
+          {
+            "name": "thanks",
+            "layout": "page-thanks"
+          }
+        ]
+      }
+    ]
   }
 }

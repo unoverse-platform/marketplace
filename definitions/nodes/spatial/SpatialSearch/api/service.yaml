@@ -3,10 +3,9 @@
 #
 # Trimmed 2026-08-24 (v2.1). They were transcribed verbatim from the retired SPATIAL_SCHEMA
 # and had accumulated restatements of the protocol in shared/schema.yaml. A rule now lives in
-# exactly ONE place: the search rule and the skill rule in the protocol, the display rule on
-# the `includeApps` field. Measured cause: a repeated question was being read as a reason not
-# to search (33% search rate on repeats vs 100% on a first turn). See §Memory vs fresh search
-# in docs/SPATIAL_SEARCH_GUIDE.md.
+# exactly ONE place: the search rule and the skill rule in the protocol. Measured cause: a
+# repeated question was being read as a reason not to search (33% search rate on repeats vs
+# 100% on a first turn). See §Memory vs fresh search in docs/SPATIAL_SEARCH_GUIDE.md.
 
 findIntent:
   description: >-
@@ -26,23 +25,9 @@ findIntent:
   # THE CARD LANE. A result row carrying a component renders it on the caller's live screen
   # the moment it surfaces: data-driven, never a model tool, so the model cannot forget to
   # show it or describe one that is not there. Declared BEFORE `returns` because a card needs
-  # the full row that the lean projection strips.
-  #
-  # Unconditional on purpose. This was a config toggle until 2026-07-29 and it was the wrong
-  # shape: a row only produces a card when it points at one, so "off" never meant cleaner
-  # results, it meant a row that had authored a card silently not showing it. (Briefly
-  # re-conditioned on includeApps 2026-08-26 and reverted the same day: content cards ride
-  # need/service rows that return regardless of includeApps, so gating the RENDER lost
-  # cards on every narrowing turn.)
+  # the full row that the lean projection strips. Unconditional on purpose: a row only
+  # produces a card when it points at one.
   renderComponents: "return response.results"
-  # THE EMPTY DELIVERY (STATE_MODEL §5 rule 5, amended 2026-08-26): when this turn surfaced
-  # NO components, does that emptiness OWN the screen? A new-subject turn (the model left
-  # includeApps alone — its per-turn subject judgment, Phase 0a in shared/schema.yaml) says
-  # yes → COMPONENTS_CLEAR, so a subject change never leaves last subject's cards up as
-  # stale recommendations. A refinement turn (includeApps: false — the guest is talking
-  # about the thing on screen) or an author ceiling of includeMcps: false says hands off.
-  clearComponentsWhen: >-
-    return !(config.includeMcps === false || params.includeApps === false)
   returns: { $ref: search#lean }
 
 discoverRelated:
@@ -58,10 +43,8 @@ discoverRelated:
     - $ref: search#call
       body:
         mode: "return 'related'"
-  # Same card lane + empty-delivery contract as findIntent above.
+  # Same card lane as findIntent above.
   renderComponents: "return response.results"
-  clearComponentsWhen: >-
-    return !(config.includeMcps === false || params.includeApps === false)
   returns: { $ref: search#lean }
 
 readSkill:

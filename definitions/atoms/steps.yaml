@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: steps
 category: markdown
 description: "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only."

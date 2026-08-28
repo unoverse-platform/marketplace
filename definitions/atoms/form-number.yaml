@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-number
 category: markdown
 description: "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from."

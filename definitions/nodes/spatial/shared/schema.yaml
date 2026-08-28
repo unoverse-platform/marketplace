@@ -14,11 +14,11 @@
 # was being applied across the whole CONVERSATION, so a repeated question got no search. It
 # now says what it meant and says what a repeat is.
 #
-# ONE RULE, ONE PLACE. The search rule and the skill rule live here; the display rule
-# (includeApps / the old Phase 0a) lives on the field's own description, because twenty lines
-# of "already on screen" sitting inside the search decision taught exactly the frame that
-# suppresses a search. Rationale prose ("an unnecessary search costs one call...") is gone:
-# the model needs the rule, not the argument for it.
+# ONE RULE, ONE PLACE. The search rule and the skill rule live here. Rationale prose ("an
+# unnecessary search costs one call...") is gone: the model needs the rule, not the argument
+# for it. (The per-turn card gate — includeApps / Phase 0a — was removed 2026-08-28: cards
+# render unconditionally from the rows a search returns; the author's includeMcps config is
+# the only lever.)
 #
 # See §Memory vs fresh search in docs/SPATIAL_SEARCH_GUIDE.md for the measurement.
 #
@@ -55,10 +55,6 @@ spatial:
       think to ask about. Low similarity is normal here; these are neighbours.
     Pick by SPECIFICITY of the ask. Never call both in parallel. If the one you chose comes
     back weak, follow up with the OTHER before answering.
-
-    DISPLAY: set includeApps on EVERY search, true or false, never omitted, and decide it per
-    search rather than once per turn. It governs only how the answer is DISPLAYED, never
-    whether to search. The rule is on the field's own description.
 
     SKILLS: if ANY result has object_type="skill" you MUST call readSkill(skillName) BEFORE
     responding. Check ALL results, not just the top one. Skills contain behavioural
@@ -119,17 +115,6 @@ spatial:
               user has already moved past — an opening question still sitting in slot 0 after
               they have answered a form fills half the results with what they wanted before
               they told you.
-          includeApps:
-            type: boolean
-            description: >-
-              ALWAYS SET THIS EXPLICITLY, true or false, on every search — never omit it, so
-              the trace records the judgement you made. true = this search may return app
-              cards, for a NEW subject the user has not been shown. false = it may not, for a
-              turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
-              question about it), so no second card lands over what they are reading
-              Length of the conversation is irrelevant; only the SUBJECT matters.
-              true cannot turn apps ON by itself — the box's own setting is the ceiling and
-              false here only declines what that setting already permitted.
 
     discoverRelated:
       description: >-
@@ -165,17 +150,6 @@ spatial:
               what THIS turn needs answered rather than on the ask the user has already moved
               past — an opening question still sitting in slot 0 after they have answered a
               form fills half the results with what they wanted before they told you.
-          includeApps:
-            type: boolean
-            description: >-
-              ALWAYS SET THIS EXPLICITLY, true or false, on every search — never omit it, so
-              the trace records the judgement you made. true = this search may return app
-              cards, for a NEW subject the user has not been shown. false = it may not, for a
-              turn about something ALREADY ON SCREEN (refining it, correcting it, answering a
-              question about it), so no second card lands over what they are reading
-              Length of the conversation is irrelevant; only the SUBJECT matters.
-              true cannot turn apps ON by itself — the box's own setting is the ceiling and
-              false here only declines what that setting already permitted.
 
     readSkill:
       description: >-

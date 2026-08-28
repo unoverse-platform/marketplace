@@ -7,7 +7,6 @@
   "description": "A small rounded tag/chip: a single label on a sunken surface. Owns its full style — references tokens only. Override `background` via the Ref's style for other tones.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "pill",
     "description": "A small rounded tag/chip: a single label on a sunken surface. Owns its full style — references tokens only. Override `background` via the Ref's style for other tones.",
     "whenToUse": "A compact tag/category/attribute chip (e.g. card feature tags). Compose via a Ref, mapping label to a host field, or use as an Each `template` to read the per-item label.",
@@ -42,6 +41,7 @@
         }
       ]
     },
-    "file": "pill.yaml"
+    "file": "pill.yaml",
+    "kind": "atom"
   }
 }

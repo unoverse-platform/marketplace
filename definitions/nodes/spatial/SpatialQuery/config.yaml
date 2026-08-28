@@ -1,0 +1,97 @@
+$schema: ../../../_schema/config.schema.json
+
+# The search settings, shared with the service node in this package: everything except
+# `query` and `mode` is read by shared/search.yaml under the same names, so the two nodes
+# cannot drift on what a flag means. The notes on defaults and the template-field rules live
+# on the service node's config and in shared/search.yaml; they apply here unchanged.
+#
+# On a data-flow node there is no model in the loop, so ALL of these belong to whoever wires
+# the box — `query` is just another config value, templated from an upstream output.
+
+configSchema:
+  type: object
+  required: []
+  properties:
+    query:
+      type: string
+      title: Query
+      description: What to search for. Usually wired in from an upstream node.
+      default: ""
+      "ui:field": template
+
+    mode:
+      type: string
+      title: Search Mode
+      description: >-
+        Intent pinpoints matches for a named thing (cosine similarity). Discovery surfaces
+        the neighbourhood around an open need (spatial distance); it requires the map to be
+        trained, and low similarity is normal there.
+      enum: [intent, related]
+      enumNames: [Intent (precise), Discovery (related)]
+      default: intent
+
+    maxResults:
+      type: number
+      title: Max Results
+      description: Maximum total results to return (safety cap)
+      default: 10
+      minimum: 5
+      maximum: 30
+
+    sourceId:
+      type: string
+      title: Source ID
+      description: Restrict searches to one source's entries (its source_id, e.g. from an upstream file node). Blank = whole map.
+      default: ""
+      "ui:field": template
+
+    similarityThreshold:
+      type: number
+      title: Min Similarity (Intent)
+      description: >-
+        Precision floor for intent mode (0 to 0.9). Results scoring below this cosine
+        similarity are dropped. Discovery is unaffected, since it ranks by spatial distance.
+      default: 0.35
+      minimum: 0
+      maximum: 0.9
+      step: 0.05
+
+    # The six type filters, same vocabulary as the Spatial view panel. An UNSET flag arrives
+    # as undefined so the server's own default applies (mostly TRUE; only actions is false).
+    includeNeeds:
+      type: boolean
+      title: Include Needs
+      description: Fetch needs from results
+      default: false
+
+    includeImages:
+      type: boolean
+      title: Include Images
+      description: Fetch images from results
+      default: false
+
+    includeServices:
+      type: boolean
+      title: Include Services
+      description: Fetch services from results
+      default: false
+
+    includeActions:
+      type: boolean
+      title: Include Actions
+      description: Fetch actions from results
+      default: false
+
+    includeSkills:
+      type: boolean
+      title: Include Skills
+      description: Fetch skills (behavioural instructions)
+      default: true
+
+    includeMcps:
+      type: boolean
+      title: Include Apps
+      description: Fetch apps and MCP workflows from results
+      default: false
+"ui:order":
+  [query, mode, maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]

@@ -7,7 +7,6 @@
   "description": "Primary action button. Owns its full style — references tokens only (the theme's action colors carry the brand).",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "button",
     "description": "Primary action button. Owns its full style — references tokens only (the theme's action colors carry the brand).",
     "whenToUse": "The standard call-to-action. Components COMPOSE this atom via a Ref node.",
@@ -49,6 +48,7 @@
         }
       ]
     },
-    "file": "button.yaml"
+    "file": "button.yaml",
+    "kind": "atom"
   }
 }

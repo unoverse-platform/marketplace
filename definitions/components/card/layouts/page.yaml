@@ -1,0 +1,13 @@
+# The PAGE state's shell: its private `step` axis, one drawing per step (the
+# course-card convention). `detail` is the page itself; `thanks` demonstrates a
+# second sub-state (an acknowledgement screen). The app never moves between steps;
+# they are this component's own business.
+type: Switch
+on: step
+cases:
+  detail:
+    $include: layouts/page-detail
+  thanks:
+    $include: layouts/page-thanks
+  default:
+    $include: layouts/page-detail

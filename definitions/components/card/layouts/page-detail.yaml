@@ -1,0 +1,111 @@
+# The PAGE face: a real DETAIL PAGE, not a bigger card — the established anatomy
+# (a sticky header with the shared close-button, a full-bleed hero band, then a
+# reading-measure content column). The ✕ writes the view back to grid.
+type: Box
+style:
+  position: relative
+  direction: column
+  width: full
+  minHeight: full
+  background: surface.base
+  textAlign: start
+children:
+  - type: Box
+    style:
+      position: sticky
+      top: "0"
+      zIndex: 10
+      flex: 0 0 auto
+      height: "16"
+      direction: row
+      align: center
+      gap: "3"
+      width: full
+      padding: [ "0", "6" ]
+      background: surface.base
+      border: subtle
+    children:
+      - type: Text
+        bind:
+          value: title
+        style:
+          font: headline.sm
+          weight: semibold
+          color: text.primary
+          lineHeight: tight
+          flex: 1
+          minWidth: 0
+      - type: Ref
+        ref: close-button
+        action:
+          type: setValue
+          values:
+            - key: view
+              value: grid
+  - type: Box
+    visibleWhen: image
+    style:
+      flex: 0 0 auto
+      height: "75"
+      width: full
+      overflow: hidden
+    children:
+      - type: Image
+        bind:
+          src: image
+          alt: title
+        style:
+          width: full
+          height: full
+          fit: cover
+  - type: Box
+    style:
+      direction: column
+      gap: "5"
+      padding: [ "8", "8" ]
+      width: full
+      maxWidth: reading
+      margin: [ "0", auto ]
+    children:
+      - type: Text
+        bind:
+          value: title
+        style:
+          font: headline.lg
+          weight: semibold
+          color: text.primary
+          lineHeight: tight
+      - type: Text
+        visibleWhen: description
+        bind:
+          value: description
+        style:
+          font: body.lg
+          color: text.secondary
+          lineHeight: relaxed
+      # The CTA steps to the acknowledgement — the sub-state demonstrator. A
+      # product card whose CTA must reach a workflow replaces this with its own
+      # action (the click contract), as course-card's apply flow does.
+      - type: Button
+        bind:
+          label: callToAction
+        action:
+          type: setValue
+          values:
+            - key: step
+              value: thanks
+        visibleWhen: callToAction
+        style:
+          display: inline-flex
+          align: center
+          justify: center
+          cursor: pointer
+          border: none
+          font: button
+          background: action.primary
+          color: action.primary-text
+          padding:
+            - "3"
+            - "6"
+          minHeight: "10"
+          radius: sm

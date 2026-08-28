@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-date",
     "category": "markdown",
     "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
@@ -147,6 +146,7 @@
         }
       ]
     },
-    "file": "form-date.yaml"
+    "file": "form-date.yaml",
+    "kind": "atom"
   }
 }

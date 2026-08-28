@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-text
 category: markdown
 description: "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of."

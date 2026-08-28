@@ -7,7 +7,6 @@
   "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "close-button",
     "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only.",
     "whenToUse": "The dismiss/close affordance on a focused component or modal, typically pinned to the top-right corner. Compose via a Ref; the host supplies the close action and the absolute placement.",
@@ -51,6 +50,7 @@
         }
       ]
     },
-    "file": "close-button.yaml"
+    "file": "close-button.yaml",
+    "kind": "atom"
   }
 }

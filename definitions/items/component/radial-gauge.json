@@ -8,7 +8,6 @@
   "category": "Charts",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "radial-gauge",
     "category": "Charts",
     "nodeSize": {
@@ -130,6 +129,7 @@
           ]
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }

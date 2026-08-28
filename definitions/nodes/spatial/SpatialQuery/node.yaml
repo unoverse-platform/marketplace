@@ -1,0 +1,39 @@
+$schema: ../../../_schema/node.schema.json
+
+# THE DATA-FLOW SIBLING of the service node in this package: same platform search, same
+# shared call (shared/search.yaml), same lean projection — but run as an ordinary workflow
+# step. A query goes in on a connector, the matching rows come out on one. No agent, no
+# tools, no cards.
+
+type: SpatialQuery
+
+kind: PromiseNode
+
+name: Spatial Query
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Search the platform knowledge base as a workflow step and pass the matching rows to the
+  next node
+
+whenToUse: >-
+  Search the platform's own knowledge base inside the data flow: hand it a query, usually
+  wired in from an upstream node, and it returns the most relevant needs, skills, services
+  and content as an output the next step reads. Precise intent search or spatial discovery
+  of what sits near a topic, chosen once in its settings. Reach elsewhere when the knowledge
+  lives in an external vector store. Not for letting an agent choose its own searches
+  mid-conversation — this box runs once per pass with the query it was given. Wires in the
+  data flow like any other step.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Same answer as the rest of the package:
+# it reads the platform's OWN knowledge base, and what a guest may reach is decided at the
+# trigger's publicEntry toggle. A staff-only workflow says so with the instance toggle.
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable, for the same reason as the service node: the index changes as content
+  # is ingested, and a cached answer would report something absent when it is there.
+  cacheable: false

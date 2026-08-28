@@ -1,5 +1,5 @@
 {
-  "release": "0.1.68",
+  "release": "0.1.69",
   "items": [
     {
       "kind": "component",
@@ -31,10 +31,10 @@
     {
       "kind": "component",
       "name": "card",
-      "fingerprint": "908eaad8dc827cf6",
+      "fingerprint": "51ac55f5921c310d",
       "bundle": "design-system",
       "title": "card",
-      "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action.",
+      "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
       "category": "Content"
     },
     {
@@ -530,7 +530,7 @@
     {
       "kind": "style",
       "name": "styles",
-      "fingerprint": "0e895649b5536287",
+      "fingerprint": "77a825ef4137f501",
       "bundle": "design-system",
       "title": "Design tokens and themes",
       "description": "The token contract every component renders against."
@@ -1486,9 +1486,20 @@
     },
     {
       "kind": "node",
+      "name": "SpatialQuery",
+      "pack": "spatial",
+      "fingerprint": "96560a2bd37a3b8f",
+      "title": "Spatial Query",
+      "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
+      "category": "Search",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Search the platform's own knowledge base inside the data flow: hand it a query, usually wired in from an upstream node, and it returns the most relevant needs, skills, services and content as an output the next step reads. Precise intent search or spatial discovery of what sits near a topic, chosen once in its settings. Reach elsewhere when the knowledge lives in an external vector store. Not for letting an agent choose its own searches mid-conversation — this box runs once per pass with the query it was given. Wires in the data flow like any other step."
+    },
+    {
+      "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "97a4a52ca94c5c25",
+      "fingerprint": "35b5f86b48c7353a",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

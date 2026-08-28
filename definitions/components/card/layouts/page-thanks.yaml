@@ -1,0 +1,93 @@
+# The THANKS step: the acknowledgement screen after the page's action — the
+# design-system demonstrator of a second sub-state. Back returns to the detail
+# step; the header's ✕ still leaves the page entirely (view back to grid).
+type: Box
+style:
+  position: relative
+  direction: column
+  width: full
+  minHeight: full
+  background: surface.base
+  textAlign: start
+children:
+  - type: Box
+    style:
+      position: sticky
+      top: "0"
+      zIndex: 10
+      flex: 0 0 auto
+      height: "16"
+      direction: row
+      align: center
+      gap: "3"
+      width: full
+      padding: [ "0", "6" ]
+      background: surface.base
+      border: subtle
+    children:
+      - type: Text
+        bind:
+          value: title
+        style:
+          font: headline.sm
+          weight: semibold
+          color: text.primary
+          lineHeight: tight
+          flex: 1
+          minWidth: 0
+      - type: Ref
+        ref: close-button
+        action:
+          type: setValue
+          values:
+            - key: view
+              value: grid
+  - type: Box
+    style:
+      direction: column
+      align: center
+      justify: center
+      gap: "4"
+      padding: [ "16", "8" ]
+      width: full
+      maxWidth: reading
+      margin: [ "0", auto ]
+      textAlign: center
+    children:
+      - type: Text
+        value: Thank you
+        style:
+          font: headline.lg
+          weight: semibold
+          color: text.primary
+      - type: Text
+        value: We look forward to seeing you.
+        style:
+          font: body.lg
+          color: text.secondary
+      - type: Button
+        action:
+          type: setValue
+          values:
+            - key: step
+              value: detail
+        style:
+          display: inline-flex
+          align: center
+          justify: center
+          cursor: pointer
+          border: subtle
+          font: button
+          background: surface.base
+          color: text.primary
+          padding:
+            - "3"
+            - "6"
+          minHeight: "10"
+          radius: sm
+        children:
+          - type: Text
+            value: Back
+            style:
+              font: button
+              weight: semibold

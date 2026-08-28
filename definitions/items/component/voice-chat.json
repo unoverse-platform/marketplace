@@ -8,7 +8,6 @@
   "category": "Communication",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "voice-chat",
     "category": "Communication",
     "nodeSize": {
@@ -1799,6 +1798,7 @@
         }
       }
     },
+    "kind": "component",
     "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
     "whenToUse": "Talk to the assistant on a live voice call and see the call itself, the assistant's face and orb, a button to start the call, and clear signs of who is speaking, when it is listening and when it is looking something up. It shows the whole call from resting to hung up. Not for the conversation transcript and not for typing a message, it renders the call and nothing else.",
     "title": "Voice Call",

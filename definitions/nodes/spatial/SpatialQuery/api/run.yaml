@@ -1,0 +1,15 @@
+# ONE CALL, the package's shared search (shared/search.yaml). The $ref merges and local
+# wins, so this overrides ONLY the keys the shared body reads from `params` — which on a
+# service node is the agent's tool arguments, and on this node does not exist. Everything
+# else (the flags, the caps, workflowId, userId, the error contract) rides the shared
+# definition untouched, so the two nodes cannot drift.
+
+- $ref: search#call
+  name: search
+  body:
+    mode: "return config.mode === 'related' ? 'related' : 'intent'"
+    # The query is CONFIG here, not a tool argument: whoever wires the box decides it,
+    # usually as a template from an upstream output. Empty resolves to undefined and the
+    # server answers with its own validation error rather than a silent empty search.
+    query: "return String(config.query || '').trim() || undefined"
+    queries: "return undefined"

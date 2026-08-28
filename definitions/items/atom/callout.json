@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "callout",
     "category": "markdown",
     "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
@@ -94,6 +93,7 @@
         }
       ]
     },
-    "file": "callout.yaml"
+    "file": "callout.yaml",
+    "kind": "atom"
   }
 }

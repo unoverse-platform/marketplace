@@ -1,0 +1,23 @@
+# Runs against the LOCAL platform (loopback engine), so it needs the runtime up. No
+# credential: the search API is inside the trust boundary. Same shape-assertion stance as
+# the service node's fixture: an empty result set is legitimate (the index is the
+# tester's), so this proves the PROJECTION, not any content.
+
+testData:
+  config:
+    query: What is there to do this weekend?
+    mode: intent
+    maxResults: 5
+    similarityThreshold: 0
+    includeNeeds: true
+    includeServices: true
+    includeSkills: true
+  expect:
+    results: >-
+      return Array.isArray(output.results)
+        && output.results.every(r =>
+          typeof r.universal_id === 'string'
+            && r.embedding === undefined
+            && r.umap === undefined
+            && r.metadata?.bodyCopy === undefined)
+    count: "return typeof output.count === 'number'"

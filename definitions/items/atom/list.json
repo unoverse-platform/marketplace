@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "list",
     "category": "markdown",
     "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -115,6 +114,7 @@
         ]
       }
     },
-    "file": "list.yaml"
+    "file": "list.yaml",
+    "kind": "atom"
   }
 }

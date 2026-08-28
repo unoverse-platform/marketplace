@@ -1,0 +1,6 @@
+# THE CARD LANE, same declaration as the service node's search methods: a result row
+# carrying a component renders it on the caller's live screen the moment the run settles.
+# Data-driven, never a model tool. Evaluated over the FULL rows (the events projection leans
+# a SEPARATE copy for the output connector), and Include Apps is what governs whether
+# app/component rows come back at all — the same lever as the service node.
+"return response.results"

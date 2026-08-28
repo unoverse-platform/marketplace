@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-phone",
     "category": "markdown",
     "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
@@ -147,6 +146,7 @@
         }
       ]
     },
-    "file": "form-phone.yaml"
+    "file": "form-phone.yaml",
+    "kind": "atom"
   }
 }

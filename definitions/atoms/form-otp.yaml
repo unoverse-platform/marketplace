@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-otp
 category: markdown
 description: "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only."

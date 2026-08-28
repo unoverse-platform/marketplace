@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-email",
     "category": "markdown",
     "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
@@ -146,6 +145,7 @@
         }
       ]
     },
-    "file": "form-email.yaml"
+    "file": "form-email.yaml",
+    "kind": "atom"
   }
 }

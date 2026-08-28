@@ -8,7 +8,6 @@
   "category": "Feedback",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "avatar-orb",
     "category": "Feedback",
     "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -189,6 +188,7 @@
           ]
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }

@@ -7,7 +7,6 @@
   "description": "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "section-header",
     "description": "Centered section heading: a title with an optional subtitle below. Owns its full style — references tokens only.",
     "whenToUse": "The heading for a step/section (e.g. a wizard question). Components COMPOSE this via a Ref, mapping title/subtitle to host fields.",
@@ -54,6 +53,7 @@
         }
       ]
     },
-    "file": "section-header.yaml"
+    "file": "section-header.yaml",
+    "kind": "atom"
   }
 }

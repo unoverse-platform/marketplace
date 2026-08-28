@@ -7,7 +7,6 @@
   "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "cta-link",
     "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here.",
     "whenToUse": "The standard outline CTA that opens a content link in a new tab. Components COMPOSE this atom via a Ref node, mapping their link field via props.",
@@ -62,6 +61,7 @@
         }
       ]
     },
-    "file": "cta-link.yaml"
+    "file": "cta-link.yaml",
+    "kind": "atom"
   }
 }

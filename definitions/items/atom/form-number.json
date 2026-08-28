@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-number",
     "category": "markdown",
     "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
@@ -147,6 +146,7 @@
         }
       ]
     },
-    "file": "form-number.yaml"
+    "file": "form-number.yaml",
+    "kind": "atom"
   }
 }

@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: field
 description: "A labeled text input: a small label above an Input, with an optional help line beneath. The standard form row. Owns its full style — references tokens only."
 whenToUse: Any single-line text entry in a form or wizard step. Compose via a Ref, mapping label/placeholder/help and binding value to the host field the input writes.

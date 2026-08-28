@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-dropdown
 category: markdown
 description: "One collected choice from a long set: a label and the platform's own select, with a chip naming where a proposed value came from."

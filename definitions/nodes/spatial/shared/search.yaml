@@ -48,10 +48,6 @@ call:
     # by feeding CONFIG, so nothing here changes. A flag must be exactly one `{{ path }}` to
     # survive as a boolean.
     #
-    # ONE EXCEPTION, and it is the last line of this block, not this one: `includeMcps` also
-    # reads `params.includeApps`, downwards only. Every other flag here is config alone, and
-    # `params` for them stays the agent's arguments — which it may not set.
-    #
     # An UNSET flag must arrive as undefined so `resolveBody` drops the key and the SERVER's
     # own default applies — and those defaults are mostly TRUE (images, needs, services,
     # skills and mcps; only actions is false). Writing `=== true` turned every unset flag
@@ -65,26 +61,7 @@ call:
     includeServices: "return config.includeServices"
     includeActions: "return config.includeActions"
     includeSkills: "return config.includeSkills"
-    # THE ONE SETTING THE MODEL MAY TOUCH, AND ONLY DOWNWARDS (2026-08-14). Apps come back
-    # as CARDS — `renderComponents` in api/service.yaml is unconditional, so a row carrying
-    # a component renders the moment it surfaces. That is right when the guest is choosing
-    # between things they have not seen, and wrong when they are asking ABOUT something
-    # already named, or refining what is in front of them: another card is a step backwards.
-    # Only the caller knows which of those this turn is, so `includeApps` is a tool argument.
-    #
-    # NARROWING ONLY, which is why it does not break the law at the top of config.yaml: that
-    # rule objects to a model that could "turn ON a content type" and route around the
-    # author. The author's setting stays the CEILING — `false` here stays false whatever is
-    # asked — and the model may only decline what was already permitted.
-    #
-    # THE MODEL MUST ASK to narrow. Reading `params.includeApps` on its own made the author's
-    # `true` a no-op: it meant nothing more than "not false", and an omitted argument fell
-    # through to the server's default rather than to the setting the author had actually
-    # chosen. Only an EXPLICIT `false` narrows now, so a ceiling of true is a real floor too,
-    # and a model that never mentions apps gets what the box was configured to give.
-    includeMcps: >-
-      return config.includeMcps === false || params.includeApps === false
-        ? false : config.includeMcps
+    includeMcps: "return config.includeMcps"
 
     # OPTIONAL source scope (migration 021): restrict the whole search to rows from ONE
     # source ("only this doc's needs"). Author-set, never a default — unset resolves to

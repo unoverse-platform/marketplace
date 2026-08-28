@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: progress
 description: 'A determinate progress bar: a sunken full-width track with a brand-colored fill whose width is data-driven ({{pct}}, a percentage string like "62%"). Owns its full style — references tokens only.'
 whenToUse: Show completion of a known-length task or quota (upload, steps done, budget used). Compose via a Ref, remapping the pct binding to the host's percentage field; the data producer supplies a resolved percentage string.

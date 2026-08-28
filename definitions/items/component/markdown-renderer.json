@@ -8,7 +8,6 @@
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "markdown-renderer",
     "category": "Content",
     "nodeSize": {
@@ -12909,6 +12908,7 @@
           }
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }

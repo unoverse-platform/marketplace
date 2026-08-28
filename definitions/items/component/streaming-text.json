@@ -8,7 +8,6 @@
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "streaming-text",
     "category": "Content",
     "nodeSize": {
@@ -248,6 +247,7 @@
           }
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }

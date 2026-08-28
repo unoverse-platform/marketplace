@@ -8,7 +8,6 @@
   "category": "Charts",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "bar-chart",
     "category": "Charts",
     "nodeSize": {
@@ -227,6 +226,7 @@
           }
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }

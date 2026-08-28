@@ -1,0 +1,63 @@
+# The GRID face: the compact card (the original single-file markup, unchanged).
+# Tapping it opens its own page — the standard face contract.
+type: Button
+action:
+  type: setValue
+  values:
+    - key: view
+      value: page
+style:
+  width: full
+  direction: column
+  background: surface.base
+  border: subtle
+  shadow: lg
+  overflow: hidden
+  padding: "0"
+  cursor: pointer
+  textAlign: start
+children:
+  - type: Box
+    visibleWhen: image
+    style:
+      width: full
+      height: "50"
+      overflow: hidden
+    children:
+      - type: Image
+        bind:
+          src: image
+          alt: title
+        style:
+          width: full
+          height: full
+          fit: cover
+  - type: Box
+    style:
+      direction: column
+      padding: "6"
+      gap: "3"
+      align: start
+    children:
+      - type: Text
+        bind:
+          value: title
+        style:
+          font: headline.sm
+          weight: semibold
+          color: text.primary
+      - type: Text
+        visibleWhen: description
+        bind:
+          value: description
+        style:
+          font: body.md
+          color: text.secondary
+      - type: Text
+        visibleWhen: callToAction
+        bind:
+          value: callToAction
+        style:
+          font: button
+          weight: semibold
+          color: action.primary

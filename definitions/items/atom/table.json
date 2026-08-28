@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "table",
     "category": "markdown",
     "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
@@ -134,6 +133,7 @@
         }
       ]
     },
-    "file": "table.yaml"
+    "file": "table.yaml",
+    "kind": "atom"
   }
 }

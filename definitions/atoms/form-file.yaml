@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-file
 category: markdown
 description: "One collected document: a label, the platform's file chooser, and the name of whatever was chosen."

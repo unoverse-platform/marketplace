@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "key-facts",
     "category": "markdown",
     "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -116,6 +115,7 @@
         ]
       }
     },
-    "file": "key-facts.yaml"
+    "file": "key-facts.yaml",
+    "kind": "atom"
   }
 }

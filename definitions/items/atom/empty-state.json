@@ -7,7 +7,6 @@
   "description": "A centered nothing-here block: a muted icon over a title and a hint line. Owns its full style — references tokens only.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "empty-state",
     "description": "A centered nothing-here block: a muted icon over a title and a hint line. Owns its full style — references tokens only.",
     "whenToUse": "The empty condition of a list, search, or collection — say what is empty and what fills it. Compose via a Ref, mapping icon/title/hint; gate it on the host's empty condition.",
@@ -71,6 +70,7 @@
         }
       ]
     },
-    "file": "empty-state.yaml"
+    "file": "empty-state.yaml",
+    "kind": "atom"
   }
 }

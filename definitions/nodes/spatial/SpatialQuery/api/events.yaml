@@ -1,0 +1,12 @@
+# One row per output connector, in interface.yaml's order.
+
+- emit: results
+  # THE SAME LEAN PROJECTION as the service node (shared/helpers.yaml): a handle plus the
+  # editorial essentials, never embeddings, UMAP coordinates or bodyCopy. A downstream step
+  # is very often a prompt, and the full rows cost ~100k tokens a search when this
+  # projection was once removed — and every emitted value is recorded into node_traces too.
+  # A downstream reader that needs the full body dereferences by universal_id.
+  value: "return (response.results || []).map(helpers.searchRow)"
+
+- emit: count
+  value: "return response.count != null ? response.count : (response.results || []).length"

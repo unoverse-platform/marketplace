@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: faq
 category: markdown
 description: "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only."

@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "prose",
     "category": "markdown",
     "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
@@ -31,6 +30,7 @@
         "width": "full"
       }
     },
-    "file": "prose.yaml"
+    "file": "prose.yaml",
+    "kind": "atom"
   }
 }

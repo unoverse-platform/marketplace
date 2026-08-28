@@ -8,7 +8,6 @@
   "category": "markdown",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "form-file",
     "category": "markdown",
     "description": "One collected document: a label, the platform's file chooser, and the name of whatever was chosen.",
@@ -144,6 +143,7 @@
         }
       ]
     },
-    "file": "form-file.yaml"
+    "file": "form-file.yaml",
+    "kind": "atom"
   }
 }

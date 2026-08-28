@@ -7,7 +7,6 @@
   "description": "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only.",
   "definition": {
     "unoverse": "1.0",
-    "kind": "atom",
     "name": "toggle-switch",
     "description": "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only.",
     "whenToUse": "The on/off control inside a row that supplies its own label and its own action, such as a settings row or a form's yes-or-no field. Compose via a Ref, remapping `on` to the field it reflects. A whole labelled settings row is toggle-row.",
@@ -59,6 +58,7 @@
         }
       ]
     },
-    "file": "toggle-switch.yaml"
+    "file": "toggle-switch.yaml",
+    "kind": "atom"
   }
 }

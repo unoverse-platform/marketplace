@@ -8,7 +8,6 @@
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "card-carousel",
     "category": "Content",
     "nodeSize": {
@@ -147,6 +146,7 @@
           }
         ]
       }
-    }
+    },
+    "kind": "component"
   }
 }

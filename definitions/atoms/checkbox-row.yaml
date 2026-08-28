@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: checkbox-row
 description: "A selectable row with a real checkbox: a bordered square that fills with the brand color and a check glyph when the bound `checked` field is true, beside a label and optional description. Owns its full style — references tokens only."
 whenToUse: A multi-select option or a confirm/agree row, wherever the checked state must stay visible. Compose via a Ref, mapping label/description and binding checked to the host field its action toggles; the host supplies the action.

@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: component
+type: component
 name: ken-burns-image
 category: Media
 description: Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.

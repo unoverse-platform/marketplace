@@ -1,5 +1,5 @@
 unoverse: "1.0"
-kind: atom
+type: atom
 name: form-email
 category: markdown
 description: "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from."

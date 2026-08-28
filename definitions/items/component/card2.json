@@ -8,7 +8,6 @@
   "category": "Content",
   "definition": {
     "unoverse": "1.0",
-    "kind": "component",
     "name": "card2",
     "category": "Content",
     "nodeSize": {
@@ -149,6 +148,7 @@
           ]
         }
       ]
-    }
+    },
+    "kind": "component"
   }
 }
