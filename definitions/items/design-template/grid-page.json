@@ -1,0 +1,154 @@
+{
+  "kind": "design-template",
+  "name": "grid-page",
+  "fingerprint": "8cae915e1aaf215c",
+  "bundle": "design-system",
+  "title": "grid-page",
+  "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
+  "category": "Arrangement",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "grid-page",
+    "parts": [
+      {
+        "slot": "items",
+        "accepts": "interfaces"
+      }
+    ],
+    "shapes": {
+      "grid": {
+        "layout": "layouts/grid"
+      },
+      "page": {
+        "layout": "layouts/page"
+      }
+    },
+    "kind": "template",
+    "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
+    "whenToUse": "Four to eight peer items the guest is browsing or choosing between.",
+    "category": "Arrangement",
+    "version": "1.0.0",
+    "preview": {
+      "items": [
+        "card",
+        "card",
+        "card"
+      ]
+    },
+    "layouts": {
+      "grid": {
+        "type": "Box",
+        "style": {
+          "width": "full",
+          "container": "inline-size"
+        },
+        "children": [
+          {
+            "type": "Box",
+            "style": {
+              "columns": {
+                "mobile": "1",
+                "tablet": "2",
+                "desktop": "3",
+                "full": "4"
+              },
+              "gap": "4",
+              "width": "full",
+              "padding": [
+                "4",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            "children": [
+              {
+                "type": "ComponentSlot",
+                "select": {
+                  "from": "all",
+                  "where": {
+                    "field": "view",
+                    "eq": "grid"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "page": {
+        "type": "Box",
+        "style": {
+          "direction": "column",
+          "width": "full"
+        },
+        "children": [
+          {
+            "type": "ComponentSlot",
+            "select": {
+              "from": "all",
+              "where": {
+                "field": "view",
+                "eq": "page"
+              },
+              "limit": 1
+            }
+          }
+        ]
+      }
+    },
+    "defaultLayout": "grid",
+    "stateOrder": [
+      "page"
+    ],
+    "root": {
+      "type": "Box",
+      "style": {
+        "width": "full",
+        "container": "inline-size"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "width": "full",
+            "container": "inline-size"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "columns": {
+                  "mobile": "1",
+                  "tablet": "2",
+                  "desktop": "3",
+                  "full": "4"
+                },
+                "gap": "4",
+                "width": "full",
+                "padding": [
+                  "4",
+                  "0",
+                  "0",
+                  "0"
+                ]
+              },
+              "children": [
+                {
+                  "type": "ComponentSlot",
+                  "select": {
+                    "from": "all",
+                    "where": {
+                      "field": "view",
+                      "eq": "grid"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

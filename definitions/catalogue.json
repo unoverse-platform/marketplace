@@ -1,5 +1,5 @@
 {
-  "release": "0.1.72",
+  "release": "0.1.73",
   "items": [
     {
       "kind": "component",
@@ -526,6 +526,15 @@
       "bundle": "design-system",
       "title": "toggle-switch",
       "description": "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only."
+    },
+    {
+      "kind": "design-template",
+      "name": "grid-page",
+      "fingerprint": "8cae915e1aaf215c",
+      "bundle": "design-system",
+      "title": "grid-page",
+      "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
+      "category": "Arrangement"
     },
     {
       "kind": "style",
