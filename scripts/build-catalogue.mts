@@ -28,6 +28,38 @@ const out = join(pkg, "definitions");
 
 const release = JSON.parse(readFileSync(join(pkg, "package.json"), "utf8")).version;
 const full = await buildCatalogue();
+
+/**
+ * NOTHING FROM AN ORG LEAVES THIS BUILD. The last gate before the tarball.
+ *
+ * `design/<org>/` is a customer's own work — components, atoms, templates, apps, skills,
+ * prompt blocks, whatever a future kind adds. It reaches a universe through Studio, per
+ * org, and belongs in no published package. Each builder in catalogue.ts is supposed to
+ * enforce that for its own kind (designSystemItems: "An org's own components are theirs,
+ * never ours to publish"), and every one of them did except skills.
+ *
+ * That cost thirteen of one customer's skills, published in
+ * @unoverse-platform/marketplace and readable by anyone. It went unseen because the org
+ * was stripped BEFORE the item was catalogued — `bpp/accountancy-career-coach` was stored
+ * as `accountancy-career-coach`, so it did not look like org content to any reader.
+ *
+ * So the rule is enforced HERE too, at the one place every kind must pass through. A
+ * per-kind guard protects the kind whose author remembered it; this protects the ones
+ * nobody has written yet. It THROWS rather than filtering: silently dropping items would
+ * hide the same class of bug the other way round, publishing a package quietly missing
+ * things. A build that finds org content is a build that must not ship.
+ */
+const orgQualified = full.filter((i) => i.name.includes("/") || (i as { org?: string }).org);
+if (orgQualified.length) {
+  console.error(
+    `\nREFUSING TO BUILD: ${orgQualified.length} item(s) carry an org. A customer's own work is ` +
+      `deployed through Studio and is never published:\n` +
+      orgQualified.map((i) => `  ${i.kind}/${i.name}`).join("\n") +
+      `\n\nThe builder for that kind in packages/base/src/items/catalogue.ts needs the guard ` +
+      `designSystemItems already has: an org's work is theirs, never ours to publish.\n`,
+  );
+  process.exit(1);
+}
 // `detail` goes the way `definition` goes: it is what a node takes, gives back and needs
 // access to, read by ONE page, and its config schema outweighs every browse field in the
 // file. Both travel in the per-item file below.

@@ -1,6 +1,7 @@
 {
   "kind": "skill",
   "name": "complaints-handling",
+  "installed": false,
   "fingerprint": "70e44f09357652b9",
   "title": "Complaints Handling",
   "description": "Guide for handling customer complaints professionally, with empathy and clear escalation paths.",
