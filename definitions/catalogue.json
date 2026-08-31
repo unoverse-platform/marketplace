@@ -1,5 +1,5 @@
 {
-  "release": "0.1.74",
+  "release": "0.1.75",
   "items": [
     {
       "kind": "component",
@@ -530,18 +530,18 @@
     {
       "kind": "template",
       "name": "email-digest",
-      "fingerprint": "22bd9fca479b2984",
+      "fingerprint": "105b52b88cfc550b",
       "bundle": "design-system",
-      "title": "email-digest",
+      "title": "Email Digest",
       "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
       "category": "Communication"
     },
     {
       "kind": "template",
       "name": "grid-page",
-      "fingerprint": "d905880fdfa4b204",
+      "fingerprint": "0f63798b426adc25",
       "bundle": "design-system",
-      "title": "grid-page",
+      "title": "Browse Grid",
       "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
       "category": "Arrangement"
     },

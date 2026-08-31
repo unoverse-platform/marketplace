@@ -1,5 +1,6 @@
 # STANDARD TEMPLATE MANIFEST: the discovery meta. Preview mocks live ON each slot
 # in the envelope (one grammar, 2026-08-29).
+title: Email Digest
 description: A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.
 whenToUse: "Compose an email, digest or announcement for one reader: a branded frame, a personalised subject and message, a handful of the items most relevant to them, and a signature."
 category: Communication

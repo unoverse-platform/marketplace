@@ -1,15 +1,16 @@
 {
   "kind": "template",
   "name": "grid-page",
-  "fingerprint": "d905880fdfa4b204",
+  "fingerprint": "0f63798b426adc25",
   "bundle": "design-system",
-  "title": "grid-page",
+  "title": "Browse Grid",
   "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
   "category": "Arrangement",
   "definition": {
     "unoverse": "1.0",
     "name": "grid-page",
     "kind": "template",
+    "title": "Browse Grid",
     "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
     "whenToUse": "Four to eight peer items the guest is browsing or choosing between.",
     "category": "Arrangement",
