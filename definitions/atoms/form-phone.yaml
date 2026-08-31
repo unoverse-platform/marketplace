@@ -14,19 +14,24 @@ whenToUse: "Collect a telephone number a person types or confirms, for a callbac
 props:
   label:
     type: string
-    default: Label
     preview: Phone number
+    default: Label
   value:
     type: string
-    default: ""
+    description: >-
+      Propose the number the person's profile actually holds, copied exactly, digits
+      and spacing as stated. Never construct one from a country or an address, and
+      leave it out when nothing states it: a wrong number is a call that never comes.
+    maxLength: 32
+    optional: true
     preview: 7700 900123
+    default: ""
   placeholder:
     type: string
-    default: ""
     preview: e.g. 7700 900123
+    default: ""
   help:
     type: string
-    default: ""
     preview: An advisor will call this number, usually within one working day.
   # Where a proposed value came from, in the reader's words: 'From your profile',
   # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
@@ -34,14 +39,15 @@ props:
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: From your profile
+    default: ""
 root:
   type: Box
   style:
@@ -95,13 +101,6 @@ root:
       # is what lets a model propose a value at all. Per-field guidance belongs to the
       # authored form spec and reaches the schema through the compiler: an atom is one
       # file and cannot carry a different description for every field that composes it.
-      brief:
-        description: >-
-          Propose the number the person's profile actually holds, copied exactly, digits
-          and spacing as stated. Never construct one from a country or an address, and
-          leave it out when nothing states it: a wrong number is a call that never comes.
-        optional: true
-        maxLength: 32
       # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
       # input write that key back: the input action writes `{ [boundField]: text }`.
       bind:
@@ -114,7 +113,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
       visibleWhen: help

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "stacked-bar-chart",
-  "fingerprint": "5758280b5dce3f65",
+  "fingerprint": "cc648ca22758e61c",
   "bundle": "design-system",
   "title": "stacked-bar-chart",
   "description": "Stacked bar chart showing composition per category. Composed from a nested Box + Each (no chart primitive): each bar stacks segments whose heights bind to producer-supplied proportions ({{pct}}) and whose colours are served tokens bound per segment ({{color}}). A legend maps colours to series.",
@@ -19,10 +19,12 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "What the chart is showing.",
         "default": "Revenue by product"
       },
       "series": {
         "type": "array",
+        "description": "The parts every bar is built from, in legend order. Each carries a label and a colour token.",
         "default": [
           {
             "label": "Product A",
@@ -40,6 +42,7 @@
       },
       "bars": {
         "type": "array",
+        "description": "The bars left to right. Each carries a label and its segments, one per series, each with a pct and a colour.",
         "default": [
           {
             "label": "Q1",

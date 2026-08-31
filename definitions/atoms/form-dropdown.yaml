@@ -18,31 +18,36 @@ whenToUse: "Collect one answer from a set too long to read at a glance: a countr
 props:
   label:
     type: string
-    default: Label
     preview: Country of residence
+    default: Label
   value:
     type: string
-    default: ""
+    description: >-
+      Propose this ONLY from what the person's profile or an uploaded document states,
+      and only as one of the option values offered. Never guess a country from a
+      language, an address or a name, and leave it out when nothing states it.
+    maxLength: 60
+    optional: true
     preview: NL
+    default: ""
   placeholder:
     type: string
-    default: ""
     preview: Choose a country
+    default: ""
   help:
     type: string
-    default: ""
     preview: The country you are tax resident in, which may not be where you live.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: From your profile
+    default: ""
   options:
     type: array
-    default: []
     preview:
       - value: BE
         label: Belgium
@@ -56,6 +61,7 @@ props:
         label: Netherlands
       - value: SE
         label: Sweden
+    default: []
 root:
   type: Box
   style:
@@ -99,13 +105,6 @@ root:
           style:
             background: action.subtle
     - type: Select
-      brief:
-        description: >-
-          Propose this ONLY from what the person's profile or an uploaded document states,
-          and only as one of the option values offered. Never guess a country from a
-          language, an address or a name, and leave it out when nothing states it.
-        optional: true
-        maxLength: 60
       bind:
         value: value
         options: options
@@ -116,7 +115,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
         cursor: pointer
     - type: Text

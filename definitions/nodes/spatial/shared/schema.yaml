@@ -22,6 +22,12 @@
 #
 # See §Memory vs fresh search in docs/SPATIAL_SEARCH_GUIDE.md for the measurement.
 #
+# COMPLETION EXCEPTION 2026-08-29. "Pass the user's EXACT words" exists because agents were
+# rewriting queries until the original context was lost — it stays the default. But obeyed
+# literally it sent "tell me more" to findIntent as-is, a query that searches nothing. The
+# one exception: an ask that cannot stand alone gets its reference completed from the
+# conversation ("tell me more" -> "tell me more about X"). A completion, never a rewrite.
+#
 # Written as plain YAML rather than a `return { ... }` expression. A constant is data, and
 # encoding a document this size inside a JavaScript string meant escaping every inner quote
 # with no editor able to check the result.
@@ -85,7 +91,11 @@ spatial:
         pinpoints the matches for that named need, however the ask is phrased. Pass the
         user's EXACT words from THIS turn: not paraphrased, and not carried over from an
         earlier turn. If they repeat themselves, those repeated words ARE this turn's
-        question and this search still runs. NOT for open needs with no named thing ("where
+        question and this search still runs. ONE exception: an ask that cannot stand alone
+        ("tell me more", "and the second one?") searches NOTHING as written — keep their
+        words and complete the reference with the thing from the conversation they point
+        at ("tell me more" becomes "tell me more about X"). A completion, never a rewrite:
+        an ask that stands alone is passed untouched. NOT for open needs with no named thing ("where
         do I start?", "what are my options?") — that is discoverRelated. Do not pair with
         discoverRelated in parallel.
       input:
@@ -96,8 +106,9 @@ spatial:
             type: string
             description: >-
               What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
-              with references resolved (a pronoun or "what about that one?" becomes the thing
-              they mean). NEVER compress, paraphrase, or strip it to a keyword stub: the
+              with references resolved (a pronoun becomes the thing it means; "tell me more"
+              becomes "tell me more about X" — complete the reference, change nothing else).
+              NEVER compress, paraphrase, or strip it to a keyword stub: the
               catalog is indexed against asks like the user's, so the ask's own phrasing IS
               the routing, and losing its words loses the match. Search what is UNANSWERED:
               when the user has since narrowed or changed what they want, THAT is this
@@ -133,7 +144,9 @@ spatial:
             type: string
             description: >-
               What the user wants ANSWERED BY THIS SEARCH, FAITHFULLY, in their own words,
-              with references resolved. NEVER compress, paraphrase, or strip it to a keyword
+              with references resolved (a pronoun becomes the thing it means; "tell me more"
+              becomes "tell me more about X" — complete the reference, change nothing else).
+              NEVER compress, paraphrase, or strip it to a keyword
               stub: the catalog is indexed against asks like the user's, so the ask's own
               phrasing IS the routing, and losing its words loses the match. Search what is
               UNANSWERED: when the user has since narrowed or changed what they want, THAT is

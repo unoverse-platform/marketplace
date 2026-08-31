@@ -1,15 +1,10 @@
-# The detail SHAPE (`page` state): claims the ONE interface whose face is `page`
-# — the standard reaction surface select. Its occupant fills it; the ✕ writing the
-# face back releases the claim and the grid returns.
+# The DETAIL arrangement (`page` state): the ONE interface the guest opened, full
+# width. Its occupant fills it; the ✕ writing the state back releases it and the
+# grid returns — all by name-match, no director judgment needed for the dance.
 type: Box
 style:
   direction: column
   width: full
 children:
-  - type: ComponentSlot
-    select:
-      from: all
-      where:
-        field: view
-        eq: page
+  - director:
       limit: 1

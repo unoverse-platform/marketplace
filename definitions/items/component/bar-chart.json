@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "bar-chart",
-  "fingerprint": "4cc23587718a9970",
+  "fingerprint": "dd143c08451afb83",
   "bundle": "design-system",
   "title": "bar-chart",
   "description": "Interactive vertical bar chart of labelled values. Composed from Box + Each + Button (NOT a chart primitive): each bar is a Button whose height binds to a producer-supplied proportion (`pct`, e.g. \"72%\"); tapping a bar writes the selection to the store (cross-filter). Value labels sit on each bar, months below, on a baseline. Colour is a served token.",
@@ -19,10 +19,12 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "What the chart is showing.",
         "default": "Revenue by month"
       },
       "bars": {
         "type": "array",
+        "description": "The bars left to right. Each carries a label, its value as text, and pct, the bar's height.",
         "default": [
           {
             "label": "Jan",

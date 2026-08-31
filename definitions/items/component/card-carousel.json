@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "card-carousel",
-  "fingerprint": "0391faf95f946b7d",
+  "fingerprint": "b876f7a9ca3c5ea2",
   "bundle": "design-system",
   "title": "card-carousel",
   "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
@@ -19,6 +19,7 @@
     "props": {
       "items": {
         "type": "array",
+        "description": "The cards left to right. Each carries what a card draws: title, description, image and call to action.",
         "default": [
           {
             "title": "Aurora Expedition",

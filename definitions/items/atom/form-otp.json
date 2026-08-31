@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-otp",
-  "fingerprint": "70419c712b662535",
+  "fingerprint": "172e4f2e9dbe2093",
   "bundle": "design-system",
   "title": "form-otp",
   "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
@@ -15,13 +15,18 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "",
-        "preview": "Enter the code we sent to your phone"
+        "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
+        "maxLength": 80,
+        "preview": "Enter the code we sent to your phone",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "The code expires in 10 minutes."
+        "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+        "maxLength": 120,
+        "optional": true,
+        "preview": "The code expires in 10 minutes.",
+        "default": ""
       },
       "d1": {
         "type": "string",
@@ -59,10 +64,6 @@
       "children": [
         {
           "type": "Text",
-          "brief": {
-            "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-            "maxLength": 80
-          },
           "visibleWhen": "label",
           "bind": {
             "value": "label"
@@ -231,11 +232,6 @@
         },
         {
           "type": "Text",
-          "brief": {
-            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-            "optional": true,
-            "maxLength": 120
-          },
           "visibleWhen": "help",
           "bind": {
             "value": "help"

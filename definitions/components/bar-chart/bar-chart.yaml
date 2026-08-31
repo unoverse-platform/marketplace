@@ -10,9 +10,11 @@ whenToUse: Compare a handful of labelled numeric values side by side as vertical
 props:
   title:
     type: string
+    description: "What the chart is showing."
     default: Revenue by month
   bars:
     type: array
+    description: "The bars left to right. Each carries a label, its value as text, and pct, the bar's height."
     default:
       - label: Jan
         value: "42"

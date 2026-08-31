@@ -1,0 +1,442 @@
+{
+  "kind": "template",
+  "name": "email-digest",
+  "fingerprint": "22bd9fca479b2984",
+  "bundle": "design-system",
+  "title": "email-digest",
+  "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
+  "category": "Communication",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "email-digest",
+    "kind": "template",
+    "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
+    "whenToUse": "Compose an email, digest or announcement for one reader: a branded frame, a personalised subject and message, a handful of the items most relevant to them, and a signature.",
+    "category": "Communication",
+    "version": "1.0.0",
+    "spatial": true,
+    "layouts": {
+      "email": {
+        "type": "Box",
+        "style": {
+          "direction": "column",
+          "align": "center",
+          "width": "full"
+        },
+        "children": [
+          {
+            "type": "Box",
+            "style": {
+              "direction": "column",
+              "width": "full",
+              "maxWidth": "page",
+              "container": "inline-size",
+              "background": "surface.base",
+              "border": "thin subtle",
+              "radius": "lg",
+              "shadow": "sm",
+              "overflow": "hidden"
+            },
+            "children": [
+              {
+                "type": "ComponentSlot",
+                "select": {
+                  "from": "all",
+                  "where": {
+                    "field": "state",
+                    "eq": "masthead"
+                  },
+                  "limit": 1
+                }
+              },
+              {
+                "type": "Box",
+                "style": {
+                  "direction": "column",
+                  "gap": "5",
+                  "padding": [
+                    "8",
+                    "8",
+                    "6",
+                    "8"
+                  ],
+                  "width": "full"
+                },
+                "children": [
+                  {
+                    "type": "ComponentSlot",
+                    "select": {
+                      "from": "all",
+                      "where": {
+                        "field": "state",
+                        "eq": "subject"
+                      },
+                      "limit": 1
+                    }
+                  },
+                  {
+                    "type": "ComponentSlot",
+                    "select": {
+                      "from": "all",
+                      "where": {
+                        "field": "state",
+                        "eq": "body"
+                      },
+                      "limit": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "style": {
+                  "direction": "column",
+                  "gap": "5",
+                  "padding": [
+                    "0",
+                    "8",
+                    "7",
+                    "8"
+                  ],
+                  "width": "full"
+                },
+                "children": [
+                  {
+                    "type": "ComponentSlot",
+                    "select": {
+                      "from": "all",
+                      "where": {
+                        "field": "state",
+                        "eq": "grid"
+                      },
+                      "limit": 3
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "style": {
+                  "direction": "column",
+                  "padding": [
+                    "0",
+                    "8",
+                    "8",
+                    "8"
+                  ],
+                  "width": "full"
+                },
+                "children": [
+                  {
+                    "type": "ComponentSlot",
+                    "select": {
+                      "from": "all",
+                      "where": {
+                        "field": "state",
+                        "eq": "signoff"
+                      },
+                      "limit": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "style": {
+                  "width": "full",
+                  "background": "surface.sunken",
+                  "borderTop": "thin subtle"
+                },
+                "children": [
+                  {
+                    "type": "ComponentSlot",
+                    "select": {
+                      "from": "all",
+                      "where": {
+                        "field": "state",
+                        "eq": "footer"
+                      },
+                      "limit": 1
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "defaultLayout": "email",
+    "stateOrder": [],
+    "publicStates": [
+      "email"
+    ],
+    "initialView": "email",
+    "sections": {
+      "email": [
+        {
+          "kind": "static",
+          "face": "masthead",
+          "component": "components/masthead",
+          "ref": "email-digest/masthead",
+          "seeds": {
+            "email-digest/masthead": {
+              "wordmark": "Your organisation",
+              "kicker": "This month's edition"
+            }
+          }
+        },
+        {
+          "kind": "copywriter",
+          "face": "subject",
+          "component": "components/subject",
+          "ref": "email-digest/subject",
+          "seeds": {
+            "email-digest/subject": {
+              "subject": "Three courses that fit where you're heading"
+            }
+          }
+        },
+        {
+          "kind": "copywriter",
+          "face": "body",
+          "component": "components/body",
+          "ref": "email-digest/body",
+          "seeds": {
+            "email-digest/body": {
+              "greeting": "Hi Sarah,",
+              "message": "Thanks for telling us where you want to take your career. Based on what you\nsaid about moving into practice and studying alongside work, I have pulled\ntogether a short list rather than the full catalogue.\n\nEach one is part time, starts this September, and is taught live with\non-demand catch-up, so none of them assume you can drop everything.",
+              "leadIn": "Here is what I would look at first"
+            }
+          }
+        },
+        {
+          "kind": "director",
+          "face": "grid",
+          "state": "grid",
+          "limit": 3,
+          "rules": "The items most relevant to the reader, strongest matches first.",
+          "preview": [
+            "card",
+            "card",
+            "card"
+          ],
+          "seeds": {
+            "card": {
+              "title": "Lightsaber Combat Training",
+              "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
+              "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+              "callToAction": "Begin Training"
+            }
+          }
+        },
+        {
+          "kind": "copywriter",
+          "face": "signoff",
+          "component": "components/signoff",
+          "ref": "email-digest/signoff",
+          "seeds": {
+            "email-digest/signoff": {
+              "closing": "Any questions, just reply to this email and it comes straight to me.",
+              "senderName": "Jo Whitfield",
+              "senderRole": "Course Adviser"
+            }
+          }
+        },
+        {
+          "kind": "static",
+          "face": "footer",
+          "component": "components/footer",
+          "ref": "email-digest/footer",
+          "seeds": {
+            "email-digest/footer": {
+              "orgName": "Your organisation",
+              "note": "You are receiving this because you asked to hear from us.",
+              "legal": ""
+            }
+          }
+        }
+      ]
+    },
+    "preview": {
+      "masthead": [
+        "email-digest/masthead"
+      ],
+      "subject": [
+        "email-digest/subject"
+      ],
+      "body": [
+        "email-digest/body"
+      ],
+      "grid": [
+        "card",
+        "card",
+        "card"
+      ],
+      "signoff": [
+        "email-digest/signoff"
+      ],
+      "footer": [
+        "email-digest/footer"
+      ]
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "width": "full",
+        "container": "inline-size"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "align": "center",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "width": "full",
+                "maxWidth": "page",
+                "container": "inline-size",
+                "background": "surface.base",
+                "border": "thin subtle",
+                "radius": "lg",
+                "shadow": "sm",
+                "overflow": "hidden"
+              },
+              "children": [
+                {
+                  "type": "ComponentSlot",
+                  "select": {
+                    "from": "all",
+                    "where": {
+                      "field": "state",
+                      "eq": "masthead"
+                    },
+                    "limit": 1
+                  }
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "gap": "5",
+                    "padding": [
+                      "8",
+                      "8",
+                      "6",
+                      "8"
+                    ],
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "subject"
+                        },
+                        "limit": 1
+                      }
+                    },
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "body"
+                        },
+                        "limit": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "gap": "5",
+                    "padding": [
+                      "0",
+                      "8",
+                      "7",
+                      "8"
+                    ],
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "grid"
+                        },
+                        "limit": 3
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "direction": "column",
+                    "padding": [
+                      "0",
+                      "8",
+                      "8",
+                      "8"
+                    ],
+                    "width": "full"
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "signoff"
+                        },
+                        "limit": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Box",
+                  "style": {
+                    "width": "full",
+                    "background": "surface.sunken",
+                    "borderTop": "thin subtle"
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "footer"
+                        },
+                        "limit": 1
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

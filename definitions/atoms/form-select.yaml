@@ -21,30 +21,39 @@ whenToUse: "Collect one answer from a SET the source defines: a class, a classif
 props:
   label:
     type: string
-    default: Label
+    description: >-
+      What is being chosen, in a few words: 'Share class', 'Investor
+      classification'. A noun phrase, never a question.
+    maxLength: 60
     preview: Share class
+    default: Label
   value:
     type: string
-    default: ""
     preview: A
+    default: ""
   help:
     type: string
-    default: ""
     preview: Class I requires a commitment of £5m or more.
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they choose rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: From the deal's terms
+    default: ""
   options:
     type: array
-    default: []
+    description: >-
+      The options the source defines, in its own order and its own words. Never invent
+      an option, never drop one because it seems unlikely, and never add 'Other' unless
+      the source offers it.
+    minItems: 2
+    maxItems: 8
     preview:
       - label: A
         description: EUR, minimum €250k
@@ -52,6 +61,7 @@ props:
         description: USD, minimum $300k
       - label: I
         description: EUR, minimum €5m
+    default: []
 root:
   type: Box
   style:
@@ -74,11 +84,6 @@ root:
             gap: "1"
           children:
             - type: Text
-              brief:
-                description: >-
-                  What is being chosen, in a few words: 'Share class', 'Investor
-                  classification'. A noun phrase, never a question.
-                maxLength: 60
               bind:
                 value: label
               style:
@@ -110,7 +115,7 @@ root:
         justify: space-between
         gap: "3"
         width: full
-        padding: [ "3", "4" ]
+        padding: ["3", "4"]
         background: surface.base
         border: strong
         radius: sm
@@ -134,13 +139,6 @@ root:
       visibleWhen:
         field: value
         eq: ""
-      brief:
-        description: >-
-          The options the source defines, in its own order and its own words. Never invent
-          an option, never drop one because it seems unlikely, and never add 'Other' unless
-          the source offers it.
-        minItems: 2
-        maxItems: 8
       bind:
         items: options
       style:

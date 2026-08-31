@@ -1,0 +1,12 @@
+unoverse: "1.0"
+# THE SHELF'S EMAIL DIGEST (docs/unoverse/UNOVERSE_TEMPLATE_MODEL.md §9b, the
+# three-word grammar ruled 2026-08-29). ONE flat state (owner ruling): an email is
+# a document, not a surface you navigate — nothing rearranges while it is read.
+# Everything else lives where it belongs: the sections in layouts/email (static /
+# copywriter / director lines, in the letter's order), the template's own parts in
+# components/ (the folder is the namespace), discovery meta in manifest.yaml.
+type: template
+name: email-digest
+states:
+  email:
+    layout: layouts/email

@@ -7,16 +7,15 @@ whenToUse: Terms, conditions and regulatory wording the source carries. Present 
 props:
   body:
     type: string
+    description: The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only.
     default: Terms and conditions apply.
 root:
   type: Markdown
-  brief:
-    description: The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only.
   bind:
     value: body
   style:
     width: full
     font: caption
     color: text.tertiary
-    padding: [ "4", "0", "0", "0" ]
+    padding: ["4", "0", "0", "0"]
     borderTop: thin subtle

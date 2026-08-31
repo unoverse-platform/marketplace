@@ -11,17 +11,21 @@ props:
   # what this branches on and this default never applies. Never simulate it elsewhere.
   callState:
     type: string
+    description: "Where the call is: idle, listening, speaking. Decides how the orb moves."
     default: idle
     enum: [idle, active, listening, speaking, thinking]
   size:
     type: string
+    description: "The orb's width in pixels."
     default: "200"
   orbColor:
     type: string
+    description: "The orb's colour, as a token name."
     default: orb.ink-soft
     enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
   speed:
     type: string
+    description: "How fast the animation runs. 1 is normal."
     default: "1"
 root:
   type: Box

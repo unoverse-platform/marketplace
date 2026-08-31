@@ -10,9 +10,11 @@ whenToUse: Default for text that streams in token-by-token, such as a chat-style
 props:
   streaming:
     type: boolean
+    description: "True while tokens are still arriving. Drives the cursor and the thinking indicator."
     default: false
   thinking:
     type: string
+    description: "The short status line shown while the model works, before any answer text."
     input: true
     default: ""
   # The MODEL'S OWN reasoning summary, streamed live from the agent's `reasoning`
@@ -20,10 +22,12 @@ props:
   # Markdown: the API writes bold section headers per summary part.
   reasoning:
     type: string
+    description: "The model's reasoning as it works, shown above the answer and folded away once it lands."
     input: true
     default: ""
   text:
     type: string
+    description: "The answer itself, as markdown, growing as it streams."
     input: true
     default: |
       ## How can I help?
@@ -40,6 +44,7 @@ props:
       | Streaming | ✅ |
   questions:
     type: object
+    description: "Follow-up questions offered under the answer, each one tappable."
     input: true
     default: []
 root:

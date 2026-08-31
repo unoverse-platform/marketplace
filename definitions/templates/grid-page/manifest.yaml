@@ -1,12 +1,6 @@
-# STANDARD TEMPLATE MANIFEST (like a component's): the home for discovery meta and
-# the Studio preview mocks. Mocks are interface refs — each renders its OWN defaults
-# (never authored preview data), seeded at its arrival face.
+# STANDARD TEMPLATE MANIFEST (like a component's): the home for discovery meta.
+# Preview mocks live ON each slot in the envelope (one grammar, 2026-08-29).
 description: "Browse a set of peer items in a responsive grid; any one opens into its own full detail page."
 whenToUse: Four to eight peer items the guest is browsing or choosing between.
 category: Arrangement
 version: 1.0.0
-# The universal card now carries the standard faces (grid/page), so the shelf
-# template previews with the shelf's own component: each template state shows the
-# mock in the NAME-MATCHED face — compact in grid, the full detail in page.
-preview:
-  items: [ card, card, card ]

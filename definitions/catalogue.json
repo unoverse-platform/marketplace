@@ -1,10 +1,10 @@
 {
-  "release": "0.1.73",
+  "release": "0.1.74",
   "items": [
     {
       "kind": "component",
       "name": "avatar-orb",
-      "fingerprint": "fd8ae8e19461c8ad",
+      "fingerprint": "b6f7ef701919721c",
       "bundle": "design-system",
       "title": "avatar-orb",
       "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -13,7 +13,7 @@
     {
       "kind": "component",
       "name": "bar-chart",
-      "fingerprint": "4cc23587718a9970",
+      "fingerprint": "dd143c08451afb83",
       "bundle": "design-system",
       "title": "bar-chart",
       "description": "Interactive vertical bar chart of labelled values. Composed from Box + Each + Button (NOT a chart primitive): each bar is a Button whose height binds to a producer-supplied proportion (`pct`, e.g. \"72%\"); tapping a bar writes the selection to the store (cross-filter). Value labels sit on each bar, months below, on a baseline. Colour is a served token.",
@@ -22,7 +22,7 @@
     {
       "kind": "component",
       "name": "bar-list",
-      "fingerprint": "702a527d28bf31ca",
+      "fingerprint": "4e0f5bb948af800a",
       "bundle": "design-system",
       "title": "bar-list",
       "description": "Ranked list of horizontal bars — each row a label, a track with a {{pct}}-bound fill, and a value. Composed from Box + Each (no chart primitive); the fill proportions are supplied by the data producer.",
@@ -31,7 +31,7 @@
     {
       "kind": "component",
       "name": "card",
-      "fingerprint": "51ac55f5921c310d",
+      "fingerprint": "7a822084aa32183f",
       "bundle": "design-system",
       "title": "card",
       "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
@@ -40,7 +40,7 @@
     {
       "kind": "component",
       "name": "card-carousel",
-      "fingerprint": "0391faf95f946b7d",
+      "fingerprint": "b876f7a9ca3c5ea2",
       "bundle": "design-system",
       "title": "card-carousel",
       "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
@@ -49,7 +49,7 @@
     {
       "kind": "component",
       "name": "card2",
-      "fingerprint": "59a3a31c27aa25ee",
+      "fingerprint": "d88e0aaacf73a3c4",
       "bundle": "design-system",
       "title": "card2",
       "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "composer-bar",
-      "fingerprint": "c65cbd4139ca0cb1",
+      "fingerprint": "6dbf411934b83aae",
       "bundle": "design-system",
       "title": "composer-bar",
       "description": "The message composer: a rounded input pill with a leading chat glyph, a microphone, and a circular send button. Sits at the foot of a chat surface. Owns its full style — references semantic tokens only, so it themes per org.",
@@ -67,7 +67,7 @@
     {
       "kind": "component",
       "name": "image-block",
-      "fingerprint": "bb6068862221deca",
+      "fingerprint": "4735586b130e9e08",
       "bundle": "design-system",
       "title": "image-block",
       "description": "A single image from a URL with an optional caption beneath it.",
@@ -76,7 +76,7 @@
     {
       "kind": "component",
       "name": "ken-burns-image",
-      "fingerprint": "d50de0fce286f258",
+      "fingerprint": "ce0588f1d6bd16f4",
       "bundle": "design-system",
       "title": "ken-burns-image",
       "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
@@ -85,7 +85,7 @@
     {
       "kind": "component",
       "name": "list-picker",
-      "fingerprint": "524a198c4ada67bd",
+      "fingerprint": "1e71c93758a6bb3c",
       "bundle": "design-system",
       "title": "list-picker",
       "description": "Vertical list of selectable rows — each an optional thumbnail with a title and supporting subtitle — under an optional heading. One tap selects a row.",
@@ -94,7 +94,7 @@
     {
       "kind": "component",
       "name": "markdown-renderer",
-      "fingerprint": "7c7b5086ecadcdf8",
+      "fingerprint": "d7a24229f2d6f86d",
       "bundle": "design-system",
       "title": "markdown-renderer",
       "description": "The Universal Markdown renderer: draws a markdown string (headings, lists, tables, code, links, images) or a typed-block document (prose, key facts, steps, lists, tables, fine print — tabbed when its groups call for it), under an optional titled header with a streaming indicator.",
@@ -103,7 +103,7 @@
     {
       "kind": "component",
       "name": "metric-grid",
-      "fingerprint": "20f8b9b49368aebe",
+      "fingerprint": "a5eb46e49671eaf1",
       "bundle": "design-system",
       "title": "metric-grid",
       "description": "Grid of KPI tiles — each a labelled headline value with an optional prefix/suffix and icon, plus a colour-coded period-over-period delta (up/down/neutral). Sentiment and arrow glyph are resolved by the data producer (deltaPositive/deltaNegative/deltaNeutral + deltaArrow); the definition only composes them — no computation lives in the renderer.",
@@ -112,7 +112,7 @@
     {
       "kind": "component",
       "name": "radial-gauge",
-      "fingerprint": "386e45baff861927",
+      "fingerprint": "8d7f165f136bb551",
       "bundle": "design-system",
       "title": "radial-gauge",
       "description": "Radial progress dial: a circular ring filled to a producer-supplied proportion ({{pct}}), with a value and label in the centre. Composed from a circular Box using the neutral `radial` style (a served fill token sweeping to the stop over a served track token) plus a centred hole — no chart primitive.",
@@ -121,7 +121,7 @@
     {
       "kind": "component",
       "name": "stacked-bar-chart",
-      "fingerprint": "5758280b5dce3f65",
+      "fingerprint": "cc648ca22758e61c",
       "bundle": "design-system",
       "title": "stacked-bar-chart",
       "description": "Stacked bar chart showing composition per category. Composed from a nested Box + Each (no chart primitive): each bar stacks segments whose heights bind to producer-supplied proportions ({{pct}}) and whose colours are served tokens bound per segment ({{color}}). A legend maps colours to series.",
@@ -130,7 +130,7 @@
     {
       "kind": "component",
       "name": "stat-card",
-      "fingerprint": "81575e11b9678ddf",
+      "fingerprint": "df90659ae32d1e5f",
       "bundle": "design-system",
       "title": "stat-card",
       "description": "Single hero KPI card: a label, a large headline value, a colour-coded period-over-period delta, and a compact bar trend. Composed from Box + Each + {{pct}}-bound bars (no chart primitive); delta sentiment (deltaPositive/deltaNegative/deltaNeutral) and the trend proportions are resolved by the data producer.",
@@ -139,7 +139,7 @@
     {
       "kind": "component",
       "name": "streaming-text",
-      "fingerprint": "2edd61c3e2245690",
+      "fingerprint": "f09aaeed732cb3e0",
       "bundle": "design-system",
       "title": "streaming-text",
       "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -148,7 +148,7 @@
     {
       "kind": "component",
       "name": "table",
-      "fingerprint": "ae4fd9d2ccf34b03",
+      "fingerprint": "701317a65e43b810",
       "bundle": "design-system",
       "title": "table",
       "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
@@ -157,7 +157,7 @@
     {
       "kind": "component",
       "name": "thinking-orb",
-      "fingerprint": "a0a7eb1ab007bcf8",
+      "fingerprint": "1a039745f1bc56ba",
       "bundle": "design-system",
       "title": "thinking-orb",
       "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
@@ -166,7 +166,7 @@
     {
       "kind": "component",
       "name": "voice-chat",
-      "fingerprint": "149fcdd270fb802c",
+      "fingerprint": "767fd400dec26484",
       "bundle": "design-system",
       "title": "Voice Call",
       "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
@@ -223,7 +223,7 @@
     {
       "kind": "atom",
       "name": "callout",
-      "fingerprint": "16b9e3aee67c4ab4",
+      "fingerprint": "723439f3c454cf21",
       "bundle": "design-system",
       "title": "callout",
       "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
@@ -256,7 +256,7 @@
     {
       "kind": "atom",
       "name": "close-button",
-      "fingerprint": "0a1b726c52f7289c",
+      "fingerprint": "238262d6320713f8",
       "bundle": "design-system",
       "title": "close-button",
       "description": "A circular close (✕) control — the floating dismiss for a focused widget or overlay: a surface-filled, bordered, shadowed icon button that reads on any background. Owns its full style; references tokens only."
@@ -264,7 +264,7 @@
     {
       "kind": "atom",
       "name": "cta-link",
-      "fingerprint": "2a620041a2a04046",
+      "fingerprint": "a0fac32f5889f08c",
       "bundle": "design-system",
       "title": "cta-link",
       "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here."
@@ -296,7 +296,7 @@
     {
       "kind": "atom",
       "name": "faq",
-      "fingerprint": "45dfddd419d6f3be",
+      "fingerprint": "e3836348cbb877dc",
       "bundle": "design-system",
       "title": "faq",
       "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -313,7 +313,7 @@
     {
       "kind": "atom",
       "name": "fine-print",
-      "fingerprint": "87acac1b06e90266",
+      "fingerprint": "57e1d8a8199c67a9",
       "bundle": "design-system",
       "title": "fine-print",
       "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
@@ -322,7 +322,7 @@
     {
       "kind": "atom",
       "name": "form-date",
-      "fingerprint": "32c28bb3e318d2e3",
+      "fingerprint": "e0869614141af32d",
       "bundle": "design-system",
       "title": "form-date",
       "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
@@ -331,7 +331,7 @@
     {
       "kind": "atom",
       "name": "form-dropdown",
-      "fingerprint": "78a7d9534f95ce6d",
+      "fingerprint": "713354c914b182d7",
       "bundle": "design-system",
       "title": "form-dropdown",
       "description": "One collected choice from a long set: a label and the platform's own select, with a chip naming where a proposed value came from.",
@@ -340,7 +340,7 @@
     {
       "kind": "atom",
       "name": "form-email",
-      "fingerprint": "a40a47055d2337ec",
+      "fingerprint": "490b9ba66154564b",
       "bundle": "design-system",
       "title": "form-email",
       "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
@@ -349,7 +349,7 @@
     {
       "kind": "atom",
       "name": "form-file",
-      "fingerprint": "0bc5ff9a664a7dba",
+      "fingerprint": "c9933208bcc75281",
       "bundle": "design-system",
       "title": "form-file",
       "description": "One collected document: a label, the platform's file chooser, and the name of whatever was chosen.",
@@ -358,7 +358,7 @@
     {
       "kind": "atom",
       "name": "form-long",
-      "fingerprint": "39cf0a00ea2b5ed8",
+      "fingerprint": "beb85c6b410fc793",
       "bundle": "design-system",
       "title": "form-long",
       "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
@@ -367,7 +367,7 @@
     {
       "kind": "atom",
       "name": "form-number",
-      "fingerprint": "66c6f4e8281c6431",
+      "fingerprint": "14a96e68c8d884d5",
       "bundle": "design-system",
       "title": "form-number",
       "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
@@ -376,7 +376,7 @@
     {
       "kind": "atom",
       "name": "form-otp",
-      "fingerprint": "70419c712b662535",
+      "fingerprint": "172e4f2e9dbe2093",
       "bundle": "design-system",
       "title": "form-otp",
       "description": "A six-box one-time-code entry row: each box takes a single digit 0-9. The standard verification-code field. Owns its full style — references tokens only.",
@@ -385,7 +385,7 @@
     {
       "kind": "atom",
       "name": "form-phone",
-      "fingerprint": "6b0ecaa7e635e24d",
+      "fingerprint": "67e66d43cd394d0c",
       "bundle": "design-system",
       "title": "form-phone",
       "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
@@ -394,7 +394,7 @@
     {
       "kind": "atom",
       "name": "form-select",
-      "fingerprint": "ac66f340fced60f3",
+      "fingerprint": "ab20a2aa2f4de2e3",
       "bundle": "design-system",
       "title": "form-select",
       "description": "One collected choice: a label, the options laid out as selectable rows, and a chip naming where a proposed value came from.",
@@ -403,7 +403,7 @@
     {
       "kind": "atom",
       "name": "form-text",
-      "fingerprint": "fcc4df48d45cdfc8",
+      "fingerprint": "168a7cfe6dad48d3",
       "bundle": "design-system",
       "title": "form-text",
       "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
@@ -412,7 +412,7 @@
     {
       "kind": "atom",
       "name": "form-toggle",
-      "fingerprint": "31ecf3ddb7f984f4",
+      "fingerprint": "e10c28205dfbffe3",
       "bundle": "design-system",
       "title": "form-toggle",
       "description": "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines.",
@@ -429,7 +429,7 @@
     {
       "kind": "atom",
       "name": "key-facts",
-      "fingerprint": "5a2b574c91de4589",
+      "fingerprint": "da31a4a5263ed1ea",
       "bundle": "design-system",
       "title": "key-facts",
       "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -438,7 +438,7 @@
     {
       "kind": "atom",
       "name": "list",
-      "fingerprint": "f73c714008a1e89c",
+      "fingerprint": "62062b42c4a86846",
       "bundle": "design-system",
       "title": "list",
       "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -479,7 +479,7 @@
     {
       "kind": "atom",
       "name": "prose",
-      "fingerprint": "69d0b2ef4739738e",
+      "fingerprint": "4a907dc9c7533525",
       "bundle": "design-system",
       "title": "prose",
       "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
@@ -496,7 +496,7 @@
     {
       "kind": "atom",
       "name": "steps",
-      "fingerprint": "e0cc3e6288f13b68",
+      "fingerprint": "148522a48e8d8ee1",
       "bundle": "design-system",
       "title": "steps",
       "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -505,7 +505,7 @@
     {
       "kind": "atom",
       "name": "table",
-      "fingerprint": "1ef39260d2d56a5f",
+      "fingerprint": "847b2ba9233be602",
       "bundle": "design-system",
       "title": "table",
       "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
@@ -528,9 +528,18 @@
       "description": "The switch itself: a pill track whose knob slides to the end and fills with the brand colour when the bound `on` field is true. Owns its full style, references tokens only."
     },
     {
-      "kind": "design-template",
+      "kind": "template",
+      "name": "email-digest",
+      "fingerprint": "22bd9fca479b2984",
+      "bundle": "design-system",
+      "title": "email-digest",
+      "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
+      "category": "Communication"
+    },
+    {
+      "kind": "template",
       "name": "grid-page",
-      "fingerprint": "8cae915e1aaf215c",
+      "fingerprint": "d905880fdfa4b204",
       "bundle": "design-system",
       "title": "grid-page",
       "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -804,7 +813,7 @@
       "kind": "node",
       "name": "BedrockClaude",
       "pack": "aws-bedrock",
-      "fingerprint": "5d134e2072ab49ca",
+      "fingerprint": "9da6a3f51161859d",
       "title": "Bedrock Chat",
       "description": "Ask Claude on AWS Bedrock, optionally about an image or document",
       "category": "AI",
@@ -815,7 +824,7 @@
       "kind": "node",
       "name": "BedrockEmbedding",
       "pack": "aws-bedrock",
-      "fingerprint": "5428848646aa6531",
+      "fingerprint": "d2aa0d8bbbe8c96b",
       "title": "Bedrock Embedding",
       "description": "Turn text into a vector using AWS Bedrock Titan models",
       "category": "AI",
@@ -826,7 +835,7 @@
       "kind": "node",
       "name": "BedrockEmbeddingService",
       "pack": "aws-bedrock",
-      "fingerprint": "ab6fe29fe7859202",
+      "fingerprint": "3297c70def281548",
       "title": "Bedrock Embedding Service",
       "description": "Offer Titan embeddings to other nodes over a service edge",
       "category": "AI",
@@ -837,7 +846,7 @@
       "kind": "node",
       "name": "BedrockOpenAI",
       "pack": "aws-bedrock",
-      "fingerprint": "f2ec88d4623f288f",
+      "fingerprint": "05347b5f79f55470",
       "title": "Bedrock GPT",
       "description": "One prompt in, one GPT completion out, running in your AWS account",
       "category": "AI",
@@ -848,7 +857,7 @@
       "kind": "node",
       "name": "GuardrailCheck",
       "pack": "aws-bedrock",
-      "fingerprint": "925a1fd984280ac1",
+      "fingerprint": "ad1ef56591eba564",
       "title": "Guardrail Check",
       "description": "Check text against an AWS Bedrock guardrail — block, flag or mask content by your organization's policy.",
       "category": "Documents",
@@ -859,7 +868,7 @@
       "kind": "node",
       "name": "DynamoDB",
       "pack": "aws-dynamodb",
-      "fingerprint": "2c555e515943ad62",
+      "fingerprint": "a7db8d0e3a7f3dad",
       "title": "DynamoDB",
       "description": "Write a record to an AWS DynamoDB table",
       "category": "Storage & Data",
@@ -870,7 +879,7 @@
       "kind": "node",
       "name": "DynamoDBFetch",
       "pack": "aws-dynamodb",
-      "fingerprint": "693b492124f49521",
+      "fingerprint": "ffc85f34a00fd52f",
       "title": "DynamoDB Fetch",
       "description": "Fetch a record from an AWS DynamoDB table by key",
       "category": "Storage & Data",
@@ -881,7 +890,7 @@
       "kind": "node",
       "name": "DynamoDBService",
       "pack": "aws-dynamodb",
-      "fingerprint": "dea4951f74b5e738",
+      "fingerprint": "8429395fb99a9e7e",
       "title": "DynamoDB Service",
       "description": "Give an agent the full DynamoDB operation set on a table",
       "category": "Storage & Data",
@@ -892,7 +901,7 @@
       "kind": "node",
       "name": "S3FileContent",
       "pack": "aws-s3",
-      "fingerprint": "05b55989ff89525e",
+      "fingerprint": "c1fdd7c54479268c",
       "title": "S3 File Content",
       "description": "Read one S3 object's details, mint a link to fetch it, and optionally read its text",
       "category": "Storage & Data",
@@ -903,7 +912,7 @@
       "kind": "node",
       "name": "S3Files",
       "pack": "aws-s3",
-      "fingerprint": "5684b976ed003f2e",
+      "fingerprint": "d74f7cbe47c2e23f",
       "title": "S3 Files",
       "description": "List files in an S3 bucket, optionally with shareable links",
       "category": "Storage & Data",
@@ -914,7 +923,7 @@
       "kind": "node",
       "name": "S3Upload",
       "pack": "aws-s3",
-      "fingerprint": "f725160e4cdad3e9",
+      "fingerprint": "aff5c1b6fc1e2b3c",
       "title": "S3 Upload",
       "description": "Write a file into S3 from a URL, base64 data, or plain text",
       "category": "Storage & Data",
@@ -925,7 +934,7 @@
       "kind": "node",
       "name": "CloudinaryFileContent",
       "pack": "cloudinary",
-      "fingerprint": "b1a4523daf8db7e3",
+      "fingerprint": "d7f79849dcb35306",
       "title": "Cloudinary File Content",
       "description": "Read one Cloudinary asset's details, and build a transformed delivery URL for it.",
       "category": "Media & Design",
@@ -936,7 +945,7 @@
       "kind": "node",
       "name": "CloudinaryFiles",
       "pack": "cloudinary",
-      "fingerprint": "09ffc933f9c6756e",
+      "fingerprint": "9d1e1dea2d65358e",
       "title": "Cloudinary Files",
       "description": "List media already stored in Cloudinary, optionally filtered by folder or tag.",
       "category": "Media & Design",
@@ -947,7 +956,7 @@
       "kind": "node",
       "name": "CloudinaryUpload",
       "pack": "cloudinary",
-      "fingerprint": "c57d2fb9b8e3e411",
+      "fingerprint": "377891983791c4b4",
       "title": "Cloudinary Upload",
       "description": "Upload an image or video to Cloudinary and get back a hosted URL.",
       "category": "Media & Design",
@@ -1497,7 +1506,7 @@
       "kind": "node",
       "name": "SpatialQuery",
       "pack": "spatial",
-      "fingerprint": "96560a2bd37a3b8f",
+      "fingerprint": "1afd3f62ee5ea93d",
       "title": "Spatial Query",
       "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
       "category": "Search",
@@ -1508,7 +1517,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "35b5f86b48c7353a",
+      "fingerprint": "14f2a283b3ed2208",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

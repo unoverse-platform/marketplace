@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "avatar-orb",
-  "fingerprint": "fd8ae8e19461c8ad",
+  "fingerprint": "b6f7ef701919721c",
   "bundle": "design-system",
   "title": "avatar-orb",
   "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -15,6 +15,7 @@
     "props": {
       "callState": {
         "type": "string",
+        "description": "Where the call is: idle, listening, speaking. Decides how the orb moves.",
         "default": "idle",
         "enum": [
           "idle",
@@ -26,10 +27,12 @@
       },
       "size": {
         "type": "string",
+        "description": "The orb's width in pixels.",
         "default": "200"
       },
       "orbColor": {
         "type": "string",
+        "description": "The orb's colour, as a token name.",
         "default": "orb.ink-soft",
         "enum": [
           "orb.ink-faint",
@@ -40,6 +43,7 @@
       },
       "speed": {
         "type": "string",
+        "description": "How fast the animation runs. 1 is normal.",
         "default": "1"
       }
     },

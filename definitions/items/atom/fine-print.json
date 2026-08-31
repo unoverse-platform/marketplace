@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "fine-print",
-  "fingerprint": "87acac1b06e90266",
+  "fingerprint": "57e1d8a8199c67a9",
   "bundle": "design-system",
   "title": "fine-print",
   "description": "Legal or regulatory caveats, set quieter and smaller than the copy they qualify. Owns its full style, references tokens only.",
@@ -15,14 +15,12 @@
     "props": {
       "body": {
         "type": "string",
+        "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only.",
         "default": "Terms and conditions apply."
       }
     },
     "root": {
       "type": "Markdown",
-      "brief": {
-        "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-      },
       "bind": {
         "value": "body"
       },

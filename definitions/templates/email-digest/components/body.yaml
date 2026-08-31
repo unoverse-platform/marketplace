@@ -1,0 +1,78 @@
+unoverse: "1.0"
+# THE LETTER'S BODY — the copywriter's main slot: a greeting, the message itself, and
+# the line that hands off to whatever the email is showing. Three separately briefed
+# fields, because they are three different writing jobs and one description could not
+# govern all of them.
+#
+# The message is drawn by a bound `Markdown` node rather than a `Ref` to the `prose`
+# atom ON PURPOSE: a brief on a Ref never compiles, and the atom's own generic
+# description would silently replace the one written here.
+type: component
+name: body
+category: Communication
+nodeSize:
+  width: 600
+  height: 320
+props:
+  greeting:
+    type: string
+    input: true
+    description: >-
+      The greeting, on its own line. The reader's first name and a comma when the
+      source gives a name; a plain "Hello," when it does not. Never invent a name,
+      never guess a title, and never add a line of small talk here.
+    maxLength: 40
+    default: Hi Sarah,
+  message:
+    type: string
+    input: true
+    description: >-
+      The message: two or three short paragraphs saying why this email is being
+      sent to THIS reader, in the second person. Ground every claim in what the
+      source actually says about them; where it says nothing, write less rather
+      than filling the space. Do not list or describe the individual items — they
+      are shown below in their own right, and repeating them here reads as
+      padding. Markdown paragraphs and inline marks only: no headings, no bullet
+      lists, no links.
+    default: |-
+      Thanks for telling us where you want to take your career. Based on what you
+      said about moving into practice and studying alongside work, I have pulled
+      together a short list rather than the full catalogue.
+
+      Each one is part time, starts this September, and is taught live with
+      on-demand catch-up, so none of them assume you can drop everything.
+  leadIn:
+    type: string
+    input: true
+    description: >-
+      One line handing off to the items shown below it — "Here is what I would
+      look at first". It introduces them as a set; it never names, counts or
+      ranks them, because what finally appears is chosen after this line is
+      written.
+    maxLength: 70
+    default: Here is what I would look at first
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "4"
+    width: full
+  children:
+    - type: Text
+      bind:
+        value: greeting
+      style:
+        font: body.md
+        color: text.primary
+    - type: Markdown
+      bind:
+        value: message
+      style:
+        width: full
+    - type: Text
+      bind:
+        value: leadIn
+      style:
+        font: body.md
+        weight: semibold
+        color: text.primary

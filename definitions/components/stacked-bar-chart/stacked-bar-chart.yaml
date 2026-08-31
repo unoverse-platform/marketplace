@@ -10,9 +10,11 @@ whenToUse: Show how a total breaks down into parts across categories — revenue
 props:
   title:
     type: string
+    description: "What the chart is showing."
     default: Revenue by product
   series:
     type: array
+    description: "The parts every bar is built from, in legend order. Each carries a label and a colour token."
     default:
       - label: Product A
         color: action.primary
@@ -22,6 +24,7 @@ props:
         color: status.warning
   bars:
     type: array
+    description: "The bars left to right. Each carries a label and its segments, one per series, each with a pct and a colour."
     default:
       - label: Q1
         segments:

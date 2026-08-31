@@ -1,0 +1,56 @@
+unoverse: "1.0"
+# THE EMAIL FRAME'S HEAD. It exists because a universal template cannot carry client
+# words: BPP's intake email opened with a hardcoded "BPP / September intake" masthead,
+# which is exactly the branding a shelf artifact may not hold. The words become DATA
+# supplied at the use, and the ground comes from the org's own theme tokens — the
+# cta-link rule, applied to the frame: the brand lives in tokens, never here.
+type: component
+name: masthead
+category: Communication
+nodeSize:
+  width: 600
+  height: 160
+props:
+  wordmark:
+    type: string
+    description: "The organisation's name as it reads at the top of the email."
+    input: true
+    default: Your organisation
+  kicker:
+    type: string
+    description: "The short line above or beside the wordmark naming this edition."
+    input: true
+    default: This month's edition
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "3"
+    padding: [ "6", "6" ]
+    width: full
+    background: surface.inverse
+  children:
+    - type: Text
+      bind:
+        value: wordmark
+      style:
+        font: headline.sm
+        weight: semibold
+        lineHeight: tight
+        color: text.inverse
+    # THE ACCENT RULE — a short stroke of the org's primary under the wordmark. It is
+    # what stops the masthead reading as a plain dark bar, and it costs one token: an
+    # org that rebrands gets a new rule for free.
+    - type: Box
+      style:
+        width: "10"
+        height: "1"
+        radius: full
+        background: action.primary
+    - type: Text
+      visibleWhen: kicker
+      bind:
+        value: kicker
+      style:
+        font: caption
+        color: text.inverse

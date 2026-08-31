@@ -4,7 +4,7 @@ type: Button
 action:
   type: setValue
   values:
-    - key: view
+    - key: state
       value: page
 style:
   width: full

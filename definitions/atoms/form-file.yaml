@@ -17,15 +17,25 @@ whenToUse: "Collect a document a person must provide: proof of identity, proof o
 props:
   label:
     type: string
-    default: Label
+    description: >-
+      WHICH DOCUMENT is wanted, in the person's words: 'Proof of address',
+      'Signed subscription form'. Name the document the source actually
+      requires, never one you think would help.
+    maxLength: 60
     preview: Proof of address
+    default: Label
   value:
     type: string
-    default: ""
     preview: ""
+    default: ""
   help:
     type: string
-    default: ""
+    description: >-
+      What makes a document acceptable, when the source says: how recent it must be,
+      whose name it must carry, which formats are allowed. Empty when the source sets
+      no condition.
+    maxLength: 160
+    optional: true
     preview: A utility bill or bank statement from the last three months.
   # Where a proposed value came from, in the reader's words: 'From your profile',
   # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
@@ -33,14 +43,15 @@ props:
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: ""
+    default: ""
 root:
   type: Box
   style:
@@ -63,12 +74,6 @@ root:
             gap: "1"
           children:
             - type: Text
-              brief:
-                description: >-
-                  WHICH DOCUMENT is wanted, in the person's words: 'Proof of address',
-                  'Signed subscription form'. Name the document the source actually
-                  requires, never one you think would help.
-                maxLength: 60
               bind:
                 value: label
               style:
@@ -110,16 +115,9 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
-      brief:
-        description: >-
-          What makes a document acceptable, when the source says: how recent it must be,
-          whose name it must carry, which formats are allowed. Empty when the source sets
-          no condition.
-        optional: true
-        maxLength: 160
       visibleWhen: help
       bind:
         value: help

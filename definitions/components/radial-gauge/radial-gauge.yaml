@@ -10,15 +10,19 @@ whenToUse: Show a single value as progress toward a whole — completion %, goal
 props:
   title:
     type: string
+    description: "What the gauge is measuring."
     default: Quarterly goal
   pct:
     type: string
+    description: "How far round the arc is drawn, as a percentage."
     default: 72%
   centerValue:
     type: string
+    description: "The figure printed in the middle, already formatted."
     default: 72%
   label:
     type: string
+    description: "The words under the centre figure, saying what it counts."
     default: of target
 root:
   type: Box

@@ -12,18 +12,23 @@ whenToUse: "Collect several sentences a person writes or confirms, such as a rea
 props:
   label:
     type: string
-    default: Label
     preview: Why are you applying?
+    default: Label
   value:
     type: string
+    description: >-
+      Propose this passage only from what the source actually says, in the person's own
+      words where they exist. Never write on their behalf to fill the box: this is a
+      field they are expected to write themselves.
+    maxLength: 600
+    optional: true
     default: ""
   placeholder:
     type: string
-    default: ""
     preview: A few sentences in your own words
+    default: ""
   help:
     type: string
-    default: ""
     preview: Two or three sentences is plenty.
   # Where a proposed value came from, in the reader's words: 'From your profile',
   # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
@@ -31,10 +36,11 @@ props:
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
     default: ""
@@ -89,13 +95,6 @@ root:
       # is what lets a model propose a value at all. Per-field guidance belongs to the
       # authored form spec and reaches the schema through the compiler: an atom is one
       # file and cannot carry a different description for every field that composes it.
-      brief:
-        description: >-
-          Propose this passage only from what the source actually says, in the person's own
-          words where they exist. Never write on their behalf to fill the box: this is a
-          field they are expected to write themselves.
-        optional: true
-        maxLength: 600
       # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
       # input write that key back: the input action writes `{ [boundField]: text }`.
       multiline: true
@@ -111,7 +110,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
       visibleWhen: help

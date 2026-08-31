@@ -10,18 +10,22 @@ whenToUse: Lay out several records side by side so values can be compared line b
 props:
   colA:
     type: string
+    description: "The first column's heading."
     default: Item
     input: true
   colB:
     type: string
+    description: "The second column's heading."
     default: Status
     input: true
   colC:
     type: string
+    description: "The third column's heading."
     default: Amount
     input: true
   rows:
     type: array
+    description: "The rows in the order they should be read. Each carries a, b and c, one per column."
     default:
       - a: Starter plan
         b: Active

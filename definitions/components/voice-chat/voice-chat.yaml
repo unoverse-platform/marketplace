@@ -12,6 +12,7 @@ props:
   # branch on and this default never applies. Never simulate it elsewhere.
   callState:
     type: string
+    description: "Where the call is: idle, listening, speaking. Decides the orb and what the button offers."
     input: false
     default: idle
     enum: [idle, active, listening, speaking, thinking]
@@ -19,18 +20,22 @@ props:
   # Defaults are the Studio preview. `input: false` — no workflow fills them.
   assistantName:
     type: string
+    description: "The assistant's name, shown under the orb."
     input: false
     default: Assistant
   tagline:
     type: string
+    description: "One line under the name, saying what the assistant is for."
     input: false
     default: Your AI Voice Assistant
   orbSize:
     type: string
+    description: "The orb's width in pixels."
     input: false
     default: "200"
   orbColor:
     type: string
+    description: "The orb's colour, as a token name."
     input: false
     default: orb.ink-soft
     enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
@@ -45,25 +50,24 @@ props:
 # the value into scope (STATE_MODEL §4) and the write IS the transition. No
 # `initial` keys: order IS the priority (the course-application rule) — the first
 # declared name is the arrival, so `call` arrives and the call rests in `idle`.
-state:
-  view:
+states:
+  call:
+    layout: layouts/call
+    on: callState
     states:
-      call:
-        on: callState
-        states:
-          idle:
-            layout: callState-idle
-          active:
-            layout: callState-active
-          listening:
-            layout: callState-listening
-          speaking:
-            layout: callState-speaking
-          thinking:
-            layout: callState-thinking
+      idle:
+        layout: layouts/callState-idle
+      active:
+        layout: layouts/callState-active
+      listening:
+        layout: layouts/callState-listening
+      speaking:
+        layout: layouts/callState-speaking
+      thinking:
+        layout: layouts/callState-thinking
 root:
   type: Switch
-  on: view
+  on: state
   cases:
     call: { $include: layouts/call }
     # Ref placement: embedded in an app's core the component has no spawned

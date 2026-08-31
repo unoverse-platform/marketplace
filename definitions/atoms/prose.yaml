@@ -11,6 +11,7 @@ props:
     # the theme's prose recipe does with **bold**, a link and a list. The previous default
     # said "markdown renders here" in plain text, which rendered as plain text and read as
     # a broken renderer.
+    description: The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.
     default: |-
       ### A passage of body copy
 
@@ -21,8 +22,6 @@ props:
       - The writer decides only what the words are
 root:
   type: Markdown
-  brief:
-    description: The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.
   bind:
     value: body
   style:

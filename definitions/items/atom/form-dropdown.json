@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-dropdown",
-  "fingerprint": "78a7d9534f95ce6d",
+  "fingerprint": "713354c914b182d7",
   "bundle": "design-system",
   "title": "form-dropdown",
   "description": "One collected choice from a long set: a label and the platform's own select, with a chip naming where a proposed value came from.",
@@ -15,37 +15,39 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Country of residence"
+        "preview": "Country of residence",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "NL"
+        "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
+        "maxLength": 60,
+        "optional": true,
+        "preview": "NL",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "Choose a country"
+        "preview": "Choose a country",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "The country you are tax resident in, which may not be where you live."
+        "preview": "The country you are tax resident in, which may not be where you live.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
-        "default": "",
-        "preview": "From your profile"
+        "preview": "From your profile",
+        "default": ""
       },
       "options": {
         "type": "array",
-        "default": [],
         "preview": [
           {
             "value": "BE",
@@ -71,7 +73,8 @@
             "value": "SE",
             "label": "Sweden"
           }
-        ]
+        ],
+        "default": []
       }
     },
     "root": {
@@ -138,11 +141,6 @@
         },
         {
           "type": "Select",
-          "brief": {
-            "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-            "optional": true,
-            "maxLength": 60
-          },
           "bind": {
             "value": "value",
             "options": "options"

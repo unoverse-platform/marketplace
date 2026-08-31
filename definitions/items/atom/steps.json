@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "steps",
-  "fingerprint": "e0cc3e6288f13b68",
+  "fingerprint": "148522a48e8d8ee1",
   "bundle": "design-system",
   "title": "steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -15,6 +15,9 @@
     "props": {
       "items": {
         "type": "array",
+        "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
+        "minItems": 2,
+        "maxItems": 12,
         "default": [
           {
             "title": "Choose what you need",
@@ -28,16 +31,24 @@
             "title": "Confirm",
             "body": "A confirmation follows."
           }
-        ]
+        ],
+        "items": {
+          "title": {
+            "type": "string",
+            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
+            "maxLength": 60
+          },
+          "body": {
+            "type": "string",
+            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
+            "maxLength": 160,
+            "optional": true
+          }
+        }
       }
     },
     "root": {
       "type": "Each",
-      "brief": {
-        "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-        "minItems": 2,
-        "maxItems": 12
-      },
       "bind": {
         "items": "items"
       },
@@ -93,10 +104,6 @@
             "children": [
               {
                 "type": "Text",
-                "brief": {
-                  "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                  "maxLength": 60
-                },
                 "bind": {
                   "value": "title"
                 },
@@ -109,11 +116,6 @@
               },
               {
                 "type": "Text",
-                "brief": {
-                  "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                  "optional": true,
-                  "maxLength": 160
-                },
                 "visibleWhen": "body",
                 "bind": {
                   "value": "body"

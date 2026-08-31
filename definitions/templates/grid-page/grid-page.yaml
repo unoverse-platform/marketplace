@@ -1,36 +1,17 @@
 unoverse: "1.0"
-# THE FIRST SHELF TEMPLATE (docs/unoverse/UNOVERSE_TEMPLATE_MODEL.md §9b).
-# Discovery meta and preview mocks live in manifest.yaml (the standard home).
+# THE FIRST SHELF TEMPLATE (docs/unoverse/UNOVERSE_TEMPLATE_MODEL.md §9b, the
+# three-word grammar ruled 2026-08-29). TWO STATES, one template: browse and detail
+# are the same template's life. States activate by the EXISTING name-match reaction
+# — an interface arriving (or a held one re-facing on the guest's tap) in a state
+# this template declares draws that state's arrangement; its ✕ writes the state
+# back and the grid returns. `grid`/`page` are the standard names every card
+# declares, so any org's card matches with zero mapping. Each layout holds one
+# `director:` section; the grants and rules are written where the template is
+# placed (a universal thing carries no context).
 type: template
 name: grid-page
-# PURE STRUCTURE, no rules: the universal template ships only what it IS — one slot
-# and one shape. Every rule (limit, hold, state, the director) is written where the
-# template is USED; the system defaults apply until then (`hold: latest`: each
-# delivery replaces the set, a confirmed-empty delivery clears it; arrivals render
-# in their own declared state).
-parts:
-  - slot: items
-    accepts: interfaces
-# TWO STATES, one template (UNOVERSE_TEMPLATE_MODEL.md §5d): browse and detail are
-# the same template's life. States activate by the EXISTING name-match reaction —
-# an interface arriving (or a held one re-facing on the guest's tap) in a state this
-# template declares draws that state's shape; its ✕ writes the face back and the
-# grid returns (rule 6). `page` is the platform's face vocabulary for a full detail
-# view; a client whose component uses another face name maps it at the USE.
-shapes:
+states:
   grid:
-    layout: layouts/grid    # the browse state: every held interface, responsive columns
+    layout: layouts/grid
   page:
-    layout: layouts/page    # the detail state: ONE occupant, full width
-
-# OPTIONAL: one director per template — its duties and rules live HERE, never on a
-# slot (the director is the template's reaction; a shape choice could never belong
-# to a slot anyway). No block = no director: dumb fills, which is this shelf grid's
-# resting state. To pass control, uncomment and grant:
-#
-# director:
-#   select: true          # which offered interfaces deserve the slots
-#   order: true           # their sequence
-#   shape: true           # which admitted shape is active (needs 2+ shapes)
-#   rules: >-             # soft rules, brief-style English; hard limits stay on
-#     Prefer items the guest has not seen.   # the slots (limit) and shapes (authored)
+    layout: layouts/page

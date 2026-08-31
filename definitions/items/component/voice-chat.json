@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "voice-chat",
-  "fingerprint": "149fcdd270fb802c",
+  "fingerprint": "767fd400dec26484",
   "bundle": "design-system",
   "title": "Voice Call",
   "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
@@ -17,6 +17,7 @@
     "props": {
       "callState": {
         "type": "string",
+        "description": "Where the call is: idle, listening, speaking. Decides the orb and what the button offers.",
         "input": false,
         "default": "idle",
         "enum": [
@@ -29,21 +30,25 @@
       },
       "assistantName": {
         "type": "string",
+        "description": "The assistant's name, shown under the orb.",
         "input": false,
         "default": "Assistant"
       },
       "tagline": {
         "type": "string",
+        "description": "One line under the name, saying what the assistant is for.",
         "input": false,
         "default": "Your AI Voice Assistant"
       },
       "orbSize": {
         "type": "string",
+        "description": "The orb's width in pixels.",
         "input": false,
         "default": "200"
       },
       "orbColor": {
         "type": "string",
+        "description": "The orb's colour, as a token name.",
         "input": false,
         "default": "orb.ink-soft",
         "enum": [
@@ -52,15 +57,15 @@
           "orb.ink",
           "orb.brand"
         ]
+      },
+      "speed": {
+        "type": "string",
+        "description": "How fast the animation runs. 1 is normal."
       }
-    },
-    "state": {
-      "view": "call",
-      "callState": "idle"
     },
     "root": {
       "type": "Switch",
-      "on": "view",
+      "on": "state",
       "cases": {
         "call": {
           "type": "Box",
@@ -1803,6 +1808,10 @@
     "whenToUse": "Talk to the assistant on a live voice call and see the call itself, the assistant's face and orb, a button to start the call, and clear signs of who is speaking, when it is listening and when it is looking something up. It shows the whole call from resting to hung up. Not for the conversation transcript and not for typing a message, it renders the call and nothing else.",
     "title": "Voice Call",
     "version": "1.0.0",
+    "state": {
+      "state": "call",
+      "callState": "idle"
+    },
     "spatial": true,
     "publicStates": [
       "call"
@@ -1811,27 +1820,28 @@
     "stateTree": [
       {
         "name": "call",
+        "layout": "layouts/call",
         "on": "callState",
         "states": [
           {
             "name": "idle",
-            "layout": "callState-idle"
+            "layout": "layouts/callState-idle"
           },
           {
             "name": "active",
-            "layout": "callState-active"
+            "layout": "layouts/callState-active"
           },
           {
             "name": "listening",
-            "layout": "callState-listening"
+            "layout": "layouts/callState-listening"
           },
           {
             "name": "speaking",
-            "layout": "callState-speaking"
+            "layout": "layouts/callState-speaking"
           },
           {
             "name": "thinking",
-            "layout": "callState-thinking"
+            "layout": "layouts/callState-thinking"
           }
         ]
       }

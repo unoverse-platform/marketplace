@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "table",
-  "fingerprint": "ae4fd9d2ccf34b03",
+  "fingerprint": "701317a65e43b810",
   "bundle": "design-system",
   "title": "table",
   "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
@@ -19,21 +19,25 @@
     "props": {
       "colA": {
         "type": "string",
+        "description": "The first column's heading.",
         "default": "Item",
         "input": true
       },
       "colB": {
         "type": "string",
+        "description": "The second column's heading.",
         "default": "Status",
         "input": true
       },
       "colC": {
         "type": "string",
+        "description": "The third column's heading.",
         "default": "Amount",
         "input": true
       },
       "rows": {
         "type": "array",
+        "description": "The rows in the order they should be read. Each carries a, b and c, one per column.",
         "default": [
           {
             "a": "Starter plan",

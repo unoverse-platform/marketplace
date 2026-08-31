@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "cta-link",
-  "fingerprint": "2a620041a2a04046",
+  "fingerprint": "a0fac32f5889f08c",
   "bundle": "design-system",
   "title": "cta-link",
   "description": "Outline call-to-action pill wrapping a labelled markdown link. Owns its full shape; every color comes from the org theme (border accent, prose link) — the brand lives in tokens, never here.",
@@ -13,6 +13,8 @@
     "props": {
       "link": {
         "type": "string",
+        "description": "A markdown link to THIS item's own page. If you write it yourself: label 2-4 words, ALL CAPITALS, in the guest's language: [SEE THE ROOFTOP](its-url) — URL verbatim from the content, never invented.",
+        "hydrate": "link",
         "default": "[LEARN MORE](https://example.com)"
       }
     },
@@ -46,10 +48,6 @@
       "children": [
         {
           "type": "Markdown",
-          "brief": {
-            "description": "A markdown link to THIS item's own page. If you write it yourself: label 2-4 words, ALL CAPITALS, in the guest's language: [SEE THE ROOFTOP](its-url) — URL verbatim from the content, never invented.",
-            "hydrate": "link"
-          },
           "bind": {
             "value": "link"
           },

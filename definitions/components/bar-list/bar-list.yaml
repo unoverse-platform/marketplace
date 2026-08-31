@@ -10,9 +10,11 @@ whenToUse: Rank or compare named items as horizontal bars with their values — 
 props:
   title:
     type: string
+    description: "What the list is ranking."
     default: Top traffic sources
   items:
     type: array
+    description: "The rows, strongest first. Each carries a label, its value as text, and pct, the bar's width."
     default:
       - label: Organic search
         value: 12,480

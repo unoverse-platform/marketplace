@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "streaming-text",
-  "fingerprint": "2edd61c3e2245690",
+  "fingerprint": "f09aaeed732cb3e0",
   "bundle": "design-system",
   "title": "streaming-text",
   "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -19,25 +19,30 @@
     "props": {
       "streaming": {
         "type": "boolean",
+        "description": "True while tokens are still arriving. Drives the cursor and the thinking indicator.",
         "default": false
       },
       "thinking": {
         "type": "string",
+        "description": "The short status line shown while the model works, before any answer text.",
         "input": true,
         "default": ""
       },
       "reasoning": {
         "type": "string",
+        "description": "The model's reasoning as it works, shown above the answer and folded away once it lands.",
         "input": true,
         "default": ""
       },
       "text": {
         "type": "string",
+        "description": "The answer itself, as markdown, growing as it streams.",
         "input": true,
         "default": "## How can I help?\n\nThis is an **AI response** rendered from _markdown_ — it streams in token by token and supports rich formatting:\n\n- **Lists** and `inline code`\n- [Links](https://example.com) that open in a new tab\n- Tables and images\n\n| Feature | Supported |\n| --- | --- |\n| Markdown body | ✅ |\n| Streaming | ✅ |\n"
       },
       "questions": {
         "type": "object",
+        "description": "Follow-up questions offered under the answer, each one tappable.",
         "input": true,
         "default": []
       }

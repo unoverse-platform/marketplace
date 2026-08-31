@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-long",
-  "fingerprint": "39cf0a00ea2b5ed8",
+  "fingerprint": "beb85c6b410fc793",
   "bundle": "design-system",
   "title": "form-long",
   "description": "One collected passage: a label, a multi-line input, a help line, and a chip naming where a proposed value came from.",
@@ -15,27 +15,30 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Why are you applying?"
+        "preview": "Why are you applying?",
+        "default": "Label"
       },
       "value": {
         "type": "string",
+        "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+        "maxLength": 600,
+        "optional": true,
         "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "A few sentences in your own words"
+        "preview": "A few sentences in your own words",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "Two or three sentences is plenty."
+        "preview": "Two or three sentences is plenty.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
@@ -106,11 +109,6 @@
         },
         {
           "type": "Input",
-          "brief": {
-            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-            "optional": true,
-            "maxLength": 600
-          },
           "multiline": true,
           "rows": 4,
           "autoComplete": "off",

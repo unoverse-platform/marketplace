@@ -14,27 +14,35 @@ whenToUse: "Collect a count a person types or confirms: a number of years, a qua
 props:
   label:
     type: string
-    default: Label
     preview: Years at your current address
+    default: Label
   value:
     type: string
-    default: ""
+    description: >-
+      Propose this number ONLY from what the person's profile, the record, or a
+      document they uploaded actually states, as digits with no unit and no
+      separators. Never calculate it, never estimate it, and leave it out when
+      nothing states it. An empty field is correct; a guessed one is a defect they
+      may confirm without noticing.
+    maxLength: 12
+    optional: true
     preview: "7"
+    default: ""
   placeholder:
     type: string
-    default: ""
     preview: "0"
+    default: ""
   help:
     type: string
-    default: ""
     preview: Whole years, rounded down.
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
     default: ""
@@ -81,15 +89,6 @@ root:
           style:
             background: action.subtle
     - type: Input
-      brief:
-        description: >-
-          Propose this number ONLY from what the person's profile, the record, or a
-          document they uploaded actually states, as digits with no unit and no
-          separators. Never calculate it, never estimate it, and leave it out when
-          nothing states it. An empty field is correct; a guessed one is a defect they
-          may confirm without noticing.
-        optional: true
-        maxLength: 12
       inputMode: numeric
       maxLength: 12
       autoComplete: "off"
@@ -103,7 +102,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
       visibleWhen: help

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "metric-grid",
-  "fingerprint": "20f8b9b49368aebe",
+  "fingerprint": "a5eb46e49671eaf1",
   "bundle": "design-system",
   "title": "metric-grid",
   "description": "Grid of KPI tiles — each a labelled headline value with an optional prefix/suffix and icon, plus a colour-coded period-over-period delta (up/down/neutral). Sentiment and arrow glyph are resolved by the data producer (deltaPositive/deltaNegative/deltaNeutral + deltaArrow); the definition only composes them — no computation lives in the renderer.",
@@ -19,10 +19,12 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "What the tiles have in common.",
         "default": "This month at a glance"
       },
       "metrics": {
         "type": "array",
+        "description": "The tiles in reading order. Each carries a label and its value as text, with an optional prefix, icon and change.",
         "default": [
           {
             "label": "Revenue",

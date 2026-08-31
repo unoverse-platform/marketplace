@@ -7,16 +7,20 @@ whenToUse: The thinking indicator for an AI surface — a procedural orb animati
 props:
   orbState:
     type: string
+    description: "What the assistant is doing: working, waiting, done. Decides how the orb moves."
     default: working
     enum: [working, searching, solving, listening, connecting, weaving, composing, breathing, shaping, halo, sonar, shimmer, pulse]
   speed:
     type: string
+    description: "How fast the animation runs. 1 is normal."
     default: "1"
   size:
     type: string
+    description: "The orb's width in pixels."
     default: "150"
   orbColor:
     type: string
+    description: "The orb's colour, as a token name."
     default: orb.ink-soft
     enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
 root:

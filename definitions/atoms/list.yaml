@@ -7,17 +7,26 @@ whenToUse: Enumerable items the source gives in no particular order, such as wha
 props:
   items:
     type: array
+    description: The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.
+    minItems: 2
+    maxItems: 10
     default:
       - title: Something included
         body: A line of detail the source gives about it.
       - title: Something else included
         body: ""
+    items:
+      title:
+        type: string
+        description: What the item is, in a few words. A noun phrase, not a sentence.
+        maxLength: 60
+      body:
+        type: string
+        description: One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.
+        maxLength: 320
+        optional: true
 root:
   type: Each
-  brief:
-    description: The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.
-    minItems: 2
-    maxItems: 10
   bind:
     items: items
   style:
@@ -39,7 +48,7 @@ root:
           height: "1.5"
           radius: full
           background: action.primary
-          margin: [ "2", "0", "0", "0" ]
+          margin: ["2", "0", "0", "0"]
       - type: Box
         style:
           direction: column
@@ -48,9 +57,6 @@ root:
           minWidth: "0"
         children:
           - type: Text
-            brief:
-              description: What the item is, in a few words. A noun phrase, not a sentence.
-              maxLength: 60
             bind:
               value: title
             style:
@@ -59,10 +65,6 @@ root:
               color: text.primary
               lineHeight: snug
           - type: Text
-            brief:
-              description: One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.
-              optional: true
-              maxLength: 320
             visibleWhen: body
             bind:
               value: body

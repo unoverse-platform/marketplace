@@ -10,6 +10,7 @@ whenToUse: Show a set of items — offers, products, services, results — as a 
 props:
   items:
     type: array
+    description: "The cards left to right. Each carries what a card draws: title, description, image and call to action."
     default:
       - title: Aurora Expedition
         description: Chase the northern lights across the Arctic circle with expert guides and glass-roofed lodges.

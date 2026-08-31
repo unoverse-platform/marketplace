@@ -15,12 +15,22 @@ whenToUse: Entering a one-time passcode sent by SMS or email (transfer verificat
 props:
   label:
     type: string
-    default: ""
+    description: >-
+      What the code is for, in the reader's words: 'Enter the code we sent to your
+      phone'. Say where it was sent when the source states it, and never guess the
+      channel.
+    maxLength: 80
     preview: Enter the code we sent to your phone
+    default: ""
   help:
     type: string
-    default: ""
+    description: >-
+      One line of help the source gives about the code, such as how long it lasts or
+      what to do if it does not arrive. Empty when the source says nothing.
+    maxLength: 120
+    optional: true
     preview: The code expires in 10 minutes.
+    default: ""
   d1:
     type: string
     default: ""
@@ -48,12 +58,6 @@ root:
     width: full
   children:
     - type: Text
-      brief:
-        description: >-
-          What the code is for, in the reader's words: 'Enter the code we sent to your
-          phone'. Say where it was sent when the source states it, and never guess the
-          channel.
-        maxLength: 80
       visibleWhen: label
       bind:
         value: label
@@ -74,133 +78,127 @@ root:
       # `autoComplete: one-time-code` is what these fields ARE — without it the browser
       # guesses from the shape (a row of short numeric boxes) and offers to save the digits
       # as a card or ID number. Enforced by the Input primitive, so none of it drifts per host.
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d1
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d2
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d3
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d4
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d5
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
-      - type: Input
-        maxLength: 1
-        inputMode: numeric
-        advanceOnFill: true
-        autoComplete: one-time-code
-        bind:
-          value: d6
-        style:
-          flex: 0 0 auto
-          width: "16"
-          height: "16"
-          padding: "0"
-          textAlign: center
-          font: headline.lg
-          weight: bold
-          color: text.primary
-          background: surface.base
-          border: strong
-          radius: md
-          outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d1
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d2
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d3
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d4
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d5
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
+        - type: Input
+          maxLength: 1
+          inputMode: numeric
+          advanceOnFill: true
+          autoComplete: one-time-code
+          bind:
+            value: d6
+          style:
+            flex: 0 0 auto
+            width: "16"
+            height: "16"
+            padding: "0"
+            textAlign: center
+            font: headline.lg
+            weight: bold
+            color: text.primary
+            background: surface.base
+            border: strong
+            radius: md
+            outline: none
     - type: Text
-      brief:
-        description: >-
-          One line of help the source gives about the code, such as how long it lasts or
-          what to do if it does not arrive. Empty when the source says nothing.
-        optional: true
-        maxLength: 120
       visibleWhen: help
       bind:
         value: help

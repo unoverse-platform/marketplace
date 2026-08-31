@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "callout",
-  "fingerprint": "16b9e3aee67c4ab4",
+  "fingerprint": "723439f3c454cf21",
   "bundle": "design-system",
   "title": "callout",
   "description": "An inline status message: an icon beside a title with an optional body line, on a soft bordered surface. Neutral by default; override background/border via the Ref's style with the status tones (status.success-subtle / success-border, warning, error) for a colored alert. Owns its full style — references tokens only.",
@@ -19,10 +19,15 @@
       },
       "title": {
         "type": "string",
+        "description": "The warning itself, in one line. State the consequence, not the topic.",
+        "maxLength": 90,
         "default": "Something to know"
       },
       "body": {
         "type": "string",
+        "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
+        "maxLength": 320,
+        "optional": true,
         "default": ""
       }
     },
@@ -60,10 +65,6 @@
           "children": [
             {
               "type": "Text",
-              "brief": {
-                "description": "The warning itself, in one line. State the consequence, not the topic.",
-                "maxLength": 90
-              },
               "bind": {
                 "value": "title"
               },
@@ -75,11 +76,6 @@
             },
             {
               "type": "Text",
-              "brief": {
-                "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                "optional": true,
-                "maxLength": 320
-              },
               "visibleWhen": "body",
               "bind": {
                 "value": "body"

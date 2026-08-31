@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "radial-gauge",
-  "fingerprint": "386e45baff861927",
+  "fingerprint": "8d7f165f136bb551",
   "bundle": "design-system",
   "title": "radial-gauge",
   "description": "Radial progress dial: a circular ring filled to a producer-supplied proportion ({{pct}}), with a value and label in the centre. Composed from a circular Box using the neutral `radial` style (a served fill token sweeping to the stop over a served track token) plus a centred hole — no chart primitive.",
@@ -19,18 +19,22 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "What the gauge is measuring.",
         "default": "Quarterly goal"
       },
       "pct": {
         "type": "string",
+        "description": "How far round the arc is drawn, as a percentage.",
         "default": "72%"
       },
       "centerValue": {
         "type": "string",
+        "description": "The figure printed in the middle, already formatted.",
         "default": "72%"
       },
       "label": {
         "type": "string",
+        "description": "The words under the centre figure, saying what it counts.",
         "default": "of target"
       }
     },

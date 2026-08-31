@@ -10,30 +10,39 @@ whenToUse: Spotlight ONE key metric on its own — a single big number with its 
 props:
   label:
     type: string
+    description: "What the number measures."
     default: Monthly Revenue
   value:
     type: string
+    description: "The number itself, already formatted, with any currency or unit."
     default: $48,250
   deltaArrow:
     type: string
+    description: "The arrow drawn beside the change. Follows the direction, not written by hand."
     default: ▲
   deltaValue:
     type: string
+    description: "How far it moved, already formatted, usually a percentage."
     default: 12.4%
   deltaLabel:
     type: string
+    description: "What the change is measured against, for example 'vs last month'."
     default: vs last month
   deltaPositive:
     type: boolean
+    description: "True when the change is an improvement. Decides the delta's colour."
     default: true
   deltaNegative:
     type: boolean
+    description: "True when the change is a decline. Decides the delta's colour."
     default: false
   deltaNeutral:
     type: boolean
+    description: "True when the change is neither good nor bad. Decides the delta's colour."
     default: false
   trend:
     type: array
+    description: "The sparkline behind the number, oldest first. Each entry carries pct, the bar's height."
     default:
       - pct: 40%
       - pct: 55%

@@ -10,12 +10,15 @@ whenToUse: Present a short set of choices as a vertical, tappable list of rows â
 props:
   title:
     type: string
+    description: "The question the list is answering."
     default: Choose a language
   subtitle:
     type: string
+    description: "One line under the title, saying how to choose."
     default: Select your preferred language to continue
   elements:
     type: array
+    description: "The choices in the order they should be read. Each carries a title, with an optional subtitle and thumbnail."
     default:
       - title: English
         subtitle: United States

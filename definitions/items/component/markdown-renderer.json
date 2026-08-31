@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "markdown-renderer",
-  "fingerprint": "7c7b5086ecadcdf8",
+  "fingerprint": "d7a24229f2d6f86d",
   "bundle": "design-system",
   "title": "markdown-renderer",
   "description": "The Universal Markdown renderer: draws a markdown string (headings, lists, tables, code, links, images) or a typed-block document (prose, key facts, steps, lists, tables, fine print — tabbed when its groups call for it), under an optional titled header with a streaming indicator.",
@@ -19,26 +19,152 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "The header above the document. Empty means no header.",
         "default": "",
         "input": true
       },
       "markdown": {
         "type": "string",
+        "description": "The document as one markdown string: headings, lists, tables, code, links, images. Use this OR sections, never both.",
         "default": "",
         "input": true
       },
       "streamingLabel": {
         "type": "string",
+        "description": "The words shown beside the indicator while the document is still arriving.",
         "default": "Writing…",
         "input": true
       },
       "placeholderText": {
         "type": "string",
+        "description": "What stands in the empty frame before any content has arrived.",
         "default": "Waiting for document…",
         "input": true
       },
       "sections": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The document as typed blocks in reading order: prose, key facts, steps, lists, tables, fine print.",
         "input": true,
         "default": [
           {
@@ -71,51 +197,666 @@
       },
       "tabbed": {
         "type": "boolean",
+        "description": "Whether the document draws as tabs or as one page. Decided by the shaping pass from the blocks' own groups, never set by hand.",
         "default": false,
         "input": true
       },
       "lead": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The blocks above the tab strip, shown whichever tab is open. Shaped from sections, not written.",
         "default": [],
         "input": true
       },
       "tab0Label": {
         "type": "string",
+        "description": "The first tab's label, taken from the group its blocks carry.",
         "default": "",
         "input": true
       },
       "tab0": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The blocks under the first tab. Shaped from sections, not written.",
         "default": [],
         "input": true
       },
       "tab1Label": {
         "type": "string",
+        "description": "The second tab's label, taken from the group its blocks carry.",
         "default": "",
         "input": true
       },
       "tab1": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The blocks under the second tab. Shaped from sections, not written.",
         "default": [],
         "input": true
       },
       "tab2Label": {
         "type": "string",
+        "description": "The third tab's label, taken from the group its blocks carry.",
         "default": "",
         "input": true
       },
       "tab2": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The blocks under the third tab. Shaped from sections, not written.",
         "default": [],
         "input": true
       },
       "tab3Label": {
         "type": "string",
+        "description": "The fourth tab's label, taken from the group its blocks carry.",
         "default": "",
         "input": true
       },
       "tab3": {
         "type": "array",
+        "items": {
+          "body": {
+            "type": "string",
+            "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
+            "maxLength": 320,
+            "optional": true
+          },
+          "items": {
+            "type": "array",
+            "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+            "minItems": 2,
+            "maxItems": 12,
+            "items": {
+              "title": {
+                "type": "string",
+                "description": "The question, as a reader would ask it.",
+                "maxLength": 120
+              },
+              "body": {
+                "type": "string",
+                "description": "The answer the source gives. Answer it; never restate the question.",
+                "maxLength": 400
+              }
+            }
+          },
+          "facts": {
+            "type": "array",
+            "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "label": {
+                "type": "string",
+                "description": "What the figure counts, in the source's own words. Two or three words.",
+                "maxLength": 28
+              },
+              "value": {
+                "type": "string",
+                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+                "maxLength": 24
+              },
+              "qualifier": {
+                "type": "string",
+                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+                "maxLength": 72,
+                "optional": true
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
+            "minItems": 2,
+            "maxItems": 5
+          },
+          "rows": {
+            "type": "array",
+            "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
+            "minItems": 2,
+            "maxItems": 20,
+            "items": {
+              "value": {
+                "type": "array",
+                "description": "One row's cells, in the same order as the columns and the same length."
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "The warning itself, in one line. State the consequence, not the topic.",
+            "maxLength": 90
+          },
+          "value": {
+            "type": "string",
+            "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
+            "maxLength": 600,
+            "optional": true,
+            "preview": "Amelia Hartley"
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+            "maxLength": 90,
+            "preview": "Send me alerts about new deals"
+          },
+          "help": {
+            "type": "string",
+            "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
+            "maxLength": 120,
+            "optional": true,
+            "preview": "The code expires in 10 minutes."
+          },
+          "options": {
+            "type": "array",
+            "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
+            "minItems": 2,
+            "maxItems": 8,
+            "items": {},
+            "preview": [
+              {
+                "label": "A",
+                "description": "EUR, minimum €250k"
+              },
+              {
+                "label": "B",
+                "description": "USD, minimum $300k"
+              },
+              {
+                "label": "I",
+                "description": "EUR, minimum €5m"
+              }
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+            "maxLength": 160,
+            "optional": true,
+            "preview": "Occasional email, and never more than once a week."
+          }
+        },
+        "description": "The blocks under the fourth tab, the last the strip holds. Shaped from sections, not written.",
         "default": [],
         "input": true
       }
@@ -311,9 +1052,6 @@
                         "cases": {
                           "prose": {
                             "type": "Markdown",
-                            "brief": {
-                              "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                            },
                             "bind": {
                               "value": "body"
                             },
@@ -323,11 +1061,6 @@
                           },
                           "steps": {
                             "type": "Each",
-                            "brief": {
-                              "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                              "minItems": 2,
-                              "maxItems": 12
-                            },
                             "bind": {
                               "items": "items"
                             },
@@ -383,10 +1116,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                        "maxLength": 60
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -399,11 +1128,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                        "optional": true,
-                                        "maxLength": 160
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -421,11 +1145,6 @@
                           },
                           "key-facts": {
                             "type": "Each",
-                            "brief": {
-                              "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                              "minItems": 2,
-                              "maxItems": 4
-                            },
                             "bind": {
                               "items": "facts"
                             },
@@ -450,10 +1169,6 @@
                               "children": [
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "What the figure counts, in the source's own words. Two or three words.",
-                                    "maxLength": 28
-                                  },
                                   "bind": {
                                     "value": "label"
                                   },
@@ -466,10 +1181,6 @@
                                 },
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                    "maxLength": 24
-                                  },
                                   "bind": {
                                     "value": "value"
                                   },
@@ -482,11 +1193,6 @@
                                 },
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                    "optional": true,
-                                    "maxLength": 72
-                                  },
                                   "visibleWhen": "qualifier",
                                   "bind": {
                                     "value": "qualifier"
@@ -502,11 +1208,6 @@
                           },
                           "list": {
                             "type": "Each",
-                            "brief": {
-                              "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                              "minItems": 2,
-                              "maxItems": 10
-                            },
                             "bind": {
                               "items": "items"
                             },
@@ -551,10 +1252,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                        "maxLength": 60
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -567,11 +1264,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                        "optional": true,
-                                        "maxLength": 320
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -589,11 +1281,6 @@
                           },
                           "faq": {
                             "type": "Each",
-                            "brief": {
-                              "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                              "minItems": 2,
-                              "maxItems": 12
-                            },
                             "bind": {
                               "items": "items"
                             },
@@ -619,10 +1306,6 @@
                               "children": [
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "The question, as a reader would ask it.",
-                                    "maxLength": 120
-                                  },
                                   "bind": {
                                     "value": "title"
                                   },
@@ -635,10 +1318,6 @@
                                 },
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "The answer the source gives. Answer it; never restate the question.",
-                                    "maxLength": 400
-                                  },
                                   "visibleWhen": "body",
                                   "bind": {
                                     "value": "body"
@@ -654,9 +1333,6 @@
                           },
                           "fine-print": {
                             "type": "Markdown",
-                            "brief": {
-                              "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                            },
                             "bind": {
                               "value": "body"
                             },
@@ -698,11 +1374,6 @@
                                 "children": [
                                   {
                                     "type": "Each",
-                                    "brief": {
-                                      "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                      "minItems": 2,
-                                      "maxItems": 5
-                                    },
                                     "bind": {
                                       "items": "columns"
                                     },
@@ -729,11 +1400,6 @@
                               },
                               {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                                  "minItems": 2,
-                                  "maxItems": 20
-                                },
                                 "bind": {
                                   "items": "rows"
                                 },
@@ -806,10 +1472,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                      "maxLength": 90
-                                    },
                                     "bind": {
                                       "value": "title"
                                     },
@@ -821,11 +1483,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                      "optional": true,
-                                      "maxLength": 320
-                                    },
                                     "visibleWhen": "body",
                                     "bind": {
                                       "value": "body"
@@ -918,11 +1575,6 @@
                               },
                               {
                                 "type": "Select",
-                                "brief": {
-                                  "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                                  "optional": true,
-                                  "maxLength": 60
-                                },
                                 "bind": {
                                   "value": "value",
                                   "options": "options"
@@ -983,10 +1635,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                          "maxLength": 60
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -1058,11 +1706,6 @@
                               },
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                                  "optional": true,
-                                  "maxLength": 160
-                                },
                                 "visibleWhen": "help",
                                 "bind": {
                                   "value": "help"
@@ -1155,11 +1798,6 @@
                                 "type": "Input",
                                 "inputType": "tel",
                                 "autoComplete": "tel",
-                                "brief": {
-                                  "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                                  "optional": true,
-                                  "maxLength": 32
-                                },
                                 "bind": {
                                   "placeholder": "placeholder",
                                   "value": "value"
@@ -1219,10 +1857,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                          "maxLength": 60
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -1321,11 +1955,6 @@
                                 "visibleWhen": {
                                   "field": "value",
                                   "eq": ""
-                                },
-                                "brief": {
-                                  "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                                  "minItems": 2,
-                                  "maxItems": 8
                                 },
                                 "bind": {
                                   "items": "options"
@@ -1497,11 +2126,6 @@
                               {
                                 "type": "Input",
                                 "autoComplete": "off",
-                                "brief": {
-                                  "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                                  "optional": true,
-                                  "maxLength": 120
-                                },
                                 "bind": {
                                   "placeholder": "placeholder",
                                   "value": "value"
@@ -1612,11 +2236,6 @@
                               },
                               {
                                 "type": "Input",
-                                "brief": {
-                                  "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                                  "optional": true,
-                                  "maxLength": 120
-                                },
                                 "autoComplete": "email",
                                 "bind": {
                                   "placeholder": "placeholder",
@@ -1728,11 +2347,6 @@
                               },
                               {
                                 "type": "Input",
-                                "brief": {
-                                  "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                                  "optional": true,
-                                  "maxLength": 12
-                                },
                                 "inputMode": "numeric",
                                 "maxLength": 12,
                                 "autoComplete": "off",
@@ -1848,11 +2462,6 @@
                                 "type": "Input",
                                 "inputType": "date",
                                 "autoComplete": "off",
-                                "brief": {
-                                  "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                                  "optional": true,
-                                  "maxLength": 10
-                                },
                                 "bind": {
                                   "placeholder": "placeholder",
                                   "value": "value"
@@ -1963,11 +2572,6 @@
                               },
                               {
                                 "type": "Input",
-                                "brief": {
-                                  "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                                  "optional": true,
-                                  "maxLength": 600
-                                },
                                 "multiline": true,
                                 "rows": 4,
                                 "autoComplete": "off",
@@ -2013,10 +2617,6 @@
                             "children": [
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                                  "maxLength": 80
-                                },
                                 "visibleWhen": "label",
                                 "bind": {
                                   "value": "label"
@@ -2185,11 +2785,6 @@
                               },
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                                  "optional": true,
-                                  "maxLength": 120
-                                },
                                 "visibleWhen": "help",
                                 "bind": {
                                   "value": "help"
@@ -2234,10 +2829,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                      "maxLength": 90
-                                    },
                                     "bind": {
                                       "value": "label"
                                     },
@@ -2249,11 +2840,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                      "optional": true,
-                                      "maxLength": 160
-                                    },
                                     "visibleWhen": "description",
                                     "bind": {
                                       "value": "description"
@@ -2310,9 +2896,6 @@
                           },
                           "default": {
                             "type": "Markdown",
-                            "brief": {
-                              "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                            },
                             "bind": {
                               "value": "body"
                             },
@@ -2623,9 +3206,6 @@
                             "cases": {
                               "prose": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -2635,11 +3215,6 @@
                               },
                               "steps": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -2695,10 +3270,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -2711,11 +3282,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                            "optional": true,
-                                            "maxLength": 160
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -2733,11 +3299,6 @@
                               },
                               "key-facts": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                                  "minItems": 2,
-                                  "maxItems": 4
-                                },
                                 "bind": {
                                   "items": "facts"
                                 },
@@ -2762,10 +3323,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the figure counts, in the source's own words. Two or three words.",
-                                        "maxLength": 28
-                                      },
                                       "bind": {
                                         "value": "label"
                                       },
@@ -2778,10 +3335,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                        "maxLength": 24
-                                      },
                                       "bind": {
                                         "value": "value"
                                       },
@@ -2794,11 +3347,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                        "optional": true,
-                                        "maxLength": 72
-                                      },
                                       "visibleWhen": "qualifier",
                                       "bind": {
                                         "value": "qualifier"
@@ -2814,11 +3362,6 @@
                               },
                               "list": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 10
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -2863,10 +3406,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -2879,11 +3418,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                            "optional": true,
-                                            "maxLength": 320
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -2901,11 +3435,6 @@
                               },
                               "faq": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -2931,10 +3460,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The question, as a reader would ask it.",
-                                        "maxLength": 120
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -2947,10 +3472,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The answer the source gives. Answer it; never restate the question.",
-                                        "maxLength": 400
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -2966,9 +3487,6 @@
                               },
                               "fine-print": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -3010,11 +3528,6 @@
                                     "children": [
                                       {
                                         "type": "Each",
-                                        "brief": {
-                                          "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                          "minItems": 2,
-                                          "maxItems": 5
-                                        },
                                         "bind": {
                                           "items": "columns"
                                         },
@@ -3041,11 +3554,6 @@
                                   },
                                   {
                                     "type": "Each",
-                                    "brief": {
-                                      "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                                      "minItems": 2,
-                                      "maxItems": 20
-                                    },
                                     "bind": {
                                       "items": "rows"
                                     },
@@ -3118,10 +3626,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "title"
                                         },
@@ -3133,11 +3637,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                          "optional": true,
-                                          "maxLength": 320
-                                        },
                                         "visibleWhen": "body",
                                         "bind": {
                                           "value": "body"
@@ -3230,11 +3729,6 @@
                                   },
                                   {
                                     "type": "Select",
-                                    "brief": {
-                                      "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "value",
                                       "options": "options"
@@ -3295,10 +3789,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -3370,11 +3860,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                                      "optional": true,
-                                      "maxLength": 160
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -3467,11 +3952,6 @@
                                     "type": "Input",
                                     "inputType": "tel",
                                     "autoComplete": "tel",
-                                    "brief": {
-                                      "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                                      "optional": true,
-                                      "maxLength": 32
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -3531,10 +4011,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -3633,11 +4109,6 @@
                                     "visibleWhen": {
                                       "field": "value",
                                       "eq": ""
-                                    },
-                                    "brief": {
-                                      "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                                      "minItems": 2,
-                                      "maxItems": 8
                                     },
                                     "bind": {
                                       "items": "options"
@@ -3809,11 +4280,6 @@
                                   {
                                     "type": "Input",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -3924,11 +4390,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "autoComplete": "email",
                                     "bind": {
                                       "placeholder": "placeholder",
@@ -4040,11 +4501,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 12
-                                    },
                                     "inputMode": "numeric",
                                     "maxLength": 12,
                                     "autoComplete": "off",
@@ -4160,11 +4616,6 @@
                                     "type": "Input",
                                     "inputType": "date",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 10
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -4275,11 +4726,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                                      "optional": true,
-                                      "maxLength": 600
-                                    },
                                     "multiline": true,
                                     "rows": 4,
                                     "autoComplete": "off",
@@ -4325,10 +4771,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                                      "maxLength": 80
-                                    },
                                     "visibleWhen": "label",
                                     "bind": {
                                       "value": "label"
@@ -4497,11 +4939,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -4546,10 +4983,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -4561,11 +4994,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                          "optional": true,
-                                          "maxLength": 160
-                                        },
                                         "visibleWhen": "description",
                                         "bind": {
                                           "value": "description"
@@ -4622,9 +5050,6 @@
                               },
                               "default": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -4685,9 +5110,6 @@
                             "cases": {
                               "prose": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -4697,11 +5119,6 @@
                               },
                               "steps": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -4757,10 +5174,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -4773,11 +5186,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                            "optional": true,
-                                            "maxLength": 160
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -4795,11 +5203,6 @@
                               },
                               "key-facts": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                                  "minItems": 2,
-                                  "maxItems": 4
-                                },
                                 "bind": {
                                   "items": "facts"
                                 },
@@ -4824,10 +5227,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the figure counts, in the source's own words. Two or three words.",
-                                        "maxLength": 28
-                                      },
                                       "bind": {
                                         "value": "label"
                                       },
@@ -4840,10 +5239,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                        "maxLength": 24
-                                      },
                                       "bind": {
                                         "value": "value"
                                       },
@@ -4856,11 +5251,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                        "optional": true,
-                                        "maxLength": 72
-                                      },
                                       "visibleWhen": "qualifier",
                                       "bind": {
                                         "value": "qualifier"
@@ -4876,11 +5266,6 @@
                               },
                               "list": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 10
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -4925,10 +5310,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -4941,11 +5322,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                            "optional": true,
-                                            "maxLength": 320
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -4963,11 +5339,6 @@
                               },
                               "faq": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -4993,10 +5364,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The question, as a reader would ask it.",
-                                        "maxLength": 120
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -5009,10 +5376,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The answer the source gives. Answer it; never restate the question.",
-                                        "maxLength": 400
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -5028,9 +5391,6 @@
                               },
                               "fine-print": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -5072,11 +5432,6 @@
                                     "children": [
                                       {
                                         "type": "Each",
-                                        "brief": {
-                                          "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                          "minItems": 2,
-                                          "maxItems": 5
-                                        },
                                         "bind": {
                                           "items": "columns"
                                         },
@@ -5103,11 +5458,6 @@
                                   },
                                   {
                                     "type": "Each",
-                                    "brief": {
-                                      "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                                      "minItems": 2,
-                                      "maxItems": 20
-                                    },
                                     "bind": {
                                       "items": "rows"
                                     },
@@ -5180,10 +5530,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "title"
                                         },
@@ -5195,11 +5541,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                          "optional": true,
-                                          "maxLength": 320
-                                        },
                                         "visibleWhen": "body",
                                         "bind": {
                                           "value": "body"
@@ -5292,11 +5633,6 @@
                                   },
                                   {
                                     "type": "Select",
-                                    "brief": {
-                                      "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "value",
                                       "options": "options"
@@ -5357,10 +5693,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -5432,11 +5764,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                                      "optional": true,
-                                      "maxLength": 160
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -5529,11 +5856,6 @@
                                     "type": "Input",
                                     "inputType": "tel",
                                     "autoComplete": "tel",
-                                    "brief": {
-                                      "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                                      "optional": true,
-                                      "maxLength": 32
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -5593,10 +5915,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -5695,11 +6013,6 @@
                                     "visibleWhen": {
                                       "field": "value",
                                       "eq": ""
-                                    },
-                                    "brief": {
-                                      "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                                      "minItems": 2,
-                                      "maxItems": 8
                                     },
                                     "bind": {
                                       "items": "options"
@@ -5871,11 +6184,6 @@
                                   {
                                     "type": "Input",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -5986,11 +6294,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "autoComplete": "email",
                                     "bind": {
                                       "placeholder": "placeholder",
@@ -6102,11 +6405,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 12
-                                    },
                                     "inputMode": "numeric",
                                     "maxLength": 12,
                                     "autoComplete": "off",
@@ -6222,11 +6520,6 @@
                                     "type": "Input",
                                     "inputType": "date",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 10
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -6337,11 +6630,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                                      "optional": true,
-                                      "maxLength": 600
-                                    },
                                     "multiline": true,
                                     "rows": 4,
                                     "autoComplete": "off",
@@ -6387,10 +6675,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                                      "maxLength": 80
-                                    },
                                     "visibleWhen": "label",
                                     "bind": {
                                       "value": "label"
@@ -6559,11 +6843,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -6608,10 +6887,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -6623,11 +6898,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                          "optional": true,
-                                          "maxLength": 160
-                                        },
                                         "visibleWhen": "description",
                                         "bind": {
                                           "value": "description"
@@ -6684,9 +6954,6 @@
                               },
                               "default": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -6747,9 +7014,6 @@
                             "cases": {
                               "prose": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -6759,11 +7023,6 @@
                               },
                               "steps": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -6819,10 +7078,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -6835,11 +7090,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                            "optional": true,
-                                            "maxLength": 160
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -6857,11 +7107,6 @@
                               },
                               "key-facts": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                                  "minItems": 2,
-                                  "maxItems": 4
-                                },
                                 "bind": {
                                   "items": "facts"
                                 },
@@ -6886,10 +7131,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the figure counts, in the source's own words. Two or three words.",
-                                        "maxLength": 28
-                                      },
                                       "bind": {
                                         "value": "label"
                                       },
@@ -6902,10 +7143,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                        "maxLength": 24
-                                      },
                                       "bind": {
                                         "value": "value"
                                       },
@@ -6918,11 +7155,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                        "optional": true,
-                                        "maxLength": 72
-                                      },
                                       "visibleWhen": "qualifier",
                                       "bind": {
                                         "value": "qualifier"
@@ -6938,11 +7170,6 @@
                               },
                               "list": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 10
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -6987,10 +7214,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -7003,11 +7226,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                            "optional": true,
-                                            "maxLength": 320
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -7025,11 +7243,6 @@
                               },
                               "faq": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -7055,10 +7268,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The question, as a reader would ask it.",
-                                        "maxLength": 120
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -7071,10 +7280,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The answer the source gives. Answer it; never restate the question.",
-                                        "maxLength": 400
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -7090,9 +7295,6 @@
                               },
                               "fine-print": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -7134,11 +7336,6 @@
                                     "children": [
                                       {
                                         "type": "Each",
-                                        "brief": {
-                                          "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                          "minItems": 2,
-                                          "maxItems": 5
-                                        },
                                         "bind": {
                                           "items": "columns"
                                         },
@@ -7165,11 +7362,6 @@
                                   },
                                   {
                                     "type": "Each",
-                                    "brief": {
-                                      "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                                      "minItems": 2,
-                                      "maxItems": 20
-                                    },
                                     "bind": {
                                       "items": "rows"
                                     },
@@ -7242,10 +7434,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "title"
                                         },
@@ -7257,11 +7445,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                          "optional": true,
-                                          "maxLength": 320
-                                        },
                                         "visibleWhen": "body",
                                         "bind": {
                                           "value": "body"
@@ -7354,11 +7537,6 @@
                                   },
                                   {
                                     "type": "Select",
-                                    "brief": {
-                                      "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "value",
                                       "options": "options"
@@ -7419,10 +7597,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -7494,11 +7668,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                                      "optional": true,
-                                      "maxLength": 160
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -7591,11 +7760,6 @@
                                     "type": "Input",
                                     "inputType": "tel",
                                     "autoComplete": "tel",
-                                    "brief": {
-                                      "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                                      "optional": true,
-                                      "maxLength": 32
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -7655,10 +7819,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -7757,11 +7917,6 @@
                                     "visibleWhen": {
                                       "field": "value",
                                       "eq": ""
-                                    },
-                                    "brief": {
-                                      "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                                      "minItems": 2,
-                                      "maxItems": 8
                                     },
                                     "bind": {
                                       "items": "options"
@@ -7933,11 +8088,6 @@
                                   {
                                     "type": "Input",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -8048,11 +8198,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "autoComplete": "email",
                                     "bind": {
                                       "placeholder": "placeholder",
@@ -8164,11 +8309,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 12
-                                    },
                                     "inputMode": "numeric",
                                     "maxLength": 12,
                                     "autoComplete": "off",
@@ -8284,11 +8424,6 @@
                                     "type": "Input",
                                     "inputType": "date",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 10
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -8399,11 +8534,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                                      "optional": true,
-                                      "maxLength": 600
-                                    },
                                     "multiline": true,
                                     "rows": 4,
                                     "autoComplete": "off",
@@ -8449,10 +8579,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                                      "maxLength": 80
-                                    },
                                     "visibleWhen": "label",
                                     "bind": {
                                       "value": "label"
@@ -8621,11 +8747,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -8670,10 +8791,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -8685,11 +8802,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                          "optional": true,
-                                          "maxLength": 160
-                                        },
                                         "visibleWhen": "description",
                                         "bind": {
                                           "value": "description"
@@ -8746,9 +8858,6 @@
                               },
                               "default": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -8809,9 +8918,6 @@
                             "cases": {
                               "prose": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -8821,11 +8927,6 @@
                               },
                               "steps": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -8881,10 +8982,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -8897,11 +8994,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                            "optional": true,
-                                            "maxLength": 160
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -8919,11 +9011,6 @@
                               },
                               "key-facts": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                                  "minItems": 2,
-                                  "maxItems": 4
-                                },
                                 "bind": {
                                   "items": "facts"
                                 },
@@ -8948,10 +9035,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "What the figure counts, in the source's own words. Two or three words.",
-                                        "maxLength": 28
-                                      },
                                       "bind": {
                                         "value": "label"
                                       },
@@ -8964,10 +9047,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                        "maxLength": 24
-                                      },
                                       "bind": {
                                         "value": "value"
                                       },
@@ -8980,11 +9059,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                        "optional": true,
-                                        "maxLength": 72
-                                      },
                                       "visibleWhen": "qualifier",
                                       "bind": {
                                         "value": "qualifier"
@@ -9000,11 +9074,6 @@
                               },
                               "list": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                                  "minItems": 2,
-                                  "maxItems": 10
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -9049,10 +9118,6 @@
                                       "children": [
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                            "maxLength": 60
-                                          },
                                           "bind": {
                                             "value": "title"
                                           },
@@ -9065,11 +9130,6 @@
                                         },
                                         {
                                           "type": "Text",
-                                          "brief": {
-                                            "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                            "optional": true,
-                                            "maxLength": 320
-                                          },
                                           "visibleWhen": "body",
                                           "bind": {
                                             "value": "body"
@@ -9087,11 +9147,6 @@
                               },
                               "faq": {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                                  "minItems": 2,
-                                  "maxItems": 12
-                                },
                                 "bind": {
                                   "items": "items"
                                 },
@@ -9117,10 +9172,6 @@
                                   "children": [
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The question, as a reader would ask it.",
-                                        "maxLength": 120
-                                      },
                                       "bind": {
                                         "value": "title"
                                       },
@@ -9133,10 +9184,6 @@
                                     },
                                     {
                                       "type": "Text",
-                                      "brief": {
-                                        "description": "The answer the source gives. Answer it; never restate the question.",
-                                        "maxLength": 400
-                                      },
                                       "visibleWhen": "body",
                                       "bind": {
                                         "value": "body"
@@ -9152,9 +9199,6 @@
                               },
                               "fine-print": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -9196,11 +9240,6 @@
                                     "children": [
                                       {
                                         "type": "Each",
-                                        "brief": {
-                                          "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                          "minItems": 2,
-                                          "maxItems": 5
-                                        },
                                         "bind": {
                                           "items": "columns"
                                         },
@@ -9227,11 +9266,6 @@
                                   },
                                   {
                                     "type": "Each",
-                                    "brief": {
-                                      "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                                      "minItems": 2,
-                                      "maxItems": 20
-                                    },
                                     "bind": {
                                       "items": "rows"
                                     },
@@ -9304,10 +9338,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "title"
                                         },
@@ -9319,11 +9349,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                          "optional": true,
-                                          "maxLength": 320
-                                        },
                                         "visibleWhen": "body",
                                         "bind": {
                                           "value": "body"
@@ -9416,11 +9441,6 @@
                                   },
                                   {
                                     "type": "Select",
-                                    "brief": {
-                                      "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "value",
                                       "options": "options"
@@ -9481,10 +9501,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -9556,11 +9572,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                                      "optional": true,
-                                      "maxLength": 160
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -9653,11 +9664,6 @@
                                     "type": "Input",
                                     "inputType": "tel",
                                     "autoComplete": "tel",
-                                    "brief": {
-                                      "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                                      "optional": true,
-                                      "maxLength": 32
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -9717,10 +9723,6 @@
                                         "children": [
                                           {
                                             "type": "Text",
-                                            "brief": {
-                                              "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                              "maxLength": 60
-                                            },
                                             "bind": {
                                               "value": "label"
                                             },
@@ -9819,11 +9821,6 @@
                                     "visibleWhen": {
                                       "field": "value",
                                       "eq": ""
-                                    },
-                                    "brief": {
-                                      "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                                      "minItems": 2,
-                                      "maxItems": 8
                                     },
                                     "bind": {
                                       "items": "options"
@@ -9995,11 +9992,6 @@
                                   {
                                     "type": "Input",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -10110,11 +10102,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "autoComplete": "email",
                                     "bind": {
                                       "placeholder": "placeholder",
@@ -10226,11 +10213,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                                      "optional": true,
-                                      "maxLength": 12
-                                    },
                                     "inputMode": "numeric",
                                     "maxLength": 12,
                                     "autoComplete": "off",
@@ -10346,11 +10328,6 @@
                                     "type": "Input",
                                     "inputType": "date",
                                     "autoComplete": "off",
-                                    "brief": {
-                                      "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                                      "optional": true,
-                                      "maxLength": 10
-                                    },
                                     "bind": {
                                       "placeholder": "placeholder",
                                       "value": "value"
@@ -10461,11 +10438,6 @@
                                   },
                                   {
                                     "type": "Input",
-                                    "brief": {
-                                      "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                                      "optional": true,
-                                      "maxLength": 600
-                                    },
                                     "multiline": true,
                                     "rows": 4,
                                     "autoComplete": "off",
@@ -10511,10 +10483,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                                      "maxLength": 80
-                                    },
                                     "visibleWhen": "label",
                                     "bind": {
                                       "value": "label"
@@ -10683,11 +10651,6 @@
                                   },
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                                      "optional": true,
-                                      "maxLength": 120
-                                    },
                                     "visibleWhen": "help",
                                     "bind": {
                                       "value": "help"
@@ -10732,10 +10695,6 @@
                                     "children": [
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                          "maxLength": 90
-                                        },
                                         "bind": {
                                           "value": "label"
                                         },
@@ -10747,11 +10706,6 @@
                                       },
                                       {
                                         "type": "Text",
-                                        "brief": {
-                                          "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                          "optional": true,
-                                          "maxLength": 160
-                                        },
                                         "visibleWhen": "description",
                                         "bind": {
                                           "value": "description"
@@ -10808,9 +10762,6 @@
                               },
                               "default": {
                                 "type": "Markdown",
-                                "brief": {
-                                  "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                                },
                                 "bind": {
                                   "value": "body"
                                 },
@@ -10875,9 +10826,6 @@
                     "cases": {
                       "prose": {
                         "type": "Markdown",
-                        "brief": {
-                          "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                        },
                         "bind": {
                           "value": "body"
                         },
@@ -10887,11 +10835,6 @@
                       },
                       "steps": {
                         "type": "Each",
-                        "brief": {
-                          "description": "The steps of the sequence, in the order the source gives them. Every step comes from the source, never inferred to round the list out.",
-                          "minItems": 2,
-                          "maxItems": 12
-                        },
                         "bind": {
                           "items": "items"
                         },
@@ -10947,10 +10890,6 @@
                               "children": [
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "What the reader does, as an instruction in a few words. Start with the verb.",
-                                    "maxLength": 60
-                                  },
                                   "bind": {
                                     "value": "title"
                                   },
@@ -10963,11 +10902,6 @@
                                 },
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "One line of detail the source gives about this step, such as where to go or what arrives. Empty when the source says nothing beyond the step itself.",
-                                    "optional": true,
-                                    "maxLength": 160
-                                  },
                                   "visibleWhen": "body",
                                   "bind": {
                                     "value": "body"
@@ -10985,11 +10919,6 @@
                       },
                       "key-facts": {
                         "type": "Each",
-                        "brief": {
-                          "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-                          "minItems": 2,
-                          "maxItems": 4
-                        },
                         "bind": {
                           "items": "facts"
                         },
@@ -11014,10 +10943,6 @@
                           "children": [
                             {
                               "type": "Text",
-                              "brief": {
-                                "description": "What the figure counts, in the source's own words. Two or three words.",
-                                "maxLength": 28
-                              },
                               "bind": {
                                 "value": "label"
                               },
@@ -11030,10 +10955,6 @@
                             },
                             {
                               "type": "Text",
-                              "brief": {
-                                "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-                                "maxLength": 24
-                              },
                               "bind": {
                                 "value": "value"
                               },
@@ -11046,11 +10967,6 @@
                             },
                             {
                               "type": "Text",
-                              "brief": {
-                                "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-                                "optional": true,
-                                "maxLength": 72
-                              },
                               "visibleWhen": "qualifier",
                               "bind": {
                                 "value": "qualifier"
@@ -11066,11 +10982,6 @@
                       },
                       "list": {
                         "type": "Each",
-                        "brief": {
-                          "description": "The items, in the order the source gives them. Every item comes from the source, never inferred to round the list out.",
-                          "minItems": 2,
-                          "maxItems": 10
-                        },
                         "bind": {
                           "items": "items"
                         },
@@ -11115,10 +11026,6 @@
                               "children": [
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "What the item is, in a few words. A noun phrase, not a sentence.",
-                                    "maxLength": 60
-                                  },
                                   "bind": {
                                     "value": "title"
                                   },
@@ -11131,11 +11038,6 @@
                                 },
                                 {
                                   "type": "Text",
-                                  "brief": {
-                                    "description": "One line the source gives about this item, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the title says it all.",
-                                    "optional": true,
-                                    "maxLength": 320
-                                  },
                                   "visibleWhen": "body",
                                   "bind": {
                                     "value": "body"
@@ -11153,11 +11055,6 @@
                       },
                       "faq": {
                         "type": "Each",
-                        "brief": {
-                          "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-                          "minItems": 2,
-                          "maxItems": 12
-                        },
                         "bind": {
                           "items": "items"
                         },
@@ -11183,10 +11080,6 @@
                           "children": [
                             {
                               "type": "Text",
-                              "brief": {
-                                "description": "The question, as a reader would ask it.",
-                                "maxLength": 120
-                              },
                               "bind": {
                                 "value": "title"
                               },
@@ -11199,10 +11092,6 @@
                             },
                             {
                               "type": "Text",
-                              "brief": {
-                                "description": "The answer the source gives. Answer it; never restate the question.",
-                                "maxLength": 400
-                              },
                               "visibleWhen": "body",
                               "bind": {
                                 "value": "body"
@@ -11218,9 +11107,6 @@
                       },
                       "fine-print": {
                         "type": "Markdown",
-                        "brief": {
-                          "description": "The terms, conditions or regulatory wording, REPRODUCED from the source rather than rewritten. Legal text carries its meaning in its exact words, so order it and label it, then leave it alone. Markdown inline marks only."
-                        },
                         "bind": {
                           "value": "body"
                         },
@@ -11262,11 +11148,6 @@
                             "children": [
                               {
                                 "type": "Each",
-                                "brief": {
-                                  "description": "The column headers, in the source's own words. Two to five; a table wider than that belongs as several sections.",
-                                  "minItems": 2,
-                                  "maxItems": 5
-                                },
                                 "bind": {
                                   "items": "columns"
                                 },
@@ -11293,11 +11174,6 @@
                           },
                           {
                             "type": "Each",
-                            "brief": {
-                              "description": "The rows, each a list of cells in the SAME ORDER as the columns and the same length. Every cell is quoted from the source, never calculated or filled in to complete the grid.",
-                              "minItems": 2,
-                              "maxItems": 20
-                            },
                             "bind": {
                               "items": "rows"
                             },
@@ -11370,10 +11246,6 @@
                             "children": [
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "The warning itself, in one line. State the consequence, not the topic.",
-                                  "maxLength": 90
-                                },
                                 "bind": {
                                   "value": "title"
                                 },
@@ -11385,11 +11257,6 @@
                               },
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.",
-                                  "optional": true,
-                                  "maxLength": 320
-                                },
                                 "visibleWhen": "body",
                                 "bind": {
                                   "value": "body"
@@ -11482,11 +11349,6 @@
                           },
                           {
                             "type": "Select",
-                            "brief": {
-                              "description": "Propose this ONLY from what the person's profile or an uploaded document states, and only as one of the option values offered. Never guess a country from a language, an address or a name, and leave it out when nothing states it.",
-                              "optional": true,
-                              "maxLength": 60
-                            },
                             "bind": {
                               "value": "value",
                               "options": "options"
@@ -11547,10 +11409,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "WHICH DOCUMENT is wanted, in the person's words: 'Proof of address', 'Signed subscription form'. Name the document the source actually requires, never one you think would help.",
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "label"
                                     },
@@ -11622,11 +11480,6 @@
                           },
                           {
                             "type": "Text",
-                            "brief": {
-                              "description": "What makes a document acceptable, when the source says: how recent it must be, whose name it must carry, which formats are allowed. Empty when the source sets no condition.",
-                              "optional": true,
-                              "maxLength": 160
-                            },
                             "visibleWhen": "help",
                             "bind": {
                               "value": "help"
@@ -11719,11 +11572,6 @@
                             "type": "Input",
                             "inputType": "tel",
                             "autoComplete": "tel",
-                            "brief": {
-                              "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-                              "optional": true,
-                              "maxLength": 32
-                            },
                             "bind": {
                               "placeholder": "placeholder",
                               "value": "value"
@@ -11783,10 +11631,6 @@
                                 "children": [
                                   {
                                     "type": "Text",
-                                    "brief": {
-                                      "description": "What is being chosen, in a few words: 'Share class', 'Investor classification'. A noun phrase, never a question.",
-                                      "maxLength": 60
-                                    },
                                     "bind": {
                                       "value": "label"
                                     },
@@ -11885,11 +11729,6 @@
                             "visibleWhen": {
                               "field": "value",
                               "eq": ""
-                            },
-                            "brief": {
-                              "description": "The options the source defines, in its own order and its own words. Never invent an option, never drop one because it seems unlikely, and never add 'Other' unless the source offers it.",
-                              "minItems": 2,
-                              "maxItems": 8
                             },
                             "bind": {
                               "items": "options"
@@ -12061,11 +11900,6 @@
                           {
                             "type": "Input",
                             "autoComplete": "off",
-                            "brief": {
-                              "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-                              "optional": true,
-                              "maxLength": 120
-                            },
                             "bind": {
                               "placeholder": "placeholder",
                               "value": "value"
@@ -12176,11 +12010,6 @@
                           },
                           {
                             "type": "Input",
-                            "brief": {
-                              "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-                              "optional": true,
-                              "maxLength": 120
-                            },
                             "autoComplete": "email",
                             "bind": {
                               "placeholder": "placeholder",
@@ -12292,11 +12121,6 @@
                           },
                           {
                             "type": "Input",
-                            "brief": {
-                              "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-                              "optional": true,
-                              "maxLength": 12
-                            },
                             "inputMode": "numeric",
                             "maxLength": 12,
                             "autoComplete": "off",
@@ -12412,11 +12236,6 @@
                             "type": "Input",
                             "inputType": "date",
                             "autoComplete": "off",
-                            "brief": {
-                              "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-                              "optional": true,
-                              "maxLength": 10
-                            },
                             "bind": {
                               "placeholder": "placeholder",
                               "value": "value"
@@ -12527,11 +12346,6 @@
                           },
                           {
                             "type": "Input",
-                            "brief": {
-                              "description": "Propose this passage only from what the source actually says, in the person's own words where they exist. Never write on their behalf to fill the box: this is a field they are expected to write themselves.",
-                              "optional": true,
-                              "maxLength": 600
-                            },
                             "multiline": true,
                             "rows": 4,
                             "autoComplete": "off",
@@ -12577,10 +12391,6 @@
                         "children": [
                           {
                             "type": "Text",
-                            "brief": {
-                              "description": "What the code is for, in the reader's words: 'Enter the code we sent to your phone'. Say where it was sent when the source states it, and never guess the channel.",
-                              "maxLength": 80
-                            },
                             "visibleWhen": "label",
                             "bind": {
                               "value": "label"
@@ -12749,11 +12559,6 @@
                           },
                           {
                             "type": "Text",
-                            "brief": {
-                              "description": "One line of help the source gives about the code, such as how long it lasts or what to do if it does not arrive. Empty when the source says nothing.",
-                              "optional": true,
-                              "maxLength": 120
-                            },
                             "visibleWhen": "help",
                             "bind": {
                               "value": "help"
@@ -12798,10 +12603,6 @@
                             "children": [
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                                  "maxLength": 90
-                                },
                                 "bind": {
                                   "value": "label"
                                 },
@@ -12813,11 +12614,6 @@
                               },
                               {
                                 "type": "Text",
-                                "brief": {
-                                  "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                                  "optional": true,
-                                  "maxLength": 160
-                                },
                                 "visibleWhen": "description",
                                 "bind": {
                                   "value": "description"
@@ -12874,9 +12670,6 @@
                       },
                       "default": {
                         "type": "Markdown",
-                        "brief": {
-                          "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-                        },
                         "bind": {
                           "value": "body"
                         },

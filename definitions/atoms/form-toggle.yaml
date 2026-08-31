@@ -21,16 +21,27 @@ whenToUse: "Collect a yes or no a person decides: a consent, a preference, a dec
 props:
   label:
     type: string
-    default: Setting
+    description: >-
+      The question, written as the statement the person is agreeing to or
+      declining: 'Send me alerts about new deals'. Never phrase it so that OFF is
+      the agreeable answer, and never ask for a consent the source does not
+      require.
+    maxLength: 90
     preview: Send me alerts about new deals
+    default: Setting
   description:
     type: string
-    default: ""
+    description: >-
+      One line the source gives about what agreeing means in practice, such as how
+      often, or what it is used for. Empty when the question says it all.
+    maxLength: 160
+    optional: true
     preview: Occasional email, and never more than once a week.
+    default: ""
   on:
     type: boolean
-    default: false
     preview: true
+    default: false
 root:
   type: Button
   action: toggle
@@ -59,13 +70,6 @@ root:
         align: start
       children:
         - type: Text
-          brief:
-            description: >-
-              The question, written as the statement the person is agreeing to or
-              declining: 'Send me alerts about new deals'. Never phrase it so that OFF is
-              the agreeable answer, and never ask for a consent the source does not
-              require.
-            maxLength: 90
           bind:
             value: label
           style:
@@ -73,12 +77,6 @@ root:
             weight: semibold
             color: text.primary
         - type: Text
-          brief:
-            description: >-
-              One line the source gives about what agreeing means in practice, such as how
-              often, or what it is used for. Empty when the question says it all.
-            optional: true
-            maxLength: 160
           visibleWhen: description
           bind:
             value: description

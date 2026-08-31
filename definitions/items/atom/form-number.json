@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-number",
-  "fingerprint": "66c6f4e8281c6431",
+  "fingerprint": "14a96e68c8d884d5",
   "bundle": "design-system",
   "title": "form-number",
   "description": "One collected whole number: a label, a digits-only input, a help line, and a chip naming where a proposed value came from.",
@@ -15,28 +15,31 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Years at your current address"
+        "preview": "Years at your current address",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "7"
+        "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
+        "maxLength": 12,
+        "optional": true,
+        "preview": "7",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "0"
+        "preview": "0",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "Whole years, rounded down."
+        "preview": "Whole years, rounded down.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
@@ -107,11 +110,6 @@
         },
         {
           "type": "Input",
-          "brief": {
-            "description": "Propose this number ONLY from what the person's profile, the record, or a document they uploaded actually states, as digits with no unit and no separators. Never calculate it, never estimate it, and leave it out when nothing states it. An empty field is correct; a guessed one is a defect they may confirm without noticing.",
-            "optional": true,
-            "maxLength": 12
-          },
           "inputMode": "numeric",
           "maxLength": 12,
           "autoComplete": "off",

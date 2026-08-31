@@ -10,12 +10,15 @@ whenToUse: "Show one image from a URL — a photo, screenshot, generated visual,
 props:
   image:
     type: string
+    description: "The picture to show. A URL the platform can fetch."
     default: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/starship.webp
   alt:
     type: string
+    description: "What the picture shows, for anyone who cannot see it."
     default: Starship in deep space
   caption:
     type: string
+    description: "The line printed under the picture. Empty means no caption."
     default: A starship drifts past a distant nebula.
 root:
   type: Box

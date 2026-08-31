@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "ken-burns-image",
-  "fingerprint": "d50de0fce286f258",
+  "fingerprint": "ce0588f1d6bd16f4",
   "bundle": "design-system",
   "title": "ken-burns-image",
   "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
@@ -15,14 +15,17 @@
     "props": {
       "src": {
         "type": "string",
+        "description": "The picture that fills the frame. A URL the platform can fetch.",
         "default": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg"
       },
       "alt": {
         "type": "string",
+        "description": "What the picture shows, for anyone who cannot see it.",
         "default": ""
       },
       "overlay": {
         "type": "boolean",
+        "description": "True to darken the image so words laid over it stay readable.",
         "default": true
       }
     },

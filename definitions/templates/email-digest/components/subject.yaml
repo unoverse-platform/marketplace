@@ -1,0 +1,38 @@
+unoverse: "1.0"
+# THE LETTER'S SUBJECT — the copywriter's first slot in the email-digest template.
+# A BRIEFED component: the brief rides on the node that BINDS the field, which is the
+# only place the schema compiler reads it from (design/CLAUDE.md §3).
+type: component
+name: subject
+category: Communication
+nodeSize:
+  width: 600
+  height: 120
+props:
+  subject:
+    type: string
+    input: true
+    description: >-
+      The subject line: what this email is about, in the reader's own terms. Say the
+      benefit to them, not the sender's activity — "Three courses that fit where
+      you're heading", never "Your September intake update". No greeting, no sender
+      name, no colon-prefixed label, and never a question the email does not answer.
+      Over the limit, write a shorter sentence; never abbreviate or drop characters
+      to fit.
+    maxLength: 78
+    default: Three courses that fit where you're heading
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "2"
+    width: full
+  children:
+    - type: Text
+      bind:
+        value: subject
+      style:
+        font: headline.md
+        weight: semibold
+        lineHeight: tight
+        color: text.primary

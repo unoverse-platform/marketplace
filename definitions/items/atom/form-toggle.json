@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-toggle",
-  "fingerprint": "31ecf3ddb7f984f4",
+  "fingerprint": "e10c28205dfbffe3",
   "bundle": "design-system",
   "title": "form-toggle",
   "description": "One collected yes or no: a question, an optional line of detail, and the design system's switch. The standard form entry for anything a person agrees to or declines.",
@@ -15,18 +15,23 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Setting",
-        "preview": "Send me alerts about new deals"
+        "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
+        "maxLength": 90,
+        "preview": "Send me alerts about new deals",
+        "default": "Setting"
       },
       "description": {
         "type": "string",
-        "default": "",
-        "preview": "Occasional email, and never more than once a week."
+        "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
+        "maxLength": 160,
+        "optional": true,
+        "preview": "Occasional email, and never more than once a week.",
+        "default": ""
       },
       "on": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       }
     },
     "root": {
@@ -62,10 +67,6 @@
           "children": [
             {
               "type": "Text",
-              "brief": {
-                "description": "The question, written as the statement the person is agreeing to or declining: 'Send me alerts about new deals'. Never phrase it so that OFF is the agreeable answer, and never ask for a consent the source does not require.",
-                "maxLength": 90
-              },
               "bind": {
                 "value": "label"
               },
@@ -77,11 +78,6 @@
             },
             {
               "type": "Text",
-              "brief": {
-                "description": "One line the source gives about what agreeing means in practice, such as how often, or what it is used for. Empty when the question says it all.",
-                "optional": true,
-                "maxLength": 160
-              },
               "visibleWhen": "description",
               "bind": {
                 "value": "description"

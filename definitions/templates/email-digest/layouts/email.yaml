@@ -1,0 +1,87 @@
+# THE EMAIL, one flat arrangement in the letter's order: masthead, subject, body
+# copy, the items it is showing you, the sign-off, the small print. Each section
+# line says HOW it is filled (§9b, the three words): `static:` placed as designed,
+# `copywriter:` written into through its props, `director:` decided from what
+# streams in. Nothing here opens, expands or rearranges.
+#
+# A MEASURED SHEET, centred. An email is a fixed-measure document, so the sheet caps
+# at the named page width and centres in whatever it is placed in, rather than
+# stretching to the host — the one cap layout.yaml sanctions by name. The cap is
+# also what makes the item band read as a letter's list instead of a web page's grid.
+type: Box
+style:
+  direction: column
+  align: center
+  width: full
+children:
+  - type: Box
+    style:
+      direction: column
+      width: full
+      maxWidth: page
+      # THE MEASURING CONTEXT sits on the SHEET, not the host: anything inside that
+      # asks how much room it has must be told the letter's width, never the screen's.
+      container: inline-size
+      background: surface.base
+      border: thin subtle
+      radius: lg
+      shadow: sm
+      overflow: hidden
+    children:
+      # THE MASTHEAD — the sender's frame, full-bleed to the sheet's edges (its own
+      # padding is its business, which is why this line adds none).
+      - static: components/masthead
+
+      # THE LETTER — subject, then the copy. This is the block the reader actually
+      # reads, so it gets the sheet's most generous margins and the widest gaps.
+      # Blank is valid: the items settle in ~300ms and the prose lands into this
+      # reserved space seconds later, so the column holds its shape while empty.
+      - type: Box
+        style:
+          direction: column
+          gap: "5"
+          padding: [ "8", "8", "6", "8" ]
+          width: full
+        children:
+          - copywriter: components/subject
+          - copywriter: components/body
+
+      # THE ITEM BAND — what the letter is showing you, STACKED. A newsletter lists
+      # its items one under another; columns here would read as a web page, and at
+      # the sheet's capped measure they would be too narrow to carry a card anyway.
+      - type: Box
+        style:
+          direction: column
+          gap: "5"
+          padding: [ "0", "8", "7", "8" ]
+          width: full
+        children:
+          - director:
+              # Arrivals are SWITCHED into their compact state and HELD there — an
+              # email is flat, there is no detail state to open into. The rule is
+              # universal wording — the shelf's default; an org wanting bespoke
+              # judgment ships its own template.
+              state: grid
+              limit: 3
+              rules: The items most relevant to the reader, strongest matches first.
+              preview: [ card, card, card ]
+
+      # THE SIGN-OFF — after the items, as in a letter: the reader sees what was
+      # sent before they see who sent it.
+      - type: Box
+        style:
+          direction: column
+          padding: [ "0", "8", "8", "8" ]
+          width: full
+        children:
+          - copywriter: components/signoff
+
+      # THE SMALL PRINT — on a sunken ground so the sheet reads as ending rather
+      # than simply stopping.
+      - type: Box
+        style:
+          width: full
+          background: surface.sunken
+          borderTop: thin subtle
+        children:
+          - static: components/footer

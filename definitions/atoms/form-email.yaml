@@ -13,19 +13,24 @@ whenToUse: "Collect an email address a person types or confirms. Not for a phone
 props:
   label:
     type: string
-    default: Label
     preview: Email address
+    default: Label
   value:
     type: string
-    default: ""
+    description: >-
+      Propose the email address the person's profile or an uploaded document actually
+      states, copied exactly. Never construct one from a name and a company, and leave
+      it out when nothing states it.
+    maxLength: 120
+    optional: true
     preview: a.hartley@northbridge.example
+    default: ""
   placeholder:
     type: string
-    default: ""
     preview: you@example.com
+    default: ""
   help:
     type: string
-    default: ""
     preview: Confirmations and statements go here.
   # Where a proposed value came from, in the reader's words: 'From your profile',
   # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
@@ -33,14 +38,15 @@ props:
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: From your profile
+    default: ""
 root:
   type: Box
   style:
@@ -92,13 +98,6 @@ root:
       # is what lets a model propose a value at all. Per-field guidance belongs to the
       # authored form spec and reaches the schema through the compiler: an atom is one
       # file and cannot carry a different description for every field that composes it.
-      brief:
-        description: >-
-          Propose the email address the person's profile or an uploaded document actually
-          states, copied exactly. Never construct one from a name and a company, and leave
-          it out when nothing states it.
-        optional: true
-        maxLength: 120
       # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
       # input write that key back: the input action writes `{ [boundField]: text }`.
       autoComplete: email
@@ -112,7 +111,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
       visibleWhen: help

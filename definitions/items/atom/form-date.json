@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-date",
-  "fingerprint": "32c28bb3e318d2e3",
+  "fingerprint": "e0869614141af32d",
   "bundle": "design-system",
   "title": "form-date",
   "description": "One collected date: a label, the platform's own date picker, and a chip naming where a proposed value came from.",
@@ -15,33 +15,36 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Full legal name"
+        "preview": "Full legal name",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "Amelia Hartley"
+        "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
+        "maxLength": 10,
+        "optional": true,
+        "preview": "Amelia Hartley",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "As it appears on your passport"
+        "preview": "As it appears on your passport",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "We check this against your identity documents."
+        "preview": "We check this against your identity documents.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
-        "default": "",
-        "preview": "From your profile"
+        "preview": "From your profile",
+        "default": ""
       }
     },
     "root": {
@@ -110,11 +113,6 @@
           "type": "Input",
           "inputType": "date",
           "autoComplete": "off",
-          "brief": {
-            "description": "Propose the date ONLY when the profile or an uploaded document states it, as YYYY-MM-DD. Never infer one from an age, a year alone or a nearby date, and leave it out when nothing states it.",
-            "optional": true,
-            "maxLength": 10
-          },
           "bind": {
             "placeholder": "placeholder",
             "value": "value"

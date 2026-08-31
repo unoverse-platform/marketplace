@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-email",
-  "fingerprint": "a40a47055d2337ec",
+  "fingerprint": "490b9ba66154564b",
   "bundle": "design-system",
   "title": "form-email",
   "description": "One collected email address: a label, an input the browser can autofill, a help line, and a chip naming where a proposed value came from.",
@@ -15,33 +15,36 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Email address"
+        "preview": "Email address",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "a.hartley@northbridge.example"
+        "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
+        "maxLength": 120,
+        "optional": true,
+        "preview": "a.hartley@northbridge.example",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "you@example.com"
+        "preview": "you@example.com",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "Confirmations and statements go here."
+        "preview": "Confirmations and statements go here.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
-        "default": "",
-        "preview": "From your profile"
+        "preview": "From your profile",
+        "default": ""
       }
     },
     "root": {
@@ -108,11 +111,6 @@
         },
         {
           "type": "Input",
-          "brief": {
-            "description": "Propose the email address the person's profile or an uploaded document actually states, copied exactly. Never construct one from a name and a company, and leave it out when nothing states it.",
-            "optional": true,
-            "maxLength": 120
-          },
           "autoComplete": "email",
           "bind": {
             "placeholder": "placeholder",

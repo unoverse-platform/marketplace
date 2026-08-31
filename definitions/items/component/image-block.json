@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "image-block",
-  "fingerprint": "bb6068862221deca",
+  "fingerprint": "4735586b130e9e08",
   "bundle": "design-system",
   "title": "image-block",
   "description": "A single image from a URL with an optional caption beneath it.",
@@ -19,14 +19,17 @@
     "props": {
       "image": {
         "type": "string",
+        "description": "The picture to show. A URL the platform can fetch.",
         "default": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/starship.webp"
       },
       "alt": {
         "type": "string",
+        "description": "What the picture shows, for anyone who cannot see it.",
         "default": "Starship in deep space"
       },
       "caption": {
         "type": "string",
+        "description": "The line printed under the picture. Empty means no caption.",
         "default": "A starship drifts past a distant nebula."
       }
     },

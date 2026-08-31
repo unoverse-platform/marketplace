@@ -1,0 +1,73 @@
+unoverse: "1.0"
+# THE LETTER'S SIGN-OFF — who sent it, after the items. Separate from the body
+# because it sits on the far side of the item band: the reader sees what was sent
+# before they see who sent it, which is the shape of a letter.
+type: component
+name: signoff
+category: Communication
+nodeSize:
+  width: 600
+  height: 160
+props:
+  closing:
+    type: string
+    input: true
+    description: >-
+      The closing line, offering the reader their next move in one sentence — how
+      to reply, ask, or come back with questions. Only an action the source
+      actually supports; never invent a phone number, a deadline or an offer.
+    maxLength: 120
+    default: Any questions, just reply to this email and it comes straight to me.
+  senderName:
+    type: string
+    input: true
+    description: >-
+      The name the email is signed with, exactly as the source gives it. Blank
+      when the source names no sender — an unsigned letter is better than an
+      invented signature.
+    maxLength: 60
+    default: Jo Whitfield
+  senderRole:
+    type: string
+    input: true
+    description: >-
+      The sender's role or team, as the source states it. Blank when it does
+      not state one.
+    maxLength: 60
+    default: Course Adviser
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "3"
+    width: full
+    padding: ["6", "0", "0", "0"]
+    borderTop: thin subtle
+  children:
+    - type: Text
+      bind:
+        value: closing
+      style:
+        font: body.md
+        lineHeight: snug
+        color: text.secondary
+    - type: Box
+      style:
+        direction: column
+        gap: "0"
+        width: full
+      children:
+        - type: Text
+          bind:
+            value: senderName
+          style:
+            font: body.md
+            weight: semibold
+            color: text.primary
+        - type: Text
+          visibleWhen: senderRole
+          bind:
+            value: senderRole
+          style:
+            font: body.sm
+            color: text.secondary

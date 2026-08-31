@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-phone",
-  "fingerprint": "6b0ecaa7e635e24d",
+  "fingerprint": "67e66d43cd394d0c",
   "bundle": "design-system",
   "title": "form-phone",
   "description": "One collected phone number: a label, the platform's phone keypad, and a chip naming where a proposed value came from.",
@@ -15,33 +15,36 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Phone number"
+        "preview": "Phone number",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "7700 900123"
+        "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
+        "maxLength": 32,
+        "optional": true,
+        "preview": "7700 900123",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "e.g. 7700 900123"
+        "preview": "e.g. 7700 900123",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "An advisor will call this number, usually within one working day."
+        "preview": "An advisor will call this number, usually within one working day.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
-        "default": "",
-        "preview": "From your profile"
+        "preview": "From your profile",
+        "default": ""
       }
     },
     "root": {
@@ -110,11 +113,6 @@
           "type": "Input",
           "inputType": "tel",
           "autoComplete": "tel",
-          "brief": {
-            "description": "Propose the number the person's profile actually holds, copied exactly, digits and spacing as stated. Never construct one from a country or an address, and leave it out when nothing states it: a wrong number is a call that never comes.",
-            "optional": true,
-            "maxLength": 32
-          },
           "bind": {
             "placeholder": "placeholder",
             "value": "value"

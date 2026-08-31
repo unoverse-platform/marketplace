@@ -10,9 +10,14 @@ props:
     default: info
   title:
     type: string
+    description: The warning itself, in one line. State the consequence, not the topic.
+    maxLength: 90
     default: Something to know
   body:
     type: string
+    description: What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.
+    maxLength: 320
+    optional: true
     default: ""
 root:
   type: Box
@@ -40,9 +45,6 @@ root:
         gap: "1"
       children:
         - type: Text
-          brief:
-            description: The warning itself, in one line. State the consequence, not the topic.
-            maxLength: 90
           bind:
             value: title
           style:
@@ -50,10 +52,6 @@ root:
             weight: semibold
             color: text.primary
         - type: Text
-          brief:
-            description: What the reader should do or know about it, from the source, as a COMPLETE sentence. If it will not fit, say less rather than stopping mid-sentence. Empty when the warning stands alone.
-            optional: true
-            maxLength: 320
           visibleWhen: body
           bind:
             value: body

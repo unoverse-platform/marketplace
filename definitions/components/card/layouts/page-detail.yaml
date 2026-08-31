@@ -40,7 +40,7 @@ children:
         action:
           type: setValue
           values:
-            - key: view
+            - key: state
               value: grid
   - type: Box
     visibleWhen: image

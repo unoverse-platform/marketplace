@@ -10,18 +10,22 @@ whenToUse: Render Universal Markdown, in either of its two forms. Given a markdo
 props:
   title:
     type: string
+    description: "The header above the document. Empty means no header."
     default: ""
     input: true
   markdown:
     type: string
+    description: "The document as one markdown string: headings, lists, tables, code, links, images. Use this OR sections, never both."
     default: ""
     input: true
   streamingLabel:
     type: string
+    description: "The words shown beside the indicator while the document is still arriving."
     default: Writing…
     input: true
   placeholderText:
     type: string
+    description: "What stands in the empty frame before any content has arrived."
     default: Waiting for document…
     input: true
   # UNIVERSAL MARKDOWN, TYPED FORM — the block document. `sections` in reading order for
@@ -30,6 +34,7 @@ props:
   # static name and a group label is whatever the source called it.
   sections:
     type: array
+    description: "The document as typed blocks in reading order: prose, key facts, steps, lists, tables, fine print."
     input: true
     default:
       - kind: key-facts
@@ -49,42 +54,52 @@ props:
         body: Terms and conditions apply.
   tabbed:
     type: boolean
+    description: "Whether the document draws as tabs or as one page. Decided by the shaping pass from the blocks' own groups, never set by hand."
     default: false
     input: true
   lead:
     type: array
+    description: "The blocks above the tab strip, shown whichever tab is open. Shaped from sections, not written."
     default: []
     input: true
   tab0Label:
     type: string
+    description: "The first tab's label, taken from the group its blocks carry."
     default: ""
     input: true
   tab0:
     type: array
+    description: "The blocks under the first tab. Shaped from sections, not written."
     default: []
     input: true
   tab1Label:
     type: string
+    description: "The second tab's label, taken from the group its blocks carry."
     default: ""
     input: true
   tab1:
     type: array
+    description: "The blocks under the second tab. Shaped from sections, not written."
     default: []
     input: true
   tab2Label:
     type: string
+    description: "The third tab's label, taken from the group its blocks carry."
     default: ""
     input: true
   tab2:
     type: array
+    description: "The blocks under the third tab. Shaped from sections, not written."
     default: []
     input: true
   tab3Label:
     type: string
+    description: "The fourth tab's label, taken from the group its blocks carry."
     default: ""
     input: true
   tab3:
     type: array
+    description: "The blocks under the fourth tab, the last the strip holds. Shaped from sections, not written."
     default: []
     input: true
 state:

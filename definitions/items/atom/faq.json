@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "faq",
-  "fingerprint": "45dfddd419d6f3be",
+  "fingerprint": "e3836348cbb877dc",
   "bundle": "design-system",
   "title": "faq",
   "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -15,21 +15,31 @@
     "props": {
       "items": {
         "type": "array",
+        "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
+        "minItems": 2,
+        "maxItems": 12,
         "default": [
           {
             "title": "A question the source answers?",
             "body": "The answer, in the source's own words."
           }
-        ]
+        ],
+        "items": {
+          "title": {
+            "type": "string",
+            "description": "The question, as a reader would ask it.",
+            "maxLength": 120
+          },
+          "body": {
+            "type": "string",
+            "description": "The answer the source gives. Answer it; never restate the question.",
+            "maxLength": 400
+          }
+        }
       }
     },
     "root": {
       "type": "Each",
-      "brief": {
-        "description": "The question and answer pairs the source states AS SUCH. Never reframe ordinary copy as questions, and skip any pair whose answer merely restates its question.",
-        "minItems": 2,
-        "maxItems": 12
-      },
       "bind": {
         "items": "items"
       },
@@ -55,10 +65,6 @@
         "children": [
           {
             "type": "Text",
-            "brief": {
-              "description": "The question, as a reader would ask it.",
-              "maxLength": 120
-            },
             "bind": {
               "value": "title"
             },
@@ -71,10 +77,6 @@
           },
           {
             "type": "Text",
-            "brief": {
-              "description": "The answer the source gives. Answer it; never restate the question.",
-              "maxLength": 400
-            },
             "visibleWhen": "body",
             "bind": {
               "value": "body"

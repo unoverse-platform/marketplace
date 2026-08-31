@@ -10,9 +10,11 @@ whenToUse: Show several key metrics or KPIs together as a grid of tiles — each
 props:
   title:
     type: string
+    description: "What the tiles have in common."
     default: This month at a glance
   metrics:
     type: array
+    description: "The tiles in reading order. Each carries a label and its value as text, with an optional prefix, icon and change."
     default:
       - label: Revenue
         prefix: $

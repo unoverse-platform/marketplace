@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "prose",
-  "fingerprint": "69d0b2ef4739738e",
+  "fingerprint": "4a907dc9c7533525",
   "bundle": "design-system",
   "title": "prose",
   "description": "A passage of body copy, rendered as Markdown: paragraphs, headings, lists, links and emphasis, styled by the served prose recipe. Owns no look of its own beyond width.",
@@ -15,14 +15,12 @@
     "props": {
       "body": {
         "type": "string",
+        "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state.",
         "default": "### A passage of body copy\n\nMarkdown renders here: **bold**, *emphasis*, [links](https://example.com) and lists,\nall styled by the theme's prose recipe.\n\n- The design system decides how each mark looks\n- The writer decides only what the words are"
       }
     },
     "root": {
       "type": "Markdown",
-      "brief": {
-        "description": "The passage, in Markdown, taken from the source. Headings, lists, emphasis and links are all allowed. Never rewrite the source's meaning, and never add facts it does not state."
-      },
       "bind": {
         "value": "body"
       },

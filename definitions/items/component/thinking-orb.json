@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "thinking-orb",
-  "fingerprint": "a0a7eb1ab007bcf8",
+  "fingerprint": "1a039745f1bc56ba",
   "bundle": "design-system",
   "title": "thinking-orb",
   "description": "A procedural thinking orb — a scan meridian sweeping a dotted globe, the assistant's \"I'm on it\" presence.",
@@ -15,6 +15,7 @@
     "props": {
       "orbState": {
         "type": "string",
+        "description": "What the assistant is doing: working, waiting, done. Decides how the orb moves.",
         "default": "working",
         "enum": [
           "working",
@@ -34,14 +35,17 @@
       },
       "speed": {
         "type": "string",
+        "description": "How fast the animation runs. 1 is normal.",
         "default": "1"
       },
       "size": {
         "type": "string",
+        "description": "The orb's width in pixels.",
         "default": "150"
       },
       "orbColor": {
         "type": "string",
+        "description": "The orb's colour, as a token name.",
         "default": "orb.ink-soft",
         "enum": [
           "orb.ink-faint",

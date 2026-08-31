@@ -1,7 +1,7 @@
 {
-  "kind": "design-template",
+  "kind": "template",
   "name": "grid-page",
-  "fingerprint": "8cae915e1aaf215c",
+  "fingerprint": "d905880fdfa4b204",
   "bundle": "design-system",
   "title": "grid-page",
   "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -9,32 +9,12 @@
   "definition": {
     "unoverse": "1.0",
     "name": "grid-page",
-    "parts": [
-      {
-        "slot": "items",
-        "accepts": "interfaces"
-      }
-    ],
-    "shapes": {
-      "grid": {
-        "layout": "layouts/grid"
-      },
-      "page": {
-        "layout": "layouts/page"
-      }
-    },
     "kind": "template",
     "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
     "whenToUse": "Four to eight peer items the guest is browsing or choosing between.",
     "category": "Arrangement",
     "version": "1.0.0",
-    "preview": {
-      "items": [
-        "card",
-        "card",
-        "card"
-      ]
-    },
+    "spatial": true,
     "layouts": {
       "grid": {
         "type": "Box",
@@ -67,7 +47,7 @@
                 "select": {
                   "from": "all",
                   "where": {
-                    "field": "view",
+                    "field": "state",
                     "eq": "grid"
                   }
                 }
@@ -88,7 +68,7 @@
             "select": {
               "from": "all",
               "where": {
-                "field": "view",
+                "field": "state",
                 "eq": "page"
               },
               "limit": 1
@@ -101,6 +81,47 @@
     "stateOrder": [
       "page"
     ],
+    "publicStates": [
+      "grid",
+      "page"
+    ],
+    "initialView": "grid",
+    "sections": {
+      "grid": [
+        {
+          "kind": "director",
+          "face": "grid",
+          "rules": "The items most relevant to the user, strongest matches first.",
+          "preview": [
+            "card",
+            "card",
+            "card"
+          ],
+          "seeds": {
+            "card": {
+              "title": "Lightsaber Combat Training",
+              "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
+              "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+              "callToAction": "Begin Training"
+            }
+          }
+        }
+      ],
+      "page": [
+        {
+          "kind": "director",
+          "face": "page",
+          "limit": 1
+        }
+      ]
+    },
+    "preview": {
+      "grid": [
+        "card",
+        "card",
+        "card"
+      ]
+    },
     "root": {
       "type": "Box",
       "style": {
@@ -139,7 +160,7 @@
                   "select": {
                     "from": "all",
                     "where": {
-                      "field": "view",
+                      "field": "state",
                       "eq": "grid"
                     }
                   }

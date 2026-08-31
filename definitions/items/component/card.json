@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "card",
-  "fingerprint": "51ac55f5921c310d",
+  "fingerprint": "7a822084aa32183f",
   "bundle": "design-system",
   "title": "card",
   "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
@@ -19,29 +19,30 @@
     "props": {
       "title": {
         "type": "string",
+        "description": "The item's name, one line, under the image.",
         "input": true,
         "default": "Lightsaber Combat Training"
       },
       "description": {
         "type": "string",
+        "description": "One or two sentences saying what the item is. Plain text, never markdown.",
         "input": true,
         "default": "Master the seven forms of lightsaber combat with guidance from Jedi Masters."
       },
       "image": {
         "type": "string",
+        "description": "The picture across the top of the card. A URL the platform can fetch.",
         "input": true,
         "default": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg"
       },
       "callToAction": {
         "type": "string",
+        "description": "The words on the button, two to four of them, naming the action.",
         "input": true,
         "default": "Begin Training"
       }
     },
-    "state": {
-      "view": "grid",
-      "step": "detail"
-    },
+    "kind": "component",
     "root": {
       "type": "Box",
       "style": {
@@ -51,7 +52,7 @@
       "children": [
         {
           "type": "Switch",
-          "on": "view",
+          "on": "state",
           "cases": {
             "grid": {
               "type": "Button",
@@ -59,7 +60,7 @@
                 "type": "setValue",
                 "values": [
                   {
-                    "key": "view",
+                    "key": "state",
                     "value": "page"
                   }
                 ]
@@ -201,7 +202,7 @@
                             "type": "setValue",
                             "values": [
                               {
-                                "key": "view",
+                                "key": "state",
                                 "value": "grid"
                               }
                             ]
@@ -389,7 +390,7 @@
                             "type": "setValue",
                             "values": [
                               {
-                                "key": "view",
+                                "key": "state",
                                 "value": "grid"
                               }
                             ]
@@ -555,7 +556,7 @@
                             "type": "setValue",
                             "values": [
                               {
-                                "key": "view",
+                                "key": "state",
                                 "value": "grid"
                               }
                             ]
@@ -700,7 +701,7 @@
                 "type": "setValue",
                 "values": [
                   {
-                    "key": "view",
+                    "key": "state",
                     "value": "page"
                   }
                 ]
@@ -791,7 +792,6 @@
         }
       ]
     },
-    "kind": "component",
     "publicStates": [
       "grid",
       "page"
@@ -799,22 +799,28 @@
     "initialView": "grid",
     "stateTree": [
       {
-        "name": "grid"
+        "name": "grid",
+        "layout": "layouts/grid"
       },
       {
         "name": "page",
+        "layout": "layouts/page",
         "on": "step",
         "states": [
           {
             "name": "detail",
-            "layout": "page-detail"
+            "layout": "layouts/page-detail"
           },
           {
             "name": "thanks",
-            "layout": "page-thanks"
+            "layout": "layouts/page-thanks"
           }
         ]
       }
-    ]
+    ],
+    "state": {
+      "state": "grid",
+      "step": "detail"
+    }
   }
 }

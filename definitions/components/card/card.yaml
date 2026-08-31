@@ -12,18 +12,22 @@ whenToUse: Present a single rich item as an upright stacked card — an image on
 props:
   title:
     type: string
+    description: "The item's name, one line, under the image."
     input: true
     default: Lightsaber Combat Training
   description:
     type: string
+    description: "One or two sentences saying what the item is. Plain text, never markdown."
     input: true
     default: Master the seven forms of lightsaber combat with guidance from Jedi Masters.
   image:
     type: string
+    description: "The picture across the top of the card. A URL the platform can fetch."
     input: true
     default: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
   callToAction:
     type: string
+    description: "The words on the button, two to four of them, naming the action."
     input: true
     default: Begin Training
 # THE STANDARD FACE VOCABULARY (ruled 2026-08-28, doc §5d): `grid` is the compact
@@ -34,29 +38,14 @@ props:
 # `page` carries a private `step` axis (detail → thanks) as the design-system
 # demonstrator of sub-states: the CTA acknowledges on `thanks`, Back returns.
 # Steps are this component's own business; the app never moves between them.
-state:
-  view:
+states:
+  grid:
+    layout: layouts/grid
+  page:
+    layout: layouts/page
+    on: step
     states:
-      grid: {}
-      page:
-        on: step
-        states:
-          detail:
-            layout: page-detail
-          thanks:
-            layout: page-thanks
-root:
-  type: Box
-  style:
-    width: full
-    container: inline-size
-  children:
-    - type: Switch
-      on: view
-      cases:
-        grid:
-          $include: layouts/grid
-        page:
-          $include: layouts/page
-        default:
-          $include: layouts/grid
+      detail:
+        layout: layouts/page-detail
+      thanks:
+        layout: layouts/page-thanks

@@ -7,12 +7,15 @@ whenToUse: A hero / background image that fills its container with subtle motion
 props:
   src:
     type: string
+    description: "The picture that fills the frame. A URL the platform can fetch."
     default: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
   alt:
     type: string
+    description: "What the picture shows, for anyone who cannot see it."
     default: ""
   overlay:
     type: boolean
+    description: "True to darken the image so words laid over it stay readable."
     default: true
 root:
   type: Box

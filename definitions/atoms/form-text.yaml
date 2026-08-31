@@ -30,19 +30,26 @@ whenToUse: "Collect one line of text a person types or confirms: a name, an emai
 props:
   label:
     type: string
-    default: Label
     preview: Full legal name
+    default: Label
   value:
     type: string
-    default: ""
+    description: >-
+      Propose this value ONLY from what the applicant's profile, the deal, or a
+      document they uploaded actually states. Never invent it, never infer it from a
+      similar field, and leave it out when nothing states it. An empty field is
+      correct and the applicant will fill it; a guessed one is a defect they may
+      confirm without noticing.
+    maxLength: 120
+    optional: true
     preview: Amelia Hartley
+    default: ""
   placeholder:
     type: string
-    default: ""
     preview: As it appears on your passport
+    default: ""
   help:
     type: string
-    default: ""
     preview: We check this against your identity documents.
   # Where a proposed value came from, in the reader's words: 'From your profile',
   # 'From the passport you uploaded'. Empty when nobody has proposed anything, which is
@@ -50,14 +57,15 @@ props:
   # WHETHER THE STEP CAN ADVANCE WITHOUT IT. Some answers are compulsory and some are not,
   # and a person deserves to know which before they start typing rather than when a button
   # refuses them. The resolver reads the same flag to decide when a step is complete.
+    default: ""
   required:
     type: boolean
-    default: false
     preview: true
+    default: false
   source:
     type: string
-    default: ""
     preview: From your profile
+    default: ""
 root:
   type: Box
   style:
@@ -110,15 +118,6 @@ root:
       # is what lets a model propose a value at all. Per-field guidance belongs to the
       # authored form spec and reaches the schema through the compiler: an atom is one
       # file and cannot carry a different description for every field that composes it.
-      brief:
-        description: >-
-          Propose this value ONLY from what the applicant's profile, the deal, or a
-          document they uploaded actually states. Never invent it, never infer it from a
-          similar field, and leave it out when nothing states it. An empty field is
-          correct and the applicant will fill it; a guessed one is a defect they may
-          confirm without noticing.
-        optional: true
-        maxLength: 120
       # `value` is remapped by the host to the FIELD'S OWN key, which is what makes the
       # input write that key back: the input action writes `{ [boundField]: text }`.
       bind:
@@ -131,7 +130,7 @@ root:
         background: surface.base
         border: subtle
         radius: sm
-        padding: [ "2", "3" ]
+        padding: ["2", "3"]
         minHeight: "10"
     - type: Text
       visibleWhen: help

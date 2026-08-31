@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-text",
-  "fingerprint": "fcc4df48d45cdfc8",
+  "fingerprint": "168a7cfe6dad48d3",
   "bundle": "design-system",
   "title": "form-text",
   "description": "One collected value: a label, a single-line input, a help line, and a chip naming where a proposed value came from. The row a form is built out of.",
@@ -15,33 +15,36 @@
     "props": {
       "label": {
         "type": "string",
-        "default": "Label",
-        "preview": "Full legal name"
+        "preview": "Full legal name",
+        "default": "Label"
       },
       "value": {
         "type": "string",
-        "default": "",
-        "preview": "Amelia Hartley"
+        "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
+        "maxLength": 120,
+        "optional": true,
+        "preview": "Amelia Hartley",
+        "default": ""
       },
       "placeholder": {
         "type": "string",
-        "default": "",
-        "preview": "As it appears on your passport"
+        "preview": "As it appears on your passport",
+        "default": ""
       },
       "help": {
         "type": "string",
-        "default": "",
-        "preview": "We check this against your identity documents."
+        "preview": "We check this against your identity documents.",
+        "default": ""
       },
       "required": {
         "type": "boolean",
-        "default": false,
-        "preview": true
+        "preview": true,
+        "default": false
       },
       "source": {
         "type": "string",
-        "default": "",
-        "preview": "From your profile"
+        "preview": "From your profile",
+        "default": ""
       }
     },
     "root": {
@@ -109,11 +112,6 @@
         {
           "type": "Input",
           "autoComplete": "off",
-          "brief": {
-            "description": "Propose this value ONLY from what the applicant's profile, the deal, or a document they uploaded actually states. Never invent it, never infer it from a similar field, and leave it out when nothing states it. An empty field is correct and the applicant will fill it; a guessed one is a defect they may confirm without noticing.",
-            "optional": true,
-            "maxLength": 120
-          },
           "bind": {
             "placeholder": "placeholder",
             "value": "value"

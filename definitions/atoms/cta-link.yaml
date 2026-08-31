@@ -6,6 +6,8 @@ whenToUse: The standard outline CTA that opens a content link in a new tab. Comp
 props:
   link:
     type: string
+    description: "A markdown link to THIS item's own page. If you write it yourself: label 2-4 words, ALL CAPITALS, in the guest's language: [SEE THE ROOFTOP](its-url) — URL verbatim from the content, never invented."
+    hydrate: link
     default: "[LEARN MORE](https://example.com)"
 root:
   type: Box
@@ -16,17 +18,14 @@ root:
     background: surface.base
     border: heavy accent
     radius: full
-    padding: [ "3", "6", "0", "6" ]
-    margin: [ "1", "0", "0", "0" ]
+    padding: ["3", "6", "0", "6"]
+    margin: ["1", "0", "0", "0"]
     cursor: pointer
     transition: all 150ms ease
     hover:
       shadow: sm
   children:
     - type: Markdown
-      brief:
-        description: "A markdown link to THIS item's own page. If you write it yourself: label 2-4 words, ALL CAPITALS, in the guest's language: [SEE THE ROOFTOP](its-url) — URL verbatim from the content, never invented."
-        hydrate: link
       bind:
         value: link
       style:

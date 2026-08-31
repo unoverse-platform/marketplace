@@ -1,0 +1,58 @@
+unoverse: "1.0"
+# THE EMAIL FRAME'S FOOT — the sign-off, the reason-you-are-hearing-from-us line, and
+# the regulatory wording. Same reason as email-masthead: BPP's hardcoded "BPP
+# Education Group" could not ride a shelf template, so the words became data.
+type: component
+name: footer
+category: Communication
+nodeSize:
+  width: 600
+  height: 200
+props:
+  orgName:
+    type: string
+    description: "The organisation sending the email, as it should appear in the footer."
+    input: true
+    default: Your organisation
+  note:
+    type: string
+    description: "Why this person is receiving the email, in one line."
+    input: true
+    default: You are receiving this because you asked to hear from us.
+  legal:
+    type: string
+    description: "Any legal line the footer must carry, such as a registered address. Empty means none."
+    input: true
+    default: ""
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "2"
+    padding: [ "5", "6" ]
+    width: full
+  children:
+    - type: Text
+      bind:
+        value: orgName
+      style:
+        font: body.sm
+        weight: semibold
+        color: text.primary
+    - type: Text
+      visibleWhen: note
+      bind:
+        value: note
+      style:
+        font: body.sm
+        lineHeight: snug
+        color: text.secondary
+    # COMPOSED, never hand-rolled: `fine-print` already owns what legal wording looks
+    # like (quieter, smaller, its own top rule) and it is briefed to REPRODUCE the
+    # source rather than rewrite it. `props` maps the atom's own `body` field onto
+    # this component's `legal`.
+    - type: Ref
+      ref: fine-print
+      visibleWhen: legal
+      props:
+        body: legal

@@ -15,11 +15,13 @@ props:
   # latched face is authorable without a live run.
   latched:
     type: boolean
+    description: "True when the bar is pinned to one component, so what is typed goes there."
     default: false
     preview: true
     input: true
   latchTitle:
     type: string
+    description: "The name of the component the bar is pinned to, shown to the person typing."
     default: ""
     preview: Perfect Day
     input: true

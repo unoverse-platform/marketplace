@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "key-facts",
-  "fingerprint": "5a2b574c91de4589",
+  "fingerprint": "da31a4a5263ed1ea",
   "bundle": "design-system",
   "title": "key-facts",
   "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -15,6 +15,9 @@
     "props": {
       "facts": {
         "type": "array",
+        "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
+        "minItems": 2,
+        "maxItems": 4,
         "default": [
           {
             "label": "Included",
@@ -31,16 +34,29 @@
             "value": "1",
             "note": "at no cost"
           }
-        ]
+        ],
+        "items": {
+          "label": {
+            "type": "string",
+            "description": "What the figure counts, in the source's own words. Two or three words.",
+            "maxLength": 28
+          },
+          "value": {
+            "type": "string",
+            "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
+            "maxLength": 24
+          },
+          "qualifier": {
+            "type": "string",
+            "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
+            "maxLength": 72,
+            "optional": true
+          }
+        }
       }
     },
     "root": {
       "type": "Each",
-      "brief": {
-        "description": "The figures, in the order the source states them. Every value is quoted from the source, never calculated, converted or rounded, and never invented to fill the row out.",
-        "minItems": 2,
-        "maxItems": 4
-      },
       "bind": {
         "items": "facts"
       },
@@ -65,10 +81,6 @@
         "children": [
           {
             "type": "Text",
-            "brief": {
-              "description": "What the figure counts, in the source's own words. Two or three words.",
-              "maxLength": 28
-            },
             "bind": {
               "value": "label"
             },
@@ -81,10 +93,6 @@
           },
           {
             "type": "Text",
-            "brief": {
-              "description": "The figure exactly as the source states it, with its unit or symbol: '18%', 'SAR 750', '29 million'. Never a phrase, never a clause. Move a modifier like 'more than' or 'up to' into the qualifier rather than shortening the figure to fit: a truncated number is WRONG, where a longer qualifier is merely longer.",
-              "maxLength": 24
-            },
             "bind": {
               "value": "value"
             },
@@ -97,11 +105,6 @@
           },
           {
             "type": "Text",
-            "brief": {
-              "description": "The condition or period the figure carries, short. Empty when the source attaches none. It must be a COMPLETE phrase: if it will not fit, drop words until it does ('ATMs worldwide'), never stop mid-phrase ('ATMs and financial institutions within the King').",
-              "optional": true,
-              "maxLength": 72
-            },
             "visibleWhen": "qualifier",
             "bind": {
               "value": "qualifier"
