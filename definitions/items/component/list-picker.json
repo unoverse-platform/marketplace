@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "list-picker",
-  "fingerprint": "1e71c93758a6bb3c",
+  "fingerprint": "15a21c4858311104",
   "bundle": "design-system",
   "title": "list-picker",
   "description": "Vertical list of selectable rows — each an optional thumbnail with a title and supporting subtitle — under an optional heading. One tap selects a row.",
@@ -102,7 +102,7 @@
             "direction": "column",
             "gap": "1.5"
           },
-          "template": {
+          "item": {
             "type": "Button",
             "action": "select",
             "style": {

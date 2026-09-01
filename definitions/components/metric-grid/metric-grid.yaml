@@ -68,7 +68,7 @@ root:
       style:
         columns: "2"
         gap: "4"
-      template:
+      item:
         type: Box
         style:
           direction: column

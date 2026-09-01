@@ -145,7 +145,7 @@ root:
         direction: column
         gap: "2"
         width: full
-      template:
+      item:
         type: Ref
         ref: choice-row
         props:

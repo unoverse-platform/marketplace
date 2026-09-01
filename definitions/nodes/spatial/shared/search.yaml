@@ -40,8 +40,11 @@ call:
     # server treats as "do not record" rather than as an error.
     userId: "return scope.userId"
 
-    # PASSED THROUGH, NEVER COERCED. Each is `config.x` and nothing more, which is exactly
-    # what the retired node did (`includeMcps: config?.includeMcps`).
+    # PASSED THROUGH, NEVER COERCED — and NARROWABLE per call (2026-09-01, owner-ruled for
+    # the template query lane): a caller may pass a flag as `false` to see LESS than the
+    # config allows, never more. `params.x === false` is the ONLY value honoured; anything
+    # else (true, missing, junk) falls through to config, so the author's panel remains the
+    # ceiling and a model cannot widen its own result set.
     #
     # Still `config.x` after these became WIRABLE (2026-08-13, see config.yaml's header): the
     # workflow may now decide any of them PER RUN through `ui:field: template`, but it does so
@@ -56,12 +59,12 @@ call:
     #
     # `false` is still SENT: resolveBody drops undefined and "", not false, so a deliberately
     # disabled type stays disabled.
-    includeImages: "return config.includeImages"
-    includeNeeds: "return config.includeNeeds"
-    includeServices: "return config.includeServices"
-    includeActions: "return config.includeActions"
-    includeSkills: "return config.includeSkills"
-    includeMcps: "return config.includeMcps"
+    includeImages: "return params.includeImages === false ? false : config.includeImages"
+    includeNeeds: "return params.includeNeeds === false ? false : config.includeNeeds"
+    includeServices: "return params.includeServices === false ? false : config.includeServices"
+    includeActions: "return params.includeActions === false ? false : config.includeActions"
+    includeSkills: "return params.includeSkills === false ? false : config.includeSkills"
+    includeMcps: "return params.includeMcps === false ? false : config.includeMcps"
 
     # OPTIONAL source scope (migration 021): restrict the whole search to rows from ONE
     # source ("only this doc's needs"). Author-set, never a default — unset resolves to

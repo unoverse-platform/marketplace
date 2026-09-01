@@ -1,0 +1,75 @@
+# THE WRITTEN PASSAGE — a template-local part (§9b rule 7): a FLAT file, no manifest
+# (a local part is never discovered) and no state tree (the face IS the filename).
+#
+# EVERY PROP CARRIES ITS BRIEF, because the prop IS the brief (AUTHORING §3b). The
+# description is what the writer is told and the cap is what the referee enforces —
+# which is why a written part can be checked at all, and a prose instruction cannot.
+unoverse: "1.0"
+type: component
+name: statement
+props:
+  eyebrow:
+    type: string
+    input: true
+    optional: true
+    maxLength: 32
+    description: "Two or three words above the heading saying what this is about. Omit it rather than repeating the heading."
+    preview: The day ahead
+  heading:
+    type: string
+    input: true
+    maxLength: 80
+    description: "The point of this passage in one line, in the reader's own language rather than a title."
+    preview: A day built for shared laughter
+  body:
+    type: string
+    input: true
+    maxLength: 400
+    description: "Two or three sentences making the point. Plain prose — no lists, no headings, nothing the reader has to parse."
+    preview: Morning thrills while the light holds, a long lunch by the water, and an evening slow enough to talk through. Everything close enough to walk between.
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "3"
+    width: full
+    # A READING MEASURE, not the full width. Prose set across a whole page is unreadable
+    # however wide the page is, so the passage caps itself where a line stops being
+    # comfortable. It lives HERE rather than in a wrapper: a template that existed only to
+    # set a width is a thing nobody can explain in six months.
+    maxWidth: reading
+    margin: [ "0", auto ]
+  children:
+    - type: Box
+      visibleWhen: eyebrow
+      style:
+        direction: column
+        gap: "2"
+      children:
+        # The accent rule — one stroke of the org's primary, so a rebrand carries it.
+        - type: Box
+          style:
+            width: "8"
+            height: "1"
+            radius: full
+            background: action.primary
+        - type: Text
+          bind: { value: eyebrow }
+          style:
+            font: label
+            weight: bold
+            color: text.tertiary
+            lineHeight: tight
+    - type: Text
+      skeleton: true
+      bind: { value: heading }
+      style:
+        font: headline.md
+        weight: bold
+        color: text.primary
+        lineHeight: tight
+    - type: Markdown
+      bind: { value: body }
+      style:
+        font: body.lg
+        color: text.secondary

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "markdown-renderer",
-  "fingerprint": "d7a24229f2d6f86d",
+  "fingerprint": "656fd6e0c0968210",
   "bundle": "design-system",
   "title": "markdown-renderer",
   "description": "The Universal Markdown renderer: draws a markdown string (headings, lists, tables, code, links, images) or a typed-block document (prose, key facts, steps, lists, tables, fine print — tabbed when its groups call for it), under an optional titled header with a streaming indicator.",
@@ -1014,7 +1014,7 @@
                     "gap": "6",
                     "width": "full"
                   },
-                  "template": {
+                  "item": {
                     "type": "Box",
                     "style": {
                       "direction": "column",
@@ -1069,7 +1069,7 @@
                               "gap": "4",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Box",
                               "style": {
                                 "direction": "row",
@@ -1153,7 +1153,7 @@
                               "gap": "3",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Box",
                               "style": {
                                 "direction": "column",
@@ -1216,7 +1216,7 @@
                               "gap": "3",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Box",
                               "style": {
                                 "direction": "row",
@@ -1289,7 +1289,7 @@
                               "gap": "4",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Box",
                               "style": {
                                 "direction": "column",
@@ -1382,7 +1382,7 @@
                                       "width": "full",
                                       "gap": "4"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Text",
                                       "bind": {
                                         "value": "value"
@@ -1407,7 +1407,7 @@
                                   "direction": "column",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Each",
                                   "bind": {
                                     "items": "value"
@@ -1422,7 +1422,7 @@
                                     ],
                                     "borderBottom": "thin subtle"
                                   },
-                                  "template": {
+                                  "item": {
                                     "type": "Text",
                                     "bind": {
                                       "value": "value"
@@ -1964,7 +1964,7 @@
                                   "gap": "2",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Button",
                                   "action": "select",
                                   "style": {
@@ -3168,7 +3168,7 @@
                         "gap": "6",
                         "width": "full"
                       },
-                      "template": {
+                      "item": {
                         "type": "Box",
                         "style": {
                           "direction": "column",
@@ -3223,7 +3223,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -3307,7 +3307,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -3370,7 +3370,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -3443,7 +3443,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -3536,7 +3536,7 @@
                                           "width": "full",
                                           "gap": "4"
                                         },
-                                        "template": {
+                                        "item": {
                                           "type": "Text",
                                           "bind": {
                                             "value": "value"
@@ -3561,7 +3561,7 @@
                                       "direction": "column",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Each",
                                       "bind": {
                                         "items": "value"
@@ -3576,7 +3576,7 @@
                                         ],
                                         "borderBottom": "thin subtle"
                                       },
-                                      "template": {
+                                      "item": {
                                         "type": "Text",
                                         "bind": {
                                           "value": "value"
@@ -4118,7 +4118,7 @@
                                       "gap": "2",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Button",
                                       "action": "select",
                                       "style": {
@@ -5072,7 +5072,7 @@
                         "gap": "6",
                         "width": "full"
                       },
-                      "template": {
+                      "item": {
                         "type": "Box",
                         "style": {
                           "direction": "column",
@@ -5127,7 +5127,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -5211,7 +5211,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -5274,7 +5274,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -5347,7 +5347,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -5440,7 +5440,7 @@
                                           "width": "full",
                                           "gap": "4"
                                         },
-                                        "template": {
+                                        "item": {
                                           "type": "Text",
                                           "bind": {
                                             "value": "value"
@@ -5465,7 +5465,7 @@
                                       "direction": "column",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Each",
                                       "bind": {
                                         "items": "value"
@@ -5480,7 +5480,7 @@
                                         ],
                                         "borderBottom": "thin subtle"
                                       },
-                                      "template": {
+                                      "item": {
                                         "type": "Text",
                                         "bind": {
                                           "value": "value"
@@ -6022,7 +6022,7 @@
                                       "gap": "2",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Button",
                                       "action": "select",
                                       "style": {
@@ -6976,7 +6976,7 @@
                         "gap": "6",
                         "width": "full"
                       },
-                      "template": {
+                      "item": {
                         "type": "Box",
                         "style": {
                           "direction": "column",
@@ -7031,7 +7031,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -7115,7 +7115,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -7178,7 +7178,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -7251,7 +7251,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -7344,7 +7344,7 @@
                                           "width": "full",
                                           "gap": "4"
                                         },
-                                        "template": {
+                                        "item": {
                                           "type": "Text",
                                           "bind": {
                                             "value": "value"
@@ -7369,7 +7369,7 @@
                                       "direction": "column",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Each",
                                       "bind": {
                                         "items": "value"
@@ -7384,7 +7384,7 @@
                                         ],
                                         "borderBottom": "thin subtle"
                                       },
-                                      "template": {
+                                      "item": {
                                         "type": "Text",
                                         "bind": {
                                           "value": "value"
@@ -7926,7 +7926,7 @@
                                       "gap": "2",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Button",
                                       "action": "select",
                                       "style": {
@@ -8880,7 +8880,7 @@
                         "gap": "6",
                         "width": "full"
                       },
-                      "template": {
+                      "item": {
                         "type": "Box",
                         "style": {
                           "direction": "column",
@@ -8935,7 +8935,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -9019,7 +9019,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -9082,7 +9082,7 @@
                                   "gap": "3",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "row",
@@ -9155,7 +9155,7 @@
                                   "gap": "4",
                                   "width": "full"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Box",
                                   "style": {
                                     "direction": "column",
@@ -9248,7 +9248,7 @@
                                           "width": "full",
                                           "gap": "4"
                                         },
-                                        "template": {
+                                        "item": {
                                           "type": "Text",
                                           "bind": {
                                             "value": "value"
@@ -9273,7 +9273,7 @@
                                       "direction": "column",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Each",
                                       "bind": {
                                         "items": "value"
@@ -9288,7 +9288,7 @@
                                         ],
                                         "borderBottom": "thin subtle"
                                       },
-                                      "template": {
+                                      "item": {
                                         "type": "Text",
                                         "bind": {
                                           "value": "value"
@@ -9830,7 +9830,7 @@
                                       "gap": "2",
                                       "width": "full"
                                     },
-                                    "template": {
+                                    "item": {
                                       "type": "Button",
                                       "action": "select",
                                       "style": {
@@ -10788,7 +10788,7 @@
                 "gap": "6",
                 "width": "full"
               },
-              "template": {
+              "item": {
                 "type": "Box",
                 "style": {
                   "direction": "column",
@@ -10843,7 +10843,7 @@
                           "gap": "4",
                           "width": "full"
                         },
-                        "template": {
+                        "item": {
                           "type": "Box",
                           "style": {
                             "direction": "row",
@@ -10927,7 +10927,7 @@
                           "gap": "3",
                           "width": "full"
                         },
-                        "template": {
+                        "item": {
                           "type": "Box",
                           "style": {
                             "direction": "column",
@@ -10990,7 +10990,7 @@
                           "gap": "3",
                           "width": "full"
                         },
-                        "template": {
+                        "item": {
                           "type": "Box",
                           "style": {
                             "direction": "row",
@@ -11063,7 +11063,7 @@
                           "gap": "4",
                           "width": "full"
                         },
-                        "template": {
+                        "item": {
                           "type": "Box",
                           "style": {
                             "direction": "column",
@@ -11156,7 +11156,7 @@
                                   "width": "full",
                                   "gap": "4"
                                 },
-                                "template": {
+                                "item": {
                                   "type": "Text",
                                   "bind": {
                                     "value": "value"
@@ -11181,7 +11181,7 @@
                               "direction": "column",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Each",
                               "bind": {
                                 "items": "value"
@@ -11196,7 +11196,7 @@
                                 ],
                                 "borderBottom": "thin subtle"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Text",
                                 "bind": {
                                   "value": "value"
@@ -11738,7 +11738,7 @@
                               "gap": "2",
                               "width": "full"
                             },
-                            "template": {
+                            "item": {
                               "type": "Button",
                               "action": "select",
                               "style": {

@@ -93,7 +93,7 @@ root:
         width: full
         height: "40"
         borderBottom: strong
-      template:
+      item:
         type: Box
         style:
           flex: "1"
@@ -136,7 +136,7 @@ root:
         justify: space-between
         gap: "3"
         width: full
-      template:
+      item:
         type: Box
         style:
           flex: "1"

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "streaming-text",
-  "fingerprint": "f09aaeed732cb3e0",
+  "fingerprint": "4120f61d7090bc7d",
   "bundle": "design-system",
   "title": "streaming-text",
   "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -206,7 +206,7 @@
               "0"
             ]
           },
-          "template": {
+          "item": {
             "type": "Button",
             "action": "ask",
             "style": {

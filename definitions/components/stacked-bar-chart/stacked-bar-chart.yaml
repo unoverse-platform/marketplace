@@ -93,7 +93,7 @@ root:
             direction: row
             align: center
             gap: "4"
-          template:
+          item:
             type: Box
             style:
               direction: row
@@ -123,7 +123,7 @@ root:
         width: full
         height: "40"
         borderBottom: strong
-      template:
+      item:
         type: Each
         bind:
           items: segments
@@ -135,7 +135,7 @@ root:
           overflow: hidden
           radiusTopLeft: sm
           radiusTopRight: sm
-        template:
+        item:
           type: Box
           style:
             width: full
@@ -149,7 +149,7 @@ root:
         justify: space-between
         gap: "4"
         width: full
-      template:
+      item:
         type: Box
         style:
           flex: "1"

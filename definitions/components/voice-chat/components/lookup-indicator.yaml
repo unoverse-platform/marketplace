@@ -17,7 +17,7 @@ children:
       direction: row
       align: center
       gap: "1"
-    template:
+    item:
       type: Box
       style:
         width: "1.5"

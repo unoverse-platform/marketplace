@@ -30,7 +30,7 @@ root:
     direction: column
     gap: "4"
     width: full
-  template:
+  item:
     type: Box
     style:
       direction: column

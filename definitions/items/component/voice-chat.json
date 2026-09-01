@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "voice-chat",
-  "fingerprint": "767fd400dec26484",
+  "fingerprint": "ae9840892914ec68",
   "bundle": "design-system",
   "title": "Voice Call",
   "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
@@ -411,7 +411,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",
@@ -681,7 +681,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",
@@ -828,7 +828,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",
@@ -1278,7 +1278,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",
@@ -1548,7 +1548,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",
@@ -1695,7 +1695,7 @@
                                 "align": "center",
                                 "gap": "1"
                               },
-                              "template": {
+                              "item": {
                                 "type": "Box",
                                 "style": {
                                   "width": "1.5",

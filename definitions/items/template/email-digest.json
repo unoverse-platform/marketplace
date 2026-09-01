@@ -1,11 +1,11 @@
 {
   "kind": "template",
   "name": "email-digest",
-  "fingerprint": "105b52b88cfc550b",
+  "fingerprint": "0ad693d8f0401c87",
   "bundle": "design-system",
   "title": "Email Digest",
   "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
-  "category": "Communication",
+  "category": "Arrangement",
   "definition": {
     "unoverse": "1.0",
     "name": "email-digest",
@@ -13,7 +13,7 @@
     "title": "Email Digest",
     "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
     "whenToUse": "Compose an email, digest or announcement for one reader: a branded frame, a personalised subject and message, a handful of the items most relevant to them, and a signature.",
-    "category": "Communication",
+    "category": "Arrangement",
     "version": "1.0.0",
     "spatial": true,
     "layouts": {

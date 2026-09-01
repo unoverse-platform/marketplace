@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "table",
-  "fingerprint": "701317a65e43b810",
+  "fingerprint": "1aedef6c63ca9df9",
   "bundle": "design-system",
   "title": "table",
   "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
@@ -131,7 +131,7 @@
             "direction": "column",
             "width": "full"
           },
-          "template": {
+          "item": {
             "type": "Box",
             "style": {
               "direction": "row",

@@ -34,7 +34,7 @@ root:
     gap: "4"
     overflow: auto
     padding: "4"
-  template:
+  item:
     type: Box
     style:
       width: "75"

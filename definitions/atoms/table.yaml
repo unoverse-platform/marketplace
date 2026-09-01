@@ -55,7 +55,7 @@ root:
             direction: row
             width: full
             gap: "4"
-          template:
+          item:
             type: Text
             bind:
               value: value
@@ -71,7 +71,7 @@ root:
       style:
         direction: column
         width: full
-      template:
+      item:
         type: Each
         bind:
           items: value
@@ -81,7 +81,7 @@ root:
           gap: "4"
           padding: ["3", "4"]
           borderBottom: thin subtle
-        template:
+        item:
           type: Text
           bind:
             value: value

@@ -1,0 +1,106 @@
+{
+  "kind": "component",
+  "name": "statement",
+  "fingerprint": "943cd4f1c6758ea0",
+  "bundle": "design-system",
+  "title": "statement",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "statement",
+    "props": {
+      "eyebrow": {
+        "type": "string",
+        "input": true,
+        "optional": true,
+        "maxLength": 32,
+        "description": "Two or three words above the heading saying what this is about. Omit it rather than repeating the heading.",
+        "preview": "The day ahead"
+      },
+      "heading": {
+        "type": "string",
+        "input": true,
+        "maxLength": 80,
+        "description": "The point of this passage in one line, in the reader's own language rather than a title.",
+        "preview": "A day built for shared laughter"
+      },
+      "body": {
+        "type": "string",
+        "input": true,
+        "maxLength": 400,
+        "description": "Two or three sentences making the point. Plain prose — no lists, no headings, nothing the reader has to parse.",
+        "preview": "Morning thrills while the light holds, a long lunch by the water, and an evening slow enough to talk through. Everything close enough to walk between."
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "gap": "3",
+        "width": "full",
+        "maxWidth": "reading",
+        "margin": [
+          "0",
+          "auto"
+        ]
+      },
+      "children": [
+        {
+          "type": "Box",
+          "visibleWhen": "eyebrow",
+          "style": {
+            "direction": "column",
+            "gap": "2"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "width": "8",
+                "height": "1",
+                "radius": "full",
+                "background": "action.primary"
+              }
+            },
+            {
+              "type": "Text",
+              "bind": {
+                "value": "eyebrow"
+              },
+              "style": {
+                "font": "label",
+                "weight": "bold",
+                "color": "text.tertiary",
+                "lineHeight": "tight"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "skeleton": true,
+          "bind": {
+            "value": "heading"
+          },
+          "style": {
+            "font": "headline.md",
+            "weight": "bold",
+            "color": "text.primary",
+            "lineHeight": "tight"
+          }
+        },
+        {
+          "type": "Markdown",
+          "bind": {
+            "value": "body"
+          },
+          "style": {
+            "font": "body.lg",
+            "color": "text.secondary"
+          }
+        }
+      ]
+    },
+    "kind": "component",
+    "file": "statement.yaml"
+  }
+}

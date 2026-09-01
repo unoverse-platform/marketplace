@@ -61,7 +61,7 @@ root:
       style:
         direction: column
         gap: "1.5"
-      template:
+      item:
         type: Button
         action: select
         style:

@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "steps",
-  "fingerprint": "148522a48e8d8ee1",
+  "fingerprint": "89c690377a6a9935",
   "bundle": "design-system",
   "title": "steps",
   "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -57,7 +57,7 @@
         "gap": "4",
         "width": "full"
       },
-      "template": {
+      "item": {
         "type": "Box",
         "style": {
           "direction": "row",

@@ -206,7 +206,7 @@ root:
             direction: column
             gap: "6"
             width: full
-          template:
+          item:
             $include: components/section
     - type: Text
       visibleWhen: empty

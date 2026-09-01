@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "stat-card",
-  "fingerprint": "df90659ae32d1e5f",
+  "fingerprint": "f4dd6dbded118dab",
   "bundle": "design-system",
   "title": "stat-card",
   "description": "Single hero KPI card: a label, a large headline value, a colour-coded period-over-period delta, and a compact bar trend. Composed from Box + Each + {{pct}}-bound bars (no chart primitive); delta sentiment (deltaPositive/deltaNegative/deltaNeutral) and the trend proportions are resolved by the data producer.",
@@ -208,7 +208,7 @@
             "width": "full",
             "height": "10"
           },
-          "template": {
+          "item": {
             "type": "Box",
             "style": {
               "flex": "1",

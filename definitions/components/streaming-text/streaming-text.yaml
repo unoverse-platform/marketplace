@@ -148,7 +148,7 @@ root:
         gap: "1"
         width: full
         margin: [ "2", "0", "0", "0" ]
-      template:
+      item:
         type: Button
         action: ask
         style:

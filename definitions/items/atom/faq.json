@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "faq",
-  "fingerprint": "e3836348cbb877dc",
+  "fingerprint": "3d3085482edc4cbd",
   "bundle": "design-system",
   "title": "faq",
   "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -48,7 +48,7 @@
         "gap": "4",
         "width": "full"
       },
-      "template": {
+      "item": {
         "type": "Box",
         "style": {
           "direction": "column",

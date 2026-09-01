@@ -1,5 +1,5 @@
 {
-  "release": "0.1.76",
+  "release": "0.1.77",
   "items": [
     {
       "kind": "component",
@@ -13,7 +13,7 @@
     {
       "kind": "component",
       "name": "bar-chart",
-      "fingerprint": "dd143c08451afb83",
+      "fingerprint": "702ab7a095376823",
       "bundle": "design-system",
       "title": "bar-chart",
       "description": "Interactive vertical bar chart of labelled values. Composed from Box + Each + Button (NOT a chart primitive): each bar is a Button whose height binds to a producer-supplied proportion (`pct`, e.g. \"72%\"); tapping a bar writes the selection to the store (cross-filter). Value labels sit on each bar, months below, on a baseline. Colour is a served token.",
@@ -22,7 +22,7 @@
     {
       "kind": "component",
       "name": "bar-list",
-      "fingerprint": "4e0f5bb948af800a",
+      "fingerprint": "ea39a7d80c821ffd",
       "bundle": "design-system",
       "title": "bar-list",
       "description": "Ranked list of horizontal bars — each row a label, a track with a {{pct}}-bound fill, and a value. Composed from Box + Each (no chart primitive); the fill proportions are supplied by the data producer.",
@@ -40,7 +40,7 @@
     {
       "kind": "component",
       "name": "card-carousel",
-      "fingerprint": "b876f7a9ca3c5ea2",
+      "fingerprint": "22698e1e09023131",
       "bundle": "design-system",
       "title": "card-carousel",
       "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
@@ -85,7 +85,7 @@
     {
       "kind": "component",
       "name": "list-picker",
-      "fingerprint": "1e71c93758a6bb3c",
+      "fingerprint": "15a21c4858311104",
       "bundle": "design-system",
       "title": "list-picker",
       "description": "Vertical list of selectable rows — each an optional thumbnail with a title and supporting subtitle — under an optional heading. One tap selects a row.",
@@ -94,7 +94,7 @@
     {
       "kind": "component",
       "name": "markdown-renderer",
-      "fingerprint": "d7a24229f2d6f86d",
+      "fingerprint": "656fd6e0c0968210",
       "bundle": "design-system",
       "title": "markdown-renderer",
       "description": "The Universal Markdown renderer: draws a markdown string (headings, lists, tables, code, links, images) or a typed-block document (prose, key facts, steps, lists, tables, fine print — tabbed when its groups call for it), under an optional titled header with a streaming indicator.",
@@ -103,7 +103,7 @@
     {
       "kind": "component",
       "name": "metric-grid",
-      "fingerprint": "a5eb46e49671eaf1",
+      "fingerprint": "94f10a6de749369b",
       "bundle": "design-system",
       "title": "metric-grid",
       "description": "Grid of KPI tiles — each a labelled headline value with an optional prefix/suffix and icon, plus a colour-coded period-over-period delta (up/down/neutral). Sentiment and arrow glyph are resolved by the data producer (deltaPositive/deltaNegative/deltaNeutral + deltaArrow); the definition only composes them — no computation lives in the renderer.",
@@ -121,7 +121,7 @@
     {
       "kind": "component",
       "name": "stacked-bar-chart",
-      "fingerprint": "cc648ca22758e61c",
+      "fingerprint": "7ffb953c05ab8354",
       "bundle": "design-system",
       "title": "stacked-bar-chart",
       "description": "Stacked bar chart showing composition per category. Composed from a nested Box + Each (no chart primitive): each bar stacks segments whose heights bind to producer-supplied proportions ({{pct}}) and whose colours are served tokens bound per segment ({{color}}). A legend maps colours to series.",
@@ -130,7 +130,7 @@
     {
       "kind": "component",
       "name": "stat-card",
-      "fingerprint": "df90659ae32d1e5f",
+      "fingerprint": "f4dd6dbded118dab",
       "bundle": "design-system",
       "title": "stat-card",
       "description": "Single hero KPI card: a label, a large headline value, a colour-coded period-over-period delta, and a compact bar trend. Composed from Box + Each + {{pct}}-bound bars (no chart primitive); delta sentiment (deltaPositive/deltaNegative/deltaNeutral) and the trend proportions are resolved by the data producer.",
@@ -138,8 +138,15 @@
     },
     {
       "kind": "component",
+      "name": "statement",
+      "fingerprint": "943cd4f1c6758ea0",
+      "bundle": "design-system",
+      "title": "statement"
+    },
+    {
+      "kind": "component",
       "name": "streaming-text",
-      "fingerprint": "f09aaeed732cb3e0",
+      "fingerprint": "4120f61d7090bc7d",
       "bundle": "design-system",
       "title": "streaming-text",
       "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -148,7 +155,7 @@
     {
       "kind": "component",
       "name": "table",
-      "fingerprint": "701317a65e43b810",
+      "fingerprint": "1aedef6c63ca9df9",
       "bundle": "design-system",
       "title": "table",
       "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
@@ -166,7 +173,7 @@
     {
       "kind": "component",
       "name": "voice-chat",
-      "fingerprint": "767fd400dec26484",
+      "fingerprint": "ae9840892914ec68",
       "bundle": "design-system",
       "title": "Voice Call",
       "description": "The live voice-call experience, the assistant's avatar and every step of a call on one surface.",
@@ -296,7 +303,7 @@
     {
       "kind": "atom",
       "name": "faq",
-      "fingerprint": "e3836348cbb877dc",
+      "fingerprint": "3d3085482edc4cbd",
       "bundle": "design-system",
       "title": "faq",
       "description": "Question and answer pairs, each question set above its answer with a rule between pairs. Owns its full style, references tokens only.",
@@ -394,7 +401,7 @@
     {
       "kind": "atom",
       "name": "form-select",
-      "fingerprint": "ab20a2aa2f4de2e3",
+      "fingerprint": "ac7a29d2b5455874",
       "bundle": "design-system",
       "title": "form-select",
       "description": "One collected choice: a label, the options laid out as selectable rows, and a chip naming where a proposed value came from.",
@@ -429,7 +436,7 @@
     {
       "kind": "atom",
       "name": "key-facts",
-      "fingerprint": "da31a4a5263ed1ea",
+      "fingerprint": "ff712bcc21952e72",
       "bundle": "design-system",
       "title": "key-facts",
       "description": "A row of stated figures: each one a value with its label above and an optional qualifier beneath, on a bordered surface. Wraps to as many rows as the figures need. Owns its full style, references tokens only.",
@@ -438,7 +445,7 @@
     {
       "kind": "atom",
       "name": "list",
-      "fingerprint": "62062b42c4a86846",
+      "fingerprint": "ef4abeeff05308cd",
       "bundle": "design-system",
       "title": "list",
       "description": "An unordered list: a marker beside each item's title, with an optional line beneath it. Owns its full style, references tokens only.",
@@ -496,7 +503,7 @@
     {
       "kind": "atom",
       "name": "steps",
-      "fingerprint": "148522a48e8d8ee1",
+      "fingerprint": "89c690377a6a9935",
       "bundle": "design-system",
       "title": "steps",
       "description": "An ordered sequence: a numbered marker beside each step's name, with an optional line of detail beneath it. Owns its full style, references tokens only.",
@@ -505,7 +512,7 @@
     {
       "kind": "atom",
       "name": "table",
-      "fingerprint": "847b2ba9233be602",
+      "fingerprint": "d9fe87ed06c169a7",
       "bundle": "design-system",
       "title": "table",
       "description": "A two-dimensional table: a header row of column names above rows of cells, scrolling inside its own frame rather than widening its container. Owns its full style, references tokens only.",
@@ -530,11 +537,11 @@
     {
       "kind": "template",
       "name": "email-digest",
-      "fingerprint": "105b52b88cfc550b",
+      "fingerprint": "0ad693d8f0401c87",
       "bundle": "design-system",
       "title": "Email Digest",
       "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
-      "category": "Communication"
+      "category": "Arrangement"
     },
     {
       "kind": "template",
@@ -1381,7 +1388,7 @@
       "kind": "node",
       "name": "SpatialQuery",
       "pack": "spatial",
-      "fingerprint": "1afd3f62ee5ea93d",
+      "fingerprint": "9be61c22c20b665f",
       "title": "Spatial Query",
       "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
       "category": "Search",
@@ -1392,7 +1399,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "14f2a283b3ed2208",
+      "fingerprint": "f0722489897a8cd6",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "stacked-bar-chart",
-  "fingerprint": "cc648ca22758e61c",
+  "fingerprint": "7ffb953c05ab8354",
   "bundle": "design-system",
   "title": "stacked-bar-chart",
   "description": "Stacked bar chart showing composition per category. Composed from a nested Box + Each (no chart primitive): each bar stacks segments whose heights bind to producer-supplied proportions ({{pct}}) and whose colours are served tokens bound per segment ({{color}}). A legend maps colours to series.",
@@ -160,7 +160,7 @@
                 "align": "center",
                 "gap": "4"
               },
-              "template": {
+              "item": {
                 "type": "Box",
                 "style": {
                   "direction": "row",
@@ -206,7 +206,7 @@
             "height": "40",
             "borderBottom": "strong"
           },
-          "template": {
+          "item": {
             "type": "Each",
             "bind": {
               "items": "segments"
@@ -220,7 +220,7 @@
               "radiusTopLeft": "sm",
               "radiusTopRight": "sm"
             },
-            "template": {
+            "item": {
               "type": "Box",
               "style": {
                 "width": "full",
@@ -241,7 +241,7 @@
             "gap": "4",
             "width": "full"
           },
-          "template": {
+          "item": {
             "type": "Box",
             "style": {
               "flex": "1",

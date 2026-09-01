@@ -1,7 +1,7 @@
 {
   "kind": "atom",
   "name": "form-select",
-  "fingerprint": "ab20a2aa2f4de2e3",
+  "fingerprint": "ac7a29d2b5455874",
   "bundle": "design-system",
   "title": "form-select",
   "description": "One collected choice: a label, the options laid out as selectable rows, and a chip naming where a proposed value came from.",
@@ -182,7 +182,7 @@
             "gap": "2",
             "width": "full"
           },
-          "template": {
+          "item": {
             "type": "Ref",
             "ref": "choice-row",
             "props": {

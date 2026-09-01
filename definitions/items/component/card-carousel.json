@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "card-carousel",
-  "fingerprint": "b876f7a9ca3c5ea2",
+  "fingerprint": "22698e1e09023131",
   "bundle": "design-system",
   "title": "card-carousel",
   "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
@@ -54,7 +54,7 @@
         "overflow": "auto",
         "padding": "4"
       },
-      "template": {
+      "item": {
         "type": "Box",
         "style": {
           "width": "75",

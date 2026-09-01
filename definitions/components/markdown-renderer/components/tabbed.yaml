@@ -15,7 +15,7 @@ children:
       direction: column
       gap: "6"
       width: full
-    template:
+    item:
       $include: components/section
   - type: Box
     style:
@@ -177,7 +177,7 @@ children:
               direction: column
               gap: "6"
               width: full
-            template:
+            item:
               $include: components/section
           "1":
             type: Each
@@ -187,7 +187,7 @@ children:
               direction: column
               gap: "6"
               width: full
-            template:
+            item:
               $include: components/section
           "2":
             type: Each
@@ -197,7 +197,7 @@ children:
               direction: column
               gap: "6"
               width: full
-            template:
+            item:
               $include: components/section
           "3":
             type: Each
@@ -207,5 +207,5 @@ children:
               direction: column
               gap: "6"
               width: full
-            template:
+            item:
               $include: components/section

@@ -129,7 +129,7 @@ root:
         gap: "1"
         width: full
         height: "10"
-      template:
+      item:
         type: Box
         style:
           flex: "1"
