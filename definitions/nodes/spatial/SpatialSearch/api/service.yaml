@@ -1,4 +1,4 @@
-# THE FIVE TOOLS an attached agent gets. These are what the model reads when choosing a tool,
+# THE SIX TOOLS an attached agent gets. These are what the model reads when choosing a tool,
 # so their wording IS the routing: rephrasing them is a behaviour change, never a tidy-up.
 #
 # Trimmed 2026-08-24 (v2.1). They were transcribed verbatim from the retired SPATIAL_SCHEMA
@@ -46,6 +46,32 @@ discoverRelated:
   # Same card lane as findIntent above.
   renderComponents: "return response.results"
   returns: { $ref: search#lean }
+
+# THE DEPTH READ (2026-09-03). helpers.detailRow returns the record IN FULL — bodyCopy
+# included (owner-ruled: specific answers live in the copy) — stripping only image urls,
+# crawl bookkeeping and transport columns. Copy on ONE fetched item is not the readResult
+# failure (copy on EVERY row of EVERY search). See §The depth read in
+# docs/spatial/SPATIAL_SEARCH_GUIDE.md. Engine listener, same trust boundary as search.
+getDetail:
+  description: >-
+    Full record for ONE already-surfaced result: pass its universal_id and get the
+    complete copy and every attribute the lean row leaves out (fees, specs, durations,
+    terms). Required before answering a factual question — pick a service row, since
+    object_type="service" carries the copy and a "need" row does not. NOT a search: the
+    id must come from a result you already hold.
+  calls:
+    - name: entry
+      method: GET
+      url: >-
+        return scope.engineUrl + '/dictionary/entry/'
+          + encodeURIComponent(String(params.universal_id || '').trim())
+      transport: json
+      error:
+        when: "return !response || !response.universal_id"
+        message: >-
+          return 'getDetail: no entry for that universal_id — pass one from a search
+          result, unmodified'
+  returns: "return helpers.detailRow(response)"
 
 readSkill:
   description: >-

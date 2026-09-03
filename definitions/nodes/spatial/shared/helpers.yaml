@@ -39,10 +39,10 @@ helpers:
 
   # ONE SEARCH RESULT, projected. Used by findIntent and discoverRelated alike.
   #
-  # NO bodyCopy: the full authored copy stays SERVER-SIDE and never reaches a model. The
-  # platform dereferences a row on the card's behalf (getDetail, or a brief's `hydrate:`
-  # field) — the model only ever holds the universal_id. `readResult` used to hand the copy
-  # to the model directly and was removed for exactly that reason.
+  # NO bodyCopy on a SEARCH row: copy on every row of every search is what got `readResult`
+  # removed (~100k tokens a search). A model that needs an item's copy to ANSWER a specific
+  # question fetches that ONE item with getDetail (detailRow below carries it); to SHOW an
+  # item, the platform dereferences the universal_id (card lane, brief `hydrate:` field).
   searchRow:
     args: [r]
     body: >-
@@ -97,6 +97,57 @@ helpers:
     body: >-
       return ['tagline', 'shortDescription', 'introParagraph', 'callToAction', 'actionPrompt',
               'app']
+
+  # THE DEPTH READ, projected (getDetail, 2026-09-03). ONE record IN FULL — bodyCopy
+  # included — for the agent answering a specific question about a specific item ("how much
+  # is X?"): the answer lives in the copy (owner-ruled same day). This does NOT contradict
+  # the searchRow rule above: the readResult failure was copy riding EVERY row of EVERY
+  # search; one deliberately fetched item is the progressive load that fix pointed at.
+  #
+  # A STRIP-LIST, not a keep-list — the one deliberate inversion from searchRow. Facts vary
+  # by content type and cannot be enumerated up front: a keep-list would silently drop
+  # exactly the field the user is asking about, which is the whole reason this read exists.
+  # The junk IS enumerable, so it is what gets named:
+  #   primaryImage/images — ref-hydration: hasImage + the id is all the model needs
+  #   openGraph/jsonLd    — crawl bookkeeping
+  #   questions           — four sentences of suggested follow-ups per row, unasked for
+  #   sections/faqs/html/raw_text — duplicate renderings of the copy
+  #   depth/loadedTime/extractedAt/extractedFrom/screenshotUrl/httpStatusCode/
+  #   languageCode/llmObjectType — crawl provenance, seen leaking on the first live
+  #                         call (2026-09-03); extractedFrom duplicates source_url
+  DETAIL_META_STRIP:
+    args: []
+    body: >-
+      return ['primaryImage', 'images', 'openGraph', 'jsonLd', 'questions',
+              'sections', 'faqs', 'html', 'raw_text',
+              'depth', 'loadedTime', 'extractedAt', 'extractedFrom', 'screenshotUrl',
+              'httpStatusCode', 'languageCode', 'llmObjectType']
+
+  # Row-level: the same handle + display fields a search row keeps (`needs` stays behind —
+  # the guard classes it as page content, and key_need already carries the essence), and
+  # NONE of the transport columns the raw entry carries (embedding_original, umap_x/y/z,
+  # cluster, color, workflow_id, timestamps).
+  detailRow:
+    args: [r]
+    body: >-
+      return Object.assign(
+        {
+          universal_id: r.universal_id,
+          object_type: r.object_type,
+          title: r.title,
+          description: r.description,
+          key_need: r.key_need,
+          source_url: r.source_url,
+          source_id: r.source_id,
+          hasImage: helpers.hasImage(r)
+        },
+        ((meta) => Object.keys(meta).length ? { metadata: meta } : {})(
+          Object.keys(r.metadata || {})
+            .filter(k => !helpers.DETAIL_META_STRIP().includes(k))
+            .filter(k => r.metadata[k] != null && r.metadata[k] !== '')
+            .reduce((acc, k) => Object.assign(acc, { [k]: r.metadata[k] }), {})
+        )
+      )
 
   # A NEED keeps ONE field: `action`, the short verb the page's own copy leads with
   # ("Advance Career", "Explore Jobs", "Check Requirements"). Title, description and key_need

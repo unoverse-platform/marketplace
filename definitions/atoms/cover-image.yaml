@@ -1,0 +1,33 @@
+unoverse: "1.0"
+type: atom
+name: cover-image
+description: "A picture filling its frame edge to edge (cover fit), clipped by the frame. Owns its full style; resize or round via the Ref's style. Skeletons while its src loads."
+whenToUse: Any image that fills a fixed-height band or tile — a page banner, a card's picture, a mosaic cell. Compose via a Ref, mapping src/alt to host fields; set height (and radius) on the Ref's style.
+props:
+  src:
+    type: string
+    default: ""
+  alt:
+    type: string
+    default: ""
+root:
+  type: Box
+  style:
+    position: relative
+    flex: 0 0 auto
+    height: "50"
+    width: full
+    overflow: hidden
+    background: surface.sunken
+  children:
+    - type: Image
+      skeleton: true
+      bind:
+        src: src
+        alt: alt
+      style:
+        position: absolute
+        inset: "0"
+        width: full
+        height: full
+        fit: cover

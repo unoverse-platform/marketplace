@@ -17,5 +17,6 @@ serviceConnectors:
     methods:
       - findIntent
       - discoverRelated
+      - getDetail
       - readSkill
       - readSkillFile

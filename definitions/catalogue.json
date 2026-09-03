@@ -1,5 +1,5 @@
 {
-  "release": "0.1.77",
+  "release": "0.1.78",
   "items": [
     {
       "kind": "component",
@@ -270,6 +270,14 @@
     },
     {
       "kind": "atom",
+      "name": "cover-image",
+      "fingerprint": "e4b7de6e5bb0a4e6",
+      "bundle": "design-system",
+      "title": "cover-image",
+      "description": "A picture filling its frame edge to edge (cover fit), clipped by the frame. Owns its full style; resize or round via the Ref's style. Skeletons while its src loads."
+    },
+    {
+      "kind": "atom",
       "name": "cta-link",
       "fingerprint": "a0fac32f5889f08c",
       "bundle": "design-system",
@@ -537,7 +545,7 @@
     {
       "kind": "template",
       "name": "email-digest",
-      "fingerprint": "0ad693d8f0401c87",
+      "fingerprint": "b6321fc8e7ff16bf",
       "bundle": "design-system",
       "title": "Email Digest",
       "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
@@ -546,7 +554,7 @@
     {
       "kind": "template",
       "name": "grid-page",
-      "fingerprint": "0f63798b426adc25",
+      "fingerprint": "9d285cc02e8d98a8",
       "bundle": "design-system",
       "title": "Browse Grid",
       "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -1388,7 +1396,7 @@
       "kind": "node",
       "name": "SpatialQuery",
       "pack": "spatial",
-      "fingerprint": "9be61c22c20b665f",
+      "fingerprint": "5770f47bcdbba9c6",
       "title": "Spatial Query",
       "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
       "category": "Search",
@@ -1399,7 +1407,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "f0722489897a8cd6",
+      "fingerprint": "ca701d4a96638443",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -1,7 +1,7 @@
 {
   "kind": "template",
   "name": "grid-page",
-  "fingerprint": "0f63798b426adc25",
+  "fingerprint": "9d285cc02e8d98a8",
   "bundle": "design-system",
   "title": "Browse Grid",
   "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -112,7 +112,7 @@
         {
           "kind": "director",
           "face": "page",
-          "limit": 1
+          "pick": 1
         }
       ]
     },

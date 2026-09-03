@@ -7,4 +7,4 @@ style:
   width: full
 children:
   - director:
-      limit: 1
+      pick: 1

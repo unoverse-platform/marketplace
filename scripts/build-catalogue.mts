@@ -20,7 +20,15 @@
 import { writeFileSync, readFileSync, mkdirSync, rmSync, copyFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildCatalogue } from "@unoverse-platform/base/items/catalogue.js";
+/**
+ * REACHING INTO THE MONOREPO ON PURPOSE. `buildCatalogue` used to be a base subpath; it
+ * moved to `apps/unoverse/core` on 2026-09-02 because nothing outside the private image
+ * imports it (docs/unoverse/UNOVERSE_BASE_BOUNDARY.md). This script is not one of those
+ * consumers: `files` does not ship `scripts/`, and it only ever runs from this checkout on
+ * `prepack`. So the relative reach is honest, and the alternative — publishing the
+ * catalogue builder to keep one import tidy — is the thing that move exists to stop.
+ */
+import { buildCatalogue } from "../../../apps/unoverse/core/items/catalogue.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const pkg = dirname(here);

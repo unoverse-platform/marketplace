@@ -62,7 +62,7 @@ children:
               # universal wording — the shelf's default; an org wanting bespoke
               # judgment ships its own template.
               state: grid
-              limit: 3
+              pick: 3
               rules: The items most relevant to the reader, strongest matches first.
               preview: [ card, card, card ]
 
