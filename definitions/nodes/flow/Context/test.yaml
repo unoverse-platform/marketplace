@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # WHAT THIS FIXTURE CAN AND CANNOT PROVE, stated because the limit is real: the bench has no run
 # behind it, so `scope` is empty and every id is undefined. It proves the node emits the object with

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # THE FIRST PASS, with nothing seeded — so this exercises `open`, which is the path that has to
 # normalise the items input and record the loop. No `continue` in the inputs is exactly what tells

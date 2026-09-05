@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # CHUNKING IS GONE, and this is the one thing lost in the migration rather than simplified.
 #

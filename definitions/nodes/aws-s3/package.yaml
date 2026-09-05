@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # S3 AS MANIFESTS. The same signer as DynamoDB, plus the three things S3 needs that a plain
 # JSON API does not:

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Running this live needs INGEST_GOOGLE_API_KEY (or GOOGLE_API_KEY) and a spreadsheet id of your own,
 # SHARED so anyone with the link can view it — an API key cannot open a private sheet, which is the

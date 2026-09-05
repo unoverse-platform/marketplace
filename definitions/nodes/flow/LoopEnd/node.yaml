@@ -1,4 +1,4 @@
-$schema: ../../../_schema/node.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
 
 type: LoopEnd
 # A PromiseNode, like its partner. It settles once per pass: it moves the index and answers on

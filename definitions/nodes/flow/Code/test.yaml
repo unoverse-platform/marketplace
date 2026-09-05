@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # `code` arrives ALREADY RESOLVED — it is a template field the engine evaluates before the node runs —
 # so a fixture supplies the finished value, not the expression that produced it. This is the retired

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 # NO inputs and NO outputs, deliberately. This node is never triggered by the graph.
 # Consumers attach a service edge and call its methods; it answers them and hands back a

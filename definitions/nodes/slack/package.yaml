@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # FULLY DECLARATIVE. One node, six MCP methods, one bearer token, nothing new required.
 # The retired TypeScript is at `_legacy/nodes/slack/`.

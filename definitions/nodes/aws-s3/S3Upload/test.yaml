@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # NEEDS A REAL BUCKET YOU CAN WRITE TO. This fixture WRITES an object, unlike the other two
 # in this package, so point it at somewhere disposable.

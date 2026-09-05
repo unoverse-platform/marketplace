@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # GEMINI IMAGE GENERATION AS A MANIFEST. Needed nothing new: an api-key header, a JSON POST,
 # and `transport: binary` for the optional reference photo, which S3Upload had already forced.

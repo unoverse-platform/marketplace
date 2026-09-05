@@ -1,4 +1,4 @@
-$schema: ../../../_schema/node.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
 
 # THE DATA-FLOW SIBLING of the service node in this package: same platform search, same
 # shared call (shared/search.yaml), same lean projection — but run as an ordinary workflow

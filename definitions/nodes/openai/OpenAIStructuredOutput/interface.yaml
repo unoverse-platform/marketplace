@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 # Both of these are WIRED, not configured. The schema usually arrives from an upstream
 # node, which is what makes one node serve every extraction rather than needing one per

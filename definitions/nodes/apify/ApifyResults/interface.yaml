@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 # NO `continue` INPUT, and no item/index/hasMore outputs. Those belonged to the iterator
 # this node no longer is; see node.yaml for why. A canvas that wants one item at a time

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # The search settings, shared with the service node in this package: everything except
 # `query` and `mode` is read by shared/search.yaml under the same names, so the two nodes

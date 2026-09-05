@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 inputs:
   - name: query

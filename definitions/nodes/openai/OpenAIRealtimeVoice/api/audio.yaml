@@ -1,4 +1,4 @@
-$schema: ../../../../_schema/audio.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/audio.schema.json
 
 # THE AUDIO LANE. The platform's socket to the browser, not the vendor's.
 #

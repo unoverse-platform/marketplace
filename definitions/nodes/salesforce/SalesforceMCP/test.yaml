@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # The READ path, because it is the one that proves the OAuth exchange, the instance_url and
 # the SOQL all work. The write methods are deliberately not the fixture: they would leave a

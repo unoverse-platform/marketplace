@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # TWO URLS, deliberately, because this fixture is the only thing that runs the fan-out for
 # real. One url takes a single request and proves almost nothing new; two exercises the

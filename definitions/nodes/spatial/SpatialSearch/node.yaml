@@ -1,4 +1,4 @@
-$schema: ../../../_schema/node.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
 
 # Transcribed from _legacy/nodes/spatial/src/SpatialSearch. Every tool, every instruction
 # string and the model-facing projection are carried over verbatim; see api/service.yaml.

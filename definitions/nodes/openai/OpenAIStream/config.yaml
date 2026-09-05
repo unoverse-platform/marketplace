@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # The settings panel. Transcribed from src/OpenAIStream/node/index.ts configSchema.
 # This is the file with the most churn: new model options land here and nowhere else.

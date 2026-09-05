@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Needs ELEVENLABS_API_KEY. Short text, because this bills per character.
 

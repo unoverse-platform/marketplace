@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # Transcribed from the retired node, minus two fields that integrated inference makes
 # meaningless:

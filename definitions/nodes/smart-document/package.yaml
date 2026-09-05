@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # THE LAST HYBRID NODE, as a manifest. What actually needed code was the DOCUMENT ENGINE —
 # sectionizing, hash-checked edits, WATCH/MULTI concurrency, the mutation-re-fires-renderer

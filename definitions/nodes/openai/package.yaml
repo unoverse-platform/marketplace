@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # The package envelope, and now the ONLY envelope: this package is fully
 # declarative. All five nodes are manifests, there is no src/ and no package.json,

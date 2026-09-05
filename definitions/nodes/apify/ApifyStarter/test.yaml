@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # STARTS A REAL RUN, which costs Apify credits. waitForCompletion is OFF so the fixture
 # returns as soon as the run is queued rather than paying for a full scrape to finish.

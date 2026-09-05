@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 # A PURE SERVICE NODE: no inputs, no outputs, only methods. Both keys are OMITTED rather
 # than written as empty lists, because an empty `outputs` claims a node emits nothing on a

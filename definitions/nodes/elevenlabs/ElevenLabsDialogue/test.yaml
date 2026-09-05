@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Needs ELEVENLABS_API_KEY. Two short lines with explicit voice ids, so the fixture does not depend on a
 # voiceMap being filled in.

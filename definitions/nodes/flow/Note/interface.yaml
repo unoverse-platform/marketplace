@@ -1,4 +1,4 @@
-$schema: ../../../_schema/interface.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
 
 # NO CONNECTORS AT ALL, deliberately. A Note is canvas furniture: with no inputs the graph can
 # never reach it, which is precisely how it stays out of the data flow. That is also why this

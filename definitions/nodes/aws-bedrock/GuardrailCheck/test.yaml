@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Running it live needs AWS credentials AND a guardrail that exists in that account — there is no
 # public fixture guardrail, so guardrailId below must be EDITED to a real one before running (any

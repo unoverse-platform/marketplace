@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # This node has no options, so the fixture is really about WHO is asking: the whole node
 # is a function of the signed-in person's email.

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # `elements` arrives ALREADY RESOLVED — it is a template field the engine evaluates before the node
 # runs — so the fixture supplies the finished object rather than the expression that built it.

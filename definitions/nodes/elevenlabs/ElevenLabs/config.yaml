@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # `characterId` and `characterGender` are GONE. They fed the retired multi-speaker compat path — see
 # package.yaml — and nothing in apps/ sets them.

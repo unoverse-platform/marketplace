@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # The source clip is a genuinely anonymous public URL AND ten seconds long — both learned
 # live (2026-08-15): Google's gtv-videos-bucket 403s a server-side fetch, and the vendor

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/node.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
 
 type: DynamoDBService
 kind: PromiseNode

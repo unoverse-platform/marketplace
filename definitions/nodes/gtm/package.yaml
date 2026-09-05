@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # Two vendors, one package: Apollo.io for company and people data, Hunter.io for email.
 # One credential each, one base URL each, no SDKs.

@@ -1,4 +1,4 @@
-$schema: ../_schema/package.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
 
 # BEDROCK AS MANIFESTS, and the cheapest AWS package to convert: both API calls it makes
 # (Converse and InvokeModel) are plain signed JSON POSTs. Everything it needed already

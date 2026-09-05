@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # NO CREDENTIAL, and that is the point of this node's rewrite. The code version held an
 # `openAICredential` because it called OpenAI directly for embeddings. The engine owns that now, along

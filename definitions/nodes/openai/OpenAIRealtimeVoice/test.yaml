@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # A duplex node cannot be proved by a fixture the way a request can: there is no single reply,
 # and nobody is talking. This opens the session, asserts the vendor accepted the handshake, and

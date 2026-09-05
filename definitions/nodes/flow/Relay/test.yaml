@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # The retired node's own fixture, unchanged, because it documents the nesting: the payload arrives
 # under the input PORT, then the SOURCE NODE, then that source's OUTPUT HANDLE.

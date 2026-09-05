@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Config fields are templates, supplied here already resolved. The bench has no live session,
 # so the publish lane no-ops (and says so) — the fixture asserts the CONNECTOR, which carries

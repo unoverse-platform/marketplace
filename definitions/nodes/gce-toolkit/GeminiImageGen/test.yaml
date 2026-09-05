@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # No reference photo, so this runs the one-call path. Asserts the SHAPE and that real bytes came
 # back: base64 of any actual image is thousands of characters, so a length floor catches an

@@ -1,4 +1,4 @@
-$schema: ../../../_schema/config.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
 
 # `useCache` and `cacheTTLMinutes` are GONE — see node.yaml for why. A saved workflow that set them
 # will simply have two fields nothing reads, rather than failing.

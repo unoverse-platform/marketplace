@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Running it live needs ELEVENLABS_API_KEY. It reaches the real API and spends credits, so the prompt is
 # short and the duration is the minimum that still produces something recognisable.

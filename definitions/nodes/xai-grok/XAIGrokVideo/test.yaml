@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Text-to-video, short and small — the cheapest honest render (video bills per second).
 # Asserts the SHAPE: a hosted URL and a plausible duration, never anything about the scene.

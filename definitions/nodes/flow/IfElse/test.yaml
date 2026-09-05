@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # `condition` arrives ALREADY RESOLVED — the engine evaluates the template before the node runs —
 # so a fixture supplies the boolean, not the expression that produced it.

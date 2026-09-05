@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # Needs ELEVENLABS_API_KEY and a REACHABLE audio URL — ElevenLabs fetches it server-side, so a localhost
 # path cannot work. The URL below is a placeholder rather than a real file: inventing one that happened to

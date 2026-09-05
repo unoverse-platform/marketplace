@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # The fixture behind Studio's "Load sample, Run" and `unoverse node test`.
 # Template fields are supplied ALREADY RESOLVED: the bench has no upstream node

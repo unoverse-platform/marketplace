@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # No MCP provider is wired on the bench, so this exercises the one-shot path
 # (maxTurns still bounds it; with no tools the loop degrades to a single request).

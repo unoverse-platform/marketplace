@@ -1,4 +1,4 @@
-$schema: ../../../_schema/test.schema.json
+$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
 
 # The graph-triggered half: initialise from config, render the whole doc. The docstore
 # normalizes blank-line spacing between sections (heading and body join with one blank
