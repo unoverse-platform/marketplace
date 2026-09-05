@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # FULLY DECLARATIVE. Four nodes, one endpoint, one key.
 #
 # SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched

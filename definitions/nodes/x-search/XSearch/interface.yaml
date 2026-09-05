@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
-
 inputs:
   - name: query
     type: string

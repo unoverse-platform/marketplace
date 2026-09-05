@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
-
 # NO inputs and NO outputs, deliberately. This node is never triggered by the graph.
 # Consumers attach a service edge and call its methods; it answers them and hands back a
 # value. The workflow channel and the service channel do not cross (08-mcp-services.md).

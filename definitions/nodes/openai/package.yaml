@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # The package envelope, and now the ONLY envelope: this package is fully
 # declarative. All five nodes are manifests, there is no src/ and no package.json,
 # so nothing here is built, published or imported. The retired TypeScript sits at

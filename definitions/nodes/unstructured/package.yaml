@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # UNSTRUCTURED — one node that reads documents, replacing two that could not be manifests.
 #
 # WHY THIS EXISTS. Two nodes were stuck for the same reason and neither was worth unsticking:

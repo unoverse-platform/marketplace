@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: LoopStart
 # A PromiseNode WITH A CONTINUE INPUT, which is not a contradiction and used to be refused.
 #

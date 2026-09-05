@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # THIS FIXTURE SEEDS AN OPEN LOOP, because it has to. LoopEnd closes a pass of a loop LoopStart
 # opened, so with nothing in storage its very first act is the "loop state not found" error it exists
 # to raise for a mistyped loopStartNodeId — the bench would report a real safeguard as the node's

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 # One page, fetched as a job. A single call that happens to take a while, which is what
 # `poll` is for: the manifest says when it is done, the executor does the waiting.
 

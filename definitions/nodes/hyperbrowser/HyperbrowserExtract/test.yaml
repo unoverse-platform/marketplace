@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # TWO URLS, deliberately, because this fixture is the only thing that runs the fan-out for
 # real. One url takes a single request and proves almost nothing new; two exercises the
 # whole of what made this node a manifest — chunk walking the list, poll waiting on each

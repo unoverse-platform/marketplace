@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # LLAMAPARSE — document parsing whose OUTPUT IS MARKDOWN, which is the reason it exists alongside an
 # element-array parser. An element array is the right shape for chunking and vector stores; an Agent
 # prompt or a RAG context window usually wants one clean Markdown document, and LlamaParse's whole

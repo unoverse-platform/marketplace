@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: GoogleSheet
 # A PromiseNode now, where the code version was a CallbackNode. That is the whole of this migration:
 # see interface.yaml for what changed on the wire and why.

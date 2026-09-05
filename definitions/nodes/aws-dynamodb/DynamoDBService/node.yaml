@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: DynamoDBService
 kind: PromiseNode
 # Drawn as a service card: it is ATTACHED to an agent over a service edge rather than

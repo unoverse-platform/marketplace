@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # NEEDS A REAL RUN ID. Apify runs are per-account, so there is no public fixture to point
 # at; replace runId with one from your own console before running this.
 

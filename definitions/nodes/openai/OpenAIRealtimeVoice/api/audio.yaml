@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/audio.schema.json
-
 # THE AUDIO LANE. The platform's socket to the browser, not the vendor's.
 #
 # This file exists for ONE reason: MCP cannot carry binary audio. Everything else this node

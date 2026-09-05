@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
-
 # Transcribed from the retired node's configSchema. These shape what an AGENT'S searches are
 # allowed to return, and they are read by shared/search.yaml on every call.
 #

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
-
 # A HYBRID: the one output is the workflow half (the rendered markdown for a renderer), and
 # the serviceConnector is the agent half (the editing tools). A MUTATING tool call re-fires
 # the workflow channel, which is what keeps the two halves showing the same document.

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
-
 # THIS NODE'S SHAPE CHANGED, and it is the one migration here that is a REWRITE rather than a
 # transcription. Stated plainly because a saved workflow will notice.
 #

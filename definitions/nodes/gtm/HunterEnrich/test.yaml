@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 testData:
   config:
     type: company

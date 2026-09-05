@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # ZAI, fully declarative.
 #
 # GLM is OpenAI-COMPATIBLE, which is true of the vendor and was not true of our tool loop until

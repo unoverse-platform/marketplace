@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # Needs the three CLOUDINARY_* variables. It reads Cloudinary's own demo asset, so it does not depend on
 # anything in your account — but the ACCOUNT must be able to see it, so this is the one fixture here that
 # may need a public_id of yours instead.

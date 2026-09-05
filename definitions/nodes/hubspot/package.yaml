@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # FULLY DECLARATIVE. This package is `package.yaml`, `nodes/`, `credentials/` and
 # `shared/`, and nothing else: no src/, no package.json, no build, no npm publish.
 # The retired TypeScript is at `_legacy/nodes/hubspot/`, whose README maps each file to

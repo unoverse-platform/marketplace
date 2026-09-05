@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 # Transcribed from src/OpenAIEmbeddingService/node/index.ts.
 #
 # A PURE SERVICE node. It is never triggered by the graph and has no inputs or

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # WHAT A FIXTURE CAN PROVE ABOUT A VOICE CALL, which is less than for any other node: there is no
 # microphone on the bench and no browser to send audio to, so the only decidable question is whether the
 # vendor ACCEPTED the handshake.

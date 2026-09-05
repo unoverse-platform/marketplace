@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
-
 configSchema:
   type: object
   # `prompt` is required for the same reason it is on OpenAI: this node has nothing to do

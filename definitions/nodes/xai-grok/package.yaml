@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # XAI GROK, fully declarative.
 #
 # The node is a REALTIME VOICE session, not a text agent — `wss://api.x.ai/v1/realtime` — so what

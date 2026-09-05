@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # A pure service node has nothing to trigger, so the fixture CALLS it the way a
 # consumer would rather than feeding inputs.
 testData:

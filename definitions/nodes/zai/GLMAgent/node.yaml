@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: GLMAgent
 # A CallbackNode because it STREAMS: the last call's transport is sse, and a tool exchange runs many
 # turns. Both are derived and verified by lint, not taken on trust.

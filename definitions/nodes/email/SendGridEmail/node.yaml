@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 # Transcribed from _legacy/nodes/email/src/SendEmail, with SMTP replaced by SendGrid's REST
 # API. Every body transform the old node performed (auto-linking, UTM injection, the open
 # pixel) is reproduced as an expression; see api/run.yaml for each one.

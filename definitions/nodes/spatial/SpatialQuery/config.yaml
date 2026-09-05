@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
-
 # The search settings, shared with the service node in this package: everything except
 # `query` and `mode` is read by shared/search.yaml under the same names, so the two nodes
 # cannot drift on what a flag means. The notes on defaults and the template-field rules live

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/interface.schema.json
-
 # NO CONNECTORS AT ALL, deliberately. A Note is canvas furniture: with no inputs the graph can
 # never reach it, which is precisely how it stays out of the data flow. That is also why this
 # node has no `api/` folder — there is nothing for it to do when run, because it is never run.

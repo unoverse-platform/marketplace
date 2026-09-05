@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # THE FIRST AWS PACKAGE AS MANIFESTS, and what proves `awsSigV4`.
 #
 # DynamoDB's HTTP API is one endpoint per region, an `X-Amz-Target` header naming the

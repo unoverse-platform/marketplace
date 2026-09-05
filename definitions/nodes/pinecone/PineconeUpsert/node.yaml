@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 # Transcribed from _legacy/nodes/pinecone/src/PineconeUpload. The embedding step is gone
 # rather than reimplemented (Pinecone embeds server-side), and so is the chunking: see
 # config.yaml, which explains why that one is a genuine loss rather than a simplification.

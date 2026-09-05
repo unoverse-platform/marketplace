@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # BEDROCK AS MANIFESTS, and the cheapest AWS package to convert: both API calls it makes
 # (Converse and InvokeModel) are plain signed JSON POSTs. Everything it needed already
 # existed by the time it was reached — the signer from DynamoDB, and `transport: binary`

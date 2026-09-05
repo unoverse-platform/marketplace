@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # Needs a real base. Point baseId and tableId at one you own before running the bench.
 testData:
   config:

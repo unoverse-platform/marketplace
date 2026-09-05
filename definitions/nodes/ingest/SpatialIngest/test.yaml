@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # THIS FIXTURE NEEDS THE PLATFORM RUNNING, which makes it the only one in the tree that does. Every other
 # node reaches a vendor over the internet; this one calls the engine on 127.0.0.1:4106, so `unoverse node
 # test SpatialIngest` fails with a connection error unless the service is up.

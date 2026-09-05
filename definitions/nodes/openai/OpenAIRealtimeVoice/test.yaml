@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # A duplex node cannot be proved by a fixture the way a request can: there is no single reply,
 # and nobody is talking. This opens the session, asserts the vendor accepted the handshake, and
 # stops. `session.updated` coming back is the one thing a fixture CAN prove without a microphone:

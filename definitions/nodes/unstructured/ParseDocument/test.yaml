@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # Running it live needs UNSTRUCTURED_API_KEY. It reaches the real API and bills per page, so the fixture
 # uses a ONE-PAGE public PDF and `strategy: fast` — the cheapest path that still proves the whole chain:
 # the url is downloaded, the bytes become a multipart file part, and elements come back.

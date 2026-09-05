@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 # Transcribed from src/OpenAIStream/node/index.ts. See docs/architecture/DECLARATIVE_NODES.md.
 
 type: OpenAIStream

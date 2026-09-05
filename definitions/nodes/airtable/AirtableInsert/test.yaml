@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # WRITES. Point this at a scratch table you do not mind adding a row to, then run it. The
 # fixture is deliberately one row so a mistake costs one row.
 testData:

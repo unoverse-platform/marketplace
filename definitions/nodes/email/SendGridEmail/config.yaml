@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
-
 # Transcribed from the retired node's configSchema, minus `provider`.
 #
 # `provider` was an enum with exactly ONE value ("microsoft365"), which is a dropdown that

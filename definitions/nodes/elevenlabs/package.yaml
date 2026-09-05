@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # ELEVENLABS, fully declarative — all five nodes.
 #
 # ALL FIVE, not four, and that is forced rather than ambitious: they share ONE credential, and

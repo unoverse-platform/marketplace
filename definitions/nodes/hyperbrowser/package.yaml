@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # FULLY DECLARATIVE. Three nodes, one vendor, one key.
 #
 # SPLIT OUT OF `crawl`, which held these three alongside two Apify nodes. That package was

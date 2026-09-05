@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # Running it live needs AWS credentials AND a guardrail that exists in that account — there is no
 # public fixture guardrail, so guardrailId below must be EDITED to a real one before running (any
 # content policy will do; the id is on the guardrail's console page). Benign text, so the fixture

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # FULLY DECLARATIVE. Two nodes, one token.
 #
 # THE LAST HALF OF THE OLD `crawl` PACKAGE. Its three Hyperbrowser nodes became

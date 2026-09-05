@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: HubspotMCP
 # Every call settles, and a chain of settling calls settles too. Nothing here streams
 # and there is no CONTINUE port, so this is a PromiseNode.

@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # The code version's own fixture. Running it live needs ZAI_API_KEY (the credential is named
 # `zaiApiKey`, so the bench looks for ZAI_API_KEY).
 #

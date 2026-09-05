@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # A service node is exercised by CALLING a method, not by running the graph.
 # Reads back what the DynamoDB (put) fixture writes, so run that one first.
 

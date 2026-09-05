@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # The source clip is a genuinely anonymous public URL AND ten seconds long — both learned
 # live (2026-08-15): Google's gtv-videos-bucket 403s a server-side fetch, and the vendor
 # rejects any input over 15 seconds ("got 52.2s" for the Sintel trailer). Two seconds of

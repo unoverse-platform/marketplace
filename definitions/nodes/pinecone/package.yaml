@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 name: pinecone
 displayName: Pinecone
 version: 2.0.0

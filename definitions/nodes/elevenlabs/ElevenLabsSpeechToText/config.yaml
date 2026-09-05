@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/config.schema.json
-
 configSchema:
   type: object
   # NEITHER source is required by the schema, because exactly ONE of them must be set and a schema cannot

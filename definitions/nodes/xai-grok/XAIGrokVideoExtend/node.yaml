@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: XAIGrokVideoExtend
 # PromiseNode WITH `poll`, exactly like the generation node: the POST returns a job receipt
 # and GET /v1/videos/{request_id} — the same status endpoint generations poll — reports the

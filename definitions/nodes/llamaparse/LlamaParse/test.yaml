@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/test.schema.json
-
 # Running it live needs LLAMACLOUD_API_KEY. It reaches the real API and bills per page, so the fixture
 # uses a ONE-PAGE public PDF and the cheapest tier — still proving the whole chain: the url becomes a
 # `source_url` job (LlamaCloud fetches it, nothing is uploaded), the job is polled to COMPLETED and

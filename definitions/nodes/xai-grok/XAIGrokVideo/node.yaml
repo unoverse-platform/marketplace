@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: XAIGrokVideo
 # PromiseNode WITH `poll`: generation is an async job (POST returns a request_id, GET reports
 # progress), but the node's answer is still one settled reply — the finished video. Only the

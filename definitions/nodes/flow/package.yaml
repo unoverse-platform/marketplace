@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # FLOW AS MANIFESTS, node by node.
 #
 # The one package that can migrate INCREMENTALLY, because it declares no credentials. The

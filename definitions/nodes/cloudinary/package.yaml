@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/package.schema.json
-
 # CLOUDINARY, fully declarative.
 #
 # It sat on the backlog as "blocked on `encoding: form`", and that turned out to be wrong twice over. The

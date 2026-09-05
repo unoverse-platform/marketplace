@@ -1,5 +1,3 @@
-$schema: https://docs.unoverse.ai/schemas/nodes/node.schema.json
-
 type: XAIGrokVoice
 # A CallbackNode because the session STREAMS for the length of the call. Derived from
 # `transport: ws` and verified by lint, not taken on trust.
