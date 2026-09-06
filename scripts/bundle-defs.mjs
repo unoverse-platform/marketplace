@@ -1,5 +1,5 @@
 /**
- * bundle-defs — Phase 1 of the marketplace refactor (docs/architecture/RX_ORG_MODEL.md).
+ * bundle-defs — Phase 1 of the marketplace refactor (docs/architecture/authoring/RX_ORG_MODEL.md).
  *
  * Copies the rx marketplace definitions INTO this package so it ships self-contained
  * (`definitions/`), instead of scraping `rx/components` off the host filesystem at boot.

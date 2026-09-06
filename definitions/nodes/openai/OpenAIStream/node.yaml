@@ -1,4 +1,4 @@
-# Transcribed from src/OpenAIStream/node/index.ts. See docs/architecture/DECLARATIVE_NODES.md.
+# Transcribed from src/OpenAIStream/node/index.ts. See docs/architecture/authoring/DECLARATIVE_NODES.md.
 
 type: OpenAIStream
 

@@ -33,6 +33,9 @@ call:
     # is no reason to leave a second one in place.
     maxResults: "return config.maxResults != null ? Number(config.maxResults) : 10"
     workflowId: "return scope.workflowId"
+    # THE ORG'S MAP (docs/unoverse/UNOVERSE_SPATIAL_ORG.md): the world the run works in. When
+    # present the engine scopes by it; workflowId is the tolerance until step E.
+    org: "return scope.org"
 
     # WHO IS ASKING. Sent so the platform can record which region of the map this query put
     # them in — the person's journey through the named themes, written only when the region

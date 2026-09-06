@@ -57,7 +57,7 @@ getDetail:
     Full record for ONE already-surfaced result: pass its universal_id and get the
     complete copy and every attribute the lean row leaves out (fees, specs, durations,
     terms). Required before answering a factual question — pick a service row, since
-    object_type="service" carries the copy and a "need" row does not. NOT a search: the
+    object_type="product" carries the copy and a "need" row does not. NOT a search: the
     id must come from a result you already hold.
   calls:
     - name: entry

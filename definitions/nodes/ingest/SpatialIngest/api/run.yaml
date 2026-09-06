@@ -69,6 +69,8 @@
       mainCategory: "return config.category === 'product' || config.category === 'component' ? 'SERVICE' : 'NEED'"
       # The engine keys everything by workflow, which is how a dictionary stays scoped to its universe.
       workflowId: "{{ scope.workflowId }}"
+      # The org the rows belong to (docs/unoverse/UNOVERSE_SPATIAL_ORG.md).
+      org: "{{ scope.org }}"
     maxItems: "return config.maxItems || undefined"
 
   timeoutMs: 60000

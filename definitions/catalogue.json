@@ -1,5 +1,5 @@
 {
-  "release": "0.1.83",
+  "release": "0.1.84",
   "items": [
     {
       "kind": "component",
@@ -1209,7 +1209,7 @@
       "kind": "node",
       "name": "SpatialIngest",
       "pack": "ingest",
-      "fingerprint": "a92d6f8b3b22c9bb",
+      "fingerprint": "40891b20854729cd",
       "title": "Spatial Ingest",
       "description": "Turn raw text into needs — or one product row — in the spatial dictionary.",
       "category": "Documents",
@@ -1275,7 +1275,7 @@
       "kind": "node",
       "name": "OpenAIStream",
       "pack": "openai",
-      "fingerprint": "bde975978ee0ba6c",
+      "fingerprint": "62b79c33f4da5dfe",
       "title": "OpenAI Stream",
       "description": "Text generation with tokens streamed live as they are produced",
       "category": "AI",
@@ -1396,7 +1396,7 @@
       "kind": "node",
       "name": "SpatialQuery",
       "pack": "spatial",
-      "fingerprint": "4086769d894a758b",
+      "fingerprint": "54543f1a27bb710f",
       "title": "Spatial Query",
       "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
       "category": "Search",
@@ -1407,7 +1407,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "75517733c877be2b",
+      "fingerprint": "a3e8db0a47112cb8",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",

@@ -79,7 +79,7 @@ spatial:
       COMPOSING the answer.
     - Results are LEAN summaries; the facts live in the full record. Before answering a
       factual question (a fee, price, duration, date, requirement, what a course covers),
-      call getDetail on the most relevant service row — object_type="service" carries the
+      call getDetail on the most relevant product row — object_type="product" carries the
       full copy, a "need" row does not. ONE call, on the item asked about.
     - To SHOW an item, CHOOSE it and hand over its id — a card carries the universal_id
       and the PLATFORM renders it; never retype an item's content into a composition.
@@ -172,7 +172,7 @@ spatial:
         Full record for ONE already-surfaced result: pass its universal_id and get the
         complete copy and every attribute the lean row leaves out (fees, specs, durations,
         terms). Required before answering a factual question — pick a service row, since
-        object_type="service" carries the copy and a "need" row does not. NOT a search:
+        object_type="product" carries the copy and a "need" row does not. NOT a search:
         the id must come from a result you already hold.
       input:
         type: object
