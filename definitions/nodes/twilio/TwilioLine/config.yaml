@@ -1,0 +1,60 @@
+# THIS ATTACHMENT'S OWN SETTINGS. They are not the host's: they reach the run under
+# `attachments.TwilioLine`, so a field of the same name on a voice node stays that node's own.
+configSchema:
+  type: object
+  required: [direction]
+  properties:
+    direction:
+      type: string
+      title: Direction
+      description: >-
+        Whether the workflow places the call, or waits for one. Outbound calls the number below
+        when the voice node runs. Inbound answers whoever rings your Twilio number.
+      enum: [outbound, inbound]
+      enumNames: [Outbound, Inbound]
+      default: outbound
+
+    to:
+      type: string
+      title: Number to call
+      description: >-
+        In E.164 form, so +447700900123 rather than 07700 900123. Outbound only. Shared blocks
+        and upstream data work here, which is how a workflow calls a different person each run.
+      "ui:field": template
+      "ui:dependencies":
+        direction: outbound
+
+    from:
+      type: string
+      title: Caller ID
+      description: >-
+        Which of your Twilio numbers the call comes from, in E.164 form. Inbound, this is the
+        number being answered.
+      "ui:field": template
+
+    # VOICEMAIL IS THE CASE THAT WILL BITE, so it is a setting rather than something the model
+    # is left to work out. A single-minded call that leaves a coherent message is a different
+    # script from one that holds a conversation, and from inside the call the two sound alike.
+    onVoicemail:
+      type: string
+      title: If voicemail answers
+      description: >-
+        Hanging up keeps the call log honest, so the workflow can try again later. Leaving a
+        message speaks the opening line once and then ends the call.
+      enum: [hangUp, leaveMessage]
+      enumNames: [Hang up, Leave the opening line as a message]
+      default: hangUp
+      "ui:dependencies":
+        direction: outbound
+
+    ringSeconds:
+      type: number
+      title: Ring for
+      description: How many seconds to let it ring before giving up. Outbound only.
+      default: 30
+      minimum: 5
+      maximum: 120
+      "ui:dependencies":
+        direction: outbound
+
+"ui:order": [direction, to, from, onVoicemail, ringSeconds]

@@ -1,0 +1,6 @@
+- emit: image
+  value: >-
+    return (() => {
+      const r = response.result || {};
+      return { base64: r.image_png_base64 || '', mimeType: 'image/png', width: r.width, height: r.height, page: r.page, box: r.box || null };
+    })()

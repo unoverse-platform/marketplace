@@ -1,0 +1,35 @@
+# TWILIO — the carrier, so a voice node can be on a real phone call instead of in a browser.
+#
+# ONE NODE, and it is an ATTACHMENT rather than a box you wire in (DECLARATIVE_NODES.md §14).
+# That is the whole design decision in this package, and it is worth reading before adding to it.
+#
+# A phone call cannot travel on a data edge in either direction. A voice node's run IS the call,
+# held open for its whole length, and its outputs fire at the end: a phone node downstream of it
+# would run after the call was over, and one upstream would have to complete while still holding
+# the socket. Nor is it a service, because a service is something the host CALLS and gets one
+# value back from.
+#
+# So the phone is not part of any voice node. It is the LANE the run is speaking on, and it
+# arrives as configuration that clips on and locks what it owns. One attachment, and every voice
+# node rides it unchanged — Realtime, GPT-Live, Grok Voice — because none of them contains a
+# phone. See docs/VOICE_STREAMING_GUIDE.md "The Phone Lane".
+#
+# MEDIA STREAMS, NOT CONVERSATIONRELAY. ConversationRelay does speech-to-text and text-to-speech
+# for you and hands back text, which would mean paying for a realtime voice model and never using
+# its voice. Media Streams gives raw call audio both ways, which is what a voice model wants.
+
+name: twilio
+displayName: Twilio
+description: Real phone numbers for voice nodes, and WhatsApp messaging
+version: 1.0.0
+category: communication
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789899519/gravity/icons/twillio-logo.png
+
+features:
+  - A voice node on a real phone number, over Media Streams
+
+allowedHosts:
+  - api.twilio.com
+
+requires:
+  executorVersion: ">=1.6.0"

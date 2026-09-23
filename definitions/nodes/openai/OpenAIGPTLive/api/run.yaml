@@ -1,0 +1,322 @@
+# ONE duplex session. Not a request: this stays open for the length of the call, and the node's
+# run IS the call.
+#
+# A DIFFERENT API FROM REALTIME, not a new model on the same one: GPT-Live answers only on
+# /v1/live/sessions, takes no query parameters, and every event name differs.
+
+- name: session
+  transport: ws
+  url: "return 'wss://api.openai.com/v1/live/sessions'"
+  credential:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  open:
+    # `session.start`, not `session.update`: the voice, the instructions and the delegation mode
+    # are fixed for the length of the call, so they are given once, here.
+    - type: session.start
+      session:
+        model: "{{ config.model }}"
+        # THREE THINGS, AND ONLY THE FIRST IS THE AUTHOR'S.
+        #
+        # The PROMPT is who this voice is and how it holds a call: generic, the same for every
+        # task, and the author's to write.
+        #
+        # The HANG-UP is the node's own, because the node is what declares that tool below and
+        # what listens for it (api/audio.yaml). A model told to end the call and never told how
+        # says goodbye and then sits on an open line, which is exactly what was heard.
+        #
+        # The TASK is what this particular call is for, and it goes in HERE rather than being
+        # left to arrive later. The `input` send rule below only carries a CHANGE, because the
+        # runtime seeds the opening value as already delivered; written without this the model
+        # opened the call holding the tools its task had minted and not one word of the task
+        # itself. Measured 2026-09-22: it greeted a customer by a name nobody had said, while
+        # `held` carried their real one.
+        instructions: >-
+          return (() => {
+            const brief = helpers.briefIn(signal);
+            return String(config.systemPrompt || '')
+              + '\n\nEnding the call is a tool, not a sentence. When the call is finished, say your'
+              + ' goodbye and then call end_call IN THE SAME TURN. A goodbye on its own leaves the'
+              + ' line open and the person listening to silence.'
+              + (brief
+                ? '\n\nThis is the task you are calling about.\n' + JSON.stringify(brief)
+                  + '\n\n`held` is what we already hold: USE it and NEVER ask for it, not even to'
+                  + ' confirm it — their name is in there, and so is what the task is about.'
+                  + ' `fields` is what is still outstanding, and it is what this call is for.'
+                  + ' Ask for those one at a time, in your own words.'
+                : '');
+          })()
+        audio:
+          # 24 kHz PCM. The lane decodes the carrier's mu-law and resamples up (api/audio.yaml).
+          #
+          # MU-LAW PASSTHROUGH WAS TRIED AND REVERTED (2026-09-22). The vendor does accept
+          # `{ type: audio/pcmu, rate: 8000 }` and the handshake succeeds, but what reached the
+          # caller was a click and then silence. The conversion this saves is real and the
+          # latency it saves is not: measured on this lane, the first audio reaches a caller
+          # 762ms after they answer WITH the resampling in place. There was no problem here to
+          # solve, so the working path stays until something is actually slow.
+          format: { type: audio/pcm, rate: 24000 }
+          output: { voice: "{{ config.voice }}" }
+        # Startup turns. `undefined` drops the key, so a call with no history sends nothing here.
+        input: >-
+          return (config.conversationHistory || []).length
+            ? config.conversationHistory.map(m => ({
+                role: ['developer', 'assistant'].includes(m.role) ? m.role : 'user',
+                content: String(m.content ?? '')
+              }))
+            : undefined
+        # WHO DOES THE THINKING. GPT-Live never works anything out itself: when it needs to, it
+        # hands off, and this says to whom (config.yaml sets out the trade at length).
+        #
+        #   client     whatever `task` is wired to on the canvas. The vendor's hand-off event
+        #              carries an id and NO task text, so what the backend gets is rebuilt from
+        #              the transcript (api/events.yaml).
+        #   responses  a model OpenAI runs, which may call the function tools declared here.
+        #              A hand-off then arrives NAMED AND TYPED, and our runtime executes it.
+        #
+        # Either way the reply comes back on the `answer` input; only the shape of the question
+        # differs. Written as one expression because the two are different objects, not one
+        # object with a different flag.
+        delegation: >-
+          return (() => {
+            // THE TOOLS A CALL ALWAYS HAS, MINTED FROM THE TASK IT WAS GIVEN.
+            //
+            // Collecting answers and hanging up are not this org's business, they are what a
+            // call IS, so nobody should have to declare them. The brief already names the
+            // fields still outstanding, so `record_answers` is built from that list and its
+            // `field` is an ENUM of those names: the model cannot answer a question nobody
+            // asked, which is how a hand-off's own `id` and a whole transcript once ended up
+            // stored as fields of a credit card application.
+            //
+            // THE BRIEF IS FOUND, NOT NAMED, and the finding is shared/task.yaml's — the
+            // instructions above need the same task, and two copies of a search that depends
+            // on how deep a wired value nests is two chances to get the depth wrong.
+            //
+            // `signal`, NOT `input`. `input.<node>.<handle>` is a TEMPLATE spelling and exists
+            // only inside {{ }}; the expression sandbox knows `config`, `credentials`, `signal`,
+            // `calls` and `scope`, and anything else is `unknown identifier` at session open,
+            // which fails the call before it dials (measured 2026-09-22).
+            const fields = helpers.fieldNamesIn(helpers.briefIn(signal));
+
+            // A TIME TO RING BACK IS ALWAYS COLLECTABLE, on any task, whether or not the task
+            // asked for it: "not now, try Thursday" is an answer to a call even when the form
+            // has no field for it.
+            const collectable = fields.concat(['callback_when', 'callback_at']);
+
+            const record = fields.length ? [{
+              type: 'function',
+              name: 'record_answers',
+              description: 'Record what the caller gave, once, at the end of the call. Only the fields listed are askable; a field they did not answer is simply left out.',
+              parameters: {
+                type: 'object',
+                required: ['answers'],
+                properties: {
+                  answers: {
+                    type: 'array',
+                    description: 'One entry per field they answered.',
+                    items: {
+                      type: 'object',
+                      required: ['field', 'value'],
+                      properties: {
+                        field: {
+                          type: 'string',
+                          enum: collectable,
+                          description: 'Which field this answers. callback_when is a time to ring back in their own words; callback_at is that same moment as a full date and time, only when the day is beyond doubt.'
+                        },
+                        value: { type: 'string', description: 'What the caller said, as they said it.' }
+                      },
+                      additionalProperties: false
+                    }
+                  }
+                },
+                additionalProperties: false
+              }
+            }] : [];
+
+            // HANGING UP IS THE LANE'S OWN, and the node both offers it and answers it (see the
+            // send rule below). It never reaches an output connector, because nothing on a
+            // canvas can execute a hang-up.
+            const hangUp = {
+              type: 'function',
+              name: 'end_call',
+              description: 'Hang up the telephone. A farewell in words does NOT end a call: the line stays open and the person is left listening to silence. Any turn where you say goodbye, or thank them and close, or agree a time and finish, MUST call this in the same turn.',
+              parameters: {
+                type: 'object',
+                required: ['reason'],
+                properties: { reason: { type: 'string', description: 'Why it ended.' } },
+                additionalProperties: false
+              }
+            };
+
+            // The author's own tools keep their place; ours are appended, and any hand-written
+            // copy of one of ours is dropped so a name is never declared twice.
+            const authored = (Array.isArray(config.backendTools)
+              ? config.backendTools
+              : (config.backendTools ? [config.backendTools] : []))
+              .filter(t => t && t.name !== 'end_call' && t.name !== 'record_answers');
+
+            return config.delegation === 'responses'
+              ? { type: 'responses', responses: {
+                  model: String(config.backendModel || 'gpt-5.6-terra'),
+                  instructions: String(config.backendPrompt || ''),
+                  tools: authored.concat(record).concat([hangUp])
+                } }
+              : { type: 'client' };
+          })()
+
+    # THE OPENING. GPT-Live has no response.create to make it speak first; the vendor's way is an
+    # instruction to greet immediately. `delegation_id: null` scopes it to the whole session.
+    # [] when empty, so a call with no opening simply waits for the person.
+    - >-
+      return String(config.initialRequest || '').trim()
+        ? [{ type: 'session.instructions.append', delegation_id: null,
+             content: 'Speak first, right now, without waiting for the caller: ' + String(config.initialRequest) +
+                      ' Then pause and listen.' }]
+        : []
+
+  # THE HAND-OFF, KEPT WHERE IT CANNOT BE OVERWRITTEN. `response.output_item.done` is not one
+  # thing: it ends a function call AND it ends the model's own spoken message. `seen` keeps the
+  # latest of each TYPE, so the message lands on top of the call and the `call_id` the reply has
+  # to be addressed to is gone. Measured 2026-09-22: the reply had nothing to address, sent
+  # nothing, and the caller heard silence after answering.
+  keep:
+    functionCall: >-
+      return !!response.event && response.event.type === 'response.output_item.done'
+        && !!response.event.item && response.event.item.type === 'function_call'
+
+  send:
+    # HANGING UP, ANSWERED BY THE NODE ITSELF.
+    #
+    # The vendor will not let the backend continue until EVERY pending call has an output
+    # ("Missing function call outputs for: call_…", measured 2026-09-22 when a turn called
+    # record_answers and end_call together and only one was answered). Nothing on a canvas can
+    # execute a hang-up, so waiting for one to answer this would deadlock the turn. The node
+    # offers the tool, so the node answers it, here, the moment it arrives.
+    #
+    # The hang-up itself is api/audio.yaml's `control.endWhen`, which waits for the goodbye to
+    # finish going out. This rule only settles the vendor's bookkeeping.
+    - on: response.event
+      when: >-
+        return !!response.event && response.event.type === 'response.output_item.done'
+          && !!response.event.item && response.event.item.type === 'function_call'
+          && response.event.item.name === 'end_call'
+      message: >-
+        return [
+          { type: 'response.item.create',
+            item: { type: 'function_call_output',
+                    call_id: response.event.item.call_id || response.event.item.id,
+                    output: '{"ended":true}' } }
+        ]
+
+    # THE BACKEND'S ANSWER, taken mid-call. Commentary is the vendor's channel for a result the
+    # model should act on: it reads it and decides what to say, in its own words.
+    #
+    # Addressed to the LATEST hand-off: `seen` holds the last delegation event, and the vendor
+    # needs its id to know which request this answers.
+    #
+    # The value is whatever the wired output carried, keyed by the node it came from
+    # ({ agent1: { text } }), so the text is dug out of it. Split into pieces of at most 1,800
+    # characters, because the vendor refuses an append over 500 tokens.
+    - on: input
+      when: "return input.handle === 'answer'"
+      message: >-
+        return (() => {
+          // WHATEVER CAME BACK, AS WORDS. A wired output is an object keyed by the node that
+          // sent it, and what is inside is that node's business: a string, something with
+          // `text`, or a plain record of fields. The last of those is the ordinary case for
+          // anything that is not an Agent, and reading only `text` turns it into the empty
+          // string — which sends NOTHING, leaves the model waiting on a hand-off that is
+          // never answered, and is heard on the call as silence after the person spoke.
+          // Measured 2026-09-22: `{ requirements: {...} }` arrived and 0 messages were sent.
+          const words = v => (typeof v === 'string' ? v
+            : v && typeof v.text === 'string' ? v.text
+            : v && typeof v === 'object' ? JSON.stringify(v)
+            : v == null ? '' : String(v));
+          const text = String(
+            typeof input.value === 'string' ? input.value
+              : Object.values(input.value || {}).map(words).filter(t => t).join('\n')
+          ).trim();
+          // A TOOL RESULT, WHEN OPENAI IS DOING THE THINKING. The thinking model is mid tool
+          // call and waiting: the vendor's way back is the result as a conversation item,
+          // then `response.create` to let it carry on. Nothing is appended as commentary,
+          // because the model has not finished reasoning and it is not the voice's turn.
+          // THE CALL THIS ANSWERS, from the slot `keep` above fills. Never from
+          // `seen['response.output_item.done']`: that is shared with the model's own message
+          // and holds whichever came last.
+          const tool = seen.functionCall;
+          const item = tool && (tool.event || {}).item;
+          const callId = (item && (item.call_id || item.id)) || null;
+          if (config.delegation === 'responses') {
+            // NOTHING, RATHER THAN THE WRONG THING. Without the id there is no way to answer
+            // the tool, and the commentary path below would address a delegation that does not
+            // exist and kill the call. A model left waiting is recoverable; a closed socket is
+            // not. The runtime names the silent input in the log.
+            if (!callId) return [];
+            return [
+              { type: 'response.item.create',
+                item: { type: 'function_call_output', call_id: callId, output: text } },
+              { type: 'response.create' }
+            ];
+          }
+
+          // OUR OWN AGENT ANSWERED, so this IS the voice's turn: commentary is the vendor's
+          // channel for a result to act on, and the model paraphrases it in its own words.
+          const handoff = seen['session.delegation.created'];
+          const id = handoff && handoff.delegation ? handoff.delegation.id : null;
+          return Array.from({ length: Math.ceil(text.length / 1800) }, (_, i) => ({
+            type: 'session.commentary.append',
+            delegation_id: id,
+            content: text.slice(i * 1800, (i + 1) * 1800)
+          }));
+        })()
+
+    # THE TASK, ARRIVING AGAIN, and the RECEIPT for whatever asked for it.
+    #
+    # One connector carries the task: the first time it opens the call, every time after it says
+    # what the task needs now. The opening brief never comes through here, because the runtime
+    # seeds it as already delivered and only a CHANGE reaches the model (CallbackNodeActor).
+    #
+    # A CHANGED TASK IS ALSO AN ANSWER. It comes back because a tool asked for it, and that tool
+    # call is still pending: the vendor will not let the backend continue until every call has an
+    # output. So when one is outstanding this settles it, carrying the task itself as the result,
+    # which is both the receipt and the update in one message. Nobody wires that, the same way
+    # nobody wires the hang-up: the node kept the id, so the node answers it.
+    #
+    # With nothing pending the task is simply a new standing order.
+    - on: input
+      when: "return input.handle === 'input'"
+      message: >-
+        return (() => {
+          // AN EMPTY BRIEF IS NOT AN UPDATE. `JSON.stringify({})` is the two characters "{}",
+          // which is text enough to send and says nothing, so the model would be handed a
+          // standing order to consider nothing.
+          const given = input.value;
+          const bare = !given || (typeof given === 'object' && Object.keys(given).length === 0);
+          const text = bare ? ''
+            : String(typeof given === 'string' ? given : JSON.stringify(given)).trim();
+          if (!text) return [];
+
+          const tool = seen.functionCall;
+          const item = tool && (tool.event || {}).item;
+          const callId = (item && (item.call_id || item.id)) || null;
+          if (config.delegation === 'responses' && callId) {
+            return [
+              { type: 'response.item.create',
+                item: { type: 'function_call_output', call_id: callId, output: text } },
+              { type: 'response.create' }
+            ];
+          }
+
+          return Array.from({ length: Math.ceil(text.length / 1800) }, (_, i) => ({
+            type: 'session.instructions.append',
+            delegation_id: null,
+            content: (i === 0 ? 'The task has moved on. This is what it needs now: ' : '')
+              + text.slice(i * 1800, (i + 1) * 1800)
+          }));
+        })()
+
+  # A GRACEFUL CLOSE. The vendor finishes what is pending and reports the session's final usage
+  # on `session.closed`.
+  close:
+    - type: session.close

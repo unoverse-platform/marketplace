@@ -1,0 +1,15 @@
+# ONE READ of the platform's skill library at loopback (package.yaml says why no token): the skill
+# itself, or with `path` one file it references.
+
+- name: read
+  method: GET
+  url: >-
+    return scope.platformUrl + '/skills/' + encodeURIComponent(String(config.name || '').trim())
+      + (String(config.path || '').trim() ? '/file?path=' + encodeURIComponent(String(config.path).trim()) : '')
+  transport: json
+
+  timeoutMs: 15000
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

@@ -1,0 +1,28 @@
+# THE NODE UNDER GUARD, against the real service. One layout, described the way any caller
+# describes its own: a marker saying which layout a file is, and where one fact sits in it.
+# Asserted on shape and provenance, never on the words a file happens to carry.
+#
+# No document type is named here: the layout is the test's own. One assertion per declared
+# output, which is what the lint asks for.
+testData:
+  config:
+    files: '[{"downloadUrl":"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf","key":"dummy.pdf"}]'
+    templates: '[{"name":"example-layout","match":"Dummy PDF","subject":{"page":1,"pattern":"(Dummy PDF file)"}}]'
+  inputs:
+    files:
+      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+        key: dummy.pdf
+  expect:
+    # The layout is recognised, the subject is found where it was said to be, and where it was
+    # read is kept in words a person can check.
+    entries: >-
+      return output.entries.length === 1
+        && output.entries[0].kind === 'pdf'
+        && output.entries[0].template === 'example-layout'
+        && typeof output.entries[0].subject === 'string' && output.entries[0].subject.length > 0
+        && typeof output.entries[0].found_in === 'string' && output.entries[0].found_in.indexOf('page') >= 0
+    # READ AND UNREAD ARE APART: a file whose subject was found can be filed; one whose subject
+    # was not is never mixed in with it.
+    read: "return output.read.length === 1 && output.read[0].file_name === 'dummy.pdf'"
+    unread: "return Array.isArray(output.unread) && output.unread.length === 0"
+    total: "return output.total === 1"

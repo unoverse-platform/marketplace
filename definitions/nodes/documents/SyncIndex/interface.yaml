@@ -1,0 +1,12 @@
+inputs:
+  - name: documents
+    type: array
+    description: The ids of every document the index holds now, when wired from an upstream node instead of the config
+    required: false
+
+outputs:
+  - name: report
+    type: object
+    description: "What the sync did: { index, documents, added, updated, kept, embedded }"
+
+credentials: []

@@ -1,0 +1,14 @@
+# ONE CALL, the engine's entry route: the same door the MCP getDetail tool, a card's hook and
+# the canvas call (engine routes/dictionary/items.ts, GET /dictionary/entry/:universalId). The
+# object fetches its own detail there (objects README 4b): a product answers with its row, a
+# document with its text from the store. Inside the trust boundary, so no token (package.yaml).
+
+- name: read
+  method: GET
+  url: >-
+    return scope.engineUrl + '/dictionary/entry/' + encodeURIComponent(String(config.universalId || '').trim())
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !response || !!response.error || !response.universal_id"
+    message: "return 'dictionary/entry failed: ' + JSON.stringify(response || {}).slice(0, 300)"

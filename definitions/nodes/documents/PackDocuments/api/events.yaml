@@ -1,0 +1,13 @@
+# One row per output connector, in interface.yaml order. `response` is { index, count, documents }.
+
+- emit: documents
+  value: "return (response && response.documents) || []"
+
+- emit: count
+  value: "return Number((response && response.count) || 0)"
+
+- emit: text
+  value: >-
+    return ((response && response.documents) || []).map(d =>
+      '- ' + d.title + (d.reportType || d.kind ? ' (' + (d.reportType || d.kind) + ')' : '') + (d.asOf ? ', as of ' + d.asOf : '') + (d.subject ? ', about ' + d.subject : '') + ' [' + d.id + ']'
+    ).join('\n')

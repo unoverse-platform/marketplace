@@ -1,0 +1,38 @@
+configSchema:
+  type: object
+  required: [state, instructions, options]
+  properties:
+    state:
+      type: string
+      title: State
+      description: >-
+        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or
+        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads
+        better than prose when the data has named fields.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    instructions:
+      type: string
+      title: Instructions
+      description: The decision to make, as a question. Shared blocks work here.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    options:
+      type: object
+      title: Options
+      description: >-
+        Option key to its description, as JSON. Describe what each option is for in concrete
+        terms; the key is what comes back as the choice.
+      default: {}
+      "ui:field": template
+    model:
+      type: string
+      title: Model
+      description: jev-latest is the stable release; jev-preview is the newest build.
+      enum: [jev-latest, jev-preview]
+      default: jev-latest
+"ui:order": [state, instructions, options, model]

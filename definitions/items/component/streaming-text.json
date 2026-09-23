@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "streaming-text",
-  "fingerprint": "4120f61d7090bc7d",
+  "fingerprint": "62a4594f103b4052",
   "bundle": "design-system",
   "title": "streaming-text",
   "description": "Streaming text: a markdown body (tables, links, images) that renders token-by-token as a node streams it, plus an optional thinking/progress line.",
@@ -57,108 +57,118 @@
       "children": [
         {
           "type": "Box",
-          "visibleWhen": "thinking",
           "style": {
-            "direction": "row",
-            "align": "center",
+            "direction": "column",
             "gap": "2",
-            "padding": [
-              "2",
-              "0",
-              "0",
-              "0"
-            ]
+            "width": "full"
           },
           "children": [
             {
               "type": "Box",
-              "visibleWhen": "streaming",
+              "visibleWhen": "thinking",
               "style": {
                 "direction": "row",
-                "gap": "1",
-                "align": "center"
+                "align": "center",
+                "gap": "2",
+                "padding": [
+                  "2",
+                  "0",
+                  "0",
+                  "0"
+                ]
               },
               "children": [
                 {
                   "type": "Box",
+                  "visibleWhen": "streaming",
                   "style": {
-                    "width": "1.5",
-                    "height": "1.5",
-                    "background": "action.primary",
-                    "radius": "full",
-                    "animation": {
-                      "name": "wave",
-                      "duration": "1.6s",
-                      "easing": "ease-in-out"
+                    "direction": "row",
+                    "gap": "1",
+                    "align": "center"
+                  },
+                  "children": [
+                    {
+                      "type": "Box",
+                      "style": {
+                        "width": "1.5",
+                        "height": "1.5",
+                        "background": "action.primary",
+                        "radius": "full",
+                        "animation": {
+                          "name": "wave",
+                          "duration": "1.6s",
+                          "easing": "ease-in-out"
+                        }
+                      }
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "width": "1.5",
+                        "height": "1.5",
+                        "background": "action.primary",
+                        "radius": "full",
+                        "animation": {
+                          "name": "wave",
+                          "duration": "1.6s",
+                          "easing": "ease-in-out"
+                        },
+                        "animationDelay": "0.16s"
+                      }
+                    },
+                    {
+                      "type": "Box",
+                      "style": {
+                        "width": "1.5",
+                        "height": "1.5",
+                        "background": "action.primary",
+                        "radius": "full",
+                        "animation": {
+                          "name": "wave",
+                          "duration": "1.6s",
+                          "easing": "ease-in-out"
+                        },
+                        "animationDelay": "0.32s"
+                      }
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "Box",
+                  "type": "Markdown",
+                  "bind": {
+                    "value": "thinking"
+                  },
                   "style": {
-                    "width": "1.5",
-                    "height": "1.5",
-                    "background": "action.primary",
-                    "radius": "full",
-                    "animation": {
-                      "name": "wave",
-                      "duration": "1.6s",
-                      "easing": "ease-in-out"
-                    },
-                    "animationDelay": "0.16s"
-                  }
-                },
-                {
-                  "type": "Box",
-                  "style": {
-                    "width": "1.5",
-                    "height": "1.5",
-                    "background": "action.primary",
-                    "radius": "full",
-                    "animation": {
-                      "name": "wave",
-                      "duration": "1.6s",
-                      "easing": "ease-in-out"
-                    },
-                    "animationDelay": "0.32s"
+                    "font": "body.sm",
+                    "color": "text.tertiary"
                   }
                 }
               ]
             },
             {
-              "type": "Markdown",
-              "bind": {
-                "value": "thinking"
-              },
+              "type": "Box",
+              "visibleWhen": "reasoning",
               "style": {
-                "font": "body.sm",
-                "color": "text.tertiary"
-              }
-            }
-          ]
-        },
-        {
-          "type": "Box",
-          "visibleWhen": "reasoning",
-          "style": {
-            "background": "surface.sunken",
-            "radius": "lg",
-            "padding": [
-              "2",
-              "3"
-            ],
-            "width": "full"
-          },
-          "children": [
-            {
-              "type": "Markdown",
-              "bind": {
-                "value": "reasoning"
+                "background": "surface.sunken",
+                "radius": "lg",
+                "padding": [
+                  "2",
+                  "3"
+                ],
+                "width": "full"
               },
-              "style": {
-                "font": "body.sm",
-                "color": "text.tertiary"
-              }
+              "children": [
+                {
+                  "type": "Markdown",
+                  "bind": {
+                    "value": "reasoning"
+                  },
+                  "style": {
+                    "font": "body.sm",
+                    "color": "text.tertiary"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -167,14 +177,12 @@
           "visibleWhen": "text",
           "style": {
             "background": "surface.sunken",
-            "radius": "2xl",
-            "radiusTopLeft": "0",
+            "radius": "xl",
             "padding": [
-              "2",
-              "4"
+              "4",
+              "5"
             ],
-            "width": "fit-content",
-            "maxWidth": "78%"
+            "width": "full"
           },
           "children": [
             {
@@ -182,6 +190,7 @@
               "bind": {
                 "value": "text"
               },
+              "citeAction": "openSource",
               "style": {
                 "font": "body.md",
                 "color": "text.primary"

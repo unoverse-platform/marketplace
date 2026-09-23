@@ -1,0 +1,20 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: noul
+  from: response
+  value: "return response.answers.answer.noul"
+
+- emit: holds
+  from: response
+  value: >-
+    return response.answers.answer.noul
+      >= (typeof config.threshold === 'number' ? config.threshold : 0.5)
+
+- emit: usage
+  from: response
+  value: >-
+    return {
+      model: response.model,
+      inputTokens: (response.usage || {}).input_tokens || 0,
+      outputTokens: (response.usage || {}).output_tokens || 0
+    }

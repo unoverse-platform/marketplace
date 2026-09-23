@@ -1,0 +1,27 @@
+type: RenderDocument
+kind: PromiseNode
+
+name: Render Document
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Capture a page, or a region of it, as an image. A diagram, a chart, a table as it looks, a
+  slide, a signature block
+
+whenToUse: >-
+  Turn part of a document into a picture: a whole page, or a region given by its page and box,
+  as a PNG. For anything a person or an Agent should SEE rather than read: a UML or process
+  diagram, an org chart, a fund structure chart, a chart whose numbers cannot be read off, a
+  table too irregular to tidy, a slide, a signature. The box usually comes from a parsed
+  document's figure, table or section provenance. Reads PDFs and images on the platform's own
+  service; a Word or PowerPoint file has to be converted to PDF first.
+
+auth:
+  required: false
+
+capabilities:
+  cacheable:
+    ignore: [fileUrl]
+    key: [etag]

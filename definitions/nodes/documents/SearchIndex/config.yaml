@@ -1,0 +1,32 @@
+configSchema:
+  type: object
+  required: [index, question]
+  properties:
+    index:
+      type: string
+      title: Index
+      description: The index's key, as the sync that built it was given, e.g. a fund pack's folder
+      default: ""
+      "ui:field": template
+    question:
+      type: string
+      title: Question
+      description: What to find, in plain words, e.g. the notice a redemption needs, in calendar days
+      default: ""
+      "ui:field": template
+    limit:
+      type: number
+      title: Passages
+      description: How many passages to return, best first
+      default: 5
+      minimum: 1
+      maximum: 20
+    documents:
+      type: string
+      title: Only these documents
+      description: >-
+        Optional: search only these of the index's documents, as a list of ids. Empty searches them
+        all.
+      default: ""
+      "ui:field": template
+"ui:order": [index, question, limit, documents]

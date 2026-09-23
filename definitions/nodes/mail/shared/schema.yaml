@@ -1,0 +1,117 @@
+# TOOL DISCOVERY, as DATA: what an attached Agent reads before touching the mailbox. The
+# wording IS the routing: a model reads these descriptions when choosing a tool, so rephrasing
+# is a behaviour change, never a tidy-up. The argument shapes are what the model fills in.
+#
+# Written as plain YAML rather than a `return { ... }` expression: a constant is data.
+
+mailbox:
+  name: Mailbox
+  version: "0.1.0"
+  description: One email inbox, as threads and messages. Read what is waiting, answer in the thread, start a message, keep a draft.
+  instructions: |-
+    MAILBOX PROTOCOL:
+    - list_threads first, to see what is waiting. It is cheap and carries no bodies.
+    - read_thread before answering anything: a reply is judged against the whole conversation,
+      not its last line.
+    - reply answers IN the thread, to the person who wrote, with the others copied. Use it for
+      every answer to a message you have read. Never start a new message to answer an old one.
+    - send starts a NEW conversation with someone; only for a message that answers nothing.
+    - save_draft when a person should look before it goes. A draft is not sent.
+    - A sent message comes back with state "sent" and its id. State "failed" carries the reason;
+      say so rather than claiming it went.
+    - You work ONE inbox. You cannot read or send from any other.
+  methods:
+    list_threads:
+      description: >-
+        The conversations in the inbox, newest first, each with its subject, who is in it, how
+        many messages, when the last one arrived, and that last message's sender and direction.
+        No bodies: read_thread gives those. An empty list means nothing is waiting, which is
+        normal.
+      input:
+        type: object
+        required: []
+        properties:
+          since:
+            type: string
+            description: Only threads with a message after this time, as an ISO date. Leave out for the newest regardless.
+          limit:
+            type: number
+            description: How many threads, newest first. Default 20, at most 200.
+    read_thread:
+      description: >-
+        One conversation in full: every message in order, each with sender, recipients,
+        subject, the text, and its attachments as links that open for a while. Call it before
+        replying.
+      input:
+        type: object
+        required: [threadId]
+        properties:
+          threadId:
+            type: string
+            description: The thread's id, from list_threads.
+    reply:
+      description: >-
+        Answer a message in its own thread. The reply goes to the message's sender, with the
+        other people on it copied, under the thread's subject, and carries the headers that make
+        it land in the same conversation in their mail client. Comes back with state "sent" and
+        the message's id, or "failed" with the reason.
+      input:
+        type: object
+        required: [messageId, text]
+        properties:
+          messageId:
+            type: string
+            description: The id of the message being answered, from read_thread. Usually the last one from the other side.
+          text:
+            type: string
+            description: The reply, as plain text. Write the whole message; it is sent as written.
+          html:
+            type: string
+            description: Optional. The same reply as HTML, when the message needs formatting. The text is still sent alongside.
+    send:
+      description: >-
+        Start a NEW conversation: a message from the inbox to one or more people. Not for
+        answering a message, which is reply. Comes back with state "sent" and the message's id,
+        or "failed" with the reason.
+      input:
+        type: object
+        required: [to, subject, text]
+        properties:
+          to:
+            type: string
+            description: Who it goes to, one or more addresses separated by commas. A name may be given as "Name <address>".
+          cc:
+            type: string
+            description: Optional. Who is copied, the same way.
+          subject:
+            type: string
+            description: The subject line.
+          text:
+            type: string
+            description: The message, as plain text.
+          html:
+            type: string
+            description: Optional. The same message as HTML.
+    save_draft:
+      description: >-
+        Keep a message without sending it, for a person to read and send. Comes back with state
+        "draft" and the draft's id. Nothing leaves the inbox.
+      input:
+        type: object
+        required: [to, subject, text]
+        properties:
+          to:
+            type: string
+            description: Who it is for, one or more addresses separated by commas.
+          cc:
+            type: string
+            description: Optional. Who would be copied.
+          subject:
+            type: string
+            description: The subject line.
+          text:
+            type: string
+            description: The message, as plain text.
+          html:
+            type: string
+            description: Optional. The same message as HTML.

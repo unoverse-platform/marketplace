@@ -1,0 +1,31 @@
+# THE NODE UNDER GUARD, against the real service. Two documents of one layout: one whose reading
+# proves itself and one whose does not. What matters is that the second's figures never reach
+# `readings`, because a reading nobody can check is the one thing this must not hand on quietly.
+#
+# No document type is named: the layout is the test's own.
+testData:
+  config:
+    documents: >-
+      [{"file_name":"good.xlsx","subject":"Example Entity","period":"2026-05-31","tables":[
+         {"caption":"2. Exposure","rows":[
+           ["2.2","Percentage of Portfolio","","","10","-4","","","",""],
+           ["2.4 Sectors","","","","","","","","",""],
+           ["","Alpha","","","6","-1","","","",""],
+           ["","Beta","","","4","-3","","","",""]]}]},
+       {"file_name":"broken.xlsx","subject":"Example Entity","period":"2026-05-31","tables":[
+         {"caption":"2. Exposure","rows":[
+           ["2.2","Percentage of Portfolio","","","10","-4","","","",""],
+           ["2.4 Sectors","","","","","","","","",""],
+           ["","Alpha","","","1","-1","","","",""]]}]}]
+    templates: >-
+      [{"name":"example-layout","match":"Percentage of Portfolio",
+        "observations":[{"sheets":["2. Exposure"],"labelColumns":[1,2,3],
+          "measures":[{"measure":"exposure","unit":"percent_of_aum","sides":{"long":4,"short":5}}]}],
+        "checks":["eachSlicingTotalsWhatTheSheetStates"]}]
+  inputs:
+    documents: []
+  expect:
+    readings: "return output.readings.length === 4 && output.readings.every(r => r.measure === 'exposure' && r.unit === 'percent_of_aum' && typeof r.source === 'string')"
+    documents: "return output.documents.length === 2 && output.documents[0].ok === true && output.documents[1].ok === false"
+    unproven: "return output.unproven.length === 1 && output.unproven[0].file_name === 'broken.xlsx'"
+    total: "return output.total === 4"

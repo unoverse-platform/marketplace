@@ -1,0 +1,15 @@
+inputs:
+  - name: question
+    type: string
+    description: The question, when wired from an upstream node instead of the config
+    required: false
+
+outputs:
+  - name: chunks
+    type: array
+    description: "The passages found, best first: { document { id, title }, section, part, chunk, kind, pages { from, to }, text, similarity }"
+  - name: text
+    type: string
+    description: The passages as one text, each opened by its document, its section and its pages, ready for a model to read and cite
+
+credentials: []

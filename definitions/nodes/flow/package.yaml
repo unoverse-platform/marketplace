@@ -7,8 +7,16 @@
 # no conflict, and `src/index.ts` registers each node on its own line — so a node moves by
 # writing its manifest and deleting those two lines.
 #
-# NO allowedHosts, and that is not an omission. Nothing in this package reaches the network at
-# all; an empty list means the executor refuses every host, which is exactly right here.
+# ONE HOST, AND ONLY THE PLATFORM'S OWN. For most of this package's life the list was empty,
+# and that was not an omission: nothing here reached the network at all. TaskRunner is the
+# exception and a narrow one. A task's half finished state is the platform's own record, kept
+# as a paused run, so reading and writing it is a loopback call to the engine and never a
+# vendor. The spatial package carries the same single entry for the same reason.
+#
+# The numeric form deliberately: the pattern rejects a bare "localhost", and the engine's
+# address is built as `http://127.0.0.1:${ENGINE_PORT ?? 4101}` by the executor itself, so
+# nothing here chooses the host. A wildcard would turn a flow package into a way to send a
+# person's half written application somewhere else.
 #
 # WHAT IS STILL CODE, and why:
 #
@@ -43,6 +51,9 @@ displayName: Flow
 description: Control flow, routing and workflow annotation
 version: 2.0.0
 category: flow
+
+allowedHosts:
+  - 127.0.0.1
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
 
 features:
@@ -51,12 +62,17 @@ features:
   - Transform data inline, with optional content ids and run-scoped saved values
   - Loop over an array, running real workflow steps once per item
   - Validate collected data against a schema and get the next missing field to ask for
+  - Walk a task's steps, handing out what is still outstanding and taking the answers back
   - Push suggested FAQs, actions and recommendations to the live chat UI
 
 requires:
   # 1.7.0 for named helpers (shared/helpers.yaml), which FieldValidator's emit rows call —
   # the same floor spatial set when helpers landed. Previously 1.5.0.
   executorVersion: ">=1.7.0"
+  # TaskRunner's three calls to the engine. Declared for the same reason as everything else
+  # here: the package says which capabilities its nodes need, so an install against an
+  # executor without them fails at install rather than at run.
+  transport: [json]
   # Code's "Save to Context" toggle. Declared even though it cannot silently no-op the way a cache
   # read can — an executor without `save` throws rather than shrugging — because the reason to
   # declare is the same either way: the package says which platform capabilities its nodes need, so

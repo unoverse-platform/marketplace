@@ -1,0 +1,26 @@
+# A REAL PAUSED TASK, created through the same route the platform uses, because the fixture
+# runs the node's calls for real and there is no way to stand in for them.
+#
+# The task declares no steps, so the questions come from its own slice, which is what a
+# component task's saved state IS: four fields answered and five empty, and an empty key is a
+# question still outstanding.
+#
+# `national_idSource` is in that slice on purpose. Every proposed field on a SAB application
+# carries a Source twin saying where the value came from, and asking someone for their
+# "national id source" is nonsense, so this fails if a twin is ever offered as a question.
+#
+# `completeWhenDone` is off and fields are outstanding, so neither write fires: what is under
+# test here is the reading and the arithmetic.
+
+testData:
+  config:
+    runId: task_wf-vhmlce_1790006335623_73f886d
+    completeWhenDone: false
+  inputs:
+    signal: {}
+  expect:
+    task: >-
+      return output.task.fields.indexOf('national_id') === 0
+        && output.task.fields.indexOf('national_idSource') === -1
+        && output.task.outstandingCount === 5
+        && output.task.held.first_name === 'Gavin'

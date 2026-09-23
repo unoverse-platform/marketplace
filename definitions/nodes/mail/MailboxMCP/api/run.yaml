@@ -1,0 +1,23 @@
+# THE GRAPH'S CHANNEL: what this node does when the workflow runs it. One read of the inbox
+# the credential names, through the engine at loopback (package.yaml says why).
+#
+# THE MAILBOX IS THE SOURCE: the door asks Google or Microsoft at the moment it is asked, and
+# nothing is stored on our side. Which provider answers is the credential's business, so
+# nothing here knows or cares.
+
+- name: overview
+  method: GET
+  url: >-
+    return scope.engineUrl + '/mail/inboxes/'
+      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())
+      + '/overview'
+  transport: json
+
+  timeoutMs: 30000
+
+  # The door answers 404 with `{ error }` for an address no credential names, which is the
+  # common mistake (a box whose credential was never attached). Without this the node would
+  # emit an empty overview and look like a working mailbox with nothing in it.
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

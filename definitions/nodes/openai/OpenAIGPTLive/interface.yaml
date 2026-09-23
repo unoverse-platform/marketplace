@@ -1,0 +1,31 @@
+inputs:
+  # THE TASK. The first time it opens the call; every time after it updates the standing
+  # orders, because "here is the task" is ONE idea and whether it is the first or the fifth is
+  # the runtime's business (CallbackNodeActor delivers a repeat to the running session).
+  - name: input
+    type: object
+    description: The task, at the start and whenever it changes
+    required: false
+
+  # ARRIVES WHILE THE CALL RUNS. `CONTINUE` is what makes that possible: the value is handed to
+  # the open call rather than starting the node again, which would open a second one. Wire the
+  # backend's final answer here, not a stream: a stream sends the answer so far each time, and
+  # the model would be told the same sentence over and over.
+  - name: answer
+    type: object
+    signal: CONTINUE
+    description: The backend's answer, for it to say
+    required: false
+
+outputs:
+  - name: task
+    type: object
+    description: "A hand-off to the backend"
+  - name: transcript
+    type: string
+    description: The whole call, when it ends
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI

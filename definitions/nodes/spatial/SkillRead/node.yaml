@@ -1,0 +1,23 @@
+type: SkillRead
+kind: PromiseNode
+
+name: Skill Read
+category: Search
+color: "#7C3AED"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Read a skill's full instructions from the platform, or one file the skill references
+
+# Outcome first, disqualify by PROPERTY, never name another node.
+whenToUse: >-
+  Follow a skill exactly: get the whole of its instructions by its name, or the one file it
+  points at by the path it wrote. It reads the platform's own skill library and nothing else; it
+  does not search for a skill or decide which applies.
+
+auth:
+  required: false
+
+capabilities:
+  # A skill file changes when its author saves it; never served from memory.
+  cacheable: false

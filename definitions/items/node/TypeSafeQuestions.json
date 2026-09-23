@@ -1,0 +1,114 @@
+{
+  "kind": "node",
+  "name": "TypeSafeQuestions",
+  "pack": "typesafe",
+  "fingerprint": "4c5085d8593c41ae",
+  "title": "TypeSafe Questions",
+  "description": "Ask several typed questions of one state in a single call; every answer comes back keyed",
+  "category": "AI",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg",
+  "whenToUse": "Make several judgements about the same text or data at once and get them all back in one round trip: route a message and rate its urgency and flag whether it needs a refund, each as its own typed answer under its own key. Questions are a JSON map in the vendor's own shape, mixing choice, score and noul freely, so it suits an Agent or an upstream step that composes questions from data, and any case where one question per node would mean sending the same state many times. For a single question of one kind a dedicated node gives the answer as flat fields.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "answers",
+        "type": "object",
+        "description": "Each question's answer, by key"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "model, inputTokens, outputTokens"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "typesafeCredential",
+        "required": true,
+        "displayName": "TypeSafe"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "state",
+        "questions"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "title": "State",
+          "description": "What to judge: a message, a passage, a record. Text is sent as text; a JSON object or array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads better than prose when the data has named fields.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "questions": {
+          "type": "object",
+          "title": "Questions",
+          "description": "Question key to question, as JSON. Each has a type of choice, score or noul, instructions, and criteria: an option map for a choice, an ordered list of levels for a score, and an optional true and false description for a noul.",
+          "default": {},
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "jev-latest is the stable release; jev-preview is the newest build.",
+          "enum": [
+            "jev-latest",
+            "jev-preview"
+          ],
+          "default": "jev-latest"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "typesafe",
+      "packageFile": "# TYPESAFE, fully declarative.\n#\n# One vendor endpoint, POST /v1/systemone, answers typed questions about a piece of state:\n# pick an option, place on a scale, or say whether a statement holds. The answer is a value\n# and a probability distribution, never prose, so a workflow branches on it directly.\n#\n# Four nodes over the one call: three ask a single question of one type, and the fourth\n# sends a whole map of questions in one round trip, which is how the vendor is meant to be\n# used when several judgements share the same state.\n\nname: typesafe\ndisplayName: TypeSafe\ndescription: Typed decisions from Jev, TypeSafe's System One model; a value and a probability, never prose\nversion: 1.0.0\ncategory: ai\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\nfeatures:\n  - Choose one option from a described list, with a probability for each\n  - Score state on an ordered scale of described levels\n  - Answer whether a statement is true, as a probability\n  - Ask several questions of one state in a single call\n\nallowedHosts:\n  - api.typesafe.ai\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  credential: [bearer]\n  transport: [json]\n",
+      "credentials": {
+        "typesafeCredential.yaml": "name: typesafeCredential\ndisplayName: TypeSafe\ndescription: Credentials for the TypeSafe API\ndocumentationUrl: https://console.typesafe.ai/settings/keys\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your TypeSafe API key\n    placeholder: ts-\n"
+      },
+      "shared": {}
+    },
+    "dir": "TypeSafeQuestions",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n\n- emit: answers\n  from: response\n  value: \"return response.answers\"\n\n- emit: usage\n  from: response\n  value: >-\n    return {\n      model: response.model,\n      inputTokens: (response.usage || {}).input_tokens || 0,\n      outputTokens: (response.usage || {}).output_tokens || 0\n    }\n",
+      "api/run.yaml": "# One synchronous call carrying the whole question map as given. The vendor evaluates every\n# question in parallel and in isolation against the one state, which is the point of\n# sending them together.\n#\n# STATE MAY BE STRUCTURE. The field is a string so it can be typed or templated, but the\n# vendor reads a JSON object or array as named fields rather than as prose, so a value that\n# is a whole JSON document is parsed before it is sent. Prose stays prose.\n\n- name: ask\n  method: POST\n  url: https://api.typesafe.ai/v1/systemone\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.typesafeCredential.apiKey }}\"\n  headers:\n    Content-Type: application/json\n  transport: json\n  timeoutMs: 60000\n  # 529 is the vendor's own overloaded code, alongside the usual rate limit and server errors.\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504, 529]\n\n  body:\n    model: \"return config.model || 'jev-latest'\"\n    state: >-\n      return (typeof config.state === 'string'\n        && ((config.state.trim().startsWith('{') && config.state.trim().endsWith('}'))\n          || (config.state.trim().startsWith('[') && config.state.trim().endsWith(']'))))\n        ? JSON.parse(config.state)\n        : config.state\n    questions: \"return config.questions\"\n\n  error:\n    # An empty answer map is a failure whatever the status was.\n    when: \"return !Object.keys(response.answers || {}).length\"\n    message: >-\n      return 'TypeSafe returned no answers.'\n        + (response.error ? ' ' + JSON.stringify(response.error) : '')\n        + (response.detail ? ' ' + JSON.stringify(response.detail) : '')\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [state, questions]\n  properties:\n    state:\n      type: string\n      title: State\n      description: >-\n        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or\n        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads\n        better than prose when the data has named fields.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    questions:\n      type: object\n      title: Questions\n      description: >-\n        Question key to question, as JSON. Each has a type of choice, score or noul,\n        instructions, and criteria: an option map for a choice, an ordered list of levels\n        for a score, and an optional true and false description for a noul.\n      default: {}\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    model:\n      type: string\n      title: Model\n      description: jev-latest is the stable release; jev-preview is the newest build.\n      enum: [jev-latest, jev-preview]\n      default: jev-latest\n\"ui:order\": [state, questions, model]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes\n    required: false\n\noutputs:\n  - name: answers\n    type: object\n    description: Each question's answer, by key\n  - name: usage\n    type: object\n    description: model, inputTokens, outputTokens\n\ncredentials:\n  - name: typesafeCredential\n    required: true\n    displayName: TypeSafe\n",
+      "node.yaml": "type: TypeSafeQuestions\n# One call, one reply: the endpoint answers synchronously however many questions it carries.\nkind: PromiseNode\n\nname: TypeSafe Questions\ncategory: AI\ncolor: \"#1D4ED8\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\ndescription: Ask several typed questions of one state in a single call; every answer comes back keyed\n\nwhenToUse: >-\n  Make several judgements about the same text or data at once and get them all back in one\n  round trip: route a message and rate its urgency and flag whether it needs a refund,\n  each as its own typed answer under its own key. Questions are a JSON map in the vendor's\n  own shape, mixing choice, score and noul freely, so it suits an Agent or an upstream\n  step that composes questions from data, and any case where one question per node would\n  mean sending the same state many times. For a single question of one kind a dedicated\n  node gives the answer as flat fields.\n\n# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody\n# thought about cannot look the same as one deliberately left open.\nauth:\n  required: false\n\ncapabilities:\n  # A pure read: the same state and questions give the same answers, and nothing is\n  # written anywhere.\n  cacheable: true\n",
+      "test.yaml": "# Asserts the SHAPE, not the verdicts: one answer per question, each of the type asked for.\n# The state is structure here, to prove the JSON path reaches the vendor as an object.\n\ntestData:\n  config:\n    state: '{\"message\": \"My card was charged twice for order A-104 and I want the second charge refunded.\", \"order_id\": \"A-104\"}'\n    questions:\n      team:\n        type: choice\n        instructions: Which team should handle this message?\n        criteria:\n          billing: Charges, refunds, invoices and payment methods\n          shipping: Where an order is, delivery dates, damaged parcels\n      urgency:\n        type: score\n        instructions: How urgent is this message?\n        criteria:\n          - Can wait a week\n          - Should be handled today\n          - Needs a reply within the hour\n      refund:\n        type: noul\n        instructions: Is the customer asking for a refund?\n    model: jev-latest\n  inputs:\n    signal: {}\n  expect:\n    answers: >-\n      return ['billing', 'shipping'].includes(output.answers.team.choice)\n        && output.answers.urgency.score >= 0 && output.answers.urgency.score <= 2\n        && output.answers.refund.noul >= 0 && output.answers.refund.noul <= 1\n    usage: \"return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'\"\n"
+    }
+  }
+}

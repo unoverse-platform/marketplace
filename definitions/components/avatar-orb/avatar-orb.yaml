@@ -27,6 +27,10 @@ props:
     type: string
     description: "How fast the animation runs. 1 is normal."
     default: "1"
+  portrait:
+    type: string
+    description: "One photo of the assistant, shown in every state. Empty means the built-in poses, one per state."
+    default: ""
 root:
   type: Box
   style:
@@ -120,6 +124,11 @@ root:
         background: surface.sunken
         shadow: lg
       children:
+        # THE BUILT-IN POSES, one per state, are the BASE and always draw. They are not
+        # guarded on `portrait` being empty: a placement that gives no portrait leaves the
+        # key ABSENT from scope, not equal to "", and a guard of `eq: ""` would then hide
+        # them and leave the frame empty. A bare `visibleWhen` reads absent and empty
+        # alike; the object form does not.
         - type: Switch
           on: callState
           cases:
@@ -167,3 +176,16 @@ root:
                 width: full
                 height: full
                 fit: cover
+        # ONE PORTRAIT for every state, when the placement gives one: laid OVER the pose,
+        # so it shows whenever a portrait is provided and the poses show whenever it is not.
+        - type: Image
+          visibleWhen: portrait
+          bind:
+            src: portrait
+          alt: The assistant
+          style:
+            position: absolute
+            inset: "0"
+            width: full
+            height: full
+            fit: cover

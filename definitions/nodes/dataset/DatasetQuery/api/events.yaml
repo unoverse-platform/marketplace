@@ -1,0 +1,4 @@
+- emit: rows
+  value: "return (response || {}).rows || []"
+- emit: total
+  value: "return ((response || {}).rows || []).length"

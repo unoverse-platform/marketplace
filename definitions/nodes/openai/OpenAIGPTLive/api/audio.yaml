@@ -1,0 +1,36 @@
+# THE AUDIO LANE. The platform's socket to the browser, not the vendor's.
+#
+# This file exists for ONE reason: MCP cannot carry binary audio. Everything else this node
+# produces is in events.yaml and reaches the client over MCP streaming.
+
+in:
+  resampleTo: 24000
+  message:
+    type: session.input_audio.append
+    audio: "{{ audio.base64 }}"
+
+out:
+  match: session.output_audio.delta
+  value: "return response.delta"
+  # NO `done` AND NO `interruptOn`: GPT-Live sends no end-of-speech or speech-started event. The
+  # model decides when to stop talking, so a person speaking never cuts its audio.
+
+control:
+  # THE MODEL HANGING UP. `endOn` below is the LANE's list and every entry means the PERSON
+  # left; nothing there can say the assistant is finished, and GPT-Live sends no end-of-call
+  # event. So a call whose business was done held the line in silence until the idle timer
+  # fired (heard live, 2026-09-22). A tool named `end_call` is how it says so.
+  endWhen: >-
+    return response.type === 'response.event'
+      && !!response.event
+      && response.event.type === 'response.output_item.done'
+      && !!response.event.item
+      && response.event.item.type === 'function_call'
+      && response.event.item.name === 'end_call'
+
+  # The person pressing hang up. Runs the `close` list in api/run.yaml.
+  endOn: [END_CALL, stop]
+  # The call state's "thinking": a hand-off starts the backend's work, and the vendor's
+  # acknowledgement of the answer (see the `send` rule in api/run.yaml) ends it.
+  toolUse: session.delegation.created
+  toolUseCompleted: session.commentary.appended

@@ -68,10 +68,17 @@
 # the SAME endpoint with the SAME body, which the generic poll supports without knowing that.
 #
 # `until` is tested against the FIRST reply before any waiting, so a ready item costs no extra call.
+#
+# `okOn: [400]` BECAUSE PLAID SAYS "NOT READY" WITH A 400. The transport treats any non-2xx as a
+# failure and throws before the poll ever reads the body, so without this the first fetch of every
+# run died as "400 Bad Request — PRODUCT_NOT_READY" and the poll declared below never engaged. With
+# it, a 400 is handed to `until` and `failed` like any other reply: not-ready keeps polling, and every
+# other 400 (a bad token, a bad date) is still caught by `failed` and reported with Plaid's own reason.
 - name: transactions
   method: POST
   url: "return 'https://' + (credentials.plaidCredential.environment || 'sandbox') + '.plaid.com/transactions/get'"
   transport: json
+  okOn: [400]
   body:
     client_id: "{{ credentials.plaidCredential.clientId }}"
     secret: "{{ credentials.plaidCredential.secret }}"

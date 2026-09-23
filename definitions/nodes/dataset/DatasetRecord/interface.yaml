@@ -1,0 +1,15 @@
+inputs:
+  - name: rows
+    type: array
+    description: The rows to write, each a record whose keys are columns the object declares
+    required: false
+
+outputs:
+  - name: written
+    type: number
+    description: How many rows were written
+  - name: removed
+    type: number
+    description: How many rows this replaced, so a read that found fewer than last time is visible
+
+credentials: []

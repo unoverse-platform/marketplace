@@ -1,0 +1,105 @@
+{
+  "kind": "node",
+  "name": "SearchIndex",
+  "pack": "documents",
+  "fingerprint": "fd69fe81129c743f",
+  "title": "Search Index",
+  "description": "Find the passages of a search index's documents that answer one question, each with its document, its section and its pages",
+  "category": "Documents",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Answer from a set of documents without reading them whole: ask one question of an index a sync has built and get back the few passages that answer it, ranked by meaning and by exact words, each with the document it is in and the pages it sits on, ready to cite. Pick it to fill a field from a fund's documents, to give a model only what it needs, or to point a reader at the page. It answers with passages, never a written answer, and searches only the index it is given.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "question",
+        "type": "string",
+        "description": "The question, when wired from an upstream node instead of the config",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "chunks",
+        "type": "array",
+        "description": "The passages found, best first: { document { id, title }, section, part, chunk, kind, pages { from, to }, text, similarity }"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The passages as one text, each opened by its document, its section and its pages, ready for a model to read and cite"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "index",
+        "question"
+      ],
+      "properties": {
+        "index": {
+          "type": "string",
+          "title": "Index",
+          "description": "The index's key, as the sync that built it was given, e.g. a fund pack's folder",
+          "default": "",
+          "ui:field": "template"
+        },
+        "question": {
+          "type": "string",
+          "title": "Question",
+          "description": "What to find, in plain words, e.g. the notice a redemption needs, in calendar days",
+          "default": "",
+          "ui:field": "template"
+        },
+        "limit": {
+          "type": "number",
+          "title": "Passages",
+          "description": "How many passages to return, best first",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 20
+        },
+        "documents": {
+          "type": "string",
+          "title": "Only these documents",
+          "description": "Optional: search only these of the index's documents, as a list of ids. Empty searches them all.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "documents",
+      "packageFile": "# DOCUMENTS — the platform's own document service (services/documents, a Python service beside\n# umap): a file in, its structure out. Text in reading order, every table as rows, every figure\n# as an image with its caption, every ordered list, the dates a document carries, and where on\n# which page each sits. docs/unoverse/data/documents/README.md.\n#\n# ONE DOOR, ONE NODE: ParseDocument, RenderDocument, InventoryFolder, ReadCover, ReadValues. Each is a JOB on\n# the service (start, poll, collect), which is the LlamaParse shape, so the poll capability does\n# the waiting. A door does one job, so one can be improved or replaced without touching what\n# calls it: a census before reading, a cover before filing, a parse when the whole is wanted.\n#\n# THE HOST IS THE ENGINE, at loopback (`scope.engineUrl`, :4101), which forwards to the service\n# (routes/documents.ts) the way it reaches umap. A node's call must be https or loopback\n# (allowedHosts.ts refuses a plaintext request to any other host), and a compose service on the\n# Docker network is neither; the engine holds the service's address so no node and no file does.\n\nname: documents\ndisplayName: Documents\ndescription: >-\n  Read a file into its structure with the platform's document service. Text, tables as rows,\n  figures, lists, dates, provenance\nversion: 0.1.0\ncategory: ingest\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Parse PDF, Word, slides, spreadsheets, HTML and images into one typed structure\n  - Tables as rows with units parsed, figures as images, ordered lists as steps\n  - Render any page or region as an image\n  - \"Inventory a folder: kinds, pages, dates, duplicates\"\n  - \"Read a cover: what each file is about and the date it states, from named cells, no model\"\n  - \"Read values: the figures a parsed document stated, refused whole when they do not add up to what it says about itself\"\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form (the pattern rejects a bare \"localhost\"): every call goes to the\n  # engine's own listener, which forwards to the service. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n  # Every door is a job: without `poll` an executor would settle on the receipt and emit the job\n  # id as the answer.\n  poll: true\n",
+      "credentials": {},
+      "shared": {}
+    },
+    "dir": "SearchIndex",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order. `response` is { chunks }.\n\n- emit: chunks\n  value: \"return (response && response.chunks) || []\"\n\n- emit: text\n  value: >-\n    return ((response && response.chunks) || []).map(p => {\n      const pages = p.pages && p.pages.from != null ? (p.pages.to != null && p.pages.to !== p.pages.from ? 'pages ' + p.pages.from + '-' + p.pages.to : 'page ' + p.pages.from) : '';\n      return '## ' + p.document.title + (p.section ? ', ' + p.section : '') + (pages ? ' (' + pages + ')' : '') + '\\n\\n' + p.text;\n    }).join('\\n\\n')\n",
+      "api/run.yaml": "# ONE QUESTION OF THE PLATFORM'S OWN INDEX, through the engine at loopback (package.yaml says why).\n# The engine ranks; the reply is the passages (docs/unoverse/data/documents/search-index.md).\n\n- name: search\n  method: POST\n  url: \"return scope.engineUrl + '/index/search'\"\n  transport: json\n\n  body:\n    index: \"{{ config.index }}\"\n    question: \"return String(config.question || (signal && signal.question) || '')\"\n    limit: \"return Number(config.limit || 5)\"\n    documents: \"return Array.isArray(config.documents) ? config.documents.map(d => typeof d === 'string' ? d : (d && (d.universal_id || d.id))).filter(Boolean) : []\"\n\n  timeoutMs: 60000\n\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [index, question]\n  properties:\n    index:\n      type: string\n      title: Index\n      description: The index's key, as the sync that built it was given, e.g. a fund pack's folder\n      default: \"\"\n      \"ui:field\": template\n    question:\n      type: string\n      title: Question\n      description: What to find, in plain words, e.g. the notice a redemption needs, in calendar days\n      default: \"\"\n      \"ui:field\": template\n    limit:\n      type: number\n      title: Passages\n      description: How many passages to return, best first\n      default: 5\n      minimum: 1\n      maximum: 20\n    documents:\n      type: string\n      title: Only these documents\n      description: >-\n        Optional: search only these of the index's documents, as a list of ids. Empty searches them\n        all.\n      default: \"\"\n      \"ui:field\": template\n\"ui:order\": [index, question, limit, documents]\n",
+      "interface.yaml": "inputs:\n  - name: question\n    type: string\n    description: The question, when wired from an upstream node instead of the config\n    required: false\n\noutputs:\n  - name: chunks\n    type: array\n    description: \"The passages found, best first: { document { id, title }, section, part, chunk, kind, pages { from, to }, text, similarity }\"\n  - name: text\n    type: string\n    description: The passages as one text, each opened by its document, its section and its pages, ready for a model to read and cite\n\ncredentials: []\n",
+      "node.yaml": "type: SearchIndex\nkind: PromiseNode\n\nname: Search Index\ncategory: Documents\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  Find the passages of a search index's documents that answer one question, each with its\n  document, its section and its pages\n\n# Outcome first, disqualify by PROPERTY, never name another node.\nwhenToUse: >-\n  Answer from a set of documents without reading them whole: ask one question of an index a sync\n  has built and get back the few passages that answer it, ranked by meaning and by exact words,\n  each with the document it is in and the pages it sits on, ready to cite. Pick it to fill a field\n  from a fund's documents, to give a model only what it needs, or to point a reader at the page.\n  It answers with passages, never a written answer, and searches only the index it is given.\n\nauth:\n  required: false\n\ncapabilities:\n  # The same question of the same index is the same answer until the index is synced again.\n  cacheable: false\n",
+      "test.yaml": "# Runs against the platform's own engine and database: a question of an index that holds nothing\n# finds nothing, and says so in both outputs. Shape assertions only.\ntestData:\n  config:\n    index: \"test://search-index/empty\"\n    question: the notice a redemption needs\n    limit: 3\n  expect:\n    chunks: \"return Array.isArray(output.chunks) && output.chunks.length === 0\"\n    text: \"return output.text === ''\"\n"
+    }
+  }
+}

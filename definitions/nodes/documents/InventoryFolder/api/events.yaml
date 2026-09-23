@@ -1,0 +1,8 @@
+- emit: entries
+  value: "return (response.result || {}).entries || []"
+
+- emit: duplicateSets
+  value: "return (response.result || {}).duplicate_sets || []"
+
+- emit: total
+  value: "return ((response.result || {}).entries || []).length"

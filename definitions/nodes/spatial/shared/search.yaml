@@ -23,7 +23,7 @@ call:
     # to set it fails loudly at the server rather than silently searching one way.
     mode: "return params.__unset"
 
-    # maxResults, the threshold and the type filters come from the NODE CONFIG, never from
+    # maxResults, the threshold and the object settings come from the NODE CONFIG, never from
     # the agent's arguments. That is this node's whole contract: the author decides what a
     # search may return, the model only decides what to ask for. A model that could widen its
     # own result set would route around the author.
@@ -43,36 +43,25 @@ call:
     # server treats as "do not record" rather than as an error.
     userId: "return scope.userId"
 
-    # PASSED THROUGH, NEVER COERCED — and NARROWABLE per call (2026-09-01, owner-ruled for
-    # the template query lane): a caller may pass a flag as `false` to see LESS than the
-    # config allows, never more. `params.x === false` is the ONLY value honoured; anything
-    # else (true, missing, junk) falls through to config, so the author's panel remains the
-    # ceiling and a model cannot widen its own result set.
+    # WHICH OBJECTS THIS SEARCH INCLUDES (docs/unoverse/data/spatial/objects-in-spatial.md). The
+    # author's setting per object comes from CONFIG: off (never), on (always, the agent cannot
+    # turn it off), intelligent (the agent decides). The agent's choice among the Intelligent ones
+    # comes from `params.objects`, the tool argument getSchema offers. The ENGINE applies the
+    # rules, so a name the agent sends that is not Intelligent is ignored and an Off object is
+    # never searched: the author's setting stays the ceiling, and a model cannot widen it.
     #
-    # Still `config.x` after these became WIRABLE (2026-08-13, see config.yaml's header): the
-    # workflow may now decide any of them PER RUN through `ui:field: template`, but it does so
-    # by feeding CONFIG, so nothing here changes. A flag must be exactly one `{{ path }}` to
-    # survive as a boolean.
-    #
-    # An UNSET flag must arrive as undefined so `resolveBody` drops the key and the SERVER's
-    # own default applies — and those defaults are mostly TRUE (images, needs, services,
-    # skills and mcps; only actions is false). Writing `=== true` turned every unset flag
-    # into an explicit `false`, so a node whose author had not touched the toggles asked for
-    # nothing instead of everything. Valid request, far narrower answer, no error.
-    #
-    # `false` is still SENT: resolveBody drops undefined and "", not false, so a deliberately
-    # disabled type stays disabled.
-    includeImages: "return params.includeImages === false ? false : config.includeImages"
-    includeNeeds: "return params.includeNeeds === false ? false : config.includeNeeds"
-    includeServices: "return params.includeServices === false ? false : config.includeServices"
-    includeActions: "return params.includeActions === false ? false : config.includeActions"
-    includeSkills: "return params.includeSkills === false ? false : config.includeSkills"
-    includeMcps: "return params.includeMcps === false ? false : config.includeMcps"
+    # Both resolve to undefined when unset, and resolveBody drops the key: no settings means every
+    # object takes the default (Intelligent), no choice means only the On objects.
+    objectSettings: "return (config.objects && typeof config.objects === 'object') ? config.objects : undefined"
+    objects: "return (Array.isArray(params.objects) && params.objects.length) ? params.objects.map(String) : undefined"
 
     # OPTIONAL source scope (migration 021): restrict the whole search to rows from ONE
     # source ("only this doc's needs"). Author-set, never a default — unset resolves to
     # undefined, resolveBody drops the key, the search stays map-wide.
-    sourceId: "return config.sourceId || undefined"
+    # ONE SOURCE (owner, 2026-09-11): the model may scope a call to a source it holds (a
+    # row's source_id: the opened deal, the document it is reading); the config's scope
+    # stands when the call names none.
+    sourceId: "return String(params.sourceId || '').trim() || config.sourceId || undefined"
 
     # A single ask, several angles, or both. `queries` batches ONE embedding call and N
     # searches into a single round trip, each row tagged with the query it answered.
@@ -114,5 +103,9 @@ call:
 # diffed as a named function rather than 45 lines inside this scalar.
 #
 # Evaluated AFTER the card lane, which needs the full rows.
+# THE OBJECTS IT SEARCHED WITH (objects-in-spatial.md, "What the trace shows"): the engine names
+# every group the search used, the On ones and the agent's choice, and it comes back as the
+# argument it really was, so the trace shows `objects` as run and the Agent sees it too.
 lean: >-
-  return Object.assign({}, response, { results: (response.results || []).map(helpers.searchRow) })
+  return Object.assign({}, response, { objects: undefined, results: (response.results || []).map(helpers.searchRow) },
+    Array.isArray(response.objects) ? { arguments: { objects: response.objects } } : {})

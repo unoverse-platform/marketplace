@@ -1,0 +1,29 @@
+type: TypeSafeQuestions
+# One call, one reply: the endpoint answers synchronously however many questions it carries.
+kind: PromiseNode
+
+name: TypeSafe Questions
+category: AI
+color: "#1D4ED8"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg
+
+description: Ask several typed questions of one state in a single call; every answer comes back keyed
+
+whenToUse: >-
+  Make several judgements about the same text or data at once and get them all back in one
+  round trip: route a message and rate its urgency and flag whether it needs a refund,
+  each as its own typed answer under its own key. Questions are a JSON map in the vendor's
+  own shape, mixing choice, score and noul freely, so it suits an Agent or an upstream
+  step that composes questions from data, and any case where one question per node would
+  mean sending the same state many times. For a single question of one kind a dedicated
+  node gives the answer as flat fields.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody
+# thought about cannot look the same as one deliberately left open.
+auth:
+  required: false
+
+capabilities:
+  # A pure read: the same state and questions give the same answers, and nothing is
+  # written anywhere.
+  cacheable: true

@@ -1,0 +1,11 @@
+# One row per output connector, in interface.yaml order. `response` is { chunks }.
+
+- emit: chunks
+  value: "return (response && response.chunks) || []"
+
+- emit: text
+  value: >-
+    return ((response && response.chunks) || []).map(p => {
+      const pages = p.pages && p.pages.from != null ? (p.pages.to != null && p.pages.to !== p.pages.from ? 'pages ' + p.pages.from + '-' + p.pages.to : 'page ' + p.pages.from) : '';
+      return '## ' + p.document.title + (p.section ? ', ' + p.section : '') + (pages ? ' (' + pages + ')' : '') + '\n\n' + p.text;
+    }).join('\n\n')

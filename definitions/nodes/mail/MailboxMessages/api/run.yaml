@@ -1,0 +1,20 @@
+# THE SAME DOOR THE OTHER MAIL NODE READS. It answers the inbox's state AND its conversations
+# in one call, so a node that wants the threads and a screen that wants the state never ask the
+# mailbox for the same list twice.
+
+- name: overview
+  method: GET
+  url: >-
+    return scope.engineUrl + '/mail/inboxes/'
+      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())
+      + '/overview'
+  transport: json
+
+  query:
+    limit: "return String(Number(config.limit || 20))"
+
+  timeoutMs: 30000
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

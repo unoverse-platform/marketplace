@@ -1,0 +1,13 @@
+configSchema:
+  type: object
+  required: [universalId]
+  properties:
+    universalId:
+      type: string
+      title: Row
+      description: >-
+        The universal id of the row to open, usually the top result of a Spatial Query wired
+        in from upstream
+      default: ""
+      "ui:field": template
+"ui:order": [universalId]

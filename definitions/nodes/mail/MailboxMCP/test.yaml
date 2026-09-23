@@ -1,0 +1,24 @@
+# THE RUN, which is the channel this node is now reached through by both a workflow step and
+# its own panel tab. It reads the inbox its Mailbox credential names (the bench takes the
+# credential's fields from the workspace .env) and emits the inbox's state.
+#
+# The service channel is deliberately NOT the fixture: `reply` and `send` put a real message
+# in a real person's inbox, and a bench that does that is not one anyone runs twice.
+#
+# Shape assertions only. An inbox holding nothing is a working mailbox with nothing in it,
+# which is a legitimate answer rather than a failure.
+testData:
+  config: {}
+
+  inputs:
+    signal: {}
+
+  expect:
+    overview: >-
+      return !!output.overview
+        && typeof output.overview.address === 'string'
+        && ['Working', 'Failing'].indexOf(output.overview.stateLabel) >= 0
+        && Array.isArray(output.overview.unanswered)
+        && Array.isArray(output.overview.volume)
+        && output.overview.volume.length === 7
+    unanswered: "return Array.isArray(output.unanswered)"

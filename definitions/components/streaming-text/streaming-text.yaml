@@ -54,88 +54,97 @@ root:
     gap: "2"
     width: full
   children:
+    # THE WORKING SECTION, always on top: the status line and the model's reasoning, together
+    # and apart from the answer, so the answer below reads on its own.
     - type: Box
-      visibleWhen: thinking
       style:
-        direction: row
-        align: center
+        direction: column
         gap: "2"
-        padding: [ "2", "0", "0", "0" ]
-      children:
-        - type: Box
-          visibleWhen: streaming
-          style:
-            direction: row
-            gap: "1"
-            align: center
-          children:
-            - type: Box
-              style:
-                width: "1.5"
-                height: "1.5"
-                background: action.primary
-                radius: full
-                animation:
-                  name: wave
-                  duration: 1.6s
-                  easing: ease-in-out
-            - type: Box
-              style:
-                width: "1.5"
-                height: "1.5"
-                background: action.primary
-                radius: full
-                animation:
-                  name: wave
-                  duration: 1.6s
-                  easing: ease-in-out
-                animationDelay: 0.16s
-            - type: Box
-              style:
-                width: "1.5"
-                height: "1.5"
-                background: action.primary
-                radius: full
-                animation:
-                  name: wave
-                  duration: 1.6s
-                  easing: ease-in-out
-                animationDelay: 0.32s
-        - type: Markdown
-          bind:
-            value: thinking
-          style:
-            font: body.sm
-            color: text.tertiary
-    # The model's working notes, above the answer it produced them for. Quiet by
-    # design: sunken, small, tertiary — present when streamed, absent otherwise.
-    - type: Box
-      visibleWhen: reasoning
-      style:
-        background: surface.sunken
-        radius: lg
-        padding: [ "2", "3" ]
         width: full
       children:
-        - type: Markdown
-          bind:
-            value: reasoning
+        - type: Box
+          visibleWhen: thinking
           style:
-            font: body.sm
-            color: text.tertiary
+            direction: row
+            align: center
+            gap: "2"
+            padding: [ "2", "0", "0", "0" ]
+          children:
+            - type: Box
+              visibleWhen: streaming
+              style:
+                direction: row
+                gap: "1"
+                align: center
+              children:
+                - type: Box
+                  style:
+                    width: "1.5"
+                    height: "1.5"
+                    background: action.primary
+                    radius: full
+                    animation:
+                      name: wave
+                      duration: 1.6s
+                      easing: ease-in-out
+                - type: Box
+                  style:
+                    width: "1.5"
+                    height: "1.5"
+                    background: action.primary
+                    radius: full
+                    animation:
+                      name: wave
+                      duration: 1.6s
+                      easing: ease-in-out
+                    animationDelay: 0.16s
+                - type: Box
+                  style:
+                    width: "1.5"
+                    height: "1.5"
+                    background: action.primary
+                    radius: full
+                    animation:
+                      name: wave
+                      duration: 1.6s
+                      easing: ease-in-out
+                    animationDelay: 0.32s
+            - type: Markdown
+              bind:
+                value: thinking
+              style:
+                font: body.sm
+                color: text.tertiary
+        # The model's working notes, above the answer it produced them for. Quiet by
+        # design: sunken, small, tertiary — present when streamed, absent otherwise.
+        - type: Box
+          visibleWhen: reasoning
+          style:
+            background: surface.sunken
+            radius: lg
+            padding: [ "2", "3" ]
+            width: full
+          children:
+            - type: Markdown
+              bind:
+                value: reasoning
+              style:
+                font: body.sm
+                color: text.tertiary
     - type: Box
       visibleWhen: text
       style:
         background: surface.sunken
-        radius: 2xl
-        radiusTopLeft: "0"
-        padding: [ "2", "4" ]
-        width: fit-content
-        maxWidth: 78%
+        radius: xl
+        padding: [ "4", "5" ]
+        width: full
       children:
         - type: Markdown
           bind:
             value: text
+          # A citation's Open (docs/unoverse/data/objects/citations-in-answers.md): the host opens
+          # the source document at the quoted page.
+          citeAction: openSource
           style:
             font: body.md
             color: text.primary

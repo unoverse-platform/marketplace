@@ -54,42 +54,16 @@ configSchema:
       maximum: 0.9
       step: 0.05
 
-    # The six type filters, same vocabulary as the Spatial view panel. An UNSET flag arrives
-    # as undefined so the server's own default applies (mostly TRUE; only actions is false).
-    includeNeeds:
-      type: boolean
-      title: Include Needs
-      description: Fetch needs from results
-      default: false
-
-    includeImages:
-      type: boolean
-      title: Include Images
-      description: Fetch images from results
-      default: false
-
-    includeServices:
-      type: boolean
-      title: Include Services
-      description: Fetch services from results
-      default: false
-
-    includeActions:
-      type: boolean
-      title: Include Actions
-      description: Fetch actions from results
-      default: false
-
-    includeSkills:
-      type: boolean
-      title: Include Skills
-      description: Fetch skills (behavioural instructions)
-      default: true
-
-    includeMcps:
-      type: boolean
-      title: Include Apps
-      description: Fetch apps and MCP workflows from results
-      default: false
+    # WHICH OBJECTS THE QUERY INCLUDES (docs/unoverse/data/spatial/objects-in-spatial.md). No
+    # agent is in the loop on a data-flow node, so an object is On or Off; Intelligent is not
+    # offered here. Replaced the six include switches on 2026-09-14.
+    objects:
+      type: object
+      title: Objects
+      description: Which kinds of thing this query includes.
+      default: {}
+      "ui:widget": spatialObjects
+      "ui:options":
+        settings: [off, on]
 "ui:order":
-  [query, mode, maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]
+  [query, mode, maxResults, similarityThreshold, sourceId, objects]

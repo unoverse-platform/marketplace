@@ -1,0 +1,27 @@
+type: OpenAISearchDetail
+kind: PromiseNode
+
+name: GPT-5 Search Detail
+category: AI
+color: "#2F6F66"
+
+description: >-
+  Answer one question from a tree of rows by opening one branch at a time: each turn reads the
+  choices one step from the rows it opened, and the model opens more or answers, with the path
+  it took and the words each answer rests on.
+
+whenToUse: >-
+  Pick when the answer to one question sits somewhere inside a large object (a deal and its
+  documents, a long document and its sections, a table's rows) and sending the whole of it to a
+  model would be too long or too costly: the model reads titles and descriptions to choose where
+  to go, and reads text only where it chose to. The wrong choice when the content is already
+  short enough to hand over whole, or when many questions are asked of one text at once. Wire the
+  question and the ids to start from in as inputs.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13).
+auth:
+  required: false
+
+capabilities:
+  # A model chooses each turn, so the same question may walk a different path.
+  cacheable: false

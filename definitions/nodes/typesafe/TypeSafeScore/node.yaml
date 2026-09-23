@@ -1,0 +1,28 @@
+type: TypeSafeScore
+# One call, one reply: the endpoint answers synchronously.
+kind: PromiseNode
+
+name: TypeSafe Score
+category: AI
+color: "#1D4ED8"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg
+
+description: Place state on an ordered scale of described levels, with a probability per level
+
+whenToUse: >-
+  Rate a piece of text or data on one quality with a graded answer: how severe a bug report
+  is, how satisfied a customer sounds, how well a candidate fits, how urgent a request is.
+  The levels are described in order from low to high and the answer is a position on that
+  scale plus a probability for every level, so a threshold or a sort can act on it without
+  parsing prose. Right when the options are ordered steps of one thing; unordered
+  categories are a choice, and one quality with no steps is a statement to test.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody
+# thought about cannot look the same as one deliberately left open.
+auth:
+  required: false
+
+capabilities:
+  # A pure read: the same state and levels give the same distribution, and nothing is
+  # written anywhere.
+  cacheable: true

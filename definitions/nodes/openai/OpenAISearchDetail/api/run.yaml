@@ -1,0 +1,106 @@
+# ONE WALK, IN TURNS (packages/docs/nodes/calls-that-loop.md, `repeat`). A turn is two calls:
+#
+#   choices  the engine's route of the choices one step from the ids, over `scope.engineUrl`
+#            (loopback). Turn one opens `signal.ids`; every later turn opens what the turn
+#            before chose.
+#   decide   one plain OpenAI call, no tools, whose reply is bound to a schema: the ids to open
+#            next, or the answer with its sources.
+#
+# ONE REPLY IS ONE JSON OBJECT: the model's last text piece is read, never the pieces joined
+# (2026-09-13: a reply in two pieces read as two objects run together and failed to parse).
+#
+# THE WALK REMEMBERS IN ITS OWN NOTES, NOT IN A RESENT HISTORY (2026-09-13: chaining each turn
+# to the one before resent every earlier menu, most of a question's 25,000 tokens). Each reply
+# carries `notes`, what it has found and opened so far; the next turn sends the question, those
+# notes and only the rows just opened.
+#
+# IT CANNOT RUN FOREVER. It ends when a reply answers or opens nothing (`until`), when a turn
+# repeats the one before (`stuckAfterRepeats`), at `config.maxTurns`, and at the platform's 20
+# whatever the config says. Every call has a ceiling on its output. The ids asked for are cut
+# to five, the route's own bound.
+
+- name: walk
+  repeat:
+    calls:
+      - name: choices
+        method: GET
+        transport: json
+        url: >-
+          return scope.engineUrl + '/dictionary/choices?ids=' + encodeURIComponent(
+            String(previous ? JSON.parse(previous.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join('')).open : signal.ids)
+              .split(',').map(x => x.trim()).filter(x => x).slice(0, 5).join(','))
+            + '&q=' + encodeURIComponent(signal.question)
+        timeoutMs: 60000
+
+      - name: decide
+        method: POST
+        url: { $ref: endpoints#responses }
+        credential:
+          scheme: bearer
+          token: "{{ credentials.openAICredential.apiKey }}"
+        body: >-
+          return {
+            model: config.model,
+            // TODAY'S DATE LAST, as every model call carries it: "latest" and "most recent" need a today.
+            instructions: String(config.instructions || '') + '\n\nToday is ' + Date.iso(Date.now()).split('T')[0] + '.',
+            input: [{
+              role: 'user',
+              content: 'Question: ' + signal.question + '\n\n'
+                + (previous
+                    ? 'Your notes so far:\n' + String(JSON.parse(previous.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join('')).notes || '') + '\n\n'
+                    : '')
+                + (calls.choices.items.length
+                    ? 'Opened now:\n' + JSON.stringify(calls.choices.items)
+                    : 'Nothing was found for those ids. Choose only from ids you have been shown.')
+            }],
+            reasoning: { effort: config.reasoning || 'low' },
+            max_output_tokens: 8000,
+            store: false,
+            text: {
+              verbosity: 'low',
+              format: {
+                type: 'json_schema',
+                name: 'step',
+                strict: true,
+                schema: {
+                  type: 'object',
+                  additionalProperties: false,
+                  required: ['open', 'answer', 'sources', 'why', 'notes', 'caveat'],
+                  properties: {
+                    open: { type: 'array', items: { type: 'string' }, description: 'The ids to open next, at most five. Empty when answering.' },
+                    answer: { type: ['string', 'null'], description: 'The answer, only from words read. Null while still walking or when there is none.' },
+                    sources: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        additionalProperties: false,
+                        required: ['id', 'page', 'quote'],
+                        properties: {
+                          id: { type: 'string' },
+                          page: { type: ['string', 'null'] },
+                          quote: { type: 'string', description: 'The exact words the answer rests on.' }
+                        }
+                      }
+                    },
+                    why: { type: 'string', description: 'One sentence: why these ids, or why this answer.' },
+                    caveat: { type: ['string', 'null'], description: 'When you answer and another document you were shown may give a different answer, say which in one sentence (its title, and what may differ). Null when none may, and while still walking.' },
+                    notes: { type: 'string', description: 'Everything the answer needs that you have found so far, with its id, pages and exact words, and the ids you have opened and the other ids you were shown that may still hold it. Carried to your next turn in place of what you read, so keep what matters: at most 1500 characters.' }
+                  }
+                }
+              }
+            }
+          }
+        timeoutMs: 120000
+        retry:
+          attempts: 3
+          backoff: exponential
+          on: [429, 500, 502, 503, 504, 520, 522, 524]
+        transport: json
+        error:
+          when: "return !!response.error"
+          message: "return response.error.message"
+
+    until: >-
+      return [JSON.parse(calls.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join(''))].some(step => step.answer !== null || !step.open.length)
+    maxTurns: "{{ config.maxTurns }}"
+    stuckAfterRepeats: 2

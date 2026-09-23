@@ -1,0 +1,32 @@
+type: ReadValues
+kind: PromiseNode
+
+name: Read Values
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  The figures a parsed document stated, taken from the places you say its kind keeps them, with
+  no model, and refused whole when they do not add up to what the document says about itself
+
+whenToUse: >-
+  Turn a document that was already parsed into figures that can be summed, ranked and compared
+  across many documents: one row per figure, each with what was counted, how it was sliced, its
+  unit, the date it speaks as of, and the sheet and row it came from. Use it where the kind of
+  document has a fixed layout, so the same file always answers the same way. It reads what the
+  parse kept, never the file again, because a parse keeps what a document PRINTS and settles a
+  sheet's columns into one grid. It knows no document type of its own: you supply the layouts.
+  Every layout says what must be true of its own reading, and a document whose reading cannot
+  prove itself comes back marked so, with nothing to store.
+
+auth:
+  required: false
+
+capabilities:
+  # REMEMBERED UNDER THE DOCUMENTS SERVICE'S OWN VERSION. This node's answer is decided by that
+  # service's code, not by this definition, so a fix to it must forget every answer it gave
+  # (2026-09-20: a figures reader was fixed, the service restarted, and the old answer was still
+  # served from a trace, silently).
+  cacheable:
+    answeredBy: documents

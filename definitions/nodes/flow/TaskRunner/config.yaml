@@ -1,0 +1,86 @@
+configSchema:
+  type: object
+  required: [runId]
+  properties:
+    # THE ONE THING THIS NODE IS TOLD. A paused task is a row, and the row already holds which
+    # component it is, whose it is and what is filled in, so naming the row names all of it.
+    # Passing the ref and the owner alongside would be asking a caller to repeat what the
+    # record already says, and to be right about it.
+    #
+    # A CONFIG FIELD RATHER THAN A CONNECTOR, the same choice SpatialDetail makes with its
+    # universal id: the engine resolves the template before the node runs, so the node fires
+    # once already holding everything it needs.
+    runId:
+      type: string
+      title: The task
+      description: >-
+        The paused task's run id. Upstream data works here, which is how one workflow carries
+        a different person's task each time it is called.
+      default: ""
+      ui:field: template
+
+    # CLEAR THESE AND ASK FOR THEM AGAIN. FOR TESTING, and the description says so in the
+    # panel because nothing else will: this EMPTIES those answers on the person's real record
+    # the moment the node runs. It is not a dry run and there is no undo.
+    #
+    # NAMED, NOT ALL. A task's state holds two different kinds of thing: what the call is
+    # asking for, and what the task ARRIVED with — the product being applied for, their name,
+    # their email. Wiping both leaves a call that cannot say what it is ringing about, which
+    # is a worse test than no test. The node cannot tell the two apart, so rather than guess
+    # it asks: name the ones to clear and everything else is left alone.
+    #
+    # Blank, the normal case, resets nothing.
+    startAgain:
+      type: string
+      title: Clear these fields and ask again
+      description: >-
+        TESTING ONLY. Field names separated by commas. Those answers are erased on the real
+        record and asked for again; everything else, including the product, is left as it is.
+        This cannot be undone. Leave blank.
+      default: ""
+      ui:field: template
+
+    # WHEN TO COME BACK TO IT, if the person said.
+    #
+    # A paused task already knows how to wait for a clock: the row carries `wake` and `wake_at`
+    # (migration 056), and `timer` is one of the three things that can wake it. Nothing was
+    # setting them, so every task waited for the person to come back rather than for us to.
+    #
+    # THE FIELD, NOT THE VALUE. Which field carries a follow-up time is the TASK's business,
+    # not this node's: a call collects a callback time, a form might collect a renewal date.
+    # Name it here, and whenever it has a value the task wakes then instead of waiting to be
+    # opened. Its value must be a full timestamp, because "Thursday morning" is not a time
+    # until something has decided which Thursday.
+    followUpField:
+      type: string
+      title: Field holding when to come back
+      description: >-
+        When this field has a value, the task waits until then rather than for the person to
+        return. It must be a full date and time. Blank means nothing schedules it.
+      default: callback_at
+      ui:field: template
+
+    # HOW LONG A HALF FINISHED TASK IS KEPT. It is saved again at every step, so this counts
+    # from the last thing they told us, never from when the task began.
+    keepForDays:
+      type: number
+      title: Keep an unfinished task for
+      description: Days a half finished task is kept before it expires.
+      default: 14
+      minimum: 1
+      maximum: 365
+
+    # FINISHING IS A SEPARATE PERMISSION FROM FILLING IN, and the reason is a real one rather
+    # than caution: a task whose last act is not ours to take, an application only the customer
+    # may submit, is filled to the end and LEFT there. That is a complete run, not a failed one,
+    # and the toggle is how an author says which kind of task this is.
+    completeWhenDone:
+      type: boolean
+      title: Complete the task when nothing is outstanding
+      description: >-
+        Off leaves the task open with everything filled in, for whoever may take the last step.
+        On marks it finished.
+      default: true
+      ui:widget: toggle
+
+  ui:order: [runId, keepForDays, completeWhenDone, startAgain]

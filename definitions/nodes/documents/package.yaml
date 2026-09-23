@@ -1,0 +1,43 @@
+# DOCUMENTS — the platform's own document service (services/documents, a Python service beside
+# umap): a file in, its structure out. Text in reading order, every table as rows, every figure
+# as an image with its caption, every ordered list, the dates a document carries, and where on
+# which page each sits. docs/unoverse/data/documents/README.md.
+#
+# ONE DOOR, ONE NODE: ParseDocument, RenderDocument, InventoryFolder, ReadCover, ReadValues. Each is a JOB on
+# the service (start, poll, collect), which is the LlamaParse shape, so the poll capability does
+# the waiting. A door does one job, so one can be improved or replaced without touching what
+# calls it: a census before reading, a cover before filing, a parse when the whole is wanted.
+#
+# THE HOST IS THE ENGINE, at loopback (`scope.engineUrl`, :4101), which forwards to the service
+# (routes/documents.ts) the way it reaches umap. A node's call must be https or loopback
+# (allowedHosts.ts refuses a plaintext request to any other host), and a compose service on the
+# Docker network is neither; the engine holds the service's address so no node and no file does.
+
+name: documents
+displayName: Documents
+description: >-
+  Read a file into its structure with the platform's document service. Text, tables as rows,
+  figures, lists, dates, provenance
+version: 0.1.0
+category: ingest
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Parse PDF, Word, slides, spreadsheets, HTML and images into one typed structure
+  - Tables as rows with units parsed, figures as images, ordered lists as steps
+  - Render any page or region as an image
+  - "Inventory a folder: kinds, pages, dates, duplicates"
+  - "Read a cover: what each file is about and the date it states, from named cells, no model"
+  - "Read values: the figures a parsed document stated, refused whole when they do not add up to what it says about itself"
+
+allowedHosts:
+  # LOOPBACK ONLY, numeric form (the pattern rejects a bare "localhost"): every call goes to the
+  # engine's own listener, which forwards to the service. No third-party host, ever.
+  - 127.0.0.1
+
+requires:
+  executorVersion: ">=1.6.0"
+  transport: [json]
+  # Every door is a job: without `poll` an executor would settle on the receipt and emit the job
+  # id as the answer.
+  poll: true

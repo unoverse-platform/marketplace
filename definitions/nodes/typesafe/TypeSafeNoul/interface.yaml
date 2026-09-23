@@ -1,0 +1,21 @@
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes
+    required: false
+
+outputs:
+  - name: noul
+    type: number
+    description: 0 to 1, how likely it is true
+  - name: holds
+    type: boolean
+    description: Whether the noul met the threshold
+  - name: usage
+    type: object
+    description: model, inputTokens, outputTokens
+
+credentials:
+  - name: typesafeCredential
+    required: true
+    displayName: TypeSafe

@@ -1,0 +1,34 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: score
+  from: response
+  value: "return response.answers.answer.score"
+
+# The vendor's own advice for combining scales of different lengths: divide by the top index.
+- emit: normalized
+  from: response
+  value: >-
+    return (Object.keys(response.answers.answer.legend || {}).length > 1)
+      ? response.answers.answer.score / (Object.keys(response.answers.answer.legend).length - 1)
+      : response.answers.answer.score
+
+- emit: probabilities
+  from: response
+  value: "return response.answers.answer.probabilities || {}"
+
+- emit: confidence
+  from: response
+  value: "return response.answers.answer.confidence"
+
+- emit: legend
+  from: response
+  value: "return response.answers.answer.legend || {}"
+
+- emit: usage
+  from: response
+  value: >-
+    return {
+      model: response.model,
+      inputTokens: (response.usage || {}).input_tokens || 0,
+      outputTokens: (response.usage || {}).output_tokens || 0
+    }

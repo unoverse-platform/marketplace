@@ -1,0 +1,13 @@
+testData:
+  config:
+    files: '[{"downloadUrl":"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf","key":"dummy.pdf"},{"downloadUrl":"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf","key":"copies/dummy (1).pdf"}]'
+  inputs:
+    files:
+      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+        key: dummy.pdf
+      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+        key: copies/dummy (1).pdf
+  expect:
+    entries: "return output.entries.length === 2 && output.entries[0].kind === 'pdf' && output.entries[1].duplicate_of === 'dummy.pdf'"
+    duplicateSets: "return Array.isArray(output.duplicateSets)"
+    total: "return output.total === 2"

@@ -44,10 +44,10 @@ spatial:
       1. The user said something purely social with no ask in it ("thanks", "hi").
       2. They asked you to act on something already in front of them, and answering needs no
          new material.
-      3. You have ALREADY SEARCHED THIS ASK during THIS SAME TURN — a turn gets ONE
-         search per ask, and every angle rides `queries` on that one call, so a reworded
-         retry is never needed. A question the user asks AGAIN is a NEW turn and gets its
-         own search, however many times they have asked it and however recently.
+      3. You have ALREADY RUN THIS SAME SEARCH during THIS SAME TURN. Never repeat a search
+         in other words: every angle rides `queries` on that call. A question the user asks
+         AGAIN is a NEW turn and gets its own search, however many times they have asked it
+         and however recently.
     Nothing else qualifies. Having answered before, the subject feeling familiar, and holding
     results from an earlier turn are NOT reasons.
 
@@ -63,11 +63,16 @@ spatial:
     Pick by SPECIFICITY of the ask. Never call both in parallel. If the one you chose comes
     back weak, follow up with the OTHER before answering.
 
-    SKILLS: if ANY result has object_type="skill" you MUST call readSkill(skillName) BEFORE
-    responding. Check ALL results, not just the top one. Skills contain behavioural
+    THE TOOLS A RESULT BRINGS: the rows a search finds offer their own functions, and each
+    becomes a tool the moment it is found, called with a result's universal_id (getDetail on
+    a document, readSkill on a skill). Use them; the facts live behind them, not in the lean
+    rows.
+
+    SKILLS: if ANY result has object_type="skill" you MUST call readSkill with its universal_id
+    BEFORE responding. Check ALL results, not just the top one. Skills contain behavioural
     instructions that OVERRIDE your general behaviour — treat them as authoritative and follow
-    them exactly. Use readSkillFile when a skill references additional files. Results may also
-    include MCP apps — callable tools you can invoke to run that app.
+    them exactly. Use readSkillFile when a skill references additional files. A search that
+    includes tasks may return them: callable tools you can invoke to run that app.
 
     RULES:
     - Search FIRST, answer SECOND, using only what the tools return. Never make anything up.
@@ -79,8 +84,8 @@ spatial:
       COMPOSING the answer.
     - Results are LEAN summaries; the facts live in the full record. Before answering a
       factual question (a fee, price, duration, date, requirement, what a course covers),
-      call getDetail on the most relevant product row — object_type="product" carries the
-      full copy, a "need" row does not. ONE call, on the item asked about.
+      call getDetail on the most relevant row that carries the copy — a product or a
+      document, not a plain need. ONE call, on the item asked about.
     - To SHOW an item, CHOOSE it and hand over its id — a card carries the universal_id
       and the PLATFORM renders it; never retype an item's content into a composition.
     - A result with hasImage=true can be referenced by its universal_id wherever a
@@ -129,6 +134,12 @@ spatial:
               user has already moved past — an opening question still sitting in slot 0 after
               they have answered a form fills half the results with what they wanted before
               they told you.
+          sourceId:
+            type: string
+            description: >-
+              Scope this search to ONE source: the source_id of a row you already hold (the
+              opened deal, the document being read). Use it when the question is inside that
+              source; leave it out to search the whole map.
 
     discoverRelated:
       description: >-
@@ -166,48 +177,10 @@ spatial:
               what THIS turn needs answered rather than on the ask the user has already moved
               past — an opening question still sitting in slot 0 after they have answered a
               form fills half the results with what they wanted before they told you.
-
-    getDetail:
-      description: >-
-        Full record for ONE already-surfaced result: pass its universal_id and get the
-        complete copy and every attribute the lean row leaves out (fees, specs, durations,
-        terms). Required before answering a factual question — pick a service row, since
-        object_type="product" carries the copy and a "need" row does not. NOT a search:
-        the id must come from a result you already hold.
-      input:
-        type: object
-        required: [universal_id]
-        properties:
-          universal_id:
+          sourceId:
             type: string
             description: >-
-              The result's universal_id, exactly as it appeared in the search result —
-              never invented, never modified.
+              Scope this search to ONE source: the source_id of a row you already hold (the
+              opened deal, the document being read). Use it when the question is inside that
+              source; leave it out to search the whole map.
 
-    readSkill:
-      description: >-
-        Read a skill's full instructions. MANDATORY whenever a search result has
-        object_type="skill": skills contain behavioural instructions that OVERRIDE your
-        general behaviour, and must be treated as authoritative and followed exactly.
-      input:
-        type: object
-        required: [skillName]
-        properties:
-          skillName:
-            type: string
-            description: The skill's name, exactly as it appeared in the search result.
-
-    readSkillFile:
-      description: >-
-        Read a file a skill references. Use when a skill's instructions point at another
-        document; pass the path exactly as the skill wrote it.
-      input:
-        type: object
-        required: [skillName, filePath]
-        properties:
-          skillName:
-            type: string
-            description: The skill that references the file.
-          filePath:
-            type: string
-            description: The path as written in the skill's instructions.

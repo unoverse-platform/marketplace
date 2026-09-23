@@ -1,0 +1,26 @@
+type: SearchIndex
+kind: PromiseNode
+
+name: Search Index
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Find the passages of a search index's documents that answer one question, each with its
+  document, its section and its pages
+
+# Outcome first, disqualify by PROPERTY, never name another node.
+whenToUse: >-
+  Answer from a set of documents without reading them whole: ask one question of an index a sync
+  has built and get back the few passages that answer it, ranked by meaning and by exact words,
+  each with the document it is in and the pages it sits on, ready to cite. Pick it to fill a field
+  from a fund's documents, to give a model only what it needs, or to point a reader at the page.
+  It answers with passages, never a written answer, and searches only the index it is given.
+
+auth:
+  required: false
+
+capabilities:
+  # The same question of the same index is the same answer until the index is synced again.
+  cacheable: false

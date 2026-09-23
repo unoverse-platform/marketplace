@@ -1,0 +1,40 @@
+# THE FIGURES, from the engine at loopback (package.yaml says why). A job, like every other door.
+
+- name: job
+  method: POST
+  url: "return scope.engineUrl + '/documents/values'"
+  transport: json
+
+  body:
+    files: >-
+      return (() => {
+        const raw = config.documents;
+        const list = Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+        return list.map(d => ({ file_name: d.file_name || d.name || d.key || '', subject: d.subject || null, period: d.period || null, text: d.text || '', tables: d.tables || [], table_urls: d.table_urls || [] }));
+      })()
+    templates: >-
+      return (() => {
+        const raw = config.templates;
+        return Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+      })()
+
+  timeoutMs: 60000
+
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"
+
+  poll:
+    url: "return scope.engineUrl + '/documents/jobs/' + response.id"
+    until: "return response.status === 'COMPLETED'"
+    failed: "return response.status === 'FAILED'"
+    # A FAILURE SAYS WHERE IT GOT TO. A step over many files that gives up after its last
+    # attempt is otherwise indistinguishable from one that never started, and the useful fact is
+    # which file it was on.
+    message: >-
+      return response.error || (() => {
+        const p = response.progress;
+        return 'values ' + response.status + (p ? ` at ${p.done}/${p.of}: ${p.what}` : '');
+      })()
+    intervalMs: 2000
+    maxAttempts: 300

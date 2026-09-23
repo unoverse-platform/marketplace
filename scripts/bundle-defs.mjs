@@ -15,8 +15,7 @@ const here = dirname(fileURLToPath(import.meta.url)); // packages/marketplace/sc
 const pkg = dirname(here); // packages/marketplace
 const home = join(pkg, "..", "..", "apps", "unoverse"); // the content home
 const rx = join(home, "design");
-const prompts = join(home, "prompts");
-const nodesHome = join(home, "nodes");
+const nodesHome = join(rx, "marketplace", "nodes"); // every kind under one tree since 2026-09-08
 const out = join(pkg, "definitions");
 
 if (!existsSync(rx)) {
@@ -38,6 +37,12 @@ const parts = [
   // the day the kind launched).
   ["marketplace/templates", "templates"],
   ["marketplace/styles", "styles"],
+  // Behaviour: prompt blocks ({{prompt.<name>}}) and skills. Read from `prompts/` beside
+  // design/ until 2026-09-07; that folder is gone and the read below is the ONE tree.
+  // A separate loop kept pointing at prompts/ afterwards and warned "skip (missing)"
+  // on every build, which shipped a catalogue with no skills and no blocks.
+  ["marketplace/blocks", "blocks"],
+  ["marketplace/skills", "skills"],
 ];
 let n = 0;
 for (const [src, name] of parts) {
@@ -60,18 +65,6 @@ for (const [src, name] of parts) {
 // Everything bundled here is EXCLUDED from the starter kit. One asset, one home,
 // or the copies drift.
 
-// Behaviour: prompt blocks ({{prompt.<name>}}) and skills.
-for (const [src, name] of [["blocks", "blocks"], ["skills", "skills"]]) {
-  const s = join(prompts, src);
-  if (existsSync(s)) {
-    cpSync(s, join(out, name), { recursive: true });
-    console.log(`[bundle-defs] prompts/${src} → definitions/${name}`);
-    n++;
-  } else {
-    console.warn(`[bundle-defs] skip (missing): prompts/${src}`);
-  }
-}
-
 // Recipes: whole workflows, published to be READ and COPIED. They ship in the same
 // package but they do not install the way the rest does — everything else here is a
 // REFERENCE a universe keeps tracking, while a recipe is copied onto a canvas and
@@ -82,10 +75,10 @@ for (const [src, name] of [["blocks", "blocks"], ["skills", "skills"]]) {
   if (existsSync(join(src, "manifest.json"))) {
     cpSync(join(src, "manifest.json"), join(out, "recipes", "manifest.json"), { recursive: true });
     if (existsSync(join(src, "recipes"))) cpSync(join(src, "recipes"), join(out, "recipes", "recipes"), { recursive: true });
-    console.log(`[bundle-defs] nodes/recipes → definitions/recipes`);
+    console.log(`[bundle-defs] marketplace/nodes/recipes → definitions/recipes`);
     n++;
   } else {
-    console.warn(`[bundle-defs] skip (missing): nodes/recipes/manifest.json`);
+    console.warn(`[bundle-defs] skip (missing): marketplace/nodes/recipes/manifest.json`);
   }
 }
 
@@ -112,7 +105,7 @@ for (const packageDir of existsSync(nodesHome) ? readdirSync(nodesHome, { withFi
   }
 }
 if (nodeCount) {
-  console.log(`[bundle-defs] nodes/*/nodes/* → definitions/nodes  (${nodeCount} manifest node(s))`);
+  console.log(`[bundle-defs] marketplace/nodes/*/nodes/* → definitions/nodes  (${nodeCount} manifest node(s))`);
   n++;
 }
 

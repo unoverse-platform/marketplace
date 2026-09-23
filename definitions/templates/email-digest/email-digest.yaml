@@ -1,5 +1,5 @@
 unoverse: "1.0"
-# THE SHELF'S EMAIL DIGEST (docs/unoverse/UNOVERSE_TEMPLATE_MODEL.md §9b, the
+# THE SHELF'S EMAIL DIGEST (docs/unoverse/design/models/UNOVERSE_TEMPLATE_MODEL.md §9b, the
 # three-word grammar ruled 2026-08-29). ONE flat state (owner ruling): an email is
 # a document, not a surface you navigate — nothing rearranges while it is read.
 # Everything else lives where it belongs: the sections in layouts/email (static /

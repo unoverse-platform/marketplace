@@ -1,0 +1,32 @@
+# Asserts the SHAPE, not the verdicts: one answer per question, each of the type asked for.
+# The state is structure here, to prove the JSON path reaches the vendor as an object.
+
+testData:
+  config:
+    state: '{"message": "My card was charged twice for order A-104 and I want the second charge refunded.", "order_id": "A-104"}'
+    questions:
+      team:
+        type: choice
+        instructions: Which team should handle this message?
+        criteria:
+          billing: Charges, refunds, invoices and payment methods
+          shipping: Where an order is, delivery dates, damaged parcels
+      urgency:
+        type: score
+        instructions: How urgent is this message?
+        criteria:
+          - Can wait a week
+          - Should be handled today
+          - Needs a reply within the hour
+      refund:
+        type: noul
+        instructions: Is the customer asking for a refund?
+    model: jev-latest
+  inputs:
+    signal: {}
+  expect:
+    answers: >-
+      return ['billing', 'shipping'].includes(output.answers.team.choice)
+        && output.answers.urgency.score >= 0 && output.answers.urgency.score <= 2
+        && output.answers.refund.noul >= 0 && output.answers.refund.noul <= 1
+    usage: "return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'"

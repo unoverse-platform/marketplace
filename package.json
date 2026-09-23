@@ -1,6 +1,6 @@
 {
   "name": "@unoverse-platform/marketplace",
-  "version": "0.1.84",
+  "version": "0.1.85",
   "description": "The Unoverse marketplace: components, atoms and styles, prompt blocks, skills, and declarative nodes. Definitions only, one version, installed per item.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -11,6 +11,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "dev": "cd storefront && vite",
     "sync-defs": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts && npm run build:storefront",
     "build": "tsc",
     "prepack": "node scripts/bundle-defs.mjs && tsx scripts/build-catalogue.mts && npm run build:storefront && tsc",

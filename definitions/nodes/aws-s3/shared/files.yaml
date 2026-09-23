@@ -7,11 +7,15 @@
 #
 # WHAT THE FILTERS ARE FOR. S3 has no real directories: a folder made in the console is a
 # zero-byte object whose key ends in "/", and a later ingest step would try to fetch it as a
-# document. Both filters are transcribed from the retired node for that reason.
+# document. Both filters are transcribed from the retired node for that reason. `_parsed/` is
+# the reserved folder for parsed output at any depth (owner ruling 2026-09-09) and is never
+# listed: the rule sits in ALL FOUR expressions, since `files` is what a caller reads (found
+# 2026-09-10: it sat in `objects` alone, and the copies were listed).
 
 objects: &objects >-
   return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
@@ -21,13 +25,15 @@ objects: &objects >-
 keys: &keys >-
   return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
            .includes(String(o.Key).split('.').at(-1).toLowerCase()))
     .map(o => String(o.Key))
 
-# The output shape, links folded in by index.
+# The output shape, links folded in by index. `address` is where the file is and `universalId`
+# who it is: a pipeline's row takes both from here (pipelines README, collect).
 #
 # universalId is transcribed exactly from the retired executor: sha256 of
 # `key|size|lastModified`, first 12 chars. It includes SIZE AND DATE deliberately, so an
@@ -37,15 +43,35 @@ keys: &keys >-
 files: &files >-
   return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
     .filter(o => !(config.fileExtensions || []).length
       || (config.fileExtensions || []).map(e => String(e).toLowerCase())
            .includes(String(o.Key).split('.').at(-1).toLowerCase()))
     .map((o, i) => Object.assign({
       key: String(o.Key),
+      name: String(o.Key).split('/').at(-1),
       size: Number(o.Size) || 0,
       lastModified: String(o.LastModified || ''),
       etag: String(o.ETag || '').split('"').join(''),
       bucket: config.bucket,
+      address: 's3://' + config.bucket + '/' + String(o.Key),
       universalId: sha256(String(o.Key) + '|' + (Number(o.Size) || 0) + '|' + String(o.LastModified || '')).substring(0, 12)
     }, (calls.links || [])[i] ? { presignedUrl: (calls.links || [])[i] } : {}))
+
+# HOW MANY `files` HOLDS. The same filters, so the count is the list's and never the bucket's
+# (2026-09-15: the count kept `_parsed/` and said 60 for a pack of 20 documents).
+count: &count >-
+  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+    .filter(o => o.Key && !String(o.Key).endsWith('/'))
+    .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
+    .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
+    .filter(o => !(config.fileExtensions || []).length
+      || (config.fileExtensions || []).map(e => String(e).toLowerCase())
+           .includes(String(o.Key).split('.').at(-1).toLowerCase()))
+    .length
+
+# THE FOLDER THAT WAS LISTED, as an address: a pipeline works out its packs from it (pipelines
+# README, "A pipeline, in one screen": each folder directly under it is a pack).
+root: &root >-
+  return 's3://' + config.bucket + '/' + String(config.prefix || '')

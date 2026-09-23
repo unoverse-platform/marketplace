@@ -1,0 +1,41 @@
+# One synchronous call carrying the whole question map as given. The vendor evaluates every
+# question in parallel and in isolation against the one state, which is the point of
+# sending them together.
+#
+# STATE MAY BE STRUCTURE. The field is a string so it can be typed or templated, but the
+# vendor reads a JSON object or array as named fields rather than as prose, so a value that
+# is a whole JSON document is parsed before it is sent. Prose stays prose.
+
+- name: ask
+  method: POST
+  url: https://api.typesafe.ai/v1/systemone
+  credential:
+    scheme: bearer
+    token: "{{ credentials.typesafeCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  timeoutMs: 60000
+  # 529 is the vendor's own overloaded code, alongside the usual rate limit and server errors.
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504, 529]
+
+  body:
+    model: "return config.model || 'jev-latest'"
+    state: >-
+      return (typeof config.state === 'string'
+        && ((config.state.trim().startsWith('{') && config.state.trim().endsWith('}'))
+          || (config.state.trim().startsWith('[') && config.state.trim().endsWith(']'))))
+        ? JSON.parse(config.state)
+        : config.state
+    questions: "return config.questions"
+
+  error:
+    # An empty answer map is a failure whatever the status was.
+    when: "return !Object.keys(response.answers || {}).length"
+    message: >-
+      return 'TypeSafe returned no answers.'
+        + (response.error ? ' ' + JSON.stringify(response.error) : '')
+        + (response.detail ? ' ' + JSON.stringify(response.detail) : '')

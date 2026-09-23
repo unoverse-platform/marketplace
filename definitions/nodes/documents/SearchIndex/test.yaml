@@ -1,0 +1,10 @@
+# Runs against the platform's own engine and database: a question of an index that holds nothing
+# finds nothing, and says so in both outputs. Shape assertions only.
+testData:
+  config:
+    index: "test://search-index/empty"
+    question: the notice a redemption needs
+    limit: 3
+  expect:
+    chunks: "return Array.isArray(output.chunks) && output.chunks.length === 0"
+    text: "return output.text === ''"

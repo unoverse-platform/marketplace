@@ -1,0 +1,37 @@
+# MAIL — the platform's own mailbox (docs/unoverse/mail/README.md): an address in, a
+# conversation out. Inboxes on the platform's domain, each a list of threads, each thread its
+# messages in order; a reply goes back into the thread it answers.
+#
+# TWO NODES. MailboxMessages reads an inbox as a step; MailboxMCP gives an attached Agent the
+# mailbox as tools: list the threads, read one, reply, send, draft. Both reach the mailbox
+# service THROUGH THE ENGINE at loopback (`scope.engineUrl` + /mail/...), the way the document
+# nodes reach /documents: a node's call must be https or loopback, and the engine holds the
+# service. THE INBOX IS THE CREDENTIAL (credentials/mailboxCredential.yaml, owner ruling
+# 2026-09-20): address, name and the AWS account that receives and sends for it, set once on
+# the credentials screen. Both nodes name it; neither has an inbox field.
+#
+# NOT the `email` package. SendGridEmail is one-way mail with no thread; this is two-way and
+# threaded, and a saved workflow storing either type keeps meaning what it meant.
+
+name: mail
+displayName: Mailbox
+description: >-
+  Read and answer email from an inbox of the platform's own: threads, messages, replies and
+  drafts, for a step or for an Agent
+version: 0.1.0
+category: communication
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Read an inbox's threads, newest first, with each thread's last message
+  - "Give an Agent the mailbox as tools: list, read, reply, send, draft"
+  - A reply carries In-Reply-To and References, so it lands in the same conversation everywhere
+
+allowedHosts:
+  # LOOPBACK ONLY, numeric form: every call goes to the engine's own listener, which serves the
+  # mailbox. No third-party host, ever.
+  - 127.0.0.1
+
+requires:
+  executorVersion: ">=1.6.0"
+  transport: [json]

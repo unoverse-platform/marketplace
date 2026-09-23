@@ -23,14 +23,14 @@ auth:
   required: false
 
 capabilities:
-  # NOT cacheable. The existing node had its OWN Redis cache — useCache and cacheTTLMinutes, keyed per
-  # workflow — and both are DROPPED here rather than reimplemented, which is the one deliberate
-  # behaviour change in this migration.
+  # CACHEABLE, on the platform's node memoization rather than a node-private cache. The node
+  # before this one carried its own Redis cache (useCache, cacheTTLMinutes); that was dropped in the
+  # migration and this flag replaces it. The fingerprint is the resolved config plus the caller and
+  # the conversation, and nothing in this node's config references the message, so within one
+  # conversation every question reads the SAME sandbox account for the memoization TTL.
   #
-  # Two reasons. The data is invented sandbox data, so re-fetching costs nothing anyone is paying for.
-  # And the platform already has node memoization, gated on exactly this flag — a second, node-private
-  # cache with its own TTL semantics is the kind of thing that later disagrees with the first.
-  #
-  # It stays FALSE rather than becoming true because each run mints a NEW sandbox item, so two runs
-  # legitimately return different transactions and a shared answer would be wrong.
-  cacheable: false
+  # That is the point, not a thrift. Each run of the three calls in api/run.yaml mints a NEW sandbox
+  # item with different invented transactions, so an uncached node gives "what did I spend" one
+  # answer and "show me those" a different account. A person querying their account expects one
+  # account for the length of the conversation.
+  cacheable: true

@@ -1,0 +1,25 @@
+type: DatasetQuery
+kind: PromiseNode
+
+name: Dataset Query
+category: Storage & Data
+color: "#334155"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Read rows back from the table an object owns: filtered by any declared column, limited, and
+  summed only ever within one unit
+
+whenToUse: >-
+  Answer a question from figures that were stored rather than from a document: what a subject's
+  figure was at a date, which subjects carry the most of something, how a figure moved between
+  two dates. Filter by a value, a list of values or a range; group and sum to rank. A sum is
+  always grouped by unit as well, because a share, an amount of money and a count are three
+  different things and a total mixing them means nothing. Always filtered and always limited: it
+  cannot be asked for a whole table. For what a document SAYS, read the document.
+
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

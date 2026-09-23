@@ -1,0 +1,26 @@
+type: SyncIndex
+kind: PromiseNode
+
+name: Sync Index
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Make a pack's documents searchable as one index: each cut into chunks with their pages, and
+  embedded where new or changed
+
+# Outcome first, disqualify by PROPERTY, never name another node.
+whenToUse: >-
+  Keep a set of documents searchable as one: a fund pack, a deal's files, a policy library. Give
+  it the index's key (the pack's folder) and the pack's documents; it cuts each into chunks with
+  their pages and embeds what is new or changed, so running it twice changes nothing. It builds
+  the index only; asking it a question is a separate step. Documents stay on the platform's own
+  database and are never sent to a third party.
+
+auth:
+  required: false
+
+capabilities:
+  # A sync writes, so it is never served from memory.
+  cacheable: false

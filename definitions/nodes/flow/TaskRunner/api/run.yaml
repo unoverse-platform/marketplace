@@ -1,0 +1,151 @@
+# FOUR CALLS, ALL TO THE PLATFORM'S OWN ENGINE, and each one guarded so exactly the ones that
+# apply run. A task IS a run (migration 056): a component task half filled in is a run of one
+# node paused at the person, one row per owner and task, the values encrypted, saved again at
+# every step and cleared when it finishes.
+#
+# SO THE NODE IS TOLD ONE THING, the row's id, and asks the row for the rest. Which component
+# it is, whose it is and which workflow it belongs to are all columns; making a caller pass
+# them alongside would be asking them to repeat the record and to be right about it.
+#
+# NO CREDENTIAL, and that is not an oversight. The engine's listener is never published or
+# proxied, so a node calling it is already inside the trust boundary (package.yaml, and the
+# reasoning the spatial package sets out at length).
+
+- name: run
+  # THE ROW ITSELF. It answers who and what; it cannot answer WITH WHAT, because the state is
+  # encrypted at rest and this route hands the column over as it is stored. That is the whole
+  # reason there is a second call below rather than one.
+  #
+  # THE ID, FROM THE CONFIG OR OUT OF WHAT ARRIVED. The config field is the ordinary way and an
+  # author templates it from upstream. The fallback is not politeness: a trigger fired by hand
+  # carries its whole input as a JSON STRING under `message`, so the template resolves to
+  # nothing and the URL becomes `/executions/` — a 404 that reads like a missing route rather
+  # than a missing id. `taskOf` already knows how to peel that, so it peels this too.
+  method: GET
+  url: >-
+    return scope.engineUrl + '/executions/' + encodeURIComponent(
+      String(config.runId || helpers.taskOf(signal.signal).runId || '').trim())
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !response || !!response.error || !response.task_ref"
+    message: >-
+      return 'no paused task at ' + String(config.runId || '') + ': '
+        + JSON.stringify(response || {}).slice(0, 200)
+
+- name: saved
+  # WHAT IS ALREADY HELD, decrypted by the route that owns the key, and read fresh every pass
+  # rather than carried in a variable. On the first pass it is what an earlier conversation
+  # left behind; on a later one it is what the pass before this one wrote. Reading it back
+  # makes the node self correcting: if a write failed, the next pass sees the field is still
+  # outstanding and asks again instead of believing its own memory.
+  method: GET
+  url: >-
+    return scope.engineUrl + '/runs/paused'
+      + '?workflowId=' + encodeURIComponent(String(calls.run.workflow_id || ''))
+      + '&userId=' + encodeURIComponent(String(calls.run.user_id || ''))
+      + '&taskRef=' + encodeURIComponent(String(calls.run.task_ref || ''))
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !response || !!response.error"
+    message: "return 'runs/paused failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+- name: reset
+  # THE WIPE ITSELF, and it has to be written down or it is not a reset: every pass reads the
+  # record fresh, so blanking the state only in memory would ask for everything once and then
+  # find it all filled in again on the next answer.
+  #
+  # ON THE WAY IN AND NEVER AGAIN — that is what `helpers.clearing` is for. A pass carrying
+  # answers must not wipe, or the record it reads fresh is blanked and rewritten with only what
+  # arrived just now, and the answer given two questions ago is gone. Written the obvious way
+  # this lever quietly destroys the conversation it was meant to restart.
+  when: "return String(helpers.clearing(signal.collected, config.startAgain) || '').trim() !== ''"
+  method: POST
+  url: "return scope.engineUrl + '/runs/pause'"
+  transport: json
+  timeoutMs: 15000
+  body:
+    workflowId: "return String(calls.run.workflow_id || '')"
+    userId: "return String(calls.run.user_id || '')"
+    taskRef: "return String(calls.run.task_ref || '')"
+    state: >-
+      return helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain))
+    wake: "return 'reply'"
+    # `Date.iso`, NOT `new Date(...)`: the expression sandbox refuses a NewExpression and names
+    # this exact case, so the constructor fails at run time rather than at lint.
+    expiresAt: >-
+      return Date.iso(Date.now()
+        + (config.keepForDays != null ? Number(config.keepForDays) : 14) * 86400000)
+  error:
+    when: "return !response || !!response.error || !response.executionId"
+    message: "return 'runs/pause (start again) failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+- name: record
+  # ONLY WHEN SOMETHING WAS JUST GIVEN. A pass that merely asks the next question writes
+  # nothing, so the expiry is not pushed out by a call where the person said nothing, and the
+  # row is not rewritten with what it already holds.
+  when: "return !!signal.collected && Object.keys(helpers.answersOf(signal.collected)).length > 0"
+  method: POST
+  url: "return scope.engineUrl + '/runs/pause'"
+  transport: json
+  timeoutMs: 15000
+  body:
+    workflowId: "return String(calls.run.workflow_id || '')"
+    userId: "return String(calls.run.user_id || '')"
+    taskRef: "return String(calls.run.task_ref || '')"
+    # THE WHOLE STATE, NEVER A PATCH. The route replaces what it is given, so sending only the
+    # new answers would drop every earlier one. The merge is the helper's, so the state written
+    # here and the state emitted on the connector are one object computed one way.
+    state: "return helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))"
+    # WHAT WAKES IT, and the person decides which.
+    #
+    # `reply` is the ordinary case: this task is carried by a conversation, so what resumes it
+    # is them answering, not them opening a page.
+    #
+    # `timer` the moment they named a time. "Ring me Thursday" is a real answer and the row can
+    # hold it, so a declined call becomes a scheduled one rather than a task nobody returns to.
+    wake: >-
+      return String(helpers.merged(
+        helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)),
+        helpers.answersOf(signal.collected)
+      )[String(config.followUpField || '')] || '').trim() ? 'timer' : 'reply'
+
+    # WHEN, and only when a time was actually given: the route keeps whatever it is sent, so a
+    # blank here must be ABSENT rather than an empty string that parses to nothing.
+    wakeAt: >-
+      return String(helpers.merged(
+        helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)),
+        helpers.answersOf(signal.collected)
+      )[String(config.followUpField || '')] || '').trim() || undefined
+    # `Date.iso`, NOT `new Date(...)`: the expression sandbox refuses a NewExpression and names
+    # this exact case, so the constructor fails at run time rather than at lint.
+    expiresAt: >-
+      return Date.iso(Date.now()
+        + (config.keepForDays != null ? Number(config.keepForDays) : 14) * 86400000)
+  error:
+    when: "return !response || !!response.error || !response.executionId"
+    message: "return 'runs/pause failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+- name: finish
+  # NOTHING OUTSTANDING, AND FINISHING IS OURS TO DO. Both halves matter: an application only
+  # the customer may submit is filled to the end and deliberately left open, and the toggle is
+  # how an author says so. The completion test is helpers.nextStep returning null, the same
+  # test the `done` connector fires on, written once.
+  when: >-
+    return config.completeWhenDone !== false
+      && helpers.nextStep(
+           helpers.taskOf(signal.signal),
+           helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))
+         ) === null
+  method: POST
+  url: "return scope.engineUrl + '/runs/complete'"
+  transport: json
+  timeoutMs: 15000
+  body:
+    workflowId: "return String(calls.run.workflow_id || '')"
+    userId: "return String(calls.run.user_id || '')"
+    taskRef: "return String(calls.run.task_ref || '')"
+  error:
+    when: "return !response || !!response.error"
+    message: "return 'runs/complete failed: ' + JSON.stringify(response || {}).slice(0, 300)"

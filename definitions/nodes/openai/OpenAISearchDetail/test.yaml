@@ -1,0 +1,15 @@
+# The ids are a WORKSPACE's own rows: paste the id of a row from the Content Library (a long
+# document is the case this node exists for) and ask a question its text answers.
+testData:
+  config:
+    model: gpt-5.6-terra
+    maxTurns: 6
+
+  inputs:
+    question: What was the fund's net return for the month?
+    ids: paste-a-row-id
+
+  expect:
+    # Proves the walk ended by its own rule, and kept its path.
+    stopped: "return ['until', 'maxTurns', 'stuck'].includes(output.stopped)"
+    path: "return output.path.length >= 1"

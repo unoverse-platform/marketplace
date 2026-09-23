@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "avatar-orb",
-  "fingerprint": "b6f7ef701919721c",
+  "fingerprint": "f8e2e646a699c772",
   "bundle": "design-system",
   "title": "avatar-orb",
   "description": "An assistant avatar whose face and surrounding orb both change with the live call phase.",
@@ -45,6 +45,11 @@
         "type": "string",
         "description": "How fast the animation runs. 1 is normal.",
         "default": "1"
+      },
+      "portrait": {
+        "type": "string",
+        "description": "One photo of the assistant, shown in every state. Empty means the built-in poses, one per state.",
+        "default": ""
       }
     },
     "root": {
@@ -187,6 +192,21 @@
                     "fit": "cover"
                   }
                 }
+              }
+            },
+            {
+              "type": "Image",
+              "visibleWhen": "portrait",
+              "bind": {
+                "src": "portrait"
+              },
+              "alt": "The assistant",
+              "style": {
+                "position": "absolute",
+                "inset": "0",
+                "width": "full",
+                "height": "full",
+                "fit": "cover"
               }
             }
           ]

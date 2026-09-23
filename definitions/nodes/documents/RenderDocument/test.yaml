@@ -1,0 +1,12 @@
+testData:
+  config:
+    fileUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+    fileName: dummy.pdf
+    page: 1
+    dpi: 72
+  inputs:
+    file:
+      downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+      etag: dummy-pdf-etag
+  expect:
+    image: "return typeof output.image.base64 === 'string' && output.image.base64.length > 100 && output.image.width > 0 && output.image.mimeType === 'image/png'"

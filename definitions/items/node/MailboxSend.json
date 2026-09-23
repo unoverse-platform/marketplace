@@ -1,0 +1,175 @@
+{
+  "kind": "node",
+  "name": "MailboxSend",
+  "pack": "mail",
+  "fingerprint": "8e2cc6d1395430ef",
+  "title": "Send Mail",
+  "description": "Send a message from a connected mailbox, or reply in a thread, with the words a previous step produced",
+  "category": "Communication",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Send an email a workflow composed rather than one a model decided to write: a report, a confirmation, a rendered template, the same message to each of a list. Every field takes a template, so the recipient, the subject and the body are bound to what earlier steps produced. Give it a message to answer and it replies in that conversation instead of starting a new one. It sends from the mailbox its credential connected, and it sends once, at the moment the graph reaches it.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "required": true,
+        "description": "Trigger to fire the node"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "sent",
+        "type": "boolean",
+        "description": "True when the mailbox accepted it"
+      },
+      {
+        "name": "messageId",
+        "type": "string",
+        "description": "The sent message's id, for looking it up"
+      },
+      {
+        "name": "threadId",
+        "type": "string",
+        "description": "The conversation it landed in"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "mailboxCredential",
+        "required": true,
+        "displayName": "Mailbox"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "subject"
+      ],
+      "properties": {
+        "to": {
+          "type": "string",
+          "title": "To",
+          "description": "Who it goes to. Separate several with commas. Leave blank when replying.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "cc": {
+          "type": "string",
+          "title": "CC",
+          "description": "Copied recipients, comma-separated",
+          "default": "",
+          "ui:field": "template"
+        },
+        "subject": {
+          "type": "string",
+          "title": "Subject",
+          "description": "The subject line. Ignored when replying, which keeps the conversation's own.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "body": {
+          "type": "string",
+          "title": "Body",
+          "description": "The message itself, as plain text or HTML depending on Body Type. Ignored when Body Type is Design Template.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "bodyType": {
+          "type": "string",
+          "title": "Body Type",
+          "description": "How the message is written. Plain Text and HTML send the Body as typed. Design Template draws one of your templates instead and sends that, with a plain-text version alongside it for readers whose client shows no pictures.",
+          "default": "text",
+          "enum": [
+            "text",
+            "html",
+            "template"
+          ],
+          "enumNames": [
+            "Plain Text",
+            "HTML",
+            "Design Template"
+          ]
+        },
+        "template": {
+          "type": "string",
+          "title": "Template",
+          "description": "Which template to draw, scoped to its org, as in \"sab/outreach-email\". Only read when Body Type is Design Template.",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "bodyType": [
+              "template"
+            ]
+          }
+        },
+        "content": {
+          "type": "object",
+          "title": "What to write in",
+          "description": "What goes into each part of the template, keyed by the part's name. The keys are the template's own sections, so { \"subject\": { \"subject\": \"...\" }, \"opening\": { \"message\": \"...\" } }. Any part left out draws with what its designer wrote as the default, so a half-filled template still sends a whole letter.",
+          "default": {},
+          "ui:field": "template",
+          "ui:dependencies": {
+            "bodyType": [
+              "template"
+            ]
+          }
+        },
+        "inReplyTo": {
+          "type": "string",
+          "title": "In reply to",
+          "description": "A message id to answer. Given one, this replies in that conversation and the recipients and subject come from it. Blank starts a new one.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "emitOnTestRun": {
+          "type": "boolean",
+          "title": "Perform on test runs",
+          "description": "This step acts outside the platform and cannot be undone, so test runs trace it rather than perform it. Enable only while testing this step, then switch it off.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "mail",
+      "packageFile": "# MAIL — the platform's own mailbox (docs/unoverse/mail/README.md): an address in, a\n# conversation out. Inboxes on the platform's domain, each a list of threads, each thread its\n# messages in order; a reply goes back into the thread it answers.\n#\n# TWO NODES. MailboxMessages reads an inbox as a step; MailboxMCP gives an attached Agent the\n# mailbox as tools: list the threads, read one, reply, send, draft. Both reach the mailbox\n# service THROUGH THE ENGINE at loopback (`scope.engineUrl` + /mail/...), the way the document\n# nodes reach /documents: a node's call must be https or loopback, and the engine holds the\n# service. THE INBOX IS THE CREDENTIAL (credentials/mailboxCredential.yaml, owner ruling\n# 2026-09-20): address, name and the AWS account that receives and sends for it, set once on\n# the credentials screen. Both nodes name it; neither has an inbox field.\n#\n# NOT the `email` package. SendGridEmail is one-way mail with no thread; this is two-way and\n# threaded, and a saved workflow storing either type keeps meaning what it meant.\n\nname: mail\ndisplayName: Mailbox\ndescription: >-\n  Read and answer email from an inbox of the platform's own: threads, messages, replies and\n  drafts, for a step or for an Agent\nversion: 0.1.0\ncategory: communication\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Read an inbox's threads, newest first, with each thread's last message\n  - \"Give an Agent the mailbox as tools: list, read, reply, send, draft\"\n  - A reply carries In-Reply-To and References, so it lands in the same conversation everywhere\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form: every call goes to the engine's own listener, which serves the\n  # mailbox. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n",
+      "credentials": {
+        "googleClientCredential.yaml": "# THE PLATFORM'S ONE GOOGLE APPLICATION, saved once and never again.\n#\n# NOBODY CHOOSES THIS, which is why `visibility: internal` keeps it out of the credentials\n# picker. It is collected in the panel that opens under the Connect button, the first time\n# anyone on this platform connects a Gmail mailbox, and never seen again.\n#\n# It is a credential rather than a setting so it is encrypted at rest with everything else, and\n# so it can be saved from the screen a person is already standing on instead of by editing a\n# file and restarting.\n\nname: googleClientCredential\ndisplayName: Google application\ncategory: Platform setup\nvisibility: internal\ndescription: The OAuth client that makes Google's approval screen say unoverse. Collected once, under the Connect button.\ndocumentationUrl: https://console.cloud.google.com/apis/credentials\n\nproperties:\n  - name: clientId\n    displayName: Client ID\n    type: string\n    required: true\n    secret: false\n    description: From the OAuth client you created in Google Cloud.\n    placeholder: 1234567890-abc.apps.googleusercontent.com\n\n  - name: clientSecret\n    displayName: Client secret\n    type: string\n    required: true\n    secret: true\n    description: From the same page.\n    placeholder: \"\"\n",
+        "mailboxCredential.yaml": "# PICK THE SERVICE, LOG IN, DONE (owner ruling 2026-09-20: \"stop overcomplicating\"; \"I should\n# see Outlook, I should see Gmail\"). The same shape as adding an account on a phone: name it,\n# choose Gmail or Outlook, approve on their own screen. Everything else comes back from them\n# and is never typed.\n#\n# The Agent then acts on that mailbox with nobody signed in, which is what the grant is for —\n# the same way a phone keeps fetching mail long after you logged into it once.\n\nname: mailboxCredential\ndisplayName: Mailbox\ncategory: Communication\ndescription: A mailbox an Agent reads and answers. Connect Gmail or Outlook.\n\nproperties:\n  - name: connect\n    displayName: Mailbox\n    type: connect\n    required: true\n    secret: false\n    description: Choose where the mailbox lives and approve access on their screen.\n    connect: /mail/connect\n    connected: address\n    providers:\n      - { id: google, label: Gmail }\n      - { id: microsoft, label: Outlook }\n\n  # ── Filled by the service when you connect. Never typed, never shown again. ─────────────\n  - name: address\n    displayName: Address\n    type: string\n    required: false\n    secret: false\n    description: The mailbox you connected.\n    \"ui:dependencies\": { __never: true }\n\n  - name: provider\n    displayName: Service\n    type: string\n    required: false\n    secret: false\n    description: Which service holds it.\n    \"ui:dependencies\": { __never: true }\n\n  - name: refreshToken\n    displayName: Grant\n    type: string\n    required: false\n    secret: true\n    description: The lasting permission this mailbox gave.\n    \"ui:dependencies\": { __never: true }\n",
+        "microsoftClientCredential.yaml": "# THE PLATFORM'S ONE MICROSOFT APPLICATION, saved once and never again.\n#\n# NOBODY CHOOSES THIS, which is why `visibility: internal` keeps it out of the credentials\n# picker. It is collected in the panel that opens under the Connect button, the first time\n# anyone on this platform connects an Outlook mailbox, and never seen again.\n#\n# It is a credential rather than a setting so it is encrypted at rest with everything else, and\n# so it can be saved from the screen a person is already standing on instead of by editing a\n# file and restarting.\n\nname: microsoftClientCredential\ndisplayName: Microsoft application\ncategory: Platform setup\nvisibility: internal\ndescription: The OAuth client that makes Microsoft's approval screen say unoverse. Collected once, under the Connect button.\ndocumentationUrl: https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade\n\nproperties:\n  - name: clientId\n    displayName: Application (client) ID\n    type: string\n    required: true\n    secret: false\n    description: The Application (client) ID from the app registration.\n    placeholder: 00000000-0000-0000-0000-000000000000\n\n  - name: clientSecret\n    displayName: Client secret\n    type: string\n    required: true\n    secret: true\n    description: The VALUE of a client secret, from Certificates and secrets.\n    placeholder: \"\"\n"
+      },
+      "shared": {
+        "overview.yaml": "# ONE MAILBOX, ONE PICTURE OF IT.\n#\n# Both mail nodes emit the inbox's state in exactly this shape, so the Mailbox screen draws the\n# same thing wherever it is opened from — it is the CREDENTIAL that decides which inbox, not\n# which node you happened to open. Written once here rather than twice, because two copies of a\n# projection drift the day one of them is edited.\n#\n# In scope: `response`, the overview door's reply\n# ({ account, health, threads, unanswered, drafts, volume }).\n\nscreen: >-\n  return (() => {\n    const o = response || {};\n    const when = (s) => s ? String(s).replace('T', ' ').slice(0, 16) : '—';\n    const who = (a) => a ? (a.name ? a.name : a.address) : '—';\n    const v = o.volume || {};\n    const row = (label, k) => ({\n      label,\n      day: String((v.day || {})[k] ?? 0),\n      days7: String((v.days7 || {})[k] ?? 0),\n      days30: String((v.days30 || {})[k] ?? 0)\n    });\n    const h = o.health || {};\n    return {\n      address: (o.account || {}).address || '',\n      provider: 'Gmail',\n      stateLabel: h.state === 'failing' ? 'Cannot reach it' : 'Working',\n      failing: h.state === 'failing',\n      healthError: h.error || '',\n      lastReceived: when(h.lastReceivedAt),\n      lastSent: when(h.lastSentAt),\n      unansweredCount: String((o.unanswered || []).length),\n      unanswered: (o.unanswered || []).map(u => ({\n        subject: u.subject || '(no subject)',\n        from: who(u.from),\n        since: when(u.since),\n        messages: String(u.messageCount) + (u.messageCount === 1 ? ' message' : ' messages')\n      })),\n      draftsCount: String((o.drafts || []).length),\n      drafts: (o.drafts || []).map(d => ({\n        subject: d.subject || '(no subject)',\n        to: (d.to || []).map(who).join(', '),\n        savedAt: when(d.savedAt)\n      })),\n      volume: [row('received', 'received'), row('sent', 'sent')],\n      accountLine: ((o.account || {}).name ? (o.account || {}).name + ' · ' : '') + 'connected to Google · manage in Credentials'\n    };\n  })()\n",
+        "schema.yaml": "# TOOL DISCOVERY, as DATA: what an attached Agent reads before touching the mailbox. The\n# wording IS the routing: a model reads these descriptions when choosing a tool, so rephrasing\n# is a behaviour change, never a tidy-up. The argument shapes are what the model fills in.\n#\n# Written as plain YAML rather than a `return { ... }` expression: a constant is data.\n\nmailbox:\n  name: Mailbox\n  version: \"0.1.0\"\n  description: One email inbox, as threads and messages. Read what is waiting, answer in the thread, start a message, keep a draft.\n  instructions: |-\n    MAILBOX PROTOCOL:\n    - list_threads first, to see what is waiting. It is cheap and carries no bodies.\n    - read_thread before answering anything: a reply is judged against the whole conversation,\n      not its last line.\n    - reply answers IN the thread, to the person who wrote, with the others copied. Use it for\n      every answer to a message you have read. Never start a new message to answer an old one.\n    - send starts a NEW conversation with someone; only for a message that answers nothing.\n    - save_draft when a person should look before it goes. A draft is not sent.\n    - A sent message comes back with state \"sent\" and its id. State \"failed\" carries the reason;\n      say so rather than claiming it went.\n    - You work ONE inbox. You cannot read or send from any other.\n  methods:\n    list_threads:\n      description: >-\n        The conversations in the inbox, newest first, each with its subject, who is in it, how\n        many messages, when the last one arrived, and that last message's sender and direction.\n        No bodies: read_thread gives those. An empty list means nothing is waiting, which is\n        normal.\n      input:\n        type: object\n        required: []\n        properties:\n          since:\n            type: string\n            description: Only threads with a message after this time, as an ISO date. Leave out for the newest regardless.\n          limit:\n            type: number\n            description: How many threads, newest first. Default 20, at most 200.\n    read_thread:\n      description: >-\n        One conversation in full: every message in order, each with sender, recipients,\n        subject, the text, and its attachments as links that open for a while. Call it before\n        replying.\n      input:\n        type: object\n        required: [threadId]\n        properties:\n          threadId:\n            type: string\n            description: The thread's id, from list_threads.\n    reply:\n      description: >-\n        Answer a message in its own thread. The reply goes to the message's sender, with the\n        other people on it copied, under the thread's subject, and carries the headers that make\n        it land in the same conversation in their mail client. Comes back with state \"sent\" and\n        the message's id, or \"failed\" with the reason.\n      input:\n        type: object\n        required: [messageId, text]\n        properties:\n          messageId:\n            type: string\n            description: The id of the message being answered, from read_thread. Usually the last one from the other side.\n          text:\n            type: string\n            description: The reply, as plain text. Write the whole message; it is sent as written.\n          html:\n            type: string\n            description: Optional. The same reply as HTML, when the message needs formatting. The text is still sent alongside.\n    send:\n      description: >-\n        Start a NEW conversation: a message from the inbox to one or more people. Not for\n        answering a message, which is reply. Comes back with state \"sent\" and the message's id,\n        or \"failed\" with the reason.\n      input:\n        type: object\n        required: [to, subject, text]\n        properties:\n          to:\n            type: string\n            description: Who it goes to, one or more addresses separated by commas. A name may be given as \"Name <address>\".\n          cc:\n            type: string\n            description: Optional. Who is copied, the same way.\n          subject:\n            type: string\n            description: The subject line.\n          text:\n            type: string\n            description: The message, as plain text.\n          html:\n            type: string\n            description: Optional. The same message as HTML.\n    save_draft:\n      description: >-\n        Keep a message without sending it, for a person to read and send. Comes back with state\n        \"draft\" and the draft's id. Nothing leaves the inbox.\n      input:\n        type: object\n        required: [to, subject, text]\n        properties:\n          to:\n            type: string\n            description: Who it is for, one or more addresses separated by commas.\n          cc:\n            type: string\n            description: Optional. Who would be copied.\n          subject:\n            type: string\n            description: The subject line.\n          text:\n            type: string\n            description: The message, as plain text.\n          html:\n            type: string\n            description: Optional. The same message as HTML.\n"
+      }
+    },
+    "dir": "MailboxSend",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order. Whichever call ran is the one that\n# answered, so each row reads both and takes the one that is there.\n\n- emit: sent\n  value: \"return ((calls.reply || calls.send || {}).state) === 'sent'\"\n\n- emit: messageId\n  value: \"return (calls.reply || calls.send || {}).id || ''\"\n\n- emit: threadId\n  value: \"return (calls.reply || calls.send || {}).threadId || ''\"\n",
+      "api/run.yaml": "# TWO DOORS, ONE NODE, chosen by whether it is answering something. A reply must go through the\n# mailbox's own reply so it lands in the conversation and threads in the recipient's client; a\n# new message cannot use it, because there is nothing to answer.\n#\n# `when` means the unchosen call never runs, so its key is absent and the events table reads\n# whichever one did.\n\n- name: reply\n  when: \"return !!String(config.inReplyTo || '').trim()\"\n  method: POST\n  url: >-\n    return scope.engineUrl + '/mail/messages/'\n      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())\n      + '/' + encodeURIComponent(String(config.inReplyTo).trim()) + '/reply'\n  transport: json\n  timeoutMs: 30000\n  body:\n    # A DESIGNED REPLY sends the template and what goes in it; the door draws it and\n    # produces both the HTML and the plain-text twin, so neither can drift from the other.\n    template: \"return config.bodyType === 'template' ? (String(config.template || '').trim() || undefined) : undefined\"\n    content: \"return config.bodyType === 'template' ? (config.content || {}) : undefined\"\n    text: \"return config.bodyType === 'template' ? undefined : (config.bodyType === 'html' ? '' : String(config.body || ''))\"\n    html: \"return config.bodyType === 'html' ? String(config.body || '') : undefined\"\n    cc: \"return String(config.cc || '').trim() || undefined\"\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error\"\n\n- name: send\n  when: \"return !String(config.inReplyTo || '').trim()\"\n  method: POST\n  url: >-\n    return scope.engineUrl + '/mail/inboxes/'\n      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())\n      + '/messages'\n  transport: json\n  timeoutMs: 30000\n  body:\n    to: \"{{ config.to }}\"\n    cc: \"return String(config.cc || '').trim() || undefined\"\n    subject: \"{{ config.subject }}\"\n    template: \"return config.bodyType === 'template' ? (String(config.template || '').trim() || undefined) : undefined\"\n    content: \"return config.bodyType === 'template' ? (config.content || {}) : undefined\"\n    text: \"return config.bodyType === 'template' ? undefined : (config.bodyType === 'html' ? '' : String(config.body || ''))\"\n    html: \"return config.bodyType === 'html' ? String(config.body || '') : undefined\"\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error\"\n",
+      "config.yaml": "# EVERY FIELD TAKES A TEMPLATE (`ui:field: template`), which is how a step sends what an earlier\n# one produced: bind the body to a rendered template, the recipient to a row's address, the\n# subject to a fund's name. A literal typed in works too.\nconfigSchema:\n  type: object\n  # A MESSAGE NEEDS A SUBJECT AND SOMETHING TO SAY, but the something has two sources now:\n  # a Body typed here, or a Design Template drawn by the door. Requiring `body` outright\n  # made a templated message impossible to configure — the form demanded a field the send\n  # would then ignore. The door is what knows whether a message is empty, and it says so.\n  required: [subject]\n  properties:\n    to:\n      type: string\n      title: To\n      description: Who it goes to. Separate several with commas. Leave blank when replying.\n      default: \"\"\n      ui:field: template\n\n    cc:\n      type: string\n      title: CC\n      description: Copied recipients, comma-separated\n      default: \"\"\n      ui:field: template\n\n    subject:\n      type: string\n      title: Subject\n      description: The subject line. Ignored when replying, which keeps the conversation's own.\n      default: \"\"\n      ui:field: template\n\n    body:\n      type: string\n      title: Body\n      description: >-\n        The message itself, as plain text or HTML depending on Body Type. Ignored when Body\n        Type is Design Template.\n      default: \"\"\n      ui:field: template\n\n    bodyType:\n      type: string\n      title: Body Type\n      description: >-\n        How the message is written. Plain Text and HTML send the Body as typed. Design\n        Template draws one of your templates instead and sends that, with a plain-text\n        version alongside it for readers whose client shows no pictures.\n      default: text\n      enum: [text, html, template]\n      enumNames: [Plain Text, HTML, Design Template]\n\n    template:\n      type: string\n      title: Template\n      description: >-\n        Which template to draw, scoped to its org, as in \"sab/outreach-email\". Only read\n        when Body Type is Design Template.\n      default: \"\"\n      ui:field: template\n      \"ui:dependencies\": { bodyType: [template] }\n\n    content:\n      type: object\n      title: What to write in\n      description: >-\n        What goes into each part of the template, keyed by the part's name. The keys are\n        the template's own sections, so { \"subject\": { \"subject\": \"...\" }, \"opening\":\n        { \"message\": \"...\" } }. Any part left out draws with what its designer wrote as\n        the default, so a half-filled template still sends a whole letter.\n      default: {}\n      ui:field: template\n      \"ui:dependencies\": { bodyType: [template] }\n\n    inReplyTo:\n      type: string\n      title: In reply to\n      description: >-\n        A message id to answer. Given one, this replies in that conversation and the recipients\n        and subject come from it. Blank starts a new one.\n      default: \"\"\n      ui:field: template\n\"ui:order\": [to, cc, subject, bodyType, body, template, content, inReplyTo]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    required: true\n    description: Trigger to fire the node\n\noutputs:\n  - name: sent\n    type: boolean\n    description: True when the mailbox accepted it\n  - name: messageId\n    type: string\n    description: The sent message's id, for looking it up\n  - name: threadId\n    type: string\n    description: The conversation it landed in\n\n# WHICH MAILBOX IT SENDS FROM is the credential's, never a field here: the same connection the\n# Agent reads with, so a reply comes from the address the message arrived at.\ncredentials:\n  - name: mailboxCredential\n    required: true\n    displayName: Mailbox\n",
+      "node.yaml": "type: MailboxSend\nkind: PromiseNode\n\nname: Send Mail\ncategory: Communication\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  Send a message from a connected mailbox, or reply in a thread, with the words a previous step\n  produced\n\n# Outcome first, disqualify by PROPERTY, never name another node, wiring last.\nwhenToUse: >-\n  Send an email a workflow composed rather than one a model decided to write: a report, a\n  confirmation, a rendered template, the same message to each of a list. Every field takes a\n  template, so the recipient, the subject and the body are bound to what earlier steps produced.\n  Give it a message to answer and it replies in that conversation instead of starting a new one.\n  It sends from the mailbox its credential connected, and it sends once, at the moment the graph\n  reaches it.\n\nauth:\n  required: false\n\ncapabilities:\n  # NEVER cacheable: sending is the side effect. A cached answer would report a delivered message\n  # that was never sent, which is the worst possible lie for a node whose whole purpose is that\n  # something left the building.\n  cacheable: false\n\n  # The same fact, positively, so the ENGINE can act on it: mail that has reached a mailbox has\n  # no inverse. A test run traces what this would have sent and does not send it, because a build\n  # calls runTest after every stage and each one would otherwise reach a real person.\n  emitsExternally: true\n",
+      "test.yaml": "# DELIBERATELY NOT A REAL SEND. This node puts a message in a real person's inbox and that has\n# no inverse, so the fixture names an address nobody owns and asserts the SHAPE of the refusal:\n# a bench that mails someone every time it runs is not one anyone runs twice.\n#\n# The engine also withholds this node on a test run (capabilities.emitsExternally), so a build\n# traces what it would have sent rather than sending it.\ntestData:\n  config:\n    to: \"nobody@test.invalid\"\n    subject: \"Bench\"\n    bodyType: text\n    body: \"Sent by the node bench.\"\n\n  inputs:\n    signal: {}\n\n  expect:\n    sent: \"return typeof output.sent === 'boolean'\"\n    messageId: \"return typeof output.messageId === 'string'\"\n"
+    }
+  }
+}

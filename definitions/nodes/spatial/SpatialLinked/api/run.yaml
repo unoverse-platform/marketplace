@@ -1,0 +1,22 @@
+# ONE CALL, the engine's walk route: the same door the detail panel walks with (engine
+# routes/dictionary/items.ts, GET /dictionary/walk/:universalId). `line` narrows it to the one
+# name asked for, so the answer holds that line and no other. Inside the trust boundary, so no
+# token (package.yaml).
+#
+# NO `question` IS SENT. That parameter makes the route rank the lines by wording with a model
+# behind it; a named line needs no ranking, and paying for one would make a deterministic read
+# cost money and seconds.
+
+- name: walk
+  method: GET
+  url: >-
+    return scope.engineUrl + '/dictionary/walk/' + encodeURIComponent(String(config.universalId || '').trim())
+      + '?line=' + encodeURIComponent(String(config.line || '').trim())
+  transport: json
+  timeoutMs: 15000
+  error:
+    # A ROW THAT IS NOT THERE IS AN ERROR; A LINE THAT WAS NEVER DRAWN IS NOT. The first means the
+    # caller holds an id of nothing. The second is an answer: this manager runs no funds we hold,
+    # and it must read as empty rather than as a failure.
+    when: "return !response || !!response.error || !response.row"
+    message: "return 'dictionary/walk failed: ' + JSON.stringify(response || {}).slice(0, 300)"

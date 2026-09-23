@@ -1,0 +1,18 @@
+- name: record
+  method: POST
+  url: "return scope.engineUrl + '/dataset/record'"
+  transport: json
+  body:
+    object: "{{ config.object }}"
+    org: "{{ config.org }}"
+    of: "{{ config.of }}"
+    document: "{{ config.document }}"
+    rows: >-
+      return (() => {
+        const raw = config.rows;
+        return Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+      })()
+  timeoutMs: 60000
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

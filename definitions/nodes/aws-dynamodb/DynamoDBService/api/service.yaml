@@ -25,7 +25,9 @@ put:
         TableName: "return params.table || config.defaultTable"
         Item: "return params.item || {}"
         ConditionExpression: "return params.condition || undefined"
-  returns: "return { ok: true, table: params.table || config.defaultTable, item: params.item }"
+  # `table` is the one the CALLER named, or null for the box's default: a reply never carries
+  # config, so the default table's name is not told to the model (the box's owner set it).
+  returns: "return { ok: true, table: params.table || null, item: params.item }"
 
 get:
   description: >-

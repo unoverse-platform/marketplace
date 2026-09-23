@@ -1,0 +1,13 @@
+# One row per output connector, in interface.yaml order. `response` is the overview door's
+# reply: { account, health, threads, unanswered, drafts, volume }.
+#
+# THE SHAPING LIVES IN shared/overview.yaml, because the OTHER mail node emits the same picture
+# of the same inbox and two copies of a projection drift. `unanswered` stays the rows as the
+# mailbox states them, for a step that acts on one rather than draws it.
+
+- emit: overview
+  value: { $ref: overview#screen }
+
+# The rows as the mailbox states them, for a step that acts on a thread rather than draws it.
+- emit: unanswered
+  value: "return (response && response.unanswered) || []"

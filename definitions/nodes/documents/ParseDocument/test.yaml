@@ -1,0 +1,22 @@
+# Runs against the platform's own document service (npm run dev starts it beside umap), reading
+# a ONE-PAGE public PDF, so it proves the whole chain: the job starts through the engine, is
+# polled to COMPLETED, and the structure comes back. Shape assertions only, never exact words.
+testData:
+  config:
+    fileUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+    fileName: dummy.pdf
+    includeFigures: false
+  inputs:
+    file:
+      downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
+      etag: dummy-pdf-etag
+  expect:
+    document: "return output.document.kind === 'pdf' && output.document.pages >= 1 && typeof output.document.content_hash === 'string'"
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    tables: "return Array.isArray(output.tables)"
+    figures: "return Array.isArray(output.figures)"
+    lists: "return Array.isArray(output.lists)"
+    firstPages: "return typeof output.firstPages === 'string' && output.firstPages.length > 0"
+    outline: "return Array.isArray(output.outline)"
+    parts: "return Array.isArray(output.parts.tables) && Array.isArray(output.parts.figures)"
+    files: "return output.files.some(f => f.name === 'text.md') && output.files.some(f => f.name === 'structure.json') && output.files.every(f => typeof f.text === 'string' || typeof f.base64 === 'string')"

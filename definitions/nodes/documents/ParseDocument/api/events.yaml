@@ -1,0 +1,115 @@
+# One row per output connector, in interface.yaml order. `response` is the finished job:
+# { id, status, door, error, result }, and `result` is the service's ParsedDocument.
+
+- emit: document
+  value: "return (response.result || {}).document || {}"
+
+- emit: text
+  value: "return (response.result || {}).text || ''"
+
+- emit: sections
+  value: "return (response.result || {}).sections || []"
+
+- emit: tables
+  value: "return (response.result || {}).tables || []"
+
+- emit: figures
+  value: "return (response.result || {}).figures || []"
+
+- emit: lists
+  value: "return (response.result || {}).lists || []"
+- emit: review
+  value: "return (response.result || {}).review || []"
+
+- emit: quality
+  value: "return (response.result || {}).quality || {}"
+
+# WHAT A READ OF THE DOCUMENT IS GIVEN (docs/unoverse/data/documents/README.md, what the model
+# reads): the first two pages, cut at the third page's mark, else about two pages of a file with none.
+- emit: firstPages
+  value: >-
+    return (() => {
+      const all = String((response.result || {}).text || '');
+      const third = all.indexOf('<!-- page 3 -->');
+      return third > 0 ? all.slice(0, third) : all.slice(0, 8000);
+    })()
+
+# EVERY HEADING, with its section's first words, so a section is named by what it says.
+- emit: outline
+  value: >-
+    return ((response.result || {}).sections || [])
+      .filter(x => x.id && String(x.title || '').trim())
+      .slice(0, 600)
+      .map(x => ({ id: x.id, page: x.page_from || null, title: String(x.title).trim().slice(0, 100), firstWords: String(x.text || '').replace(/\s+/g, ' ').trim().slice(0, 100) }))
+
+# THE PARTS, SHAPED ONCE: each table, and each figure that carries meaning (never a logo, a
+# signature, a decoration), with where it sits and the names its rows and picture are saved by.
+- emit: parts
+  value: >-
+    return (() => {
+      const r = response.result || {};
+      const MEANING = ['chart', 'diagram', 'flowchart', 'photograph', 'screenshot'];
+      const tables = (r.tables || []).map(t => {
+        const header = t.header || [];
+        const last = header.length ? header[header.length - 1] : [];
+        const columns = last.map((_, c) => header.map(row => row[c] || '').filter((x, k, a) => x && x !== a[k - 1]).join(' / '));
+        const named = columns.filter(c => c);
+        const page = t.provenance ? t.provenance.page : null;
+        const rows = (t.rows || []).length;
+        const section = (r.sections || []).find(x => (x.table_ids || []).includes(t.id));
+        const where = section && section.title ? section.title : 'Table, page ' + page;
+        return {
+          partId: t.id,
+          title: t.caption || (where + (named.length ? ' (' + named.slice(0, 3).join(', ') + ')' : '')),
+          caption: t.caption || null,
+          description: rows + ' rows' + (named.length ? '; columns: ' + named.slice(0, 10).join(', ') : ''),
+          page: page,
+          box: t.provenance && t.provenance.box ? t.provenance.box : null,
+          columns: columns,
+          rowCount: rows,
+          firstRows: (t.rows || []).slice(0, 3).map(row => row.filter(c => c).slice(0, 8).join(' | ')).join(' / '),
+          stitchedFrom: t.stitched_from || null,
+          checks: t.checks || null,
+          rowsFile: 'tables/' + t.id + '.json',
+          pictureFile: t.image_png_base64 ? 'pictures/' + t.id + '.png' : null
+        };
+      });
+      const figures = (r.figures || []).filter(f => MEANING.includes(f.kind)).map(f => {
+        const page = f.provenance ? f.provenance.page : null;
+        return {
+          partId: f.id,
+          title: f.caption || (f.kind + ', page ' + page),
+          caption: f.caption || null,
+          description: f.kind + ' on page ' + page + (f.caption ? ': ' + f.caption : ''),
+          kind: f.kind,
+          page: page,
+          box: f.provenance && f.provenance.box ? f.provenance.box : null,
+          pictureFile: f.image_png_base64 ? 'pictures/' + f.id + '.png' : null
+        };
+      });
+      return { tables: tables, figures: figures };
+    })()
+
+# WHAT TO SAVE OF THIS READING, BY NAME, NEVER WHERE: a save step, whatever the store, puts them
+# where the caller keeps them. The text, the structure (no rows, no pictures), each table's rows,
+# and each picture: a table's, and a meaningful figure's.
+- emit: files
+  value: >-
+    return (() => {
+      const r = response.result || {};
+      const MEANING = ['chart', 'diagram', 'flowchart', 'photograph', 'screenshot'];
+      const tables = r.tables || [];
+      return [
+        { name: 'text.md', contentType: 'text/markdown', text: String(r.text || '') },
+        { name: 'structure.json', contentType: 'application/json', text: JSON.stringify({
+          document: r.document,
+          sections: r.sections || [],
+          tables: tables.map(t => ({ id: t.id, caption: t.caption, header: t.header, rowCount: (t.rows || []).length, stitched_from: t.stitched_from, provenance: t.provenance })),
+          figures: (r.figures || []).map(f => ({ id: f.id, caption: f.caption, kind: f.kind, provenance: f.provenance })),
+          lists: r.lists || []
+        }) }
+      ]
+        .concat(tables.map(t => ({ name: 'tables/' + t.id + '.json', contentType: 'application/json', text: JSON.stringify({ id: t.id, caption: t.caption, header: t.header, rows: t.rows, tidy: t.tidy }) })))
+        .concat(tables.filter(t => t.image_png_base64).map(t => ({ name: 'pictures/' + t.id + '.png', contentType: 'image/png', base64: t.image_png_base64 })))
+        .concat((r.figures || []).filter(f => MEANING.includes(f.kind) && f.image_png_base64).map(f => ({ name: 'pictures/' + f.id + '.png', contentType: 'image/png', base64: f.image_png_base64 })));
+    })()

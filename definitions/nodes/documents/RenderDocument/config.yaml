@@ -1,0 +1,35 @@
+configSchema:
+  type: object
+  required: [fileUrl, page]
+  properties:
+    fileUrl:
+      type: string
+      title: File URL
+      description: A URL the service can fetch the file from, usually a presigned link wired from an upstream file node
+      default: ""
+      "ui:field": template
+    fileName:
+      type: string
+      title: File Name
+      description: The name with its extension
+      default: ""
+      "ui:field": template
+    page:
+      type: number
+      title: Page
+      description: The page to render, counted from 1
+      default: 1
+    box:
+      type: string
+      title: Region
+      description: >-
+        The region as JSON { x0, y0, x1, y1 } in points with the origin top-left, as a parsed
+        document's provenance gives it. Leave blank for the whole page.
+      default: ""
+      "ui:field": template
+    dpi:
+      type: number
+      title: DPI
+      description: Resolution of the image. 150 reads cleanly on a screen; 300 for print.
+      default: 150
+"ui:order": [fileUrl, fileName, page, box, dpi]

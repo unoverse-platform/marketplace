@@ -1,0 +1,119 @@
+{
+  "kind": "node",
+  "name": "DatasetRecord",
+  "pack": "dataset",
+  "fingerprint": "c856db11d31d2a12",
+  "title": "Dataset Record",
+  "description": "Write a read's rows into the table an object owns, replacing what the same document wrote last time rather than landing a second set beside it",
+  "category": "Storage & Data",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Store the rows a read produced, where the object they belong to owns a table. Give it the rows, the object, and what they were read from, and it replaces everything that source wrote before: a document read again corrects its figures instead of doubling them, and a read that finds nothing removes what it found last time, so a figure since withdrawn stops being reported. Every column is checked against the object's own declaration, so a row carrying a name the table does not have is refused rather than dropped. It cannot create or alter a table.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "rows",
+        "type": "array",
+        "description": "The rows to write, each a record whose keys are columns the object declares",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "written",
+        "type": "number",
+        "description": "How many rows were written"
+      },
+      {
+        "name": "removed",
+        "type": "number",
+        "description": "How many rows this replaced, so a read that found fewer than last time is visible"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "object",
+        "of",
+        "rows"
+      ],
+      "properties": {
+        "object": {
+          "type": "string",
+          "title": "Object",
+          "description": "Which object's table, by its name (the object must declare one in dataset.yaml)",
+          "default": "",
+          "ui:field": "template"
+        },
+        "org": {
+          "type": "string",
+          "title": "Organisation",
+          "description": "Whose rows these are. Set on every row and enforced by the database, never by the query",
+          "default": "",
+          "ui:field": "template"
+        },
+        "of": {
+          "type": "string",
+          "title": "Of",
+          "description": "The id of the row these belong to. Every row is deleted with it",
+          "default": "",
+          "ui:field": "template"
+        },
+        "document": {
+          "type": "string",
+          "title": "Read from",
+          "description": "The id of the document these were read from. What this source wrote before is replaced; leave it empty to replace everything this owner has.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "rows": {
+          "type": "string",
+          "title": "Rows",
+          "description": "The rows as a JSON array, or wired, e.g. return signal.readings",
+          "default": "[]",
+          "ui:field": "template"
+        },
+        "emitOnTestRun": {
+          "type": "boolean",
+          "title": "Perform on test runs",
+          "description": "This step acts outside the platform and cannot be undone, so test runs trace it rather than perform it. Enable only while testing this step, then switch it off.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "dataset",
+      "packageFile": "# DATASET — the table an object owns (docs/unoverse/data/objects/dataset.md). An object that\n# holds many small facts read together, rather than one row read alone, declares its columns and\n# the platform makes it a real table: real types, real indexes, and access the database enforces.\n#\n# TWO DOORS, two nodes. Rows in (DatasetRecord), rows out (DatasetQuery). Neither can create or\n# alter a table: structure changes only through a migration generated from the declaration and\n# approved by a person, and the role this runs as has no permission to do otherwise.\n#\n# THE HOST IS THE ENGINE, at loopback, as the documents package explains: a node's call must be\n# https or loopback, and the engine holds what the database's address is so no node and no file\n# does.\nname: dataset\ndisplayName: Dataset\ndescription: >-\n  Put rows into the table an object owns, and read them back: filtered, limited, and summed only\n  within one unit\nversion: 0.1.0\ncategory: storage\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Write a read's rows, replacing what the same document wrote last time\n  - Read rows back filtered by any declared column, by value, by list or by range\n  - Sum and rank, always grouped by unit so unlike figures are never added together\n  - Every column checked against the object's own declaration, so a name is never taken from a caller\n\nallowedHosts:\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n",
+      "credentials": {},
+      "shared": {}
+    },
+    "dir": "DatasetRecord",
+    "files": {
+      "api/events.yaml": "- emit: written\n  value: \"return (response || {}).written || 0\"\n- emit: removed\n  value: \"return (response || {}).removed || 0\"\n",
+      "api/run.yaml": "- name: record\n  method: POST\n  url: \"return scope.engineUrl + '/dataset/record'\"\n  transport: json\n  body:\n    object: \"{{ config.object }}\"\n    org: \"{{ config.org }}\"\n    of: \"{{ config.of }}\"\n    document: \"{{ config.document }}\"\n    rows: >-\n      return (() => {\n        const raw = config.rows;\n        return Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);\n      })()\n  timeoutMs: 60000\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [object, of, rows]\n  properties:\n    object:\n      type: string\n      title: Object\n      description: Which object's table, by its name (the object must declare one in dataset.yaml)\n      default: \"\"\n      \"ui:field\": template\n    org:\n      type: string\n      title: Organisation\n      description: Whose rows these are. Set on every row and enforced by the database, never by the query\n      default: \"\"\n      \"ui:field\": template\n    of:\n      type: string\n      title: Of\n      description: The id of the row these belong to. Every row is deleted with it\n      default: \"\"\n      \"ui:field\": template\n    document:\n      type: string\n      title: Read from\n      description: >-\n        The id of the document these were read from. What this source wrote before is replaced;\n        leave it empty to replace everything this owner has.\n      default: \"\"\n      \"ui:field\": template\n    rows:\n      type: string\n      title: Rows\n      description: The rows as a JSON array, or wired, e.g. return signal.readings\n      default: \"[]\"\n      \"ui:field\": template\n\"ui:order\": [object, org, of, document, rows]\n",
+      "interface.yaml": "inputs:\n  - name: rows\n    type: array\n    description: The rows to write, each a record whose keys are columns the object declares\n    required: false\n\noutputs:\n  - name: written\n    type: number\n    description: How many rows were written\n  - name: removed\n    type: number\n    description: How many rows this replaced, so a read that found fewer than last time is visible\n\ncredentials: []\n",
+      "node.yaml": "type: DatasetRecord\nkind: PromiseNode\n\nname: Dataset Record\ncategory: Storage & Data\ncolor: \"#334155\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  Write a read's rows into the table an object owns, replacing what the same document wrote last\n  time rather than landing a second set beside it\n\nwhenToUse: >-\n  Store the rows a read produced, where the object they belong to owns a table. Give it the rows,\n  the object, and what they were read from, and it replaces everything that source wrote before:\n  a document read again corrects its figures instead of doubling them, and a read that finds\n  nothing removes what it found last time, so a figure since withdrawn stops being reported.\n  Every column is checked against the object's own declaration, so a row carrying a name the\n  table does not have is refused rather than dropped. It cannot create or alter a table.\n\nauth:\n  required: false\n\ncapabilities:\n  # It changes what is stored, and a second identical call is not a second set of rows: it\n  # replaces. Still not undoable by itself, so it is never treated as a pure read.\n  emitsExternally: true\n  cacheable: false\n",
+      "test.yaml": "# SAMPLE DATA, so the node can be loaded and run from the Nodes screen. It writes two rows\n# against an object that owns a table, for one owner, read from one document. Running it again\n# writes two and removes two: the same source replaces itself rather than doubling.\ntestData:\n  config:\n    object: observation\n    org: example\n    of: row-1\n    document: doc-1\n    rows: >-\n      [{\"fund\":\"Example Fund\",\"measure\":\"exposure\",\"dimension\":\"sectors\",\"label\":\"Alpha\",\n        \"side\":\"long\",\"value\":\"1.84\",\"unit\":\"percent_of_aum\",\"as_of\":\"2026-05-31\",\n        \"scope\":\"whole\",\"basis\":\"reported\",\"source\":\"2. Exposure, row 5\"},\n       {\"fund\":\"Example Fund\",\"measure\":\"exposure\",\"dimension\":\"sectors\",\"label\":\"Alpha\",\n        \"side\":\"short\",\"value\":\"-0.40\",\"unit\":\"percent_of_aum\",\"as_of\":\"2026-05-31\",\n        \"scope\":\"whole\",\"basis\":\"reported\",\"source\":\"2. Exposure, row 5\"}]\n  inputs:\n    rows: []\n  expect:\n    written: \"return output.written === 2\"\n    removed: \"return typeof output.removed === 'number'\"\n"
+    }
+  }
+}

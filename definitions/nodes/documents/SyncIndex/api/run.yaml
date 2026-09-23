@@ -1,0 +1,22 @@
+# ONE SYNC ON THE PLATFORM'S OWN INDEX, through the engine at loopback (package.yaml says why).
+# The engine cuts, embeds and lists; the reply is what it did (docs/unoverse/data/documents/search-index.md).
+
+- name: sync
+  method: POST
+  url: "return scope.engineUrl + '/index/sync'"
+  transport: json
+
+  body:
+    index: "{{ config.index }}"
+    documents: >-
+      return (() => {
+        const v = Array.isArray(config.documents) ? config.documents : (signal && Array.isArray(signal.documents) ? signal.documents : []);
+        return v.map(d => typeof d === 'string' ? d : (d && (d.universal_id || d.id))).filter(Boolean);
+      })()
+
+  # Embedding a long document's pieces the first time is the slow part: a few seconds a document.
+  timeoutMs: 600000
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

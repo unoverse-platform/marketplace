@@ -53,7 +53,7 @@ search: &search
     on: [429, 500, 502, 503, 504]
 
 # The search the SYNC sequence runs: identical to `search` except it also stands down while
-# the snapshot is fresh. The 10 minutes is MEMORY_SPEC.md's number for this snapshot
+# the snapshot is fresh. The 10 minutes is REFERENCE.md's number (docs/architecture/memory) for this snapshot
 # (cache-aside, 10-min TTL) — the retired executor carried it as a Redis TTL, which the
 # shared state key can no longer do (the memory server merges into it), so the freshness
 # window moved onto the sync's own stamp. A duplicate rather than a merge key because the

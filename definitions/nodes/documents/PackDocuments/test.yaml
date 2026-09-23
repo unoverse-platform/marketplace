@@ -1,0 +1,8 @@
+# Runs against the platform's own engine and database: a pack that holds nothing lists nothing.
+testData:
+  config:
+    index: "test://pack-documents/empty"
+  expect:
+    documents: "return Array.isArray(output.documents) && output.documents.length === 0"
+    count: "return output.count === 0"
+    text: "return output.text === ''"

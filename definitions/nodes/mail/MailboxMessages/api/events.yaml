@@ -1,0 +1,23 @@
+# One row per output connector, in interface.yaml order. `response` is the overview door's reply:
+# { account, health, threads, unanswered, drafts, volume }.
+
+- emit: threads
+  value: "return (response && response.threads) || []"
+
+- emit: text
+  value: >-
+    return ((response && response.threads) || []).map(t => {
+      const last = t.last || {};
+      const who = last.from ? (last.from.name ? last.from.name + ' <' + last.from.address + '>' : last.from.address) : 'nobody';
+      const when = last.at || t.lastMessageAt || '';
+      return '- ' + (t.subject || '(no subject)') + ' — ' + (last.direction === 'out' ? 'we wrote to ' : 'from ') + who
+        + (when ? ' at ' + when : '') + ' (' + t.messageCount + ' message' + (t.messageCount === 1 ? '' : 's') + ', thread ' + t.id + ')';
+    }).join('\n')
+
+- emit: count
+  value: "return ((response && response.threads) || []).length"
+
+# THE SAME SCREEN THIS NODE'S MENU DRAWS, shaped exactly as the other mail node shapes it: one
+# mailbox, one picture of it, wherever you open it from.
+- emit: overview
+  value: { $ref: overview#screen }

@@ -1,0 +1,29 @@
+configSchema:
+  type: object
+  required: [universalId, line]
+  properties:
+    universalId:
+      type: string
+      title: Row
+      description: >-
+        The universal id of the row to follow the line from, usually a row an upstream search
+        found or the row a function was called on
+      default: ""
+      "ui:field": template
+    line:
+      type: string
+      title: Line
+      description: >-
+        The name of the line to follow, as the object that draws it declares it: managedBy,
+        about, follows, replaces
+      default: ""
+      "ui:field": template
+    direction:
+      type: string
+      title: Which way
+      description: >-
+        in for the rows pointing AT this row (a manager's funds), out for the rows this row
+        points at (a fund's manager)
+      enum: [in, out]
+      default: in
+"ui:order": [universalId, line, direction]

@@ -1,0 +1,15 @@
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the filter is read from config
+    required: false
+
+outputs:
+  - name: rows
+    type: array
+    description: The rows, or when summing, one row per group with its total and how many rows made it
+  - name: total
+    type: number
+    description: How many rows came back
+
+credentials: []

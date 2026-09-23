@@ -1,0 +1,27 @@
+- name: job
+  method: POST
+  url: "return scope.engineUrl + '/documents/render'"
+  transport: json
+
+  body:
+    file_url: "{{ config.fileUrl }}"
+    file_name: "return String(config.fileName || '').trim() || undefined"
+    page: "return Number(config.page) || 1"
+    # A JSON string in config, parsed here: invalid JSON fails the run loudly rather than rendering
+    # the wrong region. Blank is the whole page.
+    box: "return String(config.box || '').trim() ? JSON.parse(String(config.box)) : undefined"
+    dpi: "return Number(config.dpi) || undefined"
+
+  timeoutMs: 60000
+
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"
+
+  poll:
+    url: "return scope.engineUrl + '/documents/jobs/' + response.id"
+    until: "return response.status === 'COMPLETED'"
+    failed: "return response.status === 'FAILED'"
+    message: "return response.error || ('render ' + response.status)"
+    intervalMs: 2000
+    maxAttempts: 150

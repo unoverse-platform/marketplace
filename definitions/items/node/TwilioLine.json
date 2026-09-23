@@ -1,0 +1,104 @@
+{
+  "kind": "node",
+  "name": "TwilioLine",
+  "pack": "twilio",
+  "fingerprint": "62d48aaef97dbb20",
+  "title": "Twilio Phone Line",
+  "description": "Puts a voice node on a real phone call instead of in the browser",
+  "category": "Voice",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1789899519/gravity/icons/twillio-logo.png",
+  "whenToUse": "Pick when the conversation should happen on a real phone number rather than in a browser tab, either because the workflow is calling someone or because someone is calling in. Clips onto a voice node and changes nothing about it: the model, the voice, the prompt and the tools all stay exactly as they are, because only the lane the audio travels on is different.",
+  "detail": {
+    "inputs": [],
+    "outputs": [],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "direction"
+      ],
+      "properties": {
+        "direction": {
+          "type": "string",
+          "title": "Direction",
+          "description": "Whether the workflow places the call, or waits for one. Outbound calls the number below when the voice node runs. Inbound answers whoever rings your Twilio number.",
+          "enum": [
+            "outbound",
+            "inbound"
+          ],
+          "enumNames": [
+            "Outbound",
+            "Inbound"
+          ],
+          "default": "outbound"
+        },
+        "to": {
+          "type": "string",
+          "title": "Number to call",
+          "description": "In E.164 form, so +447700900123 rather than 07700 900123. Outbound only. Shared blocks and upstream data work here, which is how a workflow calls a different person each run.",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "direction": "outbound"
+          }
+        },
+        "from": {
+          "type": "string",
+          "title": "Caller ID",
+          "description": "Which of your Twilio numbers the call comes from, in E.164 form. Inbound, this is the number being answered.",
+          "ui:field": "template"
+        },
+        "onVoicemail": {
+          "type": "string",
+          "title": "If voicemail answers",
+          "description": "Hanging up keeps the call log honest, so the workflow can try again later. Leaving a message speaks the opening line once and then ends the call.",
+          "enum": [
+            "hangUp",
+            "leaveMessage"
+          ],
+          "enumNames": [
+            "Hang up",
+            "Leave the opening line as a message"
+          ],
+          "default": "hangUp",
+          "ui:dependencies": {
+            "direction": "outbound"
+          }
+        },
+        "ringSeconds": {
+          "type": "number",
+          "title": "Ring for",
+          "description": "How many seconds to let it ring before giving up. Outbound only.",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 120,
+          "ui:dependencies": {
+            "direction": "outbound"
+          }
+        },
+        "emitOnTestRun": {
+          "type": "boolean",
+          "title": "Perform on test runs",
+          "description": "This step acts outside the platform and cannot be undone, so test runs trace it rather than perform it. Enable only while testing this step, then switch it off.",
+          "default": false,
+          "ui:widget": "toggle"
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "twilio",
+      "packageFile": "# TWILIO — the carrier, so a voice node can be on a real phone call instead of in a browser.\n#\n# ONE NODE, and it is an ATTACHMENT rather than a box you wire in (DECLARATIVE_NODES.md §14).\n# That is the whole design decision in this package, and it is worth reading before adding to it.\n#\n# A phone call cannot travel on a data edge in either direction. A voice node's run IS the call,\n# held open for its whole length, and its outputs fire at the end: a phone node downstream of it\n# would run after the call was over, and one upstream would have to complete while still holding\n# the socket. Nor is it a service, because a service is something the host CALLS and gets one\n# value back from.\n#\n# So the phone is not part of any voice node. It is the LANE the run is speaking on, and it\n# arrives as configuration that clips on and locks what it owns. One attachment, and every voice\n# node rides it unchanged — Realtime, GPT-Live, Grok Voice — because none of them contains a\n# phone. See docs/VOICE_STREAMING_GUIDE.md \"The Phone Lane\".\n#\n# MEDIA STREAMS, NOT CONVERSATIONRELAY. ConversationRelay does speech-to-text and text-to-speech\n# for you and hands back text, which would mean paying for a realtime voice model and never using\n# its voice. Media Streams gives raw call audio both ways, which is what a voice model wants.\n\nname: twilio\ndisplayName: Twilio\ndescription: Real phone numbers for voice nodes, and WhatsApp messaging\nversion: 1.0.0\ncategory: communication\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789899519/gravity/icons/twillio-logo.png\n\nfeatures:\n  - A voice node on a real phone number, over Media Streams\n\nallowedHosts:\n  - api.twilio.com\n\nrequires:\n  executorVersion: \">=1.6.0\"\n",
+      "credentials": {
+        "twilioCredential.yaml": "# ONE credential for the whole account: the phone line today, WhatsApp when it lands.\n#\n# The Auth Token is the account's master secret. An API Key SID/Secret pair is the better\n# practice (it can be revoked without rotating everything), but the account SID plus auth token\n# is what Twilio's own console shows first and what every tutorial uses, so it is what someone\n# setting this up for the first time will have in front of them.\nname: twilioCredential\ndisplayName: Twilio\ndescription: Twilio account credentials for voice and messaging\n\nproperties:\n  - name: accountSid\n    displayName: Account SID\n    type: string\n    required: true\n    # NOT a secret, and saying so explicitly. The SID identifies the account and appears in\n    # every request URL; the auth token beside it is the thing worth hiding.\n    secret: false\n    description: Your Account SID, on the Twilio console home page. Starts with AC\n    placeholder: AC00000000000000000000000000000000\n\n  - name: authToken\n    displayName: Auth Token\n    type: string\n    required: true\n    secret: true\n    description: Your Auth Token, beside the Account SID on the console home page\n    placeholder: Enter your Twilio auth token\n"
+      },
+      "shared": {}
+    },
+    "dir": "TwilioLine",
+    "files": {
+      "config.yaml": "# THIS ATTACHMENT'S OWN SETTINGS. They are not the host's: they reach the run under\n# `attachments.TwilioLine`, so a field of the same name on a voice node stays that node's own.\nconfigSchema:\n  type: object\n  required: [direction]\n  properties:\n    direction:\n      type: string\n      title: Direction\n      description: >-\n        Whether the workflow places the call, or waits for one. Outbound calls the number below\n        when the voice node runs. Inbound answers whoever rings your Twilio number.\n      enum: [outbound, inbound]\n      enumNames: [Outbound, Inbound]\n      default: outbound\n\n    to:\n      type: string\n      title: Number to call\n      description: >-\n        In E.164 form, so +447700900123 rather than 07700 900123. Outbound only. Shared blocks\n        and upstream data work here, which is how a workflow calls a different person each run.\n      \"ui:field\": template\n      \"ui:dependencies\":\n        direction: outbound\n\n    from:\n      type: string\n      title: Caller ID\n      description: >-\n        Which of your Twilio numbers the call comes from, in E.164 form. Inbound, this is the\n        number being answered.\n      \"ui:field\": template\n\n    # VOICEMAIL IS THE CASE THAT WILL BITE, so it is a setting rather than something the model\n    # is left to work out. A single-minded call that leaves a coherent message is a different\n    # script from one that holds a conversation, and from inside the call the two sound alike.\n    onVoicemail:\n      type: string\n      title: If voicemail answers\n      description: >-\n        Hanging up keeps the call log honest, so the workflow can try again later. Leaving a\n        message speaks the opening line once and then ends the call.\n      enum: [hangUp, leaveMessage]\n      enumNames: [Hang up, Leave the opening line as a message]\n      default: hangUp\n      \"ui:dependencies\":\n        direction: outbound\n\n    ringSeconds:\n      type: number\n      title: Ring for\n      description: How many seconds to let it ring before giving up. Outbound only.\n      default: 30\n      minimum: 5\n      maximum: 120\n      \"ui:dependencies\":\n        direction: outbound\n\n\"ui:order\": [direction, to, from, onVoicemail, ringSeconds]\n",
+      "interface.yaml": "# WHAT CLIPPING THIS ON DOES (DECLARATIVE_NODES.md §14).\n#\n# No inputs, no outputs, no serviceConnectors, and no api/ folder at all. This node never runs.\nattaches:\n  # ONE FIELD, and that is deliberate. An earlier draft also set the sample rate and the codec\n  # here, which was wrong in a way worth recording: those are not choices, they are facts of the\n  # lane. Twilio is G.711 mu-law at 8 kHz because the phone network is, and the runtime knows\n  # that the moment it knows the lane. Putting them in config would be offering a decision that\n  # has exactly one correct answer, and a wrong sample rate is not an error anywhere — the model\n  # simply transcribes at the wrong speed and it reads as poor accuracy.\n  sets:\n    lane: twilio\n\n  # CONTRIBUTED TO THE HOST'S RUN, so the voice node runs holding two credentials: its own\n  # vendor key, and this one. Neither node writes into the other, and the picker for this one\n  # appears on the tab this attachment adds to the voice node's panel.\n  credentials:\n    - name: twilioCredential\n      required: true\n      displayName: Twilio\n\n  # WHAT THE HOST BECOMES while this is clipped on.\n  #\n  # A voice node in a browser emits nothing outside the platform and rightly declares nothing.\n  # The very same node with this clipped on DIALS A REAL HUMAN BEING, and a build loop re-runs a\n  # workflow after every stage — so without this, each attempt would ring a real telephone. A\n  # placed call has no inverse, so a test run traces it instead.\n  capabilities:\n    emitsExternally: true\n",
+      "node.yaml": "type: TwilioLine\nkind: Attachment\n\nname: Twilio Phone Line\n# On the canvas it is a sill under a node, beside its own logo, so the vendor is all it has to\n# say. The full name is for the picker, where it sits among a hundred others.\ndisplayName: Twilio\ncategory: Voice\ncolor: \"#F22F46\"\n\ndescription: Puts a voice node on a real phone call instead of in the browser\n\nwhenToUse: >-\n  Pick when the conversation should happen on a real phone number rather than in a browser tab,\n  either because the workflow is calling someone or because someone is calling in. Clips onto a\n  voice node and changes nothing about it: the model, the voice, the prompt and the tools all\n  stay exactly as they are, because only the lane the audio travels on is different.\n\n# WHO MAY RUN THIS. An attachment never runs, so it adds no requirement of its own and there is\n# nothing here for a requirement to narrow. The node it is clipped to owns that question.\nauth:\n  required: false\n"
+    }
+  }
+}

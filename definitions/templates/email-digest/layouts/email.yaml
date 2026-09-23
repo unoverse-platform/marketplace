@@ -58,12 +58,10 @@ children:
         children:
           - director:
               # Arrivals are SWITCHED into their compact state and HELD there — an
-              # email is flat, there is no detail state to open into. The rule is
-              # universal wording — the shelf's default; an org wanting bespoke
-              # judgment ships its own template.
+              # email is flat, there is no detail state to open into. The band holds
+              # what arrives in search rank, up to three.
               state: grid
               pick: 3
-              rules: The items most relevant to the reader, strongest matches first.
               preview: [ card, card, card ]
 
       # THE SIGN-OFF — after the items, as in a letter: the reader sees what was

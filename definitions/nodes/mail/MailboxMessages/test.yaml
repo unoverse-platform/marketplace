@@ -1,0 +1,10 @@
+# Runs against the platform's own engine and database, as the Mailbox credential the bench is
+# given (MAILBOX_ADDRESS and the rest from the workspace .env). An inbox holding nothing answers
+# an empty list. Shape assertions only.
+testData:
+  config:
+    limit: 3
+  expect:
+    threads: "return Array.isArray(output.threads)"
+    text: "return typeof output.text === 'string'"
+    count: "return typeof output.count === 'number' && output.count === output.threads.length"

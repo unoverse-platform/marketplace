@@ -1,0 +1,100 @@
+{
+  "kind": "node",
+  "name": "ReadCover",
+  "pack": "documents",
+  "fingerprint": "00e70a21ce845bf3",
+  "title": "Read Cover",
+  "description": "What each file says it is about and the date it speaks as of, taken from the places you say they sit, with no model and no guessing",
+  "category": "Documents",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Decide where a file belongs and which file it replaces, before reading any of it in full: for each file, the subject it names and the date it states, read from a named cell or a pattern on a page, with where each was found. Use it when the files come from a template whose layout is fixed, so the same file always answers the same way and every answer can be checked against the cell it came from. A file matching none of the layouts you describe comes back empty rather than guessed, which is the point: a wrong subject files a document under the wrong thing and nothing downstream can tell. It knows no document type of its own, so you supply the layouts and where their facts sit. It does not read tables, figures or the body; that is a full parse.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "files",
+        "type": "array",
+        "description": "The files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "entries",
+        "type": "array",
+        "description": "One per file, in order: file_name, kind, template, layout, subject, period, found_in, error. `layout` is the matched layout whole, as it was supplied, for a caller that needs the rest of what it says"
+      },
+      {
+        "name": "read",
+        "type": "array",
+        "description": "Only the entries whose layout was recognised and whose subject was found"
+      },
+      {
+        "name": "unread",
+        "type": "array",
+        "description": "The entries no layout matched, or whose subject was not where it was said to be. These need a reader of another kind, or a person"
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "description": "How many files were read"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "files",
+        "templates"
+      ],
+      "properties": {
+        "files": {
+          "type": "string",
+          "title": "Files",
+          "description": "The files as a JSON array of { downloadUrl, key, size? }, usually wired from a listing with links, e.g. return signal.files",
+          "default": "",
+          "ui:field": "template"
+        },
+        "templates": {
+          "type": "string",
+          "title": "Layouts",
+          "description": "The layouts you know, as a JSON array. Each is { name, match, subject, period }: `match` is text that appears in every file of that layout and no other; `subject` and `period` each say where that fact sits, either { sheet, label } for a workbook or { page, pattern } for pages, where `pattern` is a regular expression with one group. A label may hold its own value after a colon. Example: [{\"name\":\"monthly-return\",\"match\":\"Monthly Return Template\",\"subject\":{\"sheet\":\"1. Details\",\"label\":\"Entity Name\"},\"period\":{\"sheet\":\"1. Details\",\"label\":\"Date\"}}]",
+          "default": "[]",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "documents",
+      "packageFile": "# DOCUMENTS — the platform's own document service (services/documents, a Python service beside\n# umap): a file in, its structure out. Text in reading order, every table as rows, every figure\n# as an image with its caption, every ordered list, the dates a document carries, and where on\n# which page each sits. docs/unoverse/data/documents/README.md.\n#\n# ONE DOOR, ONE NODE: ParseDocument, RenderDocument, InventoryFolder, ReadCover, ReadValues. Each is a JOB on\n# the service (start, poll, collect), which is the LlamaParse shape, so the poll capability does\n# the waiting. A door does one job, so one can be improved or replaced without touching what\n# calls it: a census before reading, a cover before filing, a parse when the whole is wanted.\n#\n# THE HOST IS THE ENGINE, at loopback (`scope.engineUrl`, :4101), which forwards to the service\n# (routes/documents.ts) the way it reaches umap. A node's call must be https or loopback\n# (allowedHosts.ts refuses a plaintext request to any other host), and a compose service on the\n# Docker network is neither; the engine holds the service's address so no node and no file does.\n\nname: documents\ndisplayName: Documents\ndescription: >-\n  Read a file into its structure with the platform's document service. Text, tables as rows,\n  figures, lists, dates, provenance\nversion: 0.1.0\ncategory: ingest\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Parse PDF, Word, slides, spreadsheets, HTML and images into one typed structure\n  - Tables as rows with units parsed, figures as images, ordered lists as steps\n  - Render any page or region as an image\n  - \"Inventory a folder: kinds, pages, dates, duplicates\"\n  - \"Read a cover: what each file is about and the date it states, from named cells, no model\"\n  - \"Read values: the figures a parsed document stated, refused whole when they do not add up to what it says about itself\"\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form (the pattern rejects a bare \"localhost\"): every call goes to the\n  # engine's own listener, which forwards to the service. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n  # Every door is a job: without `poll` an executor would settle on the receipt and emit the job\n  # id as the answer.\n  poll: true\n",
+      "credentials": {},
+      "shared": {}
+    },
+    "dir": "ReadCover",
+    "files": {
+      "api/events.yaml": "- emit: entries\n  value: \"return (response.result || {}).entries || []\"\n\n# READ AND UNREAD ARE SEPARATE ON PURPOSE. A file whose subject was found can be filed; one\n# whose subject was not is not a failure and is not an empty answer, it is work for a reader of\n# another kind or for a person. Kept apart so a caller cannot treat the second as the first.\n- emit: read\n  value: \"return ((response.result || {}).entries || []).filter(e => e && e.subject)\"\n\n- emit: unread\n  value: \"return ((response.result || {}).entries || []).filter(e => !e || !e.subject)\"\n\n- emit: total\n  value: \"return ((response.result || {}).entries || []).length\"\n",
+      "api/run.yaml": "# THE COVER of each file, from the engine at loopback (package.yaml says why). A job, like every\n# other door on this service.\n\n- name: job\n  method: POST\n  url: \"return scope.engineUrl + '/documents/cover'\"\n  transport: json\n\n  body:\n    # The listing's own shape becomes the service's: downloadUrl to file_url, key to file_name.\n    # A JSON string in config, or the array itself when wired.\n    files: >-\n      return (() => {\n        const raw = config.files;\n        const list = Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);\n        return list.map(f => ({ file_url: f.downloadUrl || f.presignedUrl || f.url || f.file_url, file_name: f.key || f.name || f.file_name || '', size: f.size }));\n      })()\n    templates: >-\n      return (() => {\n        const raw = config.templates;\n        return Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);\n      })()\n\n  timeoutMs: 60000\n\n  error:\n    when: \"return !!response.detail || !!response.error\"\n    message: \"return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))\"\n\n  # A cover is a named cell or one page, so this is faster than an inventory; the same patience\n  # costs nothing when a folder is large.\n  poll:\n    url: \"return scope.engineUrl + '/documents/jobs/' + response.id\"\n    until: \"return response.status === 'COMPLETED'\"\n    failed: \"return response.status === 'FAILED'\"\n    # A FAILURE SAYS WHERE IT GOT TO. A step over many files that gives up after its last\n    # attempt is otherwise indistinguishable from one that never started, and the useful fact is\n    # which file it was on.\n    message: >-\n      return response.error || (() => {\n        const p = response.progress;\n        return 'cover ' + response.status + (p ? ` at ${p.done}/${p.of}: ${p.what}` : '');\n      })()\n    intervalMs: 2000\n    maxAttempts: 300\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [files, templates]\n  properties:\n    files:\n      type: string\n      title: Files\n      description: >-\n        The files as a JSON array of { downloadUrl, key, size? }, usually wired from a listing\n        with links, e.g. return signal.files\n      default: \"\"\n      \"ui:field\": template\n    templates:\n      type: string\n      title: Layouts\n      description: >-\n        The layouts you know, as a JSON array. Each is { name, match, subject, period }: `match`\n        is text that appears in every file of that layout and no other; `subject` and `period`\n        each say where that fact sits, either { sheet, label } for a workbook or { page, pattern }\n        for pages, where `pattern` is a regular expression with one group. A label may hold its\n        own value after a colon. Example: [{\"name\":\"monthly-return\",\"match\":\"Monthly Return\n        Template\",\"subject\":{\"sheet\":\"1. Details\",\"label\":\"Entity Name\"},\"period\":{\"sheet\":\"1.\n        Details\",\"label\":\"Date\"}}]\n      default: \"[]\"\n      \"ui:field\": template\n\"ui:order\": [files, templates]\n",
+      "interface.yaml": "inputs:\n  - name: files\n    type: array\n    description: The files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on\n    required: false\n\noutputs:\n  - name: entries\n    type: array\n    description: \"One per file, in order: file_name, kind, template, layout, subject, period, found_in, error. `layout` is the matched layout whole, as it was supplied, for a caller that needs the rest of what it says\"\n  - name: read\n    type: array\n    description: Only the entries whose layout was recognised and whose subject was found\n  - name: unread\n    type: array\n    description: The entries no layout matched, or whose subject was not where it was said to be. These need a reader of another kind, or a person\n  - name: total\n    type: number\n    description: How many files were read\n\ncredentials: []\n",
+      "node.yaml": "type: ReadCover\nkind: PromiseNode\n\nname: Read Cover\ncategory: Documents\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  What each file says it is about and the date it speaks as of, taken from the places you say\n  they sit, with no model and no guessing\n\nwhenToUse: >-\n  Decide where a file belongs and which file it replaces, before reading any of it in full: for\n  each file, the subject it names and the date it states, read from a named cell or a pattern on\n  a page, with where each was found. Use it when the files come from a template whose layout is\n  fixed, so the same file always answers the same way and every answer can be checked against\n  the cell it came from. A file matching none of the layouts you describe comes back empty\n  rather than guessed, which is the point: a wrong subject files a document under the wrong\n  thing and nothing downstream can tell. It knows no document type of its own, so you supply\n  the layouts and where their facts sit. It does not read tables, figures or the body; that is a\n  full parse.\n\nauth:\n  required: false\n\ncapabilities:\n  # A pure read of files that do not change: the same files and layouts always answer the same.\n  # REMEMBERED UNDER THE DOCUMENTS SERVICE'S OWN VERSION. This node's answer is decided by that\n  # service's code, not by this definition, so a fix to it must forget every answer it gave\n  # (2026-09-20: a figures reader was fixed, the service restarted, and the old answer was still\n  # served from a trace, silently).\n  cacheable:\n    answeredBy: documents\n",
+      "test.yaml": "# THE NODE UNDER GUARD, against the real service. One layout, described the way any caller\n# describes its own: a marker saying which layout a file is, and where one fact sits in it.\n# Asserted on shape and provenance, never on the words a file happens to carry.\n#\n# No document type is named here: the layout is the test's own. One assertion per declared\n# output, which is what the lint asks for.\ntestData:\n  config:\n    files: '[{\"downloadUrl\":\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\"key\":\"dummy.pdf\"}]'\n    templates: '[{\"name\":\"example-layout\",\"match\":\"Dummy PDF\",\"subject\":{\"page\":1,\"pattern\":\"(Dummy PDF file)\"}}]'\n  inputs:\n    files:\n      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\n        key: dummy.pdf\n  expect:\n    # The layout is recognised, the subject is found where it was said to be, and where it was\n    # read is kept in words a person can check.\n    entries: >-\n      return output.entries.length === 1\n        && output.entries[0].kind === 'pdf'\n        && output.entries[0].template === 'example-layout'\n        && typeof output.entries[0].subject === 'string' && output.entries[0].subject.length > 0\n        && typeof output.entries[0].found_in === 'string' && output.entries[0].found_in.indexOf('page') >= 0\n    # READ AND UNREAD ARE APART: a file whose subject was found can be filed; one whose subject\n    # was not is never mixed in with it.\n    read: \"return output.read.length === 1 && output.read[0].file_name === 'dummy.pdf'\"\n    unread: \"return Array.isArray(output.unread) && output.unread.length === 0\"\n    total: \"return output.total === 1\"\n"
+    }
+  }
+}

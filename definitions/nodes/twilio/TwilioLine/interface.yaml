@@ -1,0 +1,29 @@
+# WHAT CLIPPING THIS ON DOES (DECLARATIVE_NODES.md §14).
+#
+# No inputs, no outputs, no serviceConnectors, and no api/ folder at all. This node never runs.
+attaches:
+  # ONE FIELD, and that is deliberate. An earlier draft also set the sample rate and the codec
+  # here, which was wrong in a way worth recording: those are not choices, they are facts of the
+  # lane. Twilio is G.711 mu-law at 8 kHz because the phone network is, and the runtime knows
+  # that the moment it knows the lane. Putting them in config would be offering a decision that
+  # has exactly one correct answer, and a wrong sample rate is not an error anywhere — the model
+  # simply transcribes at the wrong speed and it reads as poor accuracy.
+  sets:
+    lane: twilio
+
+  # CONTRIBUTED TO THE HOST'S RUN, so the voice node runs holding two credentials: its own
+  # vendor key, and this one. Neither node writes into the other, and the picker for this one
+  # appears on the tab this attachment adds to the voice node's panel.
+  credentials:
+    - name: twilioCredential
+      required: true
+      displayName: Twilio
+
+  # WHAT THE HOST BECOMES while this is clipped on.
+  #
+  # A voice node in a browser emits nothing outside the platform and rightly declares nothing.
+  # The very same node with this clipped on DIALS A REAL HUMAN BEING, and a build loop re-runs a
+  # workflow after every stage — so without this, each attempt would ring a real telephone. A
+  # placed call has no inverse, so a test run traces it instead.
+  capabilities:
+    emitsExternally: true

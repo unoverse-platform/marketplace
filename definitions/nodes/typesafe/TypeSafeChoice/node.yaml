@@ -1,0 +1,28 @@
+type: TypeSafeChoice
+# One call, one reply: the endpoint answers synchronously.
+kind: PromiseNode
+
+name: TypeSafe Choice
+category: AI
+color: "#1D4ED8"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg
+
+description: Pick one option from a described list, with a probability for every option
+
+whenToUse: >-
+  Decide which of a fixed set of options fits a piece of text or data: route a message to a
+  team, classify a document, pick the next action, pick the best of several candidates. The
+  answer is the chosen option's key, a probability for every option and a confidence, so a
+  branch can act on it without parsing prose. Right when the options are known before the
+  run and each can be described; ordered levels of one quality are a scale, and a single
+  yes-or-no is a statement to test.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody
+# thought about cannot look the same as one deliberately left open.
+auth:
+  required: false
+
+capabilities:
+  # A pure read: the same state and questions give the same distribution, and nothing is
+  # written anywhere.
+  cacheable: true

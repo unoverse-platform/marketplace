@@ -1,0 +1,21 @@
+# ONE INPUT, `signal`: the id and the line are config fields templated from upstream
+# (signal-routing.md, "Two inputs never arrive together"), so this node fires once with
+# everything it needs.
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the universal id and the line name are templated from it
+    required: false
+
+outputs:
+  - name: rows
+    type: array
+    description: >-
+      The rows at the other end of that line, each as the search projection hands one over:
+      its universal id, object type, title and summary, and what its object carries on the
+      map (kind, page, as of, subject). Empty when the line was never drawn
+  - name: total
+    type: number
+    description: How many rows are on the other end of that line, which may exceed the rows returned
+
+credentials: []

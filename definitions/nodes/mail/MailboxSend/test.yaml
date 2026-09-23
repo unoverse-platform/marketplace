@@ -1,0 +1,19 @@
+# DELIBERATELY NOT A REAL SEND. This node puts a message in a real person's inbox and that has
+# no inverse, so the fixture names an address nobody owns and asserts the SHAPE of the refusal:
+# a bench that mails someone every time it runs is not one anyone runs twice.
+#
+# The engine also withholds this node on a test run (capabilities.emitsExternally), so a build
+# traces what it would have sent rather than sending it.
+testData:
+  config:
+    to: "nobody@test.invalid"
+    subject: "Bench"
+    bodyType: text
+    body: "Sent by the node bench."
+
+  inputs:
+    signal: {}
+
+  expect:
+    sent: "return typeof output.sent === 'boolean'"
+    messageId: "return typeof output.messageId === 'string'"

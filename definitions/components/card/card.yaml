@@ -43,7 +43,6 @@ states:
     layout: layouts/grid
   page:
     layout: layouts/page
-    on: step
     states:
       detail:
         layout: layouts/page-detail

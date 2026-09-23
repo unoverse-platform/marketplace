@@ -1,0 +1,19 @@
+# One row per output connector, in interface.yaml's order.
+
+- emit: row
+  # THE DETAIL PROJECTION (shared/helpers.yaml detailRow): everything the lean search row left
+  # out, minus the crawl bookkeeping and the transport columns. bodyCopy stays: it is the point.
+  value: "return helpers.detailRow(response)"
+
+- emit: text
+  value: >-
+    return String((response.metadata && response.metadata.bodyCopy) || response.text || response.description || '')
+
+- emit: image
+  # THE PICTURE, by URL, for a screen. detailRow strips it from the model's row on purpose
+  # (hasImage and the id are all a model needs); a component wired to this connector gets it.
+  value: >-
+    return ((m) => (typeof m.primaryImage === 'string' && m.primaryImage)
+      || (Array.isArray(m.images) && m.images.length && typeof m.images[0] === 'string' ? m.images[0] : '')
+      || (Array.isArray(m.images) && m.images.length && m.images[0] && typeof m.images[0].url === 'string' ? m.images[0].url : '')
+      || '')(response.metadata || {})

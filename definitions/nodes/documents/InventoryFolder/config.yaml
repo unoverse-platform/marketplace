@@ -1,0 +1,13 @@
+configSchema:
+  type: object
+  required: [files]
+  properties:
+    files:
+      type: string
+      title: Files
+      description: >-
+        The files as a JSON array of { downloadUrl, key, size? }, usually wired from a listing
+        with links, e.g. return signal.files
+      default: ""
+      "ui:field": template
+"ui:order": [files]

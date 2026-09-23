@@ -19,7 +19,20 @@ configSchema:
       type: string
       title: Voice
       description: Which voice the model speaks with
-      enum: [alloy, ash, ballad, coral, echo, sage, shimmer, verse, marin, cedar]
+      # Marin and Cedar first: OpenAI's recommendation for the best quality. The descriptions are
+      # the ones on openai.fm, OpenAI's voice demo.
+      enum: [marin, cedar, alloy, ash, ballad, coral, echo, sage, shimmer, verse]
+      enumNames:
+        - Marin (recommended, fresh and coastal)
+        - Cedar (recommended, warm and grounded)
+        - Alloy (neutral and balanced)
+        - Ash (clear and articulate)
+        - Ballad (smooth and melodic)
+        - Coral (vibrant and warm)
+        - Echo (resonant and clear)
+        - Sage (wise and measured)
+        - Shimmer (bright and cheerful)
+        - Verse (poetic and expressive)
       default: alloy
     turnDetection:
       type: string
@@ -54,5 +67,35 @@ configSchema:
       description: Caps how long any single spoken reply can be
       default: 4096
       minimum: 1
+
+    enableUserMemory:
+      type: boolean
+      title: User Memory
+      description: >-
+        Remember the caller across calls. The call opens knowing who they are and what they
+        were in the middle of, the model can look up more mid-call, and each turn is saved
+        as it completes.
+      default: false
+      "ui:widget": toggle
+    # THE LANE THIS CONVERSATION TRAVELS ON (DECLARATIVE_NODES.md §14).
+    #
+    # Browser is the ordinary case and needs nothing: the page captures the microphone and plays
+    # the reply back. Every other value is OWNED BY AN ATTACHMENT — clip a Twilio Phone Line onto
+    # this node and it sets this field to `twilio` and greys it out here, because one value has
+    # one owner.
+    #
+    # It is a plain config field rather than anything new, which is the point: this node does not
+    # know what a phone is. It reads `lane` the way it reads `voice`, and the runtime picks the
+    # audio lane that name refers to (VOICE_STREAMING_GUIDE.md, "The Phone Lane"). A sample rate
+    # is not here for the same reason: the lane's rate is a fact of the lane, never a choice.
+    lane:
+      type: string
+      title: Lane
+      description: >-
+        Where the audio comes from and goes to. Browser is this page's microphone. Clip a phone
+        line onto this node to put the conversation on a real number instead.
+      enum: [browser, twilio]
+      enumNames: [Browser, Twilio phone line]
+      default: browser
 "ui:order":
-  [model, systemPrompt, voice, turnDetection, initialRequest, conversationHistory, maxResponseOutputTokens]
+  [model, systemPrompt, voice, turnDetection, initialRequest, conversationHistory, maxResponseOutputTokens, enableUserMemory, lane]

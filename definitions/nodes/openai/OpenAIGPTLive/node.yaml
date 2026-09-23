@@ -1,0 +1,28 @@
+type: OpenAIGPTLive
+kind: CallbackNode
+
+name: OpenAI GPT-Live
+category: Voice
+color: "#10A37F"
+
+description: Full-duplex voice conversation with GPT-Live-1
+
+whenToUse: >-
+  Pick when someone should TALK to the workflow and be spoken back to naturally, with the model
+  listening while it speaks, handling pauses and interruptions, and keeping the conversation going
+  while slower work runs behind it. Reading a script word for word, and transcribing a recording
+  that already exists, are different jobs. Tools come from MCP provider nodes attached via service
+  edges.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # A live conversation is never cacheable: the answer depends on what was just said.
+  cacheable: false

@@ -1,0 +1,28 @@
+type: DatasetRecord
+kind: PromiseNode
+
+name: Dataset Record
+category: Storage & Data
+color: "#334155"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Write a read's rows into the table an object owns, replacing what the same document wrote last
+  time rather than landing a second set beside it
+
+whenToUse: >-
+  Store the rows a read produced, where the object they belong to owns a table. Give it the rows,
+  the object, and what they were read from, and it replaces everything that source wrote before:
+  a document read again corrects its figures instead of doubling them, and a read that finds
+  nothing removes what it found last time, so a figure since withdrawn stops being reported.
+  Every column is checked against the object's own declaration, so a row carrying a name the
+  table does not have is refused rather than dropped. It cannot create or alter a table.
+
+auth:
+  required: false
+
+capabilities:
+  # It changes what is stored, and a second identical call is not a second set of rows: it
+  # replaces. Still not undoable by itself, so it is never treated as a pure read.
+  emitsExternally: true
+  cacheable: false

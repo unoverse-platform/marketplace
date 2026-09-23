@@ -1,0 +1,11 @@
+configSchema:
+  type: object
+  required: [index]
+  properties:
+    index:
+      type: string
+      title: Pack
+      description: The pack's folder, the same key its index was built under, e.g. a fund pack's folder
+      default: ""
+      "ui:field": template
+"ui:order": [index]

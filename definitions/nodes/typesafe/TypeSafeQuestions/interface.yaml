@@ -1,0 +1,18 @@
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes
+    required: false
+
+outputs:
+  - name: answers
+    type: object
+    description: Each question's answer, by key
+  - name: usage
+    type: object
+    description: model, inputTokens, outputTokens
+
+credentials:
+  - name: typesafeCredential
+    required: true
+    displayName: TypeSafe

@@ -1,0 +1,30 @@
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes
+    required: false
+
+outputs:
+  - name: score
+    type: number
+    description: Position on the scale
+  - name: normalized
+    type: number
+    description: The score as 0 to 1
+  - name: probabilities
+    type: object
+    description: Each level's probability
+  - name: confidence
+    type: number
+    description: 0 to 1, how clear the level is
+  - name: legend
+    type: object
+    description: Level index to its description
+  - name: usage
+    type: object
+    description: model, inputTokens, outputTokens
+
+credentials:
+  - name: typesafeCredential
+    required: true
+    displayName: TypeSafe

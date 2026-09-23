@@ -1,0 +1,23 @@
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger to fire the node
+
+outputs:
+  - name: sent
+    type: boolean
+    description: True when the mailbox accepted it
+  - name: messageId
+    type: string
+    description: The sent message's id, for looking it up
+  - name: threadId
+    type: string
+    description: The conversation it landed in
+
+# WHICH MAILBOX IT SENDS FROM is the credential's, never a field here: the same connection the
+# Agent reads with, so a reply comes from the address the message arrived at.
+credentials:
+  - name: mailboxCredential
+    required: true
+    displayName: Mailbox

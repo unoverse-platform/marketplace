@@ -1,0 +1,17 @@
+configSchema:
+  type: object
+  required: [name]
+  properties:
+    name:
+      type: string
+      title: Skill
+      description: The skill's name, org-qualified, exactly as the registry assigned it
+      default: ""
+      "ui:field": template
+    path:
+      type: string
+      title: File
+      description: A file the skill references, by the path the skill wrote; empty reads the skill itself
+      default: ""
+      "ui:field": template
+"ui:order": [name, path]

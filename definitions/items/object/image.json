@@ -1,0 +1,15 @@
+{
+  "kind": "object",
+  "name": "image",
+  "fingerprint": "86811980dda90c63",
+  "bundle": "design-system",
+  "title": "Image",
+  "description": "A picture the business publishes, such as a product photo or a banner.",
+  "category": "Objects",
+  "definition": {
+    "files": {
+      "image.yaml": "unoverse: \"1.0\"\n# A picture the business publishes. Positioned by the service or need it represents, written as\n# service copy in the business's vocabulary, never as a description of the scene (the one\n# deliberate exception to strict grounding, so a picture lands beside the needs it serves).\ntype: object\nname: image\nelement: content\n# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.\nicon: image\nextends: need\nuniqueBy: [source_url]\nembed: [title, description, key_need, related_needs, questions, callToAction]\nsearch: [universal_id, object_type, title, description, key_need, source_url, source_id]\nmeta: open\n\n# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.\ntitle: Image\ndescription: >-\n  A picture the business publishes, such as a product photo or a banner.\nwhenToUse: >-\n  Show me what it looks like. Is there a picture of it? Let me see it.\ncategory: Objects\nversion: 1.0.0\n\nprops: { $include: props }\n",
+      "props.yaml": "# AN IMAGE'S OWN FIELDS. Its source_url is the image itself. A picture a document holds is a\n# `figure` (2026-09-14), a part of its document, off the map; an image is published and on it.\nvisualElements:\n  type: array\n  input: true\n  description: >-\n    What is in the picture, three to eight things, each a noun phrase.\n  minItems: 3\n  maxItems: 8\n  items:\n    type: string\ncolors:\n  type: array\n  input: true\n  description: >-\n    The dominant colours, two to five, as plain colour names.\n  minItems: 2\n  maxItems: 5\n  items:\n    type: string\n"
+    }
+  }
+}

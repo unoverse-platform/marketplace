@@ -1,0 +1,65 @@
+configSchema:
+  type: object
+  required: [model]
+
+  properties:
+    model:
+      type: string
+      title: Model
+      description: GPT-5.6 model that chooses where to go and answers
+      enum: { $ref: models#enum }
+      enumNames: { $ref: models#enumNames }
+      # LUNA, NOT THE PLATFORM DEFAULT. A walk is many small calls, one per turn, and a
+      # question opens several documents: the volume is the cost, not any one call. Choosing
+      # from a menu of headings and quoting what was read is small-tier work.
+      default: gpt-5.6-terra
+      resolve: modelTier
+
+    instructions:
+      type: string
+      title: Instructions
+      description: >-
+        How to walk and when to stop. The default is written for any tree; add to it only
+        what is particular to the questions this node will be asked.
+      default: >-
+        You answer one question by walking a tree of rows, one step at a time. Each turn you
+        are shown the rows you opened. Each row has its own face (title, description, whenToUse)
+        and its choices: what it belongs to (up), what is inside it (down), and what sits beside
+        it (sideways), each with an id, a title, a description, a whenToUse and pages. A row may
+        also carry found: the parts anywhere under it whose faces best match the question, each
+        with its id and how near it came: a hint at which row to look in, never the list of what
+        is there. At the bottom of the tree a row also
+        carries its words: text, or a table's rows. Choose the ids
+        to open next, at most five, only from ids you have been shown. Open every one that could
+        hold the answer, up to five, never the fewest. A found part names the row worth looking
+        in: open THAT ROW and read what is inside it (down), because found ranks faces by
+        wording and the words of a question are rarely the words of a title. Then open the parts
+        it names. You have not answered from a row until you have read its own words, and you may
+        never say a row does not hold something until you have seen what is inside it. You do not see earlier turns again: keep in your notes what you
+        found, where, and the ids still worth opening. Answer only from text or rows you have read, never from a title
+        alone, and give every source: its id, its pages, and the exact words the answer rests
+        on. Open nothing only when you are answering.
+        When the rows give more than one answer (for different variants, dates or sources), give
+        each, labelled with the row it comes from and its pages, and never choose one silently:
+        whoever asked decides which applies. Before
+        answering, check the other found parts that could hold a different answer. If nothing read holds the answer and nothing left to open looks likely to, answer
+        null and open nothing.
+      ui:field: template
+
+    maxTurns:
+      type: number
+      title: Most turns
+      description: >-
+        The most branches opened in a row before the walk stops without an answer. The
+        platform stops every walk at 20, whatever this says.
+      default: 8
+      minimum: 1
+      maximum: 20
+
+    reasoning:
+      type: string
+      title: Reasoning
+      description: How much the model thinks before each choice.
+      enum: [none, low, medium, high]
+      default: low
+ui:order: [model, instructions, maxTurns, reasoning]

@@ -1,0 +1,22 @@
+{
+  "kind": "prompt-block",
+  "name": "citations",
+  "fingerprint": "9f2969b2d3db06db",
+  "title": "Citations",
+  "description": "Cite every fact taken from a document inline, so a reader can tap it and see the source",
+  "category": "formatting",
+  "definition": {
+    "id": "citations",
+    "name": "Citations",
+    "description": "Cite every fact taken from a document inline, so a reader can tap it and see the source",
+    "content": "## Cite what you read\n\nEvery fact you take from a document gets a citation right after it: a figure, a date, a term,\na name, a rule. A reader taps the citation and sees the words it came from, and can open the\ndocument at that page. A fact without one cannot be checked.\n\nWrite each citation as a markdown link, straight after the fact it supports:\n\n```markdown\nThe minimum subscription is **USD 1,000,000** [1](cite:<document id>?part=<part id>&page=<page>&doc=<document name> \"<the exact words>\").\n```\n\n- **The label** is a number, counting up from 1 in the order the citations appear. The same\n  source cited again keeps its first number.\n- **`<document id>`** is the id of the document the words are in, exactly as the tool gave it.\n  For a section (`<document>#<section>`) it is the part before `#`; for a table it is the\n  document the table is part of.\n- **`part`** is what you opened inside it: for a section, the part of its id after `#` (for\n  `<document>#s112`, write `s112`); for a table, the table's id. Leave it out when you read the\n  document itself.\n- **`page`** is the page the words are on, when the tool gave one. Leave it out when it did not.\n- **`doc`** is the document's name as the tool gave it, with spaces written as `%20`.\n- **The quote** is the words from the source that state the fact, copied exactly: at most about\n  twenty-five words, never reworded, never joined from two places. A double quote inside it is\n  written as `'`. It is one line with no `|` in it: a table row is quoted with its cells joined by\n  a comma (\"Total, 10\"), never with the pipes, and never with a line break, or the link breaks\n  and, inside a table of your own, splits the row.\n\n## The rules that matter\n\n- **Cite only what you opened.** Every id must be one a tool returned to you in this conversation.\n  Never invent an id, a page or a quote.\n- **One fact, one citation.** When a sentence holds two facts from two places, cite each after its\n  own fact.\n- **Your own reasoning is not cited.** A comparison or a sum you worked out cites the facts it is\n  built from, never itself.\n- **When no source states it, say so** rather than answer without a citation.\n- **Never gather the citations into a list at the end.** They sit in the sentence, where the fact\n  is.",
+    "tags": [
+      "formatting",
+      "markdown",
+      "citations",
+      "lineage",
+      "documents"
+    ],
+    "category": "formatting"
+  }
+}

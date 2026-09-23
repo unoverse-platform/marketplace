@@ -8,8 +8,12 @@ $description: >-
 breakpoint:
   $type: dimension
   tablet:
-    $description: 48rem / 768px — the band where side-by-side starts to work.
-    $value: "48rem"
+    $description: >-
+      40rem / 640px — the band where side-by-side starts to work: two cards of ~300px and
+      a gap. A CONTAINER width, so it is lower than the viewport-era 768px: the grid-page
+      mounted beside a 680px chat is ~700px wide and stacked one across at 48rem
+      (SAB, 2026-09-07), when two across is what that width holds.
+    $value: "40rem"
   desktop:
     $description: 80rem / 1280px — the full working-width band.
     $value: "80rem"

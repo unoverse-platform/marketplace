@@ -1,0 +1,18 @@
+inputs:
+  - name: files
+    type: array
+    description: The folder's files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on
+    required: false
+
+outputs:
+  - name: entries
+    type: array
+    description: "One per file, in order: file_name, kind, size, pages, scanned, content_hash, dates found, duplicate_of, similarity, error"
+  - name: duplicateSets
+    type: array
+    description: Groups of file names that are near-duplicates of one another
+  - name: total
+    type: number
+    description: How many files were inventoried
+
+credentials: []

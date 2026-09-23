@@ -1,0 +1,155 @@
+{
+  "kind": "node",
+  "name": "TypeSafeNoul",
+  "pack": "typesafe",
+  "fingerprint": "0428a24487a577c4",
+  "title": "TypeSafe Noul",
+  "description": "Answer whether a statement holds for the state, as a probability from 0 to 1",
+  "category": "AI",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg",
+  "whenToUse": "Test one statement against a piece of text or data and get how likely it is to be true: is this message a complaint, does this passage support the claim, is this field value present, did the customer ask for a refund. The answer is a single number from 0 to 1, so a guard or a threshold branches on it directly, and the number is also a signal in its own right, usable as a feature or a filter. Right for one yes-or-no question; picking among several named options is a choice, and grading on steps is a scale.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "noul",
+        "type": "number",
+        "description": "0 to 1, how likely it is true"
+      },
+      {
+        "name": "holds",
+        "type": "boolean",
+        "description": "Whether the noul met the threshold"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "model, inputTokens, outputTokens"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "typesafeCredential",
+        "required": true,
+        "displayName": "TypeSafe"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "state",
+        "instructions"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "title": "State",
+          "description": "What to judge: a message, a passage, a record. Text is sent as text; a JSON object or array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads better than prose when the data has named fields.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "instructions": {
+          "type": "string",
+          "title": "Statement",
+          "description": "The statement to test, as a question the state answers yes or no to. Shared blocks work here.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "describeCriteria": {
+          "type": "boolean",
+          "title": "Describe true and false",
+          "description": "Spell out what counts as true and what counts as false, when the statement alone is ambiguous",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "whenTrue": {
+          "type": "string",
+          "title": "True means",
+          "description": "What a true answer looks like, in concrete terms",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "describeCriteria": true
+          }
+        },
+        "whenFalse": {
+          "type": "string",
+          "title": "False means",
+          "description": "What a false answer looks like, in concrete terms",
+          "default": "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            "describeCriteria": true
+          }
+        },
+        "threshold": {
+          "type": "number",
+          "title": "Threshold",
+          "description": "The noul at or above which the statement is taken to hold",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "step": 0.05
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "jev-latest is the stable release; jev-preview is the newest build.",
+          "enum": [
+            "jev-latest",
+            "jev-preview"
+          ],
+          "default": "jev-latest"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "typesafe",
+      "packageFile": "# TYPESAFE, fully declarative.\n#\n# One vendor endpoint, POST /v1/systemone, answers typed questions about a piece of state:\n# pick an option, place on a scale, or say whether a statement holds. The answer is a value\n# and a probability distribution, never prose, so a workflow branches on it directly.\n#\n# Four nodes over the one call: three ask a single question of one type, and the fourth\n# sends a whole map of questions in one round trip, which is how the vendor is meant to be\n# used when several judgements share the same state.\n\nname: typesafe\ndisplayName: TypeSafe\ndescription: Typed decisions from Jev, TypeSafe's System One model; a value and a probability, never prose\nversion: 1.0.0\ncategory: ai\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\nfeatures:\n  - Choose one option from a described list, with a probability for each\n  - Score state on an ordered scale of described levels\n  - Answer whether a statement is true, as a probability\n  - Ask several questions of one state in a single call\n\nallowedHosts:\n  - api.typesafe.ai\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  credential: [bearer]\n  transport: [json]\n",
+      "credentials": {
+        "typesafeCredential.yaml": "name: typesafeCredential\ndisplayName: TypeSafe\ndescription: Credentials for the TypeSafe API\ndocumentationUrl: https://console.typesafe.ai/settings/keys\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your TypeSafe API key\n    placeholder: ts-\n"
+      },
+      "shared": {}
+    },
+    "dir": "TypeSafeNoul",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n\n- emit: noul\n  from: response\n  value: \"return response.answers.answer.noul\"\n\n- emit: holds\n  from: response\n  value: >-\n    return response.answers.answer.noul\n      >= (typeof config.threshold === 'number' ? config.threshold : 0.5)\n\n- emit: usage\n  from: response\n  value: >-\n    return {\n      model: response.model,\n      inputTokens: (response.usage || {}).input_tokens || 0,\n      outputTokens: (response.usage || {}).output_tokens || 0\n    }\n",
+      "api/run.yaml": "# One synchronous call. Every question type goes through the same endpoint; this node sends\n# exactly one, keyed `answer`, so the reply is read at a fixed path.\n#\n# STATE MAY BE STRUCTURE. The field is a string so it can be typed or templated, but the\n# vendor reads a JSON object or array as named fields rather than as prose, so a value that\n# is a whole JSON document is parsed before it is sent. Prose stays prose.\n\n- name: ask\n  method: POST\n  url: https://api.typesafe.ai/v1/systemone\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.typesafeCredential.apiKey }}\"\n  headers:\n    Content-Type: application/json\n  transport: json\n  timeoutMs: 60000\n  # 529 is the vendor's own overloaded code, alongside the usual rate limit and server errors.\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504, 529]\n\n  body:\n    model: \"return config.model || 'jev-latest'\"\n    state: >-\n      return (typeof config.state === 'string'\n        && ((config.state.trim().startsWith('{') && config.state.trim().endsWith('}'))\n          || (config.state.trim().startsWith('[') && config.state.trim().endsWith(']'))))\n        ? JSON.parse(config.state)\n        : config.state\n    # criteria is optional on a noul, and sent only when the toggle asked for it.\n    questions: >-\n      return {\n        answer: Object.assign(\n          { type: 'noul', instructions: config.instructions },\n          (config.describeCriteria === true && (config.whenTrue || config.whenFalse))\n            ? { criteria: { true: config.whenTrue || '', false: config.whenFalse || '' } }\n            : {}\n        )\n      }\n\n  error:\n    # A reply without the one answer asked for is a failure whatever the status was.\n    when: \"return !((response.answers || {}).answer)\"\n    message: >-\n      return 'TypeSafe returned no answer.'\n        + (response.error ? ' ' + JSON.stringify(response.error) : '')\n        + (response.detail ? ' ' + JSON.stringify(response.detail) : '')\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [state, instructions]\n  properties:\n    state:\n      type: string\n      title: State\n      description: >-\n        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or\n        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads\n        better than prose when the data has named fields.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    instructions:\n      type: string\n      title: Statement\n      description: The statement to test, as a question the state answers yes or no to. Shared blocks work here.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    describeCriteria:\n      type: boolean\n      title: Describe true and false\n      description: Spell out what counts as true and what counts as false, when the statement alone is ambiguous\n      default: false\n      \"ui:widget\": toggle\n    whenTrue:\n      type: string\n      title: True means\n      description: What a true answer looks like, in concrete terms\n      default: \"\"\n      \"ui:field\": template\n      \"ui:dependencies\": { describeCriteria: true }\n    whenFalse:\n      type: string\n      title: False means\n      description: What a false answer looks like, in concrete terms\n      default: \"\"\n      \"ui:field\": template\n      \"ui:dependencies\": { describeCriteria: true }\n    threshold:\n      type: number\n      title: Threshold\n      description: The noul at or above which the statement is taken to hold\n      default: 0.5\n      minimum: 0\n      maximum: 1\n      step: 0.05\n    model:\n      type: string\n      title: Model\n      description: jev-latest is the stable release; jev-preview is the newest build.\n      enum: [jev-latest, jev-preview]\n      default: jev-latest\n\"ui:order\": [state, instructions, describeCriteria, whenTrue, whenFalse, threshold, model]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes\n    required: false\n\noutputs:\n  - name: noul\n    type: number\n    description: 0 to 1, how likely it is true\n  - name: holds\n    type: boolean\n    description: Whether the noul met the threshold\n  - name: usage\n    type: object\n    description: model, inputTokens, outputTokens\n\ncredentials:\n  - name: typesafeCredential\n    required: true\n    displayName: TypeSafe\n",
+      "node.yaml": "type: TypeSafeNoul\n# One call, one reply: the endpoint answers synchronously.\nkind: PromiseNode\n\nname: TypeSafe Noul\ncategory: AI\ncolor: \"#1D4ED8\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\ndescription: Answer whether a statement holds for the state, as a probability from 0 to 1\n\nwhenToUse: >-\n  Test one statement against a piece of text or data and get how likely it is to be true:\n  is this message a complaint, does this passage support the claim, is this field value\n  present, did the customer ask for a refund. The answer is a single number from 0 to 1,\n  so a guard or a threshold branches on it directly, and the number is also a signal in\n  its own right, usable as a feature or a filter. Right for one yes-or-no question;\n  picking among several named options is a choice, and grading on steps is a scale.\n\n# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody\n# thought about cannot look the same as one deliberately left open.\nauth:\n  required: false\n\ncapabilities:\n  # A pure read: the same state and statement give the same number, and nothing is\n  # written anywhere.\n  cacheable: true\n",
+      "test.yaml": "# Asserts the SHAPE, not the verdict: the noul is a fraction and holds agrees with the\n# threshold applied to it.\n\ntestData:\n  config:\n    state: \"I have been waiting three weeks and nobody has replied to any of my emails. This is unacceptable.\"\n    instructions: Is the customer complaining?\n    describeCriteria: false\n    threshold: 0.5\n    model: jev-latest\n  inputs:\n    signal: {}\n  expect:\n    noul: \"return output.noul >= 0 && output.noul <= 1\"\n    holds: \"return output.holds === (output.noul >= 0.5)\"\n    usage: \"return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'\"\n"
+    }
+  }
+}

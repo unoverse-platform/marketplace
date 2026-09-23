@@ -9,9 +9,10 @@ testData:
     mode: intent
     maxResults: 5
     similarityThreshold: 0
-    includeNeeds: true
-    includeServices: true
-    includeSkills: true
+    objects:
+      need: "on"
+      product: "on"
+      skill: "on"
   expect:
     results: >-
       return Array.isArray(output.results)

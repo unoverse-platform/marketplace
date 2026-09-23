@@ -1,0 +1,10 @@
+# One row per output connector, in interface.yaml order. `response` is { skill } for the skill and
+# { path, content } for a file.
+
+- emit: skill
+  value: "return (response && response.skill) || response || {}"
+
+- emit: text
+  value: >-
+    return String((response && response.skill && (response.skill.instructions || response.skill.content))
+      || (response && response.content) || '')

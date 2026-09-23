@@ -1,0 +1,48 @@
+# TWO DOORS, ONE NODE, chosen by whether it is answering something. A reply must go through the
+# mailbox's own reply so it lands in the conversation and threads in the recipient's client; a
+# new message cannot use it, because there is nothing to answer.
+#
+# `when` means the unchosen call never runs, so its key is absent and the events table reads
+# whichever one did.
+
+- name: reply
+  when: "return !!String(config.inReplyTo || '').trim()"
+  method: POST
+  url: >-
+    return scope.engineUrl + '/mail/messages/'
+      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())
+      + '/' + encodeURIComponent(String(config.inReplyTo).trim()) + '/reply'
+  transport: json
+  timeoutMs: 30000
+  body:
+    # A DESIGNED REPLY sends the template and what goes in it; the door draws it and
+    # produces both the HTML and the plain-text twin, so neither can drift from the other.
+    template: "return config.bodyType === 'template' ? (String(config.template || '').trim() || undefined) : undefined"
+    content: "return config.bodyType === 'template' ? (config.content || {}) : undefined"
+    text: "return config.bodyType === 'template' ? undefined : (config.bodyType === 'html' ? '' : String(config.body || ''))"
+    html: "return config.bodyType === 'html' ? String(config.body || '') : undefined"
+    cc: "return String(config.cc || '').trim() || undefined"
+  error:
+    when: "return !!response.error"
+    message: "return response.error"
+
+- name: send
+  when: "return !String(config.inReplyTo || '').trim()"
+  method: POST
+  url: >-
+    return scope.engineUrl + '/mail/inboxes/'
+      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())
+      + '/messages'
+  transport: json
+  timeoutMs: 30000
+  body:
+    to: "{{ config.to }}"
+    cc: "return String(config.cc || '').trim() || undefined"
+    subject: "{{ config.subject }}"
+    template: "return config.bodyType === 'template' ? (String(config.template || '').trim() || undefined) : undefined"
+    content: "return config.bodyType === 'template' ? (config.content || {}) : undefined"
+    text: "return config.bodyType === 'template' ? undefined : (config.bodyType === 'html' ? '' : String(config.body || ''))"
+    html: "return config.bodyType === 'html' ? String(config.body || '') : undefined"
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

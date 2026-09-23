@@ -1,0 +1,111 @@
+# THE FIVE TOOLS an attached Agent gets, each one call to the mailbox through the engine at
+# loopback (package.yaml says why). The inbox is the CREDENTIAL'S address, never a tool argument:
+# the author decides which inbox an Agent works by attaching a Mailbox credential, the model only
+# decides what to do in it. A model that could name another inbox would route around the author.
+#
+# Every door answers { error } on a miss, so every call declares the same error block; without
+# it a thread that does not exist would look like an empty one.
+
+getSchema:
+  description: Tool discovery for the mailbox
+  calls: []
+  returns: { $ref: schema#mailbox }
+
+list_threads:
+  description: >-
+    The conversations in the inbox, newest first, each with its last message's sender, subject
+    and time. No bodies. An empty list means nothing is waiting.
+  calls:
+    - name: threads
+      method: GET
+      url: "return scope.engineUrl + '/mail/inboxes/' + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase()) + '/threads'"
+      transport: json
+      query:
+        since: "{{ params.since }}"
+        limit: "return String(Math.min(Number(params.limit || 20), 200))"
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  returns: >-
+    return { ok: true, threads: (response.threads || []).map(t => ({
+      id: t.id, subject: t.subject, participants: t.participants, messageCount: t.messageCount,
+      lastMessageAt: t.lastMessageAt, last: t.last
+    })) }
+
+read_thread:
+  description: >-
+    One conversation in full: every message in order with sender, recipients, subject, text and
+    attachments as links. Call before replying.
+  calls:
+    - name: thread
+      method: GET
+      url: "return scope.engineUrl + '/mail/threads/' + encodeURIComponent(String(params.threadId || ''))"
+      transport: json
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  # The Agent reads the TEXT of a message, never its html: html is for a screen, and it is the
+  # part that fills a context with markup nobody reads.
+  returns: >-
+    return { ok: true, id: response.id, subject: response.subject, participants: response.participants,
+      messages: (response.messages || []).map(m => ({
+        id: m.id, direction: m.direction, state: m.state, from: m.from, to: m.to, cc: m.cc,
+        subject: m.subject, text: m.text, attachments: m.attachments,
+        at: m.receivedAt || m.sentAt || m.createdAt
+      })) }
+
+reply:
+  description: >-
+    Answer a message in its own thread, to its sender with the others copied. State "sent" with
+    the message's id, or "failed" with the reason.
+  calls:
+    - name: reply
+      method: POST
+      url: "return scope.engineUrl + '/mail/messages/' + encodeURIComponent(String(params.messageId || '')) + '/reply'"
+      transport: json
+      body:
+        text: "{{ params.text }}"
+        html: "return params.html || undefined"
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  returns: "return { ok: response.state === 'sent', id: response.id, threadId: response.threadId, state: response.state, error: response.error || null }"
+
+send:
+  description: >-
+    Start a new conversation from the inbox. State "sent" with the message's id, or "failed"
+    with the reason.
+  calls:
+    - name: send
+      method: POST
+      url: "return scope.engineUrl + '/mail/inboxes/' + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase()) + '/messages'"
+      transport: json
+      body:
+        to: "{{ params.to }}"
+        cc: "return params.cc || undefined"
+        subject: "{{ params.subject }}"
+        text: "{{ params.text }}"
+        html: "return params.html || undefined"
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  returns: "return { ok: response.state === 'sent', id: response.id, threadId: response.threadId, state: response.state, error: response.error || null }"
+
+save_draft:
+  description: >-
+    Keep a message for a person to send. State "draft" with the draft's id; nothing leaves.
+  calls:
+    - name: draft
+      method: POST
+      url: "return scope.engineUrl + '/mail/inboxes/' + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase()) + '/drafts'"
+      transport: json
+      body:
+        to: "{{ params.to }}"
+        cc: "return params.cc || undefined"
+        subject: "{{ params.subject }}"
+        text: "{{ params.text }}"
+        html: "return params.html || undefined"
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  returns: "return { ok: true, id: response.id, threadId: response.threadId, state: response.state }"

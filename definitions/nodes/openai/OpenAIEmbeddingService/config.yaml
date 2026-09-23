@@ -26,10 +26,8 @@ configSchema:
         - text-embedding-ada-002 (1536D) - Legacy
       default: text-embedding-3-large:1536
 
-    normalize:
-      type: boolean
-      title: Normalize Embeddings
-      description: Normalize to unit length (recommended for cosine similarity)
-      default: true
-      ui:widget: toggle
-ui:order: [model, normalize]
+# `normalize` is GONE (2026-09-20): a method's reply can no longer read config (a reply goes to
+# a model; settings are the author's), and the toggle only ever chose between a unit vector
+# and the same vector, because OpenAI's embeddings are unit length already. Every embedding is
+# normalised; a saved config still carrying the key is ignored.
+ui:order: [model]

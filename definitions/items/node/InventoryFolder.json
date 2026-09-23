@@ -1,0 +1,87 @@
+{
+  "kind": "node",
+  "name": "InventoryFolder",
+  "pack": "documents",
+  "fingerprint": "c8d056c1cb2fe0ba",
+  "title": "Inventory Folder",
+  "description": "The census of a folder of files. What each is, how many pages, the dates it carries, and which files are copies of one another",
+  "category": "Documents",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Take stock of a folder of files before reading them in full: for each file its kind, size, page count, whether it is a scan, its content hash, the dates in its name and on its cover, and the near-duplicates across the set (the same memorandum under two names, two versions of one policy). Cheap on purpose: it reads the text layer only, so a hundred files take seconds. Use it to decide what to parse, what to skip, and which version is which. It does not read tables or figures; that is a full parse.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "files",
+        "type": "array",
+        "description": "The folder's files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "entries",
+        "type": "array",
+        "description": "One per file, in order: file_name, kind, size, pages, scanned, content_hash, dates found, duplicate_of, similarity, error"
+      },
+      {
+        "name": "duplicateSets",
+        "type": "array",
+        "description": "Groups of file names that are near-duplicates of one another"
+      },
+      {
+        "name": "total",
+        "type": "number",
+        "description": "How many files were inventoried"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "files"
+      ],
+      "properties": {
+        "files": {
+          "type": "string",
+          "title": "Files",
+          "description": "The files as a JSON array of { downloadUrl, key, size? }, usually wired from a listing with links, e.g. return signal.files",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "documents",
+      "packageFile": "# DOCUMENTS — the platform's own document service (services/documents, a Python service beside\n# umap): a file in, its structure out. Text in reading order, every table as rows, every figure\n# as an image with its caption, every ordered list, the dates a document carries, and where on\n# which page each sits. docs/unoverse/data/documents/README.md.\n#\n# ONE DOOR, ONE NODE: ParseDocument, RenderDocument, InventoryFolder, ReadCover, ReadValues. Each is a JOB on\n# the service (start, poll, collect), which is the LlamaParse shape, so the poll capability does\n# the waiting. A door does one job, so one can be improved or replaced without touching what\n# calls it: a census before reading, a cover before filing, a parse when the whole is wanted.\n#\n# THE HOST IS THE ENGINE, at loopback (`scope.engineUrl`, :4101), which forwards to the service\n# (routes/documents.ts) the way it reaches umap. A node's call must be https or loopback\n# (allowedHosts.ts refuses a plaintext request to any other host), and a compose service on the\n# Docker network is neither; the engine holds the service's address so no node and no file does.\n\nname: documents\ndisplayName: Documents\ndescription: >-\n  Read a file into its structure with the platform's document service. Text, tables as rows,\n  figures, lists, dates, provenance\nversion: 0.1.0\ncategory: ingest\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Parse PDF, Word, slides, spreadsheets, HTML and images into one typed structure\n  - Tables as rows with units parsed, figures as images, ordered lists as steps\n  - Render any page or region as an image\n  - \"Inventory a folder: kinds, pages, dates, duplicates\"\n  - \"Read a cover: what each file is about and the date it states, from named cells, no model\"\n  - \"Read values: the figures a parsed document stated, refused whole when they do not add up to what it says about itself\"\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form (the pattern rejects a bare \"localhost\"): every call goes to the\n  # engine's own listener, which forwards to the service. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n  # Every door is a job: without `poll` an executor would settle on the receipt and emit the job\n  # id as the answer.\n  poll: true\n",
+      "credentials": {},
+      "shared": {}
+    },
+    "dir": "InventoryFolder",
+    "files": {
+      "api/events.yaml": "- emit: entries\n  value: \"return (response.result || {}).entries || []\"\n\n- emit: duplicateSets\n  value: \"return (response.result || {}).duplicate_sets || []\"\n\n- emit: total\n  value: \"return ((response.result || {}).entries || []).length\"\n",
+      "api/run.yaml": "- name: job\n  method: POST\n  url: \"return scope.engineUrl + '/documents/inventory'\"\n  transport: json\n\n  body:\n    # The listing's own shape becomes the service's: downloadUrl to file_url, key to file_name.\n    # A JSON string in config, or the array itself when wired.\n    files: >-\n      return (() => {\n        const raw = config.files;\n        const list = Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);\n        return list.map(f => ({ file_url: f.downloadUrl || f.presignedUrl || f.url || f.file_url, file_name: f.key || f.name || f.file_name || '', size: f.size }));\n      })()\n\n  timeoutMs: 60000\n\n  error:\n    when: \"return !!response.detail || !!response.error\"\n    message: \"return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))\"\n\n  # A hundred files at a second or two each: 3s × 300 is fifteen minutes of patience.\n  poll:\n    url: \"return scope.engineUrl + '/documents/jobs/' + response.id\"\n    until: \"return response.status === 'COMPLETED'\"\n    failed: \"return response.status === 'FAILED'\"\n    message: \"return response.error || ('inventory ' + response.status)\"\n    intervalMs: 3000\n    maxAttempts: 300\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [files]\n  properties:\n    files:\n      type: string\n      title: Files\n      description: >-\n        The files as a JSON array of { downloadUrl, key, size? }, usually wired from a listing\n        with links, e.g. return signal.files\n      default: \"\"\n      \"ui:field\": template\n\"ui:order\": [files]\n",
+      "interface.yaml": "inputs:\n  - name: files\n    type: array\n    description: The folder's files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on\n    required: false\n\noutputs:\n  - name: entries\n    type: array\n    description: \"One per file, in order: file_name, kind, size, pages, scanned, content_hash, dates found, duplicate_of, similarity, error\"\n  - name: duplicateSets\n    type: array\n    description: Groups of file names that are near-duplicates of one another\n  - name: total\n    type: number\n    description: How many files were inventoried\n\ncredentials: []\n",
+      "node.yaml": "type: InventoryFolder\nkind: PromiseNode\n\nname: Inventory Folder\ncategory: Documents\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  The census of a folder of files. What each is, how many pages, the dates it carries, and\n  which files are copies of one another\n\nwhenToUse: >-\n  Take stock of a folder of files before reading them in full: for each file its kind, size,\n  page count, whether it is a scan, its content hash, the dates in its name and on its cover,\n  and the near-duplicates across the set (the same memorandum under two names, two versions of\n  one policy). Cheap on purpose: it reads the text layer only, so a hundred files take seconds.\n  Use it to decide what to parse, what to skip, and which version is which. It does not read\n  tables or figures; that is a full parse.\n\nauth:\n  required: false\n\ncapabilities:\n  cacheable: false\n",
+      "test.yaml": "testData:\n  config:\n    files: '[{\"downloadUrl\":\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\"key\":\"dummy.pdf\"},{\"downloadUrl\":\"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\"key\":\"copies/dummy (1).pdf\"}]'\n  inputs:\n    files:\n      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\n        key: dummy.pdf\n      - downloadUrl: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\n        key: copies/dummy (1).pdf\n  expect:\n    entries: \"return output.entries.length === 2 && output.entries[0].kind === 'pdf' && output.entries[1].duplicate_of === 'dummy.pdf'\"\n    duplicateSets: \"return Array.isArray(output.duplicateSets)\"\n    total: \"return output.total === 2\"\n"
+    }
+  }
+}

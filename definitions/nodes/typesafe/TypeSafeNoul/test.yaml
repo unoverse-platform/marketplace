@@ -1,0 +1,16 @@
+# Asserts the SHAPE, not the verdict: the noul is a fraction and holds agrees with the
+# threshold applied to it.
+
+testData:
+  config:
+    state: "I have been waiting three weeks and nobody has replied to any of my emails. This is unacceptable."
+    instructions: Is the customer complaining?
+    describeCriteria: false
+    threshold: 0.5
+    model: jev-latest
+  inputs:
+    signal: {}
+  expect:
+    noul: "return output.noul >= 0 && output.noul <= 1"
+    holds: "return output.holds === (output.noul >= 0.5)"
+    usage: "return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'"

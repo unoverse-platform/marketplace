@@ -160,6 +160,13 @@
           "default": "",
           "ui:field": "template"
         },
+        "emitOnTestRun": {
+          "type": "boolean",
+          "title": "Perform on test runs",
+          "description": "This step acts outside the platform and cannot be undone, so test runs trace it rather than perform it. Enable only while testing this step, then switch it off.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
         "authRequired": {
           "type": "boolean",
           "title": "Require sign-in",

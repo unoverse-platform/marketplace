@@ -1,0 +1,31 @@
+# ONE JOB ON THE PLATFORM'S OWN DOCUMENT SERVICE, through the engine at loopback (package.yaml
+# says why). POST starts it and answers { id, status: PENDING }; the poll asks the job until it is
+# COMPLETED or FAILED; the finished reply carries the structure under `result`.
+
+- name: job
+  method: POST
+  url: "return scope.engineUrl + '/documents/parse'"
+  transport: json
+
+  body:
+    file_url: "{{ config.fileUrl }}"
+    file_name: "return String(config.fileName || '').trim() || undefined"
+    include_figures: "return config.includeFigures !== false"
+    ocr: "return config.ocr !== false"
+
+  timeoutMs: 60000
+
+  # The service answers a refusal as { detail } (FastAPI's convention) or { error } (the engine's
+  # forward when it cannot reach the service). Neither is a job.
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"
+
+  # A 300-page memorandum on CPU is minutes, not seconds: 3s × 400 is 20 minutes of patience.
+  poll:
+    url: "return scope.engineUrl + '/documents/jobs/' + response.id"
+    until: "return response.status === 'COMPLETED'"
+    failed: "return response.status === 'FAILED'"
+    message: "return response.error || ('parse ' + response.status)"
+    intervalMs: 3000
+    maxAttempts: 400

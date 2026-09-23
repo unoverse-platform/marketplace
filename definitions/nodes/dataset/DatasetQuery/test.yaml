@@ -1,0 +1,19 @@
+# SAMPLE DATA, so the node can be loaded and run from the Nodes screen. It asks the question the
+# table exists for: which subject carries the most of something, summed within one unit.
+testData:
+  config:
+    object: observation
+    org: example
+    where: >-
+      [{"column":"measure","is":"exposure"},
+       {"column":"scope","is":"whole"},
+       {"column":"label","is":"Alpha"}]
+    sum: value
+    groupBy: '["fund"]'
+    descending: true
+    limit: 10
+  inputs:
+    signal: {}
+  expect:
+    rows: "return Array.isArray(output.rows) && output.rows.every(r => 'total' in r && 'unit' in r)"
+    total: "return typeof output.total === 'number'"

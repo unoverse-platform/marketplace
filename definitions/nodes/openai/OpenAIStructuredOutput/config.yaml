@@ -1,8 +1,26 @@
 configSchema:
   type: object
-  required: [model]
+  required: [model, content, schema]
 
   properties:
+    content:
+      type: string
+      title: Content
+      description: >-
+        The text to extract from, usually an upstream node's output. A picture is given as
+        an object with type image and its imageUrl instead.
+      default: ""
+      ui:field: template
+
+    schema:
+      type: object
+      title: Schema
+      description: >-
+        The JSON schema the answer must match, as a return expression. Strict: every
+        property listed as required, additionalProperties false at every level.
+      default: {}
+      ui:field: template
+
     model:
       type: string
       title: Model
@@ -28,4 +46,13 @@ configSchema:
       title: Schema Name
       description: Name for the JSON schema, surfaced to the model
       default: extraction
-ui:order: [model, instructions, schemaName]
+
+    reasoning:
+      type: string
+      title: Reasoning
+      description: >-
+        How much the model thinks before it answers. Off for extraction: the schema fixes
+        the shape and the content fixes the facts (owner ruling 2026-09-09).
+      enum: [none, low, medium, high]
+      default: none
+ui:order: [model, content, schema, instructions, schemaName, reasoning]

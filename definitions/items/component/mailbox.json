@@ -1,0 +1,627 @@
+{
+  "kind": "component",
+  "name": "mailbox",
+  "fingerprint": "b61b3efd99eabdd2",
+  "bundle": "design-system",
+  "title": "mailbox",
+  "description": "One inbox at a glance — whether it can be reached, the threads waiting for an answer, the drafts, and how much mail moved in the last day, week and month.",
+  "category": "Communication",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "mailbox",
+    "category": "Communication",
+    "nodeSize": {
+      "width": 640,
+      "height": 720
+    },
+    "description": "One inbox at a glance — whether it can be reached, the threads waiting for an answer, the drafts, and how much mail moved in the last day, week and month.",
+    "whenToUse": "Show a person the state of one mailbox an Agent answers — whether it is reachable, the threads waiting for a reply, the drafts, and the volume — rather than the mail itself or anything to compose. It draws what the mailbox node emits when it runs.",
+    "props": {
+      "address": {
+        "type": "string",
+        "description": "The inbox's address.",
+        "default": "agent@mail.example.com"
+      },
+      "provider": {
+        "type": "string",
+        "description": "Which mailbox service this is, as a person reads it.",
+        "default": "Gmail"
+      },
+      "stateLabel": {
+        "type": "string",
+        "description": "Working or Failing.",
+        "default": "Working"
+      },
+      "failing": {
+        "type": "boolean",
+        "description": "True when the most recent thing that happened was a failure.",
+        "default": false
+      },
+      "lastReceived": {
+        "type": "string",
+        "description": "When the last message arrived.",
+        "default": "2026-09-20 10:14"
+      },
+      "lastSent": {
+        "type": "string",
+        "description": "When the last message went.",
+        "default": "2026-09-20 10:20"
+      },
+      "healthError": {
+        "type": "string",
+        "description": "Why the mailbox cannot be reached, in the provider's own words. Empty when it is working.",
+        "default": ""
+      },
+      "unansweredCount": {
+        "type": "string",
+        "description": "How many threads wait for an answer.",
+        "default": "2"
+      },
+      "unanswered": {
+        "type": "array",
+        "description": "Threads whose last message is theirs, oldest first. Each has subject, from, since and messages.",
+        "default": [
+          {
+            "subject": "Redemption notice",
+            "from": "Fund Ops",
+            "since": "2026-09-18 09:02",
+            "messages": "1 message"
+          },
+          {
+            "subject": "Q1 Planning",
+            "from": "John Doe",
+            "since": "2026-09-20 10:14",
+            "messages": "3 messages"
+          }
+        ]
+      },
+      "draftsCount": {
+        "type": "string",
+        "description": "How many drafts wait for a person to send.",
+        "default": "1"
+      },
+      "drafts": {
+        "type": "array",
+        "description": "Drafts, newest first. Each has subject, to and savedAt.",
+        "default": [
+          {
+            "subject": "Re: Side letter terms",
+            "to": "Ann Lee",
+            "savedAt": "2026-09-20 09:40"
+          }
+        ]
+      },
+      "volume": {
+        "type": "array",
+        "description": "One row per count, with label and the three windows as text. The mailbox's own counts.",
+        "default": [
+          {
+            "label": "received",
+            "day": "4",
+            "days7": "31",
+            "days30": "120"
+          },
+          {
+            "label": "sent",
+            "day": "3",
+            "days7": "28",
+            "days30": "111"
+          }
+        ]
+      },
+      "accountLine": {
+        "type": "string",
+        "description": "The account in one line, pointing at where it is managed.",
+        "default": "Alpha Agent · connected to Google · manage in Credentials"
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "width": "full",
+        "direction": "column",
+        "gap": "6"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "justify": "space-between",
+            "gap": "3"
+          },
+          "children": [
+            {
+              "type": "Text",
+              "bind": {
+                "value": "address"
+              },
+              "style": {
+                "font": "headline.sm",
+                "weight": "semibold",
+                "color": "text.primary"
+              }
+            },
+            {
+              "type": "Text",
+              "bind": {
+                "value": "provider"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.secondary"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "1",
+            "padding": "4",
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "lg"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "2"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "stateLabel"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "weight": "semibold",
+                    "color": "text.primary",
+                    "when": [
+                      {
+                        "field": "failing",
+                        "eq": true,
+                        "apply": {
+                          "color": "status.error"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "Text",
+                  "value": "· last received",
+                  "style": {
+                    "font": "body.sm",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "lastReceived"
+                  },
+                  "style": {
+                    "font": "body.sm",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "value": "· last sent",
+                  "style": {
+                    "font": "body.sm",
+                    "color": "text.secondary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "lastSent"
+                  },
+                  "style": {
+                    "font": "body.sm",
+                    "color": "text.secondary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Text",
+              "visibleWhen": "healthError",
+              "bind": {
+                "value": "healthError"
+              },
+              "style": {
+                "font": "caption",
+                "color": "status.error"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "2"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "justify": "space-between"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "value": "Unanswered",
+                  "style": {
+                    "font": "body.md",
+                    "weight": "semibold",
+                    "color": "text.primary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "unansweredCount"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "color": "text.secondary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Each",
+              "bind": {
+                "items": "unanswered"
+              },
+              "style": {
+                "direction": "column",
+                "gap": "1"
+              },
+              "item": {
+                "type": "Box",
+                "style": {
+                  "direction": "row",
+                  "align": "center",
+                  "justify": "space-between",
+                  "gap": "3",
+                  "padding": "2"
+                },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": {
+                      "direction": "column",
+                      "gap": "0"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "subject"
+                        },
+                        "style": {
+                          "font": "body.sm",
+                          "weight": "medium",
+                          "color": "text.primary"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "from"
+                        },
+                        "style": {
+                          "font": "caption",
+                          "color": "text.secondary"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Box",
+                    "style": {
+                      "direction": "column",
+                      "align": "end",
+                      "gap": "0"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "since"
+                        },
+                        "style": {
+                          "font": "caption",
+                          "color": "text.secondary"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "messages"
+                        },
+                        "style": {
+                          "font": "caption",
+                          "color": "text.secondary"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "2"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "justify": "space-between"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "value": "Drafts for a person to send",
+                  "style": {
+                    "font": "body.md",
+                    "weight": "semibold",
+                    "color": "text.primary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "draftsCount"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "color": "text.secondary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Each",
+              "bind": {
+                "items": "drafts"
+              },
+              "style": {
+                "direction": "column",
+                "gap": "1"
+              },
+              "item": {
+                "type": "Box",
+                "style": {
+                  "direction": "row",
+                  "align": "center",
+                  "justify": "space-between",
+                  "gap": "3",
+                  "padding": "2"
+                },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": {
+                      "direction": "column",
+                      "gap": "0"
+                    },
+                    "children": [
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "subject"
+                        },
+                        "style": {
+                          "font": "body.sm",
+                          "weight": "medium",
+                          "color": "text.primary"
+                        }
+                      },
+                      {
+                        "type": "Text",
+                        "bind": {
+                          "value": "to"
+                        },
+                        "style": {
+                          "font": "caption",
+                          "color": "text.secondary"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "savedAt"
+                    },
+                    "style": {
+                      "font": "caption",
+                      "color": "text.secondary"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "2"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "3"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "value": "Volume",
+                  "style": {
+                    "font": "body.md",
+                    "weight": "semibold",
+                    "color": "text.primary",
+                    "flex": 1
+                  }
+                },
+                {
+                  "type": "Text",
+                  "value": "24 hours",
+                  "style": {
+                    "font": "caption",
+                    "color": "text.secondary",
+                    "width": "16",
+                    "align": "end"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "value": "7 days",
+                  "style": {
+                    "font": "caption",
+                    "color": "text.secondary",
+                    "width": "16",
+                    "align": "end"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "value": "30 days",
+                  "style": {
+                    "font": "caption",
+                    "color": "text.secondary",
+                    "width": "16",
+                    "align": "end"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Each",
+              "bind": {
+                "items": "volume"
+              },
+              "style": {
+                "direction": "column",
+                "gap": "1"
+              },
+              "item": {
+                "type": "Box",
+                "style": {
+                  "direction": "row",
+                  "align": "center",
+                  "gap": "3",
+                  "padding": "1"
+                },
+                "children": [
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "label"
+                    },
+                    "style": {
+                      "font": "body.sm",
+                      "color": "text.primary",
+                      "flex": 1
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "day"
+                    },
+                    "style": {
+                      "font": "body.sm",
+                      "color": "text.primary",
+                      "width": "16",
+                      "align": "end"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "days7"
+                    },
+                    "style": {
+                      "font": "body.sm",
+                      "color": "text.primary",
+                      "width": "16",
+                      "align": "end"
+                    }
+                  },
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "days30"
+                    },
+                    "style": {
+                      "font": "body.sm",
+                      "color": "text.primary",
+                      "width": "16",
+                      "align": "end"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "1"
+          },
+          "children": [
+            {
+              "type": "Text",
+              "value": "Account",
+              "style": {
+                "font": "body.md",
+                "weight": "semibold",
+                "color": "text.primary"
+              }
+            },
+            {
+              "type": "Text",
+              "bind": {
+                "value": "accountLine"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.secondary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "component"
+  }
+}

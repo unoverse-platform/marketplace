@@ -1,0 +1,34 @@
+type: ReadCover
+kind: PromiseNode
+
+name: Read Cover
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  What each file says it is about and the date it speaks as of, taken from the places you say
+  they sit, with no model and no guessing
+
+whenToUse: >-
+  Decide where a file belongs and which file it replaces, before reading any of it in full: for
+  each file, the subject it names and the date it states, read from a named cell or a pattern on
+  a page, with where each was found. Use it when the files come from a template whose layout is
+  fixed, so the same file always answers the same way and every answer can be checked against
+  the cell it came from. A file matching none of the layouts you describe comes back empty
+  rather than guessed, which is the point: a wrong subject files a document under the wrong
+  thing and nothing downstream can tell. It knows no document type of its own, so you supply
+  the layouts and where their facts sit. It does not read tables, figures or the body; that is a
+  full parse.
+
+auth:
+  required: false
+
+capabilities:
+  # A pure read of files that do not change: the same files and layouts always answer the same.
+  # REMEMBERED UNDER THE DOCUMENTS SERVICE'S OWN VERSION. This node's answer is decided by that
+  # service's code, not by this definition, so a fix to it must forget every answer it gave
+  # (2026-09-20: a figures reader was fixed, the service restarted, and the old answer was still
+  # served from a trace, silently).
+  cacheable:
+    answeredBy: documents

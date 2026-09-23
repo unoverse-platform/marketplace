@@ -1,0 +1,41 @@
+inputs:
+  # STARTS IT. The task's run id is a config field templated from whatever is upstream, so the
+  # node fires once already holding everything it needs (signal-routing.md, "Two inputs never
+  # arrive together").
+  - name: signal
+    type: object
+    description: What starts it
+    required: false
+
+  # THE ANSWERS COMING BACK, while the conversation is still going. `CONTINUE` is what makes
+  # that possible: the value is handed to the step already running rather than starting the
+  # node again, which would hand out the same step afresh.
+  #
+  # WIRE THE FINAL ANSWERS, NEVER A STREAM. A stream sends what it has so far on every change,
+  # so a half heard number would be written to the record and then written again.
+  - name: collected
+    type: object
+    signal: CONTINUE
+    description: "Answers just given, as { field: value }"
+    required: false
+
+outputs:
+  # THE TASK AS IT STANDS, and the only thing anything downstream needs: which step, what is
+  # still outstanding, the values already held, and how far through it is. One object, read
+  # whichever part you want.
+  #
+  # ONE STEP AT A TIME on purpose: whatever is asking can hold one short list in its head, and
+  # cannot wander into a later step or decide it has finished early.
+  #
+  # There was a second output carrying the whole state. It went: the state is already in here,
+  # and a slice of one object is not a second idea.
+  - name: task
+    type: object
+    description: The task as it stands now
+
+  # SETTLES THE NODE. Nothing outstanding, the task completed, and the run moves on.
+  - name: done
+    type: boolean
+    description: Nothing left to ask
+
+credentials: []

@@ -1,0 +1,48 @@
+# ONE MAILBOX, ONE PICTURE OF IT.
+#
+# Both mail nodes emit the inbox's state in exactly this shape, so the Mailbox screen draws the
+# same thing wherever it is opened from — it is the CREDENTIAL that decides which inbox, not
+# which node you happened to open. Written once here rather than twice, because two copies of a
+# projection drift the day one of them is edited.
+#
+# In scope: `response`, the overview door's reply
+# ({ account, health, threads, unanswered, drafts, volume }).
+
+screen: >-
+  return (() => {
+    const o = response || {};
+    const when = (s) => s ? String(s).replace('T', ' ').slice(0, 16) : '—';
+    const who = (a) => a ? (a.name ? a.name : a.address) : '—';
+    const v = o.volume || {};
+    const row = (label, k) => ({
+      label,
+      day: String((v.day || {})[k] ?? 0),
+      days7: String((v.days7 || {})[k] ?? 0),
+      days30: String((v.days30 || {})[k] ?? 0)
+    });
+    const h = o.health || {};
+    return {
+      address: (o.account || {}).address || '',
+      provider: 'Gmail',
+      stateLabel: h.state === 'failing' ? 'Cannot reach it' : 'Working',
+      failing: h.state === 'failing',
+      healthError: h.error || '',
+      lastReceived: when(h.lastReceivedAt),
+      lastSent: when(h.lastSentAt),
+      unansweredCount: String((o.unanswered || []).length),
+      unanswered: (o.unanswered || []).map(u => ({
+        subject: u.subject || '(no subject)',
+        from: who(u.from),
+        since: when(u.since),
+        messages: String(u.messageCount) + (u.messageCount === 1 ? ' message' : ' messages')
+      })),
+      draftsCount: String((o.drafts || []).length),
+      drafts: (o.drafts || []).map(d => ({
+        subject: d.subject || '(no subject)',
+        to: (d.to || []).map(who).join(', '),
+        savedAt: when(d.savedAt)
+      })),
+      volume: [row('received', 'received'), row('sent', 'sent')],
+      accountLine: ((o.account || {}).name ? (o.account || {}).name + ' · ' : '') + 'connected to Google · manage in Credentials'
+    };
+  })()

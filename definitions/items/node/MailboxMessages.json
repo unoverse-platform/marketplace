@@ -1,0 +1,111 @@
+{
+  "kind": "node",
+  "name": "MailboxMessages",
+  "pack": "mail",
+  "fingerprint": "70176737ca8478b9",
+  "title": "Mailbox Messages",
+  "description": "Read an inbox's threads, newest first, each with its last message: who wrote, what about, when",
+  "category": "Communication",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "See what is waiting in a mailbox: the conversations an inbox holds, newest first, each with the sender, subject and time of its last message, and the words of that message ready for a model to read. Pick it to triage an inbox as a step, to brief an Agent on what arrived since a time, or to show a person their queue. It reads; it never sends, and it reads only the one inbox its Mailbox credential names. Runs as a pipeline step.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "required": true,
+        "description": "Trigger to fire the node"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "threads",
+        "type": "array",
+        "description": "The conversations, newest first"
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The same, one line per thread, for a model to read"
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "description": "How many threads came back"
+      },
+      {
+        "name": "overview",
+        "type": "object",
+        "description": "The inbox at a glance, for the Mailbox screen"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "mailboxCredential",
+        "required": true,
+        "displayName": "Mailbox"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "since": {
+          "type": "string",
+          "title": "Since",
+          "description": "Optional: only threads with a message after this time, as an ISO date. Empty reads the newest regardless",
+          "default": "",
+          "ui:field": "template"
+        },
+        "limit": {
+          "type": "number",
+          "title": "Threads",
+          "description": "How many threads to return, newest first",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "mail",
+      "packageFile": "# MAIL — the platform's own mailbox (docs/unoverse/mail/README.md): an address in, a\n# conversation out. Inboxes on the platform's domain, each a list of threads, each thread its\n# messages in order; a reply goes back into the thread it answers.\n#\n# TWO NODES. MailboxMessages reads an inbox as a step; MailboxMCP gives an attached Agent the\n# mailbox as tools: list the threads, read one, reply, send, draft. Both reach the mailbox\n# service THROUGH THE ENGINE at loopback (`scope.engineUrl` + /mail/...), the way the document\n# nodes reach /documents: a node's call must be https or loopback, and the engine holds the\n# service. THE INBOX IS THE CREDENTIAL (credentials/mailboxCredential.yaml, owner ruling\n# 2026-09-20): address, name and the AWS account that receives and sends for it, set once on\n# the credentials screen. Both nodes name it; neither has an inbox field.\n#\n# NOT the `email` package. SendGridEmail is one-way mail with no thread; this is two-way and\n# threaded, and a saved workflow storing either type keeps meaning what it meant.\n\nname: mail\ndisplayName: Mailbox\ndescription: >-\n  Read and answer email from an inbox of the platform's own: threads, messages, replies and\n  drafts, for a step or for an Agent\nversion: 0.1.0\ncategory: communication\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Read an inbox's threads, newest first, with each thread's last message\n  - \"Give an Agent the mailbox as tools: list, read, reply, send, draft\"\n  - A reply carries In-Reply-To and References, so it lands in the same conversation everywhere\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form: every call goes to the engine's own listener, which serves the\n  # mailbox. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n",
+      "credentials": {
+        "googleClientCredential.yaml": "# THE PLATFORM'S ONE GOOGLE APPLICATION, saved once and never again.\n#\n# NOBODY CHOOSES THIS, which is why `visibility: internal` keeps it out of the credentials\n# picker. It is collected in the panel that opens under the Connect button, the first time\n# anyone on this platform connects a Gmail mailbox, and never seen again.\n#\n# It is a credential rather than a setting so it is encrypted at rest with everything else, and\n# so it can be saved from the screen a person is already standing on instead of by editing a\n# file and restarting.\n\nname: googleClientCredential\ndisplayName: Google application\ncategory: Platform setup\nvisibility: internal\ndescription: The OAuth client that makes Google's approval screen say unoverse. Collected once, under the Connect button.\ndocumentationUrl: https://console.cloud.google.com/apis/credentials\n\nproperties:\n  - name: clientId\n    displayName: Client ID\n    type: string\n    required: true\n    secret: false\n    description: From the OAuth client you created in Google Cloud.\n    placeholder: 1234567890-abc.apps.googleusercontent.com\n\n  - name: clientSecret\n    displayName: Client secret\n    type: string\n    required: true\n    secret: true\n    description: From the same page.\n    placeholder: \"\"\n",
+        "mailboxCredential.yaml": "# PICK THE SERVICE, LOG IN, DONE (owner ruling 2026-09-20: \"stop overcomplicating\"; \"I should\n# see Outlook, I should see Gmail\"). The same shape as adding an account on a phone: name it,\n# choose Gmail or Outlook, approve on their own screen. Everything else comes back from them\n# and is never typed.\n#\n# The Agent then acts on that mailbox with nobody signed in, which is what the grant is for —\n# the same way a phone keeps fetching mail long after you logged into it once.\n\nname: mailboxCredential\ndisplayName: Mailbox\ncategory: Communication\ndescription: A mailbox an Agent reads and answers. Connect Gmail or Outlook.\n\nproperties:\n  - name: connect\n    displayName: Mailbox\n    type: connect\n    required: true\n    secret: false\n    description: Choose where the mailbox lives and approve access on their screen.\n    connect: /mail/connect\n    connected: address\n    providers:\n      - { id: google, label: Gmail }\n      - { id: microsoft, label: Outlook }\n\n  # ── Filled by the service when you connect. Never typed, never shown again. ─────────────\n  - name: address\n    displayName: Address\n    type: string\n    required: false\n    secret: false\n    description: The mailbox you connected.\n    \"ui:dependencies\": { __never: true }\n\n  - name: provider\n    displayName: Service\n    type: string\n    required: false\n    secret: false\n    description: Which service holds it.\n    \"ui:dependencies\": { __never: true }\n\n  - name: refreshToken\n    displayName: Grant\n    type: string\n    required: false\n    secret: true\n    description: The lasting permission this mailbox gave.\n    \"ui:dependencies\": { __never: true }\n",
+        "microsoftClientCredential.yaml": "# THE PLATFORM'S ONE MICROSOFT APPLICATION, saved once and never again.\n#\n# NOBODY CHOOSES THIS, which is why `visibility: internal` keeps it out of the credentials\n# picker. It is collected in the panel that opens under the Connect button, the first time\n# anyone on this platform connects an Outlook mailbox, and never seen again.\n#\n# It is a credential rather than a setting so it is encrypted at rest with everything else, and\n# so it can be saved from the screen a person is already standing on instead of by editing a\n# file and restarting.\n\nname: microsoftClientCredential\ndisplayName: Microsoft application\ncategory: Platform setup\nvisibility: internal\ndescription: The OAuth client that makes Microsoft's approval screen say unoverse. Collected once, under the Connect button.\ndocumentationUrl: https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade\n\nproperties:\n  - name: clientId\n    displayName: Application (client) ID\n    type: string\n    required: true\n    secret: false\n    description: The Application (client) ID from the app registration.\n    placeholder: 00000000-0000-0000-0000-000000000000\n\n  - name: clientSecret\n    displayName: Client secret\n    type: string\n    required: true\n    secret: true\n    description: The VALUE of a client secret, from Certificates and secrets.\n    placeholder: \"\"\n"
+      },
+      "shared": {
+        "overview.yaml": "# ONE MAILBOX, ONE PICTURE OF IT.\n#\n# Both mail nodes emit the inbox's state in exactly this shape, so the Mailbox screen draws the\n# same thing wherever it is opened from — it is the CREDENTIAL that decides which inbox, not\n# which node you happened to open. Written once here rather than twice, because two copies of a\n# projection drift the day one of them is edited.\n#\n# In scope: `response`, the overview door's reply\n# ({ account, health, threads, unanswered, drafts, volume }).\n\nscreen: >-\n  return (() => {\n    const o = response || {};\n    const when = (s) => s ? String(s).replace('T', ' ').slice(0, 16) : '—';\n    const who = (a) => a ? (a.name ? a.name : a.address) : '—';\n    const v = o.volume || {};\n    const row = (label, k) => ({\n      label,\n      day: String((v.day || {})[k] ?? 0),\n      days7: String((v.days7 || {})[k] ?? 0),\n      days30: String((v.days30 || {})[k] ?? 0)\n    });\n    const h = o.health || {};\n    return {\n      address: (o.account || {}).address || '',\n      provider: 'Gmail',\n      stateLabel: h.state === 'failing' ? 'Cannot reach it' : 'Working',\n      failing: h.state === 'failing',\n      healthError: h.error || '',\n      lastReceived: when(h.lastReceivedAt),\n      lastSent: when(h.lastSentAt),\n      unansweredCount: String((o.unanswered || []).length),\n      unanswered: (o.unanswered || []).map(u => ({\n        subject: u.subject || '(no subject)',\n        from: who(u.from),\n        since: when(u.since),\n        messages: String(u.messageCount) + (u.messageCount === 1 ? ' message' : ' messages')\n      })),\n      draftsCount: String((o.drafts || []).length),\n      drafts: (o.drafts || []).map(d => ({\n        subject: d.subject || '(no subject)',\n        to: (d.to || []).map(who).join(', '),\n        savedAt: when(d.savedAt)\n      })),\n      volume: [row('received', 'received'), row('sent', 'sent')],\n      accountLine: ((o.account || {}).name ? (o.account || {}).name + ' · ' : '') + 'connected to Google · manage in Credentials'\n    };\n  })()\n",
+        "schema.yaml": "# TOOL DISCOVERY, as DATA: what an attached Agent reads before touching the mailbox. The\n# wording IS the routing: a model reads these descriptions when choosing a tool, so rephrasing\n# is a behaviour change, never a tidy-up. The argument shapes are what the model fills in.\n#\n# Written as plain YAML rather than a `return { ... }` expression: a constant is data.\n\nmailbox:\n  name: Mailbox\n  version: \"0.1.0\"\n  description: One email inbox, as threads and messages. Read what is waiting, answer in the thread, start a message, keep a draft.\n  instructions: |-\n    MAILBOX PROTOCOL:\n    - list_threads first, to see what is waiting. It is cheap and carries no bodies.\n    - read_thread before answering anything: a reply is judged against the whole conversation,\n      not its last line.\n    - reply answers IN the thread, to the person who wrote, with the others copied. Use it for\n      every answer to a message you have read. Never start a new message to answer an old one.\n    - send starts a NEW conversation with someone; only for a message that answers nothing.\n    - save_draft when a person should look before it goes. A draft is not sent.\n    - A sent message comes back with state \"sent\" and its id. State \"failed\" carries the reason;\n      say so rather than claiming it went.\n    - You work ONE inbox. You cannot read or send from any other.\n  methods:\n    list_threads:\n      description: >-\n        The conversations in the inbox, newest first, each with its subject, who is in it, how\n        many messages, when the last one arrived, and that last message's sender and direction.\n        No bodies: read_thread gives those. An empty list means nothing is waiting, which is\n        normal.\n      input:\n        type: object\n        required: []\n        properties:\n          since:\n            type: string\n            description: Only threads with a message after this time, as an ISO date. Leave out for the newest regardless.\n          limit:\n            type: number\n            description: How many threads, newest first. Default 20, at most 200.\n    read_thread:\n      description: >-\n        One conversation in full: every message in order, each with sender, recipients,\n        subject, the text, and its attachments as links that open for a while. Call it before\n        replying.\n      input:\n        type: object\n        required: [threadId]\n        properties:\n          threadId:\n            type: string\n            description: The thread's id, from list_threads.\n    reply:\n      description: >-\n        Answer a message in its own thread. The reply goes to the message's sender, with the\n        other people on it copied, under the thread's subject, and carries the headers that make\n        it land in the same conversation in their mail client. Comes back with state \"sent\" and\n        the message's id, or \"failed\" with the reason.\n      input:\n        type: object\n        required: [messageId, text]\n        properties:\n          messageId:\n            type: string\n            description: The id of the message being answered, from read_thread. Usually the last one from the other side.\n          text:\n            type: string\n            description: The reply, as plain text. Write the whole message; it is sent as written.\n          html:\n            type: string\n            description: Optional. The same reply as HTML, when the message needs formatting. The text is still sent alongside.\n    send:\n      description: >-\n        Start a NEW conversation: a message from the inbox to one or more people. Not for\n        answering a message, which is reply. Comes back with state \"sent\" and the message's id,\n        or \"failed\" with the reason.\n      input:\n        type: object\n        required: [to, subject, text]\n        properties:\n          to:\n            type: string\n            description: Who it goes to, one or more addresses separated by commas. A name may be given as \"Name <address>\".\n          cc:\n            type: string\n            description: Optional. Who is copied, the same way.\n          subject:\n            type: string\n            description: The subject line.\n          text:\n            type: string\n            description: The message, as plain text.\n          html:\n            type: string\n            description: Optional. The same message as HTML.\n    save_draft:\n      description: >-\n        Keep a message without sending it, for a person to read and send. Comes back with state\n        \"draft\" and the draft's id. Nothing leaves the inbox.\n      input:\n        type: object\n        required: [to, subject, text]\n        properties:\n          to:\n            type: string\n            description: Who it is for, one or more addresses separated by commas.\n          cc:\n            type: string\n            description: Optional. Who would be copied.\n          subject:\n            type: string\n            description: The subject line.\n          text:\n            type: string\n            description: The message, as plain text.\n          html:\n            type: string\n            description: Optional. The same message as HTML.\n"
+      }
+    },
+    "dir": "MailboxMessages",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order. `response` is the overview door's reply:\n# { account, health, threads, unanswered, drafts, volume }.\n\n- emit: threads\n  value: \"return (response && response.threads) || []\"\n\n- emit: text\n  value: >-\n    return ((response && response.threads) || []).map(t => {\n      const last = t.last || {};\n      const who = last.from ? (last.from.name ? last.from.name + ' <' + last.from.address + '>' : last.from.address) : 'nobody';\n      const when = last.at || t.lastMessageAt || '';\n      return '- ' + (t.subject || '(no subject)') + ' — ' + (last.direction === 'out' ? 'we wrote to ' : 'from ') + who\n        + (when ? ' at ' + when : '') + ' (' + t.messageCount + ' message' + (t.messageCount === 1 ? '' : 's') + ', thread ' + t.id + ')';\n    }).join('\\n')\n\n- emit: count\n  value: \"return ((response && response.threads) || []).length\"\n\n# THE SAME SCREEN THIS NODE'S MENU DRAWS, shaped exactly as the other mail node shapes it: one\n# mailbox, one picture of it, wherever you open it from.\n- emit: overview\n  value: { $ref: overview#screen }\n",
+      "api/run.yaml": "# THE SAME DOOR THE OTHER MAIL NODE READS. It answers the inbox's state AND its conversations\n# in one call, so a node that wants the threads and a screen that wants the state never ask the\n# mailbox for the same list twice.\n\n- name: overview\n  method: GET\n  url: >-\n    return scope.engineUrl + '/mail/inboxes/'\n      + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase())\n      + '/overview'\n  transport: json\n\n  query:\n    limit: \"return String(Number(config.limit || 20))\"\n\n  timeoutMs: 30000\n\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error\"\n",
+      "config.yaml": "# Per-step choices only. Which inbox is the credential's, never a field here.\nconfigSchema:\n  type: object\n  required: []\n  properties:\n    since:\n      type: string\n      title: Since\n      description: \"Optional: only threads with a message after this time, as an ISO date. Empty reads the newest regardless\"\n      default: \"\"\n      \"ui:field\": template\n    limit:\n      type: number\n      title: Threads\n      description: How many threads to return, newest first\n      default: 20\n      minimum: 1\n      maximum: 200\n\"ui:order\": [since, limit]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    required: true\n    description: Trigger to fire the node\n\noutputs:\n  - name: threads\n    type: array\n    description: The conversations, newest first\n  - name: text\n    type: string\n    description: The same, one line per thread, for a model to read\n  - name: count\n    type: number\n    description: How many threads came back\n  - name: overview\n    type: object\n    description: The inbox at a glance, for the Mailbox screen\n\n# THE INBOX IS THE CREDENTIAL: its address, name and account, set once on the credentials\n# screen. The node reads which inbox from here and never from its config.\ncredentials:\n  - name: mailboxCredential\n    required: true\n    displayName: Mailbox\n",
+      "node.yaml": "type: MailboxMessages\nkind: PromiseNode\n\nname: Mailbox Messages\ncategory: Communication\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  Read an inbox's threads, newest first, each with its last message: who wrote, what about, when\n\n# Outcome first, disqualify by PROPERTY, never name another node, wiring last.\nwhenToUse: >-\n  See what is waiting in a mailbox: the conversations an inbox holds, newest first, each with\n  the sender, subject and time of its last message, and the words of that message ready for a\n  model to read. Pick it to triage an inbox as a step, to brief an Agent on what arrived since a\n  time, or to show a person their queue. It reads; it never sends, and it reads only the one\n  inbox its Mailbox credential names. Runs as a pipeline step.\n\nauth:\n  required: false\n\ncapabilities:\n  # A mailbox changes underneath us: a reused answer would hide new mail.\n  cacheable: false\n\n# THE PANEL'S TAB. The same mailbox, so the same screen: it is the credential that decides which\n# inbox, not which node you happened to open. `output` names the one that fills it, because this\n# node's primary output is its threads.\nmenu:\n  - label: Mailbox\n    component: mailbox\n    output: overview\n",
+      "test.yaml": "# Runs against the platform's own engine and database, as the Mailbox credential the bench is\n# given (MAILBOX_ADDRESS and the rest from the workspace .env). An inbox holding nothing answers\n# an empty list. Shape assertions only.\ntestData:\n  config:\n    limit: 3\n  expect:\n    threads: \"return Array.isArray(output.threads)\"\n    text: \"return typeof output.text === 'string'\"\n    count: \"return typeof output.count === 'number' && output.count === output.threads.length\"\n"
+    }
+  }
+}

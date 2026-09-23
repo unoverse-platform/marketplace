@@ -1,0 +1,14 @@
+# Runs against the LOCAL platform (loopback engine), so it needs the runtime up and a row on
+# the tester's own map: put one of your universal ids in `universalId` before running. Same
+# stance as Spatial Query's fixture: this proves the PROJECTION, not any content.
+
+testData:
+  config:
+    universalId: ""
+  expect:
+    row: >-
+      return output.row && typeof output.row.universal_id === 'string'
+        && output.row.embedding === undefined
+        && output.row.umap === undefined
+    text: "return typeof output.text === 'string'"
+    image: "return typeof output.image === 'string'"

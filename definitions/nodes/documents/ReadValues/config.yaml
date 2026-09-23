@@ -1,0 +1,24 @@
+configSchema:
+  type: object
+  required: [documents, templates]
+  properties:
+    documents:
+      type: string
+      title: Documents
+      description: >-
+        The parsed documents as a JSON array of { file_name, subject, period, tables } or, where
+        you hold their addresses rather than their contents, { ..., table_urls }. Usually wired
+        from a read, e.g. return signal.documents
+      default: ""
+      "ui:field": template
+    templates:
+      type: string
+      title: Layouts
+      description: >-
+        The layouts you know, as a JSON array. Each is { name, match, observations, checks }:
+        `match` is text appearing in every document of that layout and no other; `observations`
+        says which sheets, which columns hold which measure and in what unit; `checks` names what
+        must be true of the reading afterwards.
+      default: "[]"
+      "ui:field": template
+"ui:order": [documents, templates]

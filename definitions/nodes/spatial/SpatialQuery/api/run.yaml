@@ -13,3 +13,6 @@
     # server answers with its own validation error rather than a silent empty search.
     query: "return String(config.query || '').trim() || undefined"
     queries: "return undefined"
+    # No agent on a data-flow node, so nothing chooses among Intelligent objects: this query
+    # searches its On objects (config `objects`, read by the shared body) and nothing else.
+    objects: "return undefined"

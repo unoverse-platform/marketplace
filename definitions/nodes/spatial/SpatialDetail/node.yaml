@@ -1,0 +1,36 @@
+# THE DETAIL DOOR AS A STEP (docs/unoverse/data/objects/README.md 4b, getDetail). A search row
+# is the essence on purpose: a handle and the editorial essentials, never the copy. The Agent's
+# getDetail tool opens the one row it needs in full. This node is that same door on the data
+# flow: one universal id in, that row in full out, so a step with no agent in it (a writer, a
+# component) can be handed the product's real copy and picture. Ruled 2026-09-19, owner: "one
+# id in, that row in full out".
+
+type: SpatialDetail
+
+kind: PromiseNode
+
+name: Spatial Detail
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Open one row of the platform knowledge base in full by its id and pass it to the next node
+
+whenToUse: >-
+  Read one product, need or document in full inside the data flow: hand it the universal id
+  of a row an upstream search found, usually the top match, and it returns that row with its
+  full copy, the same detail an Agent gets when it opens a result. Use it when a later step
+  must be given the facts themselves rather than a search row's summary: a writer, a
+  comparison, a card. It opens one row per pass; searching for rows is Spatial Query's job,
+  and a step that needs a whole result set in full should not exist.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md 9.13). Same answer as the rest of the package: it
+# reads the platform's OWN knowledge base, and what a guest may reach is decided at the
+# trigger's publicEntry toggle.
+auth:
+  required: false
+
+capabilities:
+  # Never cacheable: the row changes as content is re-ingested.
+  cacheable: false

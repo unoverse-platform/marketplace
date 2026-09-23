@@ -18,7 +18,7 @@
     # shared/openaiStream/client/openaiClient.ts buildInputItems().
     #
     # NO INSTRUCTION TEXT IS HARDCODED HERE. Prompt copy lives in the prompt-block
-    # library (prompts/blocks/**), is authored and toggled in Studio, and is
+    # library (design/marketplace/blocks/**), is authored and toggled in Studio, and is
     # referenced as {{prompt.<blockName>}}. A node holding a COPY of a block's words
     # is a fork that silently stops tracking the block.
     #

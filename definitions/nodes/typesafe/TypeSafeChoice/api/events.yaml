@@ -1,0 +1,22 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: choice
+  from: response
+  value: "return response.answers.answer.choice"
+
+- emit: probabilities
+  from: response
+  value: "return response.answers.answer.probabilities || {}"
+
+- emit: confidence
+  from: response
+  value: "return response.answers.answer.confidence"
+
+- emit: usage
+  from: response
+  value: >-
+    return {
+      model: response.model,
+      inputTokens: (response.usage || {}).input_tokens || 0,
+      outputTokens: (response.usage || {}).output_tokens || 0
+    }

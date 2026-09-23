@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "card2",
-  "fingerprint": "d88e0aaacf73a3c4",
+  "fingerprint": "8730d896b89cb551",
   "bundle": "design-system",
   "title": "card2",
   "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
@@ -85,9 +85,6 @@
             },
             {
               "type": "Button",
-              "bind": {
-                "label": "callToAction"
-              },
               "action": "click",
               "style": {
                 "display": "inline-flex",
@@ -105,6 +102,18 @@
                 "minHeight": "10",
                 "radius": "sm"
               },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "callToAction"
+                  },
+                  "style": {
+                    "font": "button",
+                    "color": "action.primary-text"
+                  }
+                }
+              ],
               "visibleWhen": "callToAction"
             }
           ]

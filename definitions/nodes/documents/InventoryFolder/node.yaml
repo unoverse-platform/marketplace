@@ -1,0 +1,25 @@
+type: InventoryFolder
+kind: PromiseNode
+
+name: Inventory Folder
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  The census of a folder of files. What each is, how many pages, the dates it carries, and
+  which files are copies of one another
+
+whenToUse: >-
+  Take stock of a folder of files before reading them in full: for each file its kind, size,
+  page count, whether it is a scan, its content hash, the dates in its name and on its cover,
+  and the near-duplicates across the set (the same memorandum under two names, two versions of
+  one policy). Cheap on purpose: it reads the text layer only, so a hundred files take seconds.
+  Use it to decide what to parse, what to skip, and which version is which. It does not read
+  tables or figures; that is a full parse.
+
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

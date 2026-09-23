@@ -1,0 +1,48 @@
+# Everything that leaves this node, in interface.yaml's connector order. `response` is the
+# walk: its last turn, every turn in order, and why it stopped. Each turn's `decide` reply
+# carries its choice as a JSON string, read here the way OpenAIStructuredOutput reads its own.
+
+# NOTHING FOUND IS SAID, NEVER LEFT NULL (2026-09-15: a walk that hit its turn limit answered
+# null, and the caller showed an empty answer with no reason). When the walk stops without an
+# answer, the answer says so: that the documents this row reaches do not hold it, which
+# documents were opened, and why the walk stopped.
+- emit: answer
+  value: >-
+    return (() => {
+      const last = JSON.parse(response.last.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join(''));
+      if (last.answer) return last.answer;
+      const opened = response.turns.flatMap(t => t.choices.items.map(c => c.face.title)).filter(Boolean).filter((t, i, a) => a.indexOf(t) === i);
+      const why = response.stopped === 'maxTurns' ? 'the walk reached its turn limit' : response.stopped === 'stuck' ? 'the walk kept opening the same rows' : 'nothing else could be opened';
+      return 'The documents this row reaches do not hold that answer; ' + why + '. Opened: ' + (opened.length ? opened.join('; ') : 'nothing') + '.';
+    })()
+
+- emit: sources
+  value: >-
+    return JSON.parse(response.last.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join('')).sources
+
+- emit: path
+  value: >-
+    return response.turns.map(t => [JSON.parse(t.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join(''))].map(step => ({
+      opened: t.choices.items.map(c => ({ id: c.id, title: c.face.title, page: c.face.page })),
+      chose: step.open,
+      why: step.why
+    }))[0])
+
+# When there is no answer, the model's carried notes stand as the caveat: what it found and where it looked.
+- emit: caveat
+  value: >-
+    return (() => {
+      const last = JSON.parse(response.last.decide.output.filter(i => i.type === 'message').flatMap(i => i.content).filter(p => p.type === 'output_text').map(p => p.text).slice(-1).join(''));
+      return last.caveat || (last.answer ? null : (last.notes || null));
+    })()
+
+- emit: stopped
+  value: "return response.stopped"
+
+- emit: usage
+  value: >-
+    return response.turns.reduce((u, t) => ({
+      input_tokens: u.input_tokens + (t.decide.usage ? t.decide.usage.input_tokens : 0),
+      output_tokens: u.output_tokens + (t.decide.usage ? t.decide.usage.output_tokens : 0),
+      total_tokens: u.total_tokens + (t.decide.usage ? t.decide.usage.total_tokens : 0)
+    }), { input_tokens: 0, output_tokens: 0, total_tokens: 0 })

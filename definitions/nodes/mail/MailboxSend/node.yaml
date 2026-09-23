@@ -1,0 +1,34 @@
+type: MailboxSend
+kind: PromiseNode
+
+name: Send Mail
+category: Communication
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Send a message from a connected mailbox, or reply in a thread, with the words a previous step
+  produced
+
+# Outcome first, disqualify by PROPERTY, never name another node, wiring last.
+whenToUse: >-
+  Send an email a workflow composed rather than one a model decided to write: a report, a
+  confirmation, a rendered template, the same message to each of a list. Every field takes a
+  template, so the recipient, the subject and the body are bound to what earlier steps produced.
+  Give it a message to answer and it replies in that conversation instead of starting a new one.
+  It sends from the mailbox its credential connected, and it sends once, at the moment the graph
+  reaches it.
+
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable: sending is the side effect. A cached answer would report a delivered message
+  # that was never sent, which is the worst possible lie for a node whose whole purpose is that
+  # something left the building.
+  cacheable: false
+
+  # The same fact, positively, so the ENGINE can act on it: mail that has reached a mailbox has
+  # no inverse. A test run traces what this would have sent and does not send it, because a build
+  # calls runTest after every stage and each one would otherwise reach a real person.
+  emitsExternally: true

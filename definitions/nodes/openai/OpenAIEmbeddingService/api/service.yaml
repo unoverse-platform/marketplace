@@ -45,9 +45,7 @@ createEmbedding:
   # no assignment, by design. 1536 floats against an HTTP round trip is free.
   returns: >-
     return {
-      embedding: config.normalize === false
-        ? response.data[0].embedding
-        : response.data[0].embedding.map(x =>
+      embedding: response.data[0].embedding.map(x =>
             x / Math.sqrt(response.data[0].embedding.reduce((a, b) => a + b * b, 0))),
       dimensions: response.data[0].embedding.length,
       model: response.model
@@ -89,9 +87,7 @@ createBatchEmbeddings:
     return {
       embeddings: response.data
         .map((_, i) => response.data.find(d => d.index === i))
-        .map(d => config.normalize === false
-          ? d.embedding
-          : d.embedding.map(x => x / Math.sqrt(d.embedding.reduce((a, b) => a + b * b, 0)))),
+        .map(d => d.embedding.map(x => x / Math.sqrt(d.embedding.reduce((a, b) => a + b * b, 0)))),
       dimensions: response.data[0].embedding.length,
       model: response.model
     }

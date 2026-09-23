@@ -26,6 +26,7 @@ features:
   - Structured JSON output
   - Vision (image inputs)
   - Realtime voice calls with transcripts of both sides
+  - Search detail, one question answered by opening one branch of a tree at a time
 
 # The ONLY hosts this package's nodes may call. The executor refuses anything else.
 #
@@ -34,6 +35,10 @@ features:
 # reviewable list is what makes a manifest safe to accept from someone else.
 allowedHosts:
   - api.openai.com
+  # LOOPBACK, numeric form: OpenAISearchDetail reads the choices one step from a row from the
+  # platform's own engine over `scope.engineUrl` (127.0.0.1:4101), the same declaration the
+  # ingest and spatial packages carry. It sends the engine ids, never the credential.
+  - 127.0.0.1
 
 # Executor capabilities every manifest node here depends on. Deploy REFUSES this
 # package if the target universe's executor cannot satisfy them, so a manifest can
@@ -47,4 +52,6 @@ requires:
   # cannot do this would otherwise read a permanently cold cache and start a new
   # conversation every turn: memory that silently never remembers.
   state: [read, merge]
+  # OpenAISearchDetail walks in turns (`repeat`), each built from the reply before.
+  repeat: true
   executorVersion: ">=1.5.0"

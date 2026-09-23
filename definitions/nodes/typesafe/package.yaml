@@ -1,0 +1,30 @@
+# TYPESAFE, fully declarative.
+#
+# One vendor endpoint, POST /v1/systemone, answers typed questions about a piece of state:
+# pick an option, place on a scale, or say whether a statement holds. The answer is a value
+# and a probability distribution, never prose, so a workflow branches on it directly.
+#
+# Four nodes over the one call: three ask a single question of one type, and the fourth
+# sends a whole map of questions in one round trip, which is how the vendor is meant to be
+# used when several judgements share the same state.
+
+name: typesafe
+displayName: TypeSafe
+description: Typed decisions from Jev, TypeSafe's System One model; a value and a probability, never prose
+version: 1.0.0
+category: ai
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg
+
+features:
+  - Choose one option from a described list, with a probability for each
+  - Score state on an ordered scale of described levels
+  - Answer whether a statement is true, as a probability
+  - Ask several questions of one state in a single call
+
+allowedHosts:
+  - api.typesafe.ai
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [bearer]
+  transport: [json]

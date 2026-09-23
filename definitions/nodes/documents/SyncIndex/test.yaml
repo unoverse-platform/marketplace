@@ -1,0 +1,8 @@
+# Runs against the platform's own engine and database: syncing a test index with no documents
+# embeds nothing and says so. Shape assertions only.
+testData:
+  config:
+    index: "test://sync-index/empty"
+    documents: []
+  expect:
+    report: "return output.report.index === 'test://sync-index/empty' && output.report.documents === 0"

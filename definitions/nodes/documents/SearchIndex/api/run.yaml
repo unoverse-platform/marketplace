@@ -1,0 +1,19 @@
+# ONE QUESTION OF THE PLATFORM'S OWN INDEX, through the engine at loopback (package.yaml says why).
+# The engine ranks; the reply is the passages (docs/unoverse/data/documents/search-index.md).
+
+- name: search
+  method: POST
+  url: "return scope.engineUrl + '/index/search'"
+  transport: json
+
+  body:
+    index: "{{ config.index }}"
+    question: "return String(config.question || (signal && signal.question) || '')"
+    limit: "return Number(config.limit || 5)"
+    documents: "return Array.isArray(config.documents) ? config.documents.map(d => typeof d === 'string' ? d : (d && (d.universal_id || d.id))).filter(Boolean) : []"
+
+  timeoutMs: 60000
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

@@ -3,7 +3,6 @@
 testData:
   config:
     model: text-embedding-3-large:1024
-    normalize: true
 
   call:
     method: createEmbedding

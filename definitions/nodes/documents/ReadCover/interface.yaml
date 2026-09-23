@@ -1,0 +1,21 @@
+inputs:
+  - name: files
+    type: array
+    description: The files, each { downloadUrl, key, size }, as S3 Files emits with presigned links on
+    required: false
+
+outputs:
+  - name: entries
+    type: array
+    description: "One per file, in order: file_name, kind, template, layout, subject, period, found_in, error. `layout` is the matched layout whole, as it was supplied, for a caller that needs the rest of what it says"
+  - name: read
+    type: array
+    description: Only the entries whose layout was recognised and whose subject was found
+  - name: unread
+    type: array
+    description: The entries no layout matched, or whose subject was not where it was said to be. These need a reader of another kind, or a person
+  - name: total
+    type: number
+    description: How many files were read
+
+credentials: []

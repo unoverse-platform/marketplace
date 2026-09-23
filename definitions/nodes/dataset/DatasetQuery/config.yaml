@@ -1,0 +1,59 @@
+configSchema:
+  type: object
+  required: [object]
+  properties:
+    object:
+      type: string
+      title: Object
+      description: Which object's table, by its name
+      default: ""
+      "ui:field": template
+    org:
+      type: string
+      title: Organisation
+      description: Whose rows. Enforced by the database, not by this filter
+      default: ""
+      "ui:field": template
+    of:
+      type: string
+      title: Of
+      description: The id of the row whose figures to read. Leave empty to read across every row of this object in the organisation
+      default: ""
+      "ui:field": template
+    where:
+      type: string
+      title: Where
+      description: >-
+        The filter, as a JSON array of { column, is }, { column, oneOf: [...] },
+        { column, from, to } or { column, startsWith }. A column the object does not declare is
+        refused.
+      default: "[]"
+      "ui:field": template
+    groupBy:
+      type: string
+      title: Group by
+      description: Columns to group by when summing, as a JSON array. The unit is always added
+      default: "[]"
+      "ui:field": template
+    sum:
+      type: string
+      title: Sum
+      description: The column to add up. Leave empty to return rows rather than totals
+      default: ""
+      "ui:field": template
+    orderBy:
+      type: string
+      title: Order by
+      description: The column to order rows by. Ignored when summing, which orders by the total
+      default: ""
+      "ui:field": template
+    descending:
+      type: boolean
+      title: Largest first
+      default: true
+    limit:
+      type: number
+      title: At most
+      description: How many rows to return, 1 to 1000
+      default: 200
+"ui:order": [object, org, of, where, sum, groupBy, orderBy, descending, limit]

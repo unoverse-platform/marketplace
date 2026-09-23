@@ -1,0 +1,33 @@
+type: MailboxMessages
+kind: PromiseNode
+
+name: Mailbox Messages
+category: Communication
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Read an inbox's threads, newest first, each with its last message: who wrote, what about, when
+
+# Outcome first, disqualify by PROPERTY, never name another node, wiring last.
+whenToUse: >-
+  See what is waiting in a mailbox: the conversations an inbox holds, newest first, each with
+  the sender, subject and time of its last message, and the words of that message ready for a
+  model to read. Pick it to triage an inbox as a step, to brief an Agent on what arrived since a
+  time, or to show a person their queue. It reads; it never sends, and it reads only the one
+  inbox its Mailbox credential names. Runs as a pipeline step.
+
+auth:
+  required: false
+
+capabilities:
+  # A mailbox changes underneath us: a reused answer would hide new mail.
+  cacheable: false
+
+# THE PANEL'S TAB. The same mailbox, so the same screen: it is the credential that decides which
+# inbox, not which node you happened to open. `output` names the one that fills it, because this
+# node's primary output is its threads.
+menu:
+  - label: Mailbox
+    component: mailbox
+    output: overview

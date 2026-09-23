@@ -1,0 +1,45 @@
+# THE COVER of each file, from the engine at loopback (package.yaml says why). A job, like every
+# other door on this service.
+
+- name: job
+  method: POST
+  url: "return scope.engineUrl + '/documents/cover'"
+  transport: json
+
+  body:
+    # The listing's own shape becomes the service's: downloadUrl to file_url, key to file_name.
+    # A JSON string in config, or the array itself when wired.
+    files: >-
+      return (() => {
+        const raw = config.files;
+        const list = Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+        return list.map(f => ({ file_url: f.downloadUrl || f.presignedUrl || f.url || f.file_url, file_name: f.key || f.name || f.file_name || '', size: f.size }));
+      })()
+    templates: >-
+      return (() => {
+        const raw = config.templates;
+        return Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+      })()
+
+  timeoutMs: 60000
+
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"
+
+  # A cover is a named cell or one page, so this is faster than an inventory; the same patience
+  # costs nothing when a folder is large.
+  poll:
+    url: "return scope.engineUrl + '/documents/jobs/' + response.id"
+    until: "return response.status === 'COMPLETED'"
+    failed: "return response.status === 'FAILED'"
+    # A FAILURE SAYS WHERE IT GOT TO. A step over many files that gives up after its last
+    # attempt is otherwise indistinguishable from one that never started, and the useful fact is
+    # which file it was on.
+    message: >-
+      return response.error || (() => {
+        const p = response.progress;
+        return 'cover ' + response.status + (p ? ` at ${p.done}/${p.of}: ${p.what}` : '');
+      })()
+    intervalMs: 2000
+    maxAttempts: 300

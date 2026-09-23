@@ -1,0 +1,14 @@
+- emit: entries
+  value: "return (response.result || {}).entries || []"
+
+# READ AND UNREAD ARE SEPARATE ON PURPOSE. A file whose subject was found can be filed; one
+# whose subject was not is not a failure and is not an empty answer, it is work for a reader of
+# another kind or for a person. Kept apart so a caller cannot treat the second as the first.
+- emit: read
+  value: "return ((response.result || {}).entries || []).filter(e => e && e.subject)"
+
+- emit: unread
+  value: "return ((response.result || {}).entries || []).filter(e => !e || !e.subject)"
+
+- emit: total
+  value: "return ((response.result || {}).entries || []).length"

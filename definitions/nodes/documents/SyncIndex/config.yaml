@@ -1,0 +1,21 @@
+configSchema:
+  type: object
+  required: [index, documents]
+  properties:
+    index:
+      type: string
+      title: Index
+      description: >-
+        The index's key: the address of what owns it, e.g. a fund pack's folder
+        s3://bucket/funds/ROKOS FUND/
+      default: ""
+      "ui:field": template
+    documents:
+      type: string
+      title: Documents
+      description: >-
+        Every document the index holds now, as a list of ids, e.g. return
+        row.content.documents.map(d => d.universal_id). An empty list clears the index.
+      default: ""
+      "ui:field": template
+"ui:order": [index, documents]

@@ -17,6 +17,12 @@ call: &call
     attempts: 3
     backoff: exponential
     on: [429, 500, 502, 503, 504]
+  # ONE SESSION AT A TIME: the plan runs one browser session, and a second fetch started
+  # while one is open is answered 429 (three product reads at once, 2026-09-09: two failed
+  # after their three tries, because a second of backoff is nothing beside a twenty-second
+  # scrape). Declared here, once, so every caller of every node in the package queues
+  # behind the open session instead of being refused.
+  concurrency: 1
 
 # HOW A JOB ENDS, shared by every endpoint here.
 #

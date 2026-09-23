@@ -3,8 +3,6 @@ testData:
     model: gpt-5.6-terra
     instructions: Extract the person's contact details from the provided text.
     schemaName: contact
-
-  inputs:
     content: "Hi, I'm Jane Doe — you can reach me at jane@example.com or on +1-555-0142."
     schema:
       type: object
@@ -14,6 +12,9 @@ testData:
         name: { type: string }
         email: { type: string }
         phone: { type: string }
+
+  inputs:
+    signal: {}
 
   expect:
     # Proves the schema was actually enforced, not just that something came back.

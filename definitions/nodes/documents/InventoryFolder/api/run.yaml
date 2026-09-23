@@ -1,0 +1,29 @@
+- name: job
+  method: POST
+  url: "return scope.engineUrl + '/documents/inventory'"
+  transport: json
+
+  body:
+    # The listing's own shape becomes the service's: downloadUrl to file_url, key to file_name.
+    # A JSON string in config, or the array itself when wired.
+    files: >-
+      return (() => {
+        const raw = config.files;
+        const list = Array.isArray(raw) ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : []);
+        return list.map(f => ({ file_url: f.downloadUrl || f.presignedUrl || f.url || f.file_url, file_name: f.key || f.name || f.file_name || '', size: f.size }));
+      })()
+
+  timeoutMs: 60000
+
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"
+
+  # A hundred files at a second or two each: 3s × 300 is fifteen minutes of patience.
+  poll:
+    url: "return scope.engineUrl + '/documents/jobs/' + response.id"
+    until: "return response.status === 'COMPLETED'"
+    failed: "return response.status === 'FAILED'"
+    message: "return response.error || ('inventory ' + response.status)"
+    intervalMs: 3000
+    maxAttempts: 300

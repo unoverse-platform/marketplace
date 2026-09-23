@@ -1,0 +1,31 @@
+configSchema:
+  type: object
+  required: [fileUrl]
+  properties:
+    fileUrl:
+      type: string
+      title: File URL
+      description: >-
+        A URL the service can fetch the file from, usually a presigned link wired from an upstream
+        file node, e.g. return signal.file.downloadUrl
+      default: ""
+      "ui:field": template
+    fileName:
+      type: string
+      title: File Name
+      description: >-
+        The name with its extension, e.g. memorandum.pdf. The kind is read from the bytes, the name
+        is for the filename dates and a better title.
+      default: ""
+      "ui:field": template
+    includeFigures:
+      type: boolean
+      title: Include figures
+      description: Render every figure as a PNG into the reply. Off for a text-and-tables read, which is smaller and faster.
+      default: true
+    ocr:
+      type: boolean
+      title: OCR scanned pages
+      description: Run OCR on pages with no text layer. Off to read only what the file already says.
+      default: true
+"ui:order": [fileUrl, fileName, includeFigures, ocr]

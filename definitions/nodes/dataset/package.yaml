@@ -1,0 +1,32 @@
+# DATASET — the table an object owns (docs/unoverse/data/objects/dataset.md). An object that
+# holds many small facts read together, rather than one row read alone, declares its columns and
+# the platform makes it a real table: real types, real indexes, and access the database enforces.
+#
+# TWO DOORS, two nodes. Rows in (DatasetRecord), rows out (DatasetQuery). Neither can create or
+# alter a table: structure changes only through a migration generated from the declaration and
+# approved by a person, and the role this runs as has no permission to do otherwise.
+#
+# THE HOST IS THE ENGINE, at loopback, as the documents package explains: a node's call must be
+# https or loopback, and the engine holds what the database's address is so no node and no file
+# does.
+name: dataset
+displayName: Dataset
+description: >-
+  Put rows into the table an object owns, and read them back: filtered, limited, and summed only
+  within one unit
+version: 0.1.0
+category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Write a read's rows, replacing what the same document wrote last time
+  - Read rows back filtered by any declared column, by value, by list or by range
+  - Sum and rank, always grouped by unit so unlike figures are never added together
+  - Every column checked against the object's own declaration, so a name is never taken from a caller
+
+allowedHosts:
+  - 127.0.0.1
+
+requires:
+  executorVersion: ">=1.6.0"
+  transport: [json]

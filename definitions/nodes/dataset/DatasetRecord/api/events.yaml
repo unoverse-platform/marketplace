@@ -1,0 +1,4 @@
+- emit: written
+  value: "return (response || {}).written || 0"
+- emit: removed
+  value: "return (response || {}).removed || 0"

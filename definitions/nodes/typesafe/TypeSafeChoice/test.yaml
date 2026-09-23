@@ -1,0 +1,21 @@
+# Asserts the SHAPE, not the verdict: the choice is one of the offered keys, the
+# probabilities cover every key and sum to 1, and confidence is a fraction.
+
+testData:
+  config:
+    state: "My card was charged twice for the same order and I want the second charge refunded."
+    instructions: Which team should handle this message?
+    options:
+      billing: Charges, refunds, invoices and payment methods
+      shipping: Where an order is, delivery dates, damaged parcels
+      account: Sign-in, password and profile problems
+    model: jev-latest
+  inputs:
+    signal: {}
+  expect:
+    choice: "return ['billing', 'shipping', 'account'].includes(output.choice)"
+    probabilities: >-
+      return Object.keys(output.probabilities).length === 3
+        && Math.abs(Object.values(output.probabilities).reduce((a, b) => a + b, 0) - 1) < 0.01
+    confidence: "return output.confidence >= 0 && output.confidence <= 1"
+    usage: "return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'"

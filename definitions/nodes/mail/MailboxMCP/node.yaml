@@ -1,0 +1,45 @@
+type: MailboxMCP
+# Every call settles and there is no CONTINUE port: a PromiseNode.
+kind: PromiseNode
+
+name: Mailbox
+category: Communication
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+# Drawn as a service node: it is ATTACHED to an Agent over a service edge, never wired in
+# sequence, so the compact card is the honest shape.
+template: service
+
+description: >-
+  Give an Agent one inbox as tools: list its threads, read one, reply in it, send a new
+  message, keep a draft
+
+whenToUse: >-
+  Let an Agent work a mailbox: see the conversations waiting in one inbox, read a thread in
+  full, answer it so the reply lands in the same conversation, start a new message, or keep a
+  draft for a person to send. Pick it for an Agent that manages email on the inbox's behalf. It
+  works one inbox, the one its Mailbox credential names, and never another. Attach by a service edge to
+  the Agent; it is not a data-flow step.
+
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: the mailbox changes, and reply and send are side effects a reuse would skip.
+  #
+  # `emitsExternally` is deliberately NOT declared: the engine withholds an emitting NODE on a
+  # test run, but a tool an Agent calls over a service edge is not a node run, so declaring it
+  # here would claim a control that does not act. A test run of an Agent with this node attached
+  # can send a real reply. That gap is named in docs/unoverse/mail/README.md.
+  cacheable: false
+
+# THE PANEL'S TAB (owner ruling 2026-09-20): a person's face on this node, a tab beside
+# Configuration and Debug. `mailbox` is the shared marketplace component
+# (design/marketplace/components/mailbox); the tab RUNS this node and draws what its
+# `overview` output emits, so the screen and a workflow step read the same thing through the
+# same run and the same events table. Settings stay on the Configuration tab.
+menu:
+  - label: Mailbox
+    component: mailbox
+    output: overview

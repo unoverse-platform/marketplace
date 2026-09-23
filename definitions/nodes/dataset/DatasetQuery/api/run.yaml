@@ -1,0 +1,20 @@
+- name: rows
+  method: POST
+  url: "return scope.engineUrl + '/dataset/query'"
+  transport: json
+  body:
+    object: "{{ config.object }}"
+    org: "{{ config.org }}"
+    of: "{{ config.of }}"
+    where: >-
+      return (() => { const r = config.where; return Array.isArray(r) ? r : (String(r || '').trim() ? JSON.parse(String(r)) : []); })()
+    groupBy: >-
+      return (() => { const r = config.groupBy; return Array.isArray(r) ? r : (String(r || '').trim() ? JSON.parse(String(r)) : []); })()
+    sum: "{{ config.sum }}"
+    orderBy: "{{ config.orderBy }}"
+    descending: "return config.descending !== false"
+    limit: "return Number(config.limit || 200)"
+  timeoutMs: 30000
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

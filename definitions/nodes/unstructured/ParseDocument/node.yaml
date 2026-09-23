@@ -34,3 +34,7 @@ capabilities:
   cacheable:
     ignore: [fileUrl]
     key: [etag]
+    # The same file parsed by newer code is a different parse, so the service's version joins the
+    # key. Wider than this node strictly needs (it covers the doors too, which no parse uses),
+    # and that is the safe direction: it forgets more than it had to, never less.
+    answeredBy: documents

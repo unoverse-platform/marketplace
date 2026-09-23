@@ -10,11 +10,8 @@
 
 - emit: count
   from: response
-  value: >-
-    return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
-      .filter(o => o.Key && !String(o.Key).endsWith('/'))
-      .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
-      .filter(o => !(config.fileExtensions || []).length
-        || (config.fileExtensions || []).map(e => String(e).toLowerCase())
-             .includes(String(o.Key).split('.').at(-1).toLowerCase()))
-      .length
+  value: { $ref: files#count }
+
+- emit: root
+  from: response
+  value: { $ref: files#root }

@@ -1,0 +1,49 @@
+# THE ROWS ON THE OTHER END OF A NAMED LINE (docs/unoverse/data/objects/relationships-and-labels.md).
+# Spatial Query finds rows by meaning and Spatial Detail opens one by id; neither can follow a
+# line that was drawn between two rows. This node does that one thing: hand it a row and the name
+# of a line, and it returns the rows at the other end of it.
+#
+# WHY IT EXISTS (measured 2026-09-22). A fund is drawn `managedBy` its manager, so a fund opened
+# names its manager. A manager opened named nothing: its funds are the other end of a line it does
+# not draw. The line was in the database, both directions were queryable, and the question "which
+# funds does this manager run?" still had no answer, because no node could ask it.
+#
+# A LINE HAS A DIRECTION AND THAT IS PART OF WHAT IT MEANS. `out` are the rows this row points at;
+# `in` are the rows pointing at it. They are never mixed: a fund managedBy a manager and a manager
+# with a fund pointing at it are one line read from its two ends, and flattening them would say
+# the manager is managed by the fund.
+
+type: SpatialLinked
+
+kind: PromiseNode
+
+name: Spatial Linked
+
+category: Search
+
+color: "#8b5cf6"
+
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Follow one named line from a row of the platform knowledge base and return the rows at its
+  other end
+
+whenToUse: >-
+  Answer a question about what a row is joined to, when the join is a line somebody drew and not
+  a matter of meaning: which funds a manager runs, which documents replace which, what a deal was
+  made from. Hand it a universal id and the name of the line, and it returns the rows on the other
+  end with their titles and summaries. Reach for Spatial Query instead when the connection is
+  semantic rather than drawn, and for Spatial Detail when you already hold the id of the one row
+  you want opened in full.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md 9.13). The same answer as the rest of the package: it
+# reads the platform's OWN knowledge base, and what a guest may reach is decided at the trigger's
+# publicEntry toggle.
+auth:
+  required: false
+
+capabilities:
+  # Never cacheable: a line is drawn when either end is saved, so a cached answer would report a
+  # row as unconnected moments after it was joined.
+  cacheable: false

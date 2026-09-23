@@ -1,0 +1,39 @@
+# Both inputs are WIRED: the caller knows the question and where it is standing.
+inputs:
+  - name: question
+    type: string
+    description: The one question to answer
+
+  - name: ids
+    type: string
+    description: The ids to start from, comma-separated (one to five), such as the row the caller holds
+
+outputs:
+  - name: answer
+    type: string
+    description: The answer, or null when the walk found none
+
+  - name: sources
+    type: array
+    description: What the answer rests on, each with its id, its pages and the exact words
+
+  - name: path
+    type: array
+    description: Every turn in order, what was opened, what was chosen next and why. The lineage of the answer
+
+  - name: caveat
+    type: string
+    description: When another document may give a different answer, which one and what may differ; null when none may
+
+  - name: stopped
+    type: string
+    description: Why the walk ended, until (answered or gave up), maxTurns or stuck
+
+  - name: usage
+    type: object
+    description: Token usage over every turn
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API

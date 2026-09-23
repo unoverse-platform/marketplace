@@ -69,7 +69,7 @@ children:
         action:
           type: setValue
           values:
-            - key: step
+            - key: state
               value: detail
         style:
           display: inline-flex

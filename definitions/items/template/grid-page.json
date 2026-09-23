@@ -1,7 +1,7 @@
 {
   "kind": "template",
   "name": "grid-page",
-  "fingerprint": "9d285cc02e8d98a8",
+  "fingerprint": "8ffee6136bfc9f84",
   "bundle": "design-system",
   "title": "Browse Grid",
   "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -50,7 +50,8 @@
                   "where": {
                     "field": "state",
                     "eq": "grid"
-                  }
+                  },
+                  "limit": 6
                 }
               }
             ]
@@ -92,7 +93,7 @@
         {
           "kind": "director",
           "face": "grid",
-          "rules": "The items most relevant to the user, strongest matches first.",
+          "pick": 6,
           "preview": [
             "card",
             "card",
@@ -131,29 +132,55 @@
       },
       "children": [
         {
-          "type": "Box",
-          "style": {
-            "width": "full",
-            "container": "inline-size"
-          },
-          "children": [
-            {
+          "type": "Switch",
+          "on": "state",
+          "cases": {
+            "grid": {
               "type": "Box",
               "style": {
-                "columns": {
-                  "mobile": "1",
-                  "tablet": "2",
-                  "desktop": "3",
-                  "full": "4"
-                },
-                "gap": "4",
                 "width": "full",
-                "padding": [
-                  "4",
-                  "0",
-                  "0",
-                  "0"
-                ]
+                "container": "inline-size"
+              },
+              "children": [
+                {
+                  "type": "Box",
+                  "style": {
+                    "columns": {
+                      "mobile": "1",
+                      "tablet": "2",
+                      "desktop": "3",
+                      "full": "4"
+                    },
+                    "gap": "4",
+                    "width": "full",
+                    "padding": [
+                      "4",
+                      "0",
+                      "0",
+                      "0"
+                    ]
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "grid"
+                        },
+                        "limit": 6
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "page": {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "width": "full"
               },
               "children": [
                 {
@@ -162,13 +189,55 @@
                     "from": "all",
                     "where": {
                       "field": "state",
-                      "eq": "grid"
-                    }
+                      "eq": "page"
+                    },
+                    "limit": 1
                   }
                 }
               ]
+            },
+            "default": {
+              "type": "Box",
+              "style": {
+                "width": "full",
+                "container": "inline-size"
+              },
+              "children": [
+                {
+                  "type": "Box",
+                  "style": {
+                    "columns": {
+                      "mobile": "1",
+                      "tablet": "2",
+                      "desktop": "3",
+                      "full": "4"
+                    },
+                    "gap": "4",
+                    "width": "full",
+                    "padding": [
+                      "4",
+                      "0",
+                      "0",
+                      "0"
+                    ]
+                  },
+                  "children": [
+                    {
+                      "type": "ComponentSlot",
+                      "select": {
+                        "from": "all",
+                        "where": {
+                          "field": "state",
+                          "eq": "grid"
+                        },
+                        "limit": 6
+                      }
+                    }
+                  ]
+                }
+              ]
             }
-          ]
+          }
         }
       ]
     }

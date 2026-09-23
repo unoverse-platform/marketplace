@@ -1,0 +1,26 @@
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger to fire the node
+
+outputs:
+  - name: threads
+    type: array
+    description: The conversations, newest first
+  - name: text
+    type: string
+    description: The same, one line per thread, for a model to read
+  - name: count
+    type: number
+    description: How many threads came back
+  - name: overview
+    type: object
+    description: The inbox at a glance, for the Mailbox screen
+
+# THE INBOX IS THE CREDENTIAL: its address, name and account, set once on the credentials
+# screen. The node reads which inbox from here and never from its config.
+credentials:
+  - name: mailboxCredential
+    required: true
+    displayName: Mailbox

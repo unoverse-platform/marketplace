@@ -1,0 +1,173 @@
+{
+  "kind": "component",
+  "name": "agent-card",
+  "fingerprint": "633e1247cafae753",
+  "bundle": "design-system",
+  "title": "agent-card",
+  "description": "The face of a running Agent: its name, what it is doing, the steps of the run as they complete, and the result when it lands.",
+  "category": "Content",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "agent-card",
+    "category": "Content",
+    "nodeSize": {
+      "width": 520,
+      "height": 300
+    },
+    "description": "The face of a running Agent: its name, what it is doing, the steps of the run as they complete, and the result when it lands.",
+    "whenToUse": "Show that an Agent is working on the customer's request and what it found. The default face of a workflow task; an Agent whose result deserves its own component binds that component instead.",
+    "props": {
+      "name": {
+        "type": "string",
+        "description": "The Agent's name, from the task.",
+        "default": "Account Agent"
+      },
+      "message": {
+        "type": "string",
+        "description": "What the Agent is doing, in the customer's words, from the task.",
+        "default": "Looking at your account activity"
+      },
+      "status": {
+        "type": "string",
+        "description": "running, waiting, completed or failed. Resolved by the platform.",
+        "default": "running"
+      },
+      "current": {
+        "type": "string",
+        "description": "The step running now. Empty when none is.",
+        "default": "Fetching transactions"
+      },
+      "done": {
+        "type": "string",
+        "description": "Progress already formatted, for example '2 of 4'. Empty until a step completes.",
+        "default": "1 of 4"
+      },
+      "steps": {
+        "type": "array",
+        "description": "The run's steps in order. Each entry carries label (the node's name) and mark (a glyph the producer chose for its state: done, running, waiting, failed).",
+        "default": [
+          {
+            "label": "Input Trigger",
+            "mark": "✓"
+          },
+          {
+            "label": "Fetching transactions",
+            "mark": "●"
+          },
+          {
+            "label": "Building the query",
+            "mark": "○"
+          },
+          {
+            "label": "Writing the answer",
+            "mark": "○"
+          }
+        ]
+      },
+      "result": {
+        "type": "string",
+        "description": "The result, as markdown, once the run completes. Empty until then. The card does not draw it: the result is the caller's, and the run's own component shows it.",
+        "default": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "width": "full",
+        "direction": "column",
+        "gap": "3",
+        "padding": "5",
+        "background": "surface.base",
+        "border": "subtle",
+        "radius": "lg",
+        "shadow": "sm"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "center",
+            "gap": "2"
+          },
+          "children": [
+            {
+              "type": "Text",
+              "bind": {
+                "value": "name"
+              },
+              "style": {
+                "font": "headline.sm",
+                "weight": "semibold",
+                "color": "text.primary"
+              }
+            },
+            {
+              "type": "Text",
+              "visibleWhen": "done",
+              "bind": {
+                "value": "done"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.tertiary"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "bind": {
+            "value": "message"
+          },
+          "style": {
+            "font": "body.sm",
+            "color": "text.secondary"
+          }
+        },
+        {
+          "type": "Each",
+          "bind": {
+            "items": "steps"
+          },
+          "style": {
+            "direction": "column",
+            "gap": "1",
+            "width": "full"
+          },
+          "item": {
+            "type": "Box",
+            "style": {
+              "direction": "row",
+              "align": "center",
+              "gap": "2"
+            },
+            "children": [
+              {
+                "type": "Text",
+                "bind": {
+                  "value": "mark"
+                },
+                "style": {
+                  "font": "body.sm",
+                  "color": "text.tertiary"
+                }
+              },
+              {
+                "type": "Text",
+                "bind": {
+                  "value": "label"
+                },
+                "style": {
+                  "font": "body.sm",
+                  "color": "text.secondary"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "kind": "component"
+  }
+}

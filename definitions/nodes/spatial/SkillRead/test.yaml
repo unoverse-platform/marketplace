@@ -1,0 +1,7 @@
+# Runs against the platform's own skill library: the marketplace's shipped skill, read in full.
+testData:
+  config:
+    name: complaints-handling
+  expect:
+    skill: "return output.skill && typeof output.skill === 'object' && !!output.skill.name"
+    text: "return output.text.length > 0"

@@ -1,0 +1,33 @@
+configSchema:
+  type: object
+  required: [state, questions]
+  properties:
+    state:
+      type: string
+      title: State
+      description: >-
+        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or
+        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads
+        better than prose when the data has named fields.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    questions:
+      type: object
+      title: Questions
+      description: >-
+        Question key to question, as JSON. Each has a type of choice, score or noul,
+        instructions, and criteria: an option map for a choice, an ordered list of levels
+        for a score, and an optional true and false description for a noul.
+      default: {}
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    model:
+      type: string
+      title: Model
+      description: jev-latest is the stable release; jev-preview is the newest build.
+      enum: [jev-latest, jev-preview]
+      default: jev-latest
+"ui:order": [state, questions, model]

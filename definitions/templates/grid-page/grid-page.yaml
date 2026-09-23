@@ -1,5 +1,5 @@
 unoverse: "1.0"
-# THE FIRST SHELF TEMPLATE (docs/unoverse/UNOVERSE_TEMPLATE_MODEL.md §9b, the
+# THE FIRST SHELF TEMPLATE (docs/unoverse/design/models/UNOVERSE_TEMPLATE_MODEL.md §9b, the
 # three-word grammar ruled 2026-08-29). TWO STATES, one template: browse and detail
 # are the same template's life. States activate by the EXISTING name-match reaction
 # — an interface arriving (or a held one re-facing on the guest's tap) in a state

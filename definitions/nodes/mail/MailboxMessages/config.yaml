@@ -1,0 +1,19 @@
+# Per-step choices only. Which inbox is the credential's, never a field here.
+configSchema:
+  type: object
+  required: []
+  properties:
+    since:
+      type: string
+      title: Since
+      description: "Optional: only threads with a message after this time, as an ISO date. Empty reads the newest regardless"
+      default: ""
+      "ui:field": template
+    limit:
+      type: number
+      title: Threads
+      description: How many threads to return, newest first
+      default: 20
+      minimum: 1
+      maximum: 200
+"ui:order": [since, limit]

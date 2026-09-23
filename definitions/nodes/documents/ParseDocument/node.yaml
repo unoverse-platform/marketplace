@@ -1,0 +1,45 @@
+type: ParseDocument
+kind: PromiseNode
+
+name: Parse Document
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Read a file into its structure. Text in order, tables as rows, figures, lists, dates, and
+  where each sits on the page
+
+# Outcome first, disqualify by PROPERTY, never name another node. The property that sets this
+# parser apart is its OUTPUT SHAPE: one typed structure with tables as rows and provenance to the
+# bounding box, rather than one markdown string.
+whenToUse: >-
+  Read a document you already hold into a structure a pipeline or an Agent can work with: the
+  text in reading order, every table as header and rows with numbers and units parsed, every
+  figure as an image with its caption, every ordered list with its steps, the dates the document
+  carries and where it was found, and for each of those the page and box it came from. Best when
+  something downstream needs the TABLES or the FIGURES as things of their own rather than prose,
+  or needs to point back at the exact place a figure came from. It only reads a file that already
+  exists, on the platform's own service, and never sends the file to a third party.
+
+auth:
+  required: false
+
+capabilities:
+  # Parsing is deterministic for a file, so cache by CONTENT identity, never by URL: a presigned
+  # link is a new signature every run over the same bytes. The etag an upstream file node delivers
+  # is the identity; with none, the run is not cached.
+  #
+  # AND FOR A GIVEN FILE IT IS THE SERVICE'S CODE THAT DECIDES (2026-09-21). Keyed on the etag
+  # alone, this node answers the same way for ever: the file has not changed, so the memory
+  # stands, whatever the parser now does. Measured the day it was found: the parser was fixed so
+  # that a table is not named after a date, the service was reloaded, the row was correctly read
+  # again, and every document came back with the old names because the parse itself was replayed
+  # from a trace. The run was clean and the fix reached nothing.
+  #
+  # `answeredBy` was built for exactly this a day earlier and three of this package's four nodes
+  # declare it. This one, which is the node that parses, was missed.
+  cacheable:
+    ignore: [fileUrl]
+    key: [etag]
+    answeredBy: documents

@@ -1,0 +1,6 @@
+# No options: the whole node is a function of the Mailbox credential attached to it.
+configSchema:
+  type: object
+  required: []
+  properties: {}
+"ui:order": []

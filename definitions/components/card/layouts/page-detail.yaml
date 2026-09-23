@@ -92,7 +92,7 @@ children:
         action:
           type: setValue
           values:
-            - key: step
+            - key: state
               value: thanks
         visibleWhen: callToAction
         style:

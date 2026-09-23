@@ -1,0 +1,132 @@
+configSchema:
+  type: object
+  required: [model, voice]
+  properties:
+    # Named in config, as the other voice node names its model, because the usage record reads the
+    # model from here: GPT-Live's events never carry it, and an unnamed model cannot be priced.
+    model:
+      type: string
+      title: Model
+      description: The live voice model.
+      enum: [gpt-live-1]
+      enumNames: [GPT-Live 1]
+      default: gpt-live-1
+    systemPrompt:
+      type: string
+      title: System Prompt
+      description: How the model should behave on the call. Shared blocks work here.
+      default: ""
+      "ui:field": template
+    voice:
+      type: string
+      title: Voice
+      description: Which voice the model speaks with. Fixed for the length of the call.
+      # GPT-Live's own twelve, by their API names (live-conversations guide). The Realtime voices
+      # are a different set and are not offered here.
+      enum: [gleam, meridian, quartz, ripple, vesper, willow, stone, delta, cinder, beacon, bossa, tempo]
+      enumNames:
+        - Gleam (North American, feminine)
+        - Meridian (North American, masculine)
+        - Quartz (Australian, feminine)
+        - Ripple (Australian, masculine)
+        - Vesper (British, masculine)
+        - Willow (Irish, feminine)
+        - Stone (Irish, masculine)
+        - Delta (Southern U.S., feminine)
+        - Cinder (Southern U.S., masculine)
+        - Beacon (Filipino, masculine)
+        - Bossa (Brazilian Portuguese, feminine)
+        - Tempo (Brazilian Portuguese, masculine)
+      default: gleam
+    # No response.create exists to make GPT-Live speak first. The vendor's way is an instruction
+    # telling it to greet now, so this field is worded as that instruction rather than as a user line.
+    initialRequest:
+      type: string
+      title: Opening
+      description: >-
+        What the model should say first, the moment the call opens. Leave empty and it waits for
+        the person.
+      default: ""
+      "ui:field": template
+    conversationHistory:
+      type: object
+      title: Conversation History
+      description: >-
+        Prior turns to start from, as an array of { role, content }. Up to 128 messages and 8,192
+        tokens, text only.
+      "ui:field": template
+    # THE LANE THIS CONVERSATION TRAVELS ON (DECLARATIVE_NODES.md §14).
+    #
+    # Browser is the ordinary case and needs nothing: the page captures the microphone and plays
+    # the reply back. Every other value is OWNED BY AN ATTACHMENT — clip a Twilio Phone Line onto
+    # this node and it sets this field to `twilio` and greys it out here, because one value has
+    # one owner.
+    #
+    # It is a plain config field rather than anything new, which is the point: this node does not
+    # know what a phone is. It reads `lane` the way it reads `voice`, and the runtime picks the
+    # audio lane that name refers to (VOICE_STREAMING_GUIDE.md, "The Phone Lane"). A sample rate
+    # is not here for the same reason: the lane's rate is a fact of the lane, never a choice.
+    # WHO THE VOICE HANDS WORK TO. GPT-Live talks and listens; it does not think, so every
+    # question it cannot answer goes to a second model. This says whose.
+    #
+    # OUR AGENT (the vendor's `client` mode) hands off to whatever `task` is wired to on the
+    # canvas: your own agent, your own tools, your own prompt, and you see every hand-off. The
+    # cost is that the vendor's hand-off event carries NO task text, only an id, so what the
+    # backend receives is reconstructed from the transcript.
+    #
+    # OPENAI (the vendor's `responses` mode) hands off to a model OpenAI runs, which can call
+    # FUNCTION TOOLS. So a hand-off arrives named and typed, `record_field { field, value }`
+    # rather than a guess at what was meant, and our own runtime still executes it. The cost is
+    # that the canvas agent is no longer the backend: what it could do has to be declared below
+    # as tools instead.
+    delegation:
+      type: string
+      title: Hands work to
+      description: Who answers what the voice cannot.
+      enum: [client, responses]
+      enumNames: ["Our agent, on the canvas", "OpenAI, with the tools below"]
+      default: client
+
+    # THE THINKING MODEL, when OpenAI is doing the thinking. Not the live model: that one talks,
+    # this one reasons, and they are chosen separately.
+    backendModel:
+      type: string
+      title: Thinking model
+      description: The model behind the voice.
+      enum: [gpt-5.6-terra, gpt-5.6-luna]
+      enumNames: [Terra, Luna]
+      default: gpt-5.6-terra
+      ui:dependencies:
+        delegation: responses
+
+    backendPrompt:
+      type: string
+      title: Thinking model's instructions
+      description: How the model behind the voice should work.
+      default: ""
+      ui:field: template
+      ui:dependencies:
+        delegation: responses
+
+    # WHAT IT MAY DO, as function definitions. Our own runtime executes every one of them, so
+    # this is not a way to give OpenAI reach: it is the list of things the voice can ask FOR,
+    # and a name that is not here cannot be called.
+    backendTools:
+      type: object
+      title: Tools
+      description: Function definitions the thinking model may call.
+      ui:field: template
+      ui:dependencies:
+        delegation: responses
+
+    lane:
+      type: string
+      title: Lane
+      description: >-
+        Where the audio comes from and goes to. Browser is this page's microphone. Clip a phone
+        line onto this node to put the conversation on a real number instead.
+      enum: [browser, twilio]
+      enumNames: [Browser, Twilio phone line]
+      default: browser
+"ui:order": [model, systemPrompt, voice, initialRequest, conversationHistory,
+             delegation, backendModel, backendPrompt, backendTools, lane]

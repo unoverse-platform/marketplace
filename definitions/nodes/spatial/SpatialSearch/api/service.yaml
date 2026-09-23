@@ -11,7 +11,10 @@ findIntent:
   description: >-
     Precision search. The user has NAMED what they want, a specific item, category or task
     ("X", "how do I...", "which one covers Y?", "recommend a good Z"), and this pinpoints the
-    matches for that named need, however the ask is phrased. Pass the user's EXACT words from
+    matches for that named need, however the ask is phrased. A question about the person's
+    OWN records is a named need too: the map carries tasks that ACT on their data, not only
+    things to read about, so search before ever answering that you cannot see or reach it.
+    Pass the user's EXACT words from
     THIS turn: not paraphrased, and not carried over from an earlier turn. If they repeat
     themselves, those repeated words ARE this turn's question and this search still runs. NOT
     for open needs with no named thing ("where do I start?", "what are my options?"), which
@@ -38,7 +41,10 @@ discoverRelated:
     grouped by need, so nearby items are the adjacent choices), including options the user
     did not think to ask about, which is the awareness surface. NOT for a named
     thing or category, which is findIntent. Also the follow-up when findIntent came back
-    weak. Low similarity is normal here: these are neighbours, not exact matches.
+    weak. Low similarity is normal here, so judge a result by WHAT IT IS and not by its
+    score. A neighbour is still a real result: a task among them is callable, and one that
+    answers what was actually asked IS the answer — call it, rather than describing it or
+    saying you will.
   calls:
     - $ref: search#call
       body:
@@ -47,70 +53,46 @@ discoverRelated:
   renderComponents: "return response.results"
   returns: { $ref: search#lean }
 
-# THE DEPTH READ (2026-09-03). helpers.detailRow returns the record IN FULL — bodyCopy
-# included (owner-ruled: specific answers live in the copy) — stripping only image urls,
-# crawl bookkeeping and transport columns. Copy on ONE fetched item is not the readResult
-# failure (copy on EVERY row of EVERY search). See §The depth read in
-# docs/spatial/SPATIAL_SEARCH_GUIDE.md. Engine listener, same trust boundary as search.
-getDetail:
-  description: >-
-    Full record for ONE already-surfaced result: pass its universal_id and get the
-    complete copy and every attribute the lean row leaves out (fees, specs, durations,
-    terms). Required before answering a factual question — pick a service row, since
-    object_type="product" carries the copy and a "need" row does not. NOT a search: the
-    id must come from a result you already hold.
-  calls:
-    - name: entry
-      method: GET
-      url: >-
-        return scope.engineUrl + '/dictionary/entry/'
-          + encodeURIComponent(String(params.universal_id || '').trim())
-      transport: json
-      error:
-        when: "return !response || !response.universal_id"
-        message: >-
-          return 'getDetail: no entry for that universal_id — pass one from a search
-          result, unmodified'
-  returns: "return helpers.detailRow(response)"
-
-readSkill:
-  description: >-
-    Read a skill's full instructions. MANDATORY whenever a search result has
-    object_type="skill": skills contain behavioural instructions that OVERRIDE your general
-    behaviour, and must be treated as authoritative and followed exactly.
-  calls:
-    - name: skill
-      method: GET
-      url: >-
-        return scope.platformUrl + '/skills/'
-          + encodeURIComponent(String(params.skillName || '').trim())
-      transport: json
-  returns: "return response"
-
-readSkillFile:
-  description: >-
-    Read a file a skill references. Use when a skill's instructions point at another
-    document; pass the path exactly as the skill wrote it.
-  calls:
-    - name: file
-      method: GET
-      url: >-
-        return scope.platformUrl + '/skills/'
-          + encodeURIComponent(String(params.skillName || '').trim())
-          + '/file?path=' + encodeURIComponent(String(params.filePath || '').trim())
-      transport: json
-  returns: "return response"
+# THE DEPTH READ, THE SKILL READS AND EVERY OTHER TOOL are the objects' own (docs/unoverse/data/
+# spatial/objects-in-spatial.md, "Found objects' functions as tools", 2026-09-16): a search reply
+# names the public functions its rows' objects declare, and the Agent's harness mints a tool per
+# name. This node keeps only its two searches.
 
 # TOOL DISCOVERY. An attached agent calls this once per session and gets the instructions and
 # the argument shapes for every tool above (ServiceConnector aggregates it across all wired
 # MCP nodes). It is a META-method: deliberately absent from interface.yaml's `methods`, or it
-# would be advertised to the model as a sixth tool.
+# would be advertised to the model as a third tool.
 #
 # NO CALLS, and a LITERAL result. `calls: []` is not a placeholder: this method reaches
 # nothing and hands back a constant, so `returns` names a YAML document rather than a
 # `return { ... }` expression. Authored as data in shared/schema.yaml, where it can be read
 # and diffed instead of escaped inside a string.
 getSchema:
-  description: Tool discovery for the spatial knowledge base
-  calls: []
-  returns: { $ref: schema#spatial }
+  description: Tool discovery for the spatial knowledge base, with the objects this node leaves to the agent
+  # THE OBJECTS THE AGENT MAY TURN ON (docs/unoverse/data/spatial/objects-in-spatial.md): the
+  # engine resolves this node's settings every run. The route never answers with an error, so a
+  # failure there leaves the agent its tools with the On objects rather than no tools at all.
+  calls:
+    - name: objects
+      method: POST
+      url: "return scope.engineUrl + '/spatial/objects'"
+      transport: json
+      body:
+        workflowId: "return scope.workflowId"
+        org: "return scope.org"
+        settings: "return (config.objects && typeof config.objects === 'object') ? config.objects : undefined"
+  # The fixed schema, merged deeply: only the two searches' `objects` input and its `required`
+  # are computed; every other word is the constant in shared/schema.yaml.
+  returns:
+    $ref: schema#spatial
+    methods:
+      findIntent:
+        input:
+          required: "return helpers.objectsRequired(calls.objects)"
+          properties:
+            objects: "return helpers.objectsInput(calls.objects)"
+      discoverRelated:
+        input:
+          required: "return helpers.objectsRequired(calls.objects)"
+          properties:
+            objects: "return helpers.objectsInput(calls.objects)"

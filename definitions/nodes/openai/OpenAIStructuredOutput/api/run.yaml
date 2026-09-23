@@ -11,31 +11,40 @@
   # anything else is stringified. Templates interpolate values, they cannot branch on
   # structure. Transcribed from src/OpenAIStructuredOutput/service/structuredOutput.ts.
   #
-  # Note both `content` and `schema` come from `signal`, not `config`: they are WIRED
-  # inputs, which is what lets one node serve every extraction shape.
+  # `content` and `schema` are CONFIG, resolved by the engine from the one `signal` input
+  # before this runs, so the call always has both (signal-routing.md, "Two inputs never
+  # arrive together"). One node serves every extraction shape because the schema is a field.
+  #
+  # A CALL CANNOT RUN AWAY (owner, 2026-09-12, after a stalled schema billed about $100 of
+  # output in two days): `max_output_tokens` is a ceiling, 16000, over twice the largest
+  # answer any extraction has written (7000). A stuck model stops there, its reply says
+  # "incomplete" and carries its usage, so the spend is also in the token log; a call cut
+  # off by the timeout instead is billed and never counted.
   body: >-
     return {
       model: config.model,
       instructions: config.instructions,
       input: [{
         role: 'user',
-        content: typeof signal.content === 'string'
-          ? signal.content
-          : (signal.content && signal.content.type === 'image' && signal.content.imageUrl
+        content: typeof config.content === 'string'
+          ? config.content
+          : (config.content && config.content.type === 'image' && config.content.imageUrl
               ? [
-                  { type: 'input_image', image_url: signal.content.imageUrl },
+                  { type: 'input_image', image_url: config.content.imageUrl },
                   { type: 'input_text',
                     text: 'Analyze this image and extract structured information. Image metadata: '
-                          + JSON.stringify((signal.content && signal.content.metadata) || {}) }
+                          + JSON.stringify((config.content && config.content.metadata) || {}) }
                 ]
-              : JSON.stringify(signal.content))
+              : JSON.stringify(config.content))
       }],
+      reasoning: { effort: config.reasoning || 'none' },
+      max_output_tokens: 16000,
       text: {
         format: {
           type: 'json_schema',
           name: config.schemaName,
           strict: true,
-          schema: signal.schema
+          schema: config.schema
         },
         verbosity: 'low'
       }

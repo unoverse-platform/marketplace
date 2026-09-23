@@ -1,0 +1,16 @@
+# One row per output connector, in interface.yaml's order.
+#
+# THE ROUTE GROUPS BY NAME AND DIRECTION, and this node asked for one name, so at most two groups
+# come back: the line drawn out and the line drawn in. The direction asked for picks one of them.
+# Matching on both is what keeps a manager's funds and a fund's manager apart when an object
+# happens to draw the same name at both ends.
+
+- emit: rows
+  value: >-
+    return ((response.lines || []).find(g => g.name === String(config.line || '').trim()
+      && g.direction === String(config.direction || 'in')) || {}).rows || []
+
+- emit: total
+  value: >-
+    return Number(((response.lines || []).find(g => g.name === String(config.line || '').trim()
+      && g.direction === String(config.direction || 'in')) || {}).total || 0)

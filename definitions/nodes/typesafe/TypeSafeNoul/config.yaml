@@ -1,0 +1,58 @@
+configSchema:
+  type: object
+  required: [state, instructions]
+  properties:
+    state:
+      type: string
+      title: State
+      description: >-
+        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or
+        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads
+        better than prose when the data has named fields.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    instructions:
+      type: string
+      title: Statement
+      description: The statement to test, as a question the state answers yes or no to. Shared blocks work here.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    describeCriteria:
+      type: boolean
+      title: Describe true and false
+      description: Spell out what counts as true and what counts as false, when the statement alone is ambiguous
+      default: false
+      "ui:widget": toggle
+    whenTrue:
+      type: string
+      title: True means
+      description: What a true answer looks like, in concrete terms
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { describeCriteria: true }
+    whenFalse:
+      type: string
+      title: False means
+      description: What a false answer looks like, in concrete terms
+      default: ""
+      "ui:field": template
+      "ui:dependencies": { describeCriteria: true }
+    threshold:
+      type: number
+      title: Threshold
+      description: The noul at or above which the statement is taken to hold
+      default: 0.5
+      minimum: 0
+      maximum: 1
+      step: 0.05
+    model:
+      type: string
+      title: Model
+      description: jev-latest is the stable release; jev-preview is the newest build.
+      enum: [jev-latest, jev-preview]
+      default: jev-latest
+"ui:order": [state, instructions, describeCriteria, whenTrue, whenFalse, threshold, model]

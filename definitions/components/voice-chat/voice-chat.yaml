@@ -28,6 +28,11 @@ props:
     description: "One line under the name, saying what the assistant is for."
     input: false
     default: Your AI Voice Assistant
+  lookupLabel:
+    type: string
+    description: "The line shown while the assistant is looking something up. Say where it looks, in the org's words."
+    input: false
+    default: Looking that up…
   orbSize:
     type: string
     description: "The orb's width in pixels."
@@ -39,6 +44,11 @@ props:
     input: false
     default: orb.ink-soft
     enum: [orb.ink-faint, orb.ink-soft, orb.ink, orb.brand]
+  portrait:
+    type: string
+    description: "One photo of the assistant, shown in every state. Empty means the built-in poses."
+    input: false
+    default: ""
 # THE STATE TREE (STATE MODEL v2): ONE public state — the single-state permanent
 # component (docs/design/03): it lives in a voice app's core, cannot leave it,
 # and apps never rearrange around it. The steps of the call NEST beneath it as
@@ -53,18 +63,6 @@ props:
 states:
   call:
     layout: layouts/call
-    on: callState
-    states:
-      idle:
-        layout: layouts/callState-idle
-      active:
-        layout: layouts/callState-active
-      listening:
-        layout: layouts/callState-listening
-      speaking:
-        layout: layouts/callState-speaking
-      thinking:
-        layout: layouts/callState-thinking
 root:
   type: Switch
   on: state

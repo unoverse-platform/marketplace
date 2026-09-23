@@ -1,0 +1,37 @@
+configSchema:
+  type: object
+  required: [object, of, rows]
+  properties:
+    object:
+      type: string
+      title: Object
+      description: Which object's table, by its name (the object must declare one in dataset.yaml)
+      default: ""
+      "ui:field": template
+    org:
+      type: string
+      title: Organisation
+      description: Whose rows these are. Set on every row and enforced by the database, never by the query
+      default: ""
+      "ui:field": template
+    of:
+      type: string
+      title: Of
+      description: The id of the row these belong to. Every row is deleted with it
+      default: ""
+      "ui:field": template
+    document:
+      type: string
+      title: Read from
+      description: >-
+        The id of the document these were read from. What this source wrote before is replaced;
+        leave it empty to replace everything this owner has.
+      default: ""
+      "ui:field": template
+    rows:
+      type: string
+      title: Rows
+      description: The rows as a JSON array, or wired, e.g. return signal.readings
+      default: "[]"
+      "ui:field": template
+"ui:order": [object, org, of, document, rows]

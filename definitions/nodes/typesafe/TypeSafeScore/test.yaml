@@ -1,0 +1,23 @@
+# Asserts the SHAPE, not the verdict: the score lies on the three-level scale, the
+# normalized score is a fraction, and the legend echoes three levels.
+
+testData:
+  config:
+    state: "Checkout fails with a 500 on every attempt since this morning; nobody can buy."
+    instructions: How severe is this bug report?
+    levels:
+      - Cosmetic; no impact to functionality
+      - A feature is broken or degraded, but a workaround exists
+      - Blocking; no workaround exists
+    model: jev-latest
+  inputs:
+    signal: {}
+  expect:
+    score: "return output.score >= 0 && output.score <= 2"
+    normalized: "return output.normalized >= 0 && output.normalized <= 1"
+    probabilities: >-
+      return Object.keys(output.probabilities).length === 3
+        && Math.abs(Object.values(output.probabilities).reduce((a, b) => a + b, 0) - 1) < 0.01
+    confidence: "return output.confidence >= 0 && output.confidence <= 1"
+    legend: "return Object.keys(output.legend).length === 3"
+    usage: "return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'"

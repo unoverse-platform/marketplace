@@ -8,11 +8,14 @@ outputs:
   - name: files
     type: array
     description: >-
-      One entry per file: key, size, lastModified, etag, bucket, a stable universalId, and
+      One entry per file: key, name, size, lastModified, etag, bucket, its s3:// address, a stable universalId, and
       presignedUrl when links were asked for.
   - name: count
     type: number
     description: How many files matched
+  - name: root
+    type: string
+    description: "The folder that was listed, as an address: s3://<bucket>/<prefix>"
 
 credentials:
   - name: awsCredential

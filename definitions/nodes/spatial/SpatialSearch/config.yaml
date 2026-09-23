@@ -69,48 +69,16 @@ configSchema:
       maximum: 0.9
       step: 0.05
 
-    # The six type filters, matching the Spatial view panel's vocabulary. Each maps to one
-    # flag on /spatial/search.
-    includeNeeds:
-      type: boolean
-      title: Include Needs
-      description: Fetch needs from results
-      default: false
-
-    includeImages:
-      type: boolean
-      title: Include Images
-      description: Fetch images from results
-      default: false
-
-    includeServices:
-      type: boolean
-      title: Include Services
-      description: Fetch services from results
-      default: false
-
-    includeActions:
-      type: boolean
-      title: Include Actions
-      description: Fetch actions from results
-      default: false
-
-    includeSkills:
-      type: boolean
-      title: Include Skills
-      # The one that defaults ON, matching the retired node. Skills carry behavioural
-      # instructions an agent is REQUIRED to follow, so losing them silently changes how the
-      # agent behaves rather than just what it finds.
-      description: Fetch skills (behavioural instructions)
-      default: true
-
-    includeMcps:
-      type: boolean
-      title: Include Apps
-      # "Apps", matching the view panel and the server, which folds object_type "mcp" and
-      # "component" into ONE Apps family (routes/dictionary/search.ts). The old "Include MCP"
-      # label named half of what the flag controls.
-      description: Fetch apps and MCP workflows from results
-      default: false
+    # WHICH OBJECTS A SEARCH INCLUDES (docs/unoverse/data/spatial/objects-in-spatial.md). One
+    # setting per object on the canvas's map, listed from the org's objects when the panel opens:
+    # off (never searched, never offered to the agent), on (always searched; the agent cannot
+    # turn it off), intelligent (the agent turns it on per search). An object with no setting
+    # is Intelligent. Replaced the six include switches on 2026-09-14.
+    objects:
+      type: object
+      title: Objects
+      description: Which kinds of thing this search includes, and which the agent decides.
+      default: {}
+      "ui:widget": spatialObjects
 "ui:order":
-  [maxResults, similarityThreshold, sourceId, includeNeeds, includeImages, includeServices, includeActions, includeSkills, includeMcps]
+  [maxResults, similarityThreshold, sourceId, objects]

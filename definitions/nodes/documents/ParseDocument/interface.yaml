@@ -1,0 +1,46 @@
+inputs:
+  - name: file
+    type: object
+    description: "The file: { downloadUrl, key, etag } as S3 File Content emits, or any object with a URL"
+    required: false
+
+outputs:
+  - name: document
+    type: object
+    description: title, pages, kind, scanned, dates found with where, the file's metadata, content hash, parser version
+  - name: text
+    type: string
+    description: The whole document as markdown in reading order, headings kept; a PDF's page by page, each opened by its own page number as <!-- page n -->
+  - name: sections
+    type: array
+    description: The heading tree, each with level, page range, and the ids of the tables and figures inside it
+  - name: tables
+    type: array
+    description: Every table, header and rows as written, cells parsed to numbers and units, the tidy form when clean, with page and box
+  - name: figures
+    type: array
+    description: Every figure with its caption, a PNG (base64) rendered from the page, and its page and box
+  - name: lists
+    type: array
+    description: Every ordered list, steps included, each item with its number, text, depth, page and box
+  - name: review
+    type: array
+    description: "Regions worth a vision read, each rendered from the page: tables that failed a check, then charts, capped per document (docs/unoverse/data/documents/review.md)"
+
+  - name: quality
+    type: object
+    description: OCR and table confidence, text density, warnings that say "distrust this"
+  - name: firstPages
+    type: string
+    description: The first two pages of the text, cut at the third page's mark (a file with no pages at 8000 characters), for a read that names the document without its whole text
+  - name: outline
+    type: array
+    description: "Every heading in order, each { id, page, title, firstWords }: what the document holds, for a read that names its sections"
+  - name: parts
+    type: object
+    description: "The tables and the meaningful figures, shaped as parts: { tables: [{ partId, title, caption, description, page, box, columns, rowCount, firstRows, stitchedFrom, checks, rowsFile, pictureFile }], figures: [{ partId, title, caption, description, kind, page, box, pictureFile }] }"
+  - name: files
+    type: array
+    description: "What to save of this reading, by name, never where: [{ name, contentType, text | base64 }], the text, the structure, each table's rows and each picture. A save step puts them where the caller keeps them"
+
+credentials: []

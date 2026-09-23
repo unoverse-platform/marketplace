@@ -68,6 +68,82 @@ prose:
   # (observed live 2026-08-14). Inheriting is also the correct answer everywhere else: bold
   # in body copy takes the body's colour, bold in a quote takes the quote's. Colour belongs
   # to the CONTEXT; an inline mark contributes weight.
+  # CITATIONS (docs/unoverse/data/objects/citations-in-answers.md): a `cite:` link is drawn as a
+  # small marker after the fact it supports; tapping it opens a pop-up with the quoted words, the
+  # document and the page, and a button that opens the source. The SDK reads these keys; it
+  # authors none of the look.
+  citeAnchor:
+    $value:
+      position: relative
+      display: inline
+  citeMark:
+    $value:
+      display: inline-flex
+      alignItems: center
+      justifyContent: center
+      minWidth: 1.35em
+      height: 1.35em
+      padding: "0 {space.1}"
+      marginLeft: 0.2em
+      borderRadius: "{radius.full}"
+      background: "{color.action.subtle}"
+      color: "{color.action.primary}"
+      border: none
+      fontSize: 0.7em
+      fontWeight: "{font.weight.semibold}"
+      lineHeight: "1"
+      verticalAlign: super
+      cursor: pointer
+  citePopover:
+    $value:
+      position: absolute
+      top: 100%
+      left: 0
+      marginTop: "{space.2}"
+      zIndex: "50"
+      display: block
+      width: 22rem
+      maxWidth: 85vw
+      padding: "{space.5}"
+      borderRadius: "{radius.xl}"
+      background: "{color.surface.raised}"
+      border: "{border.width.thin} solid {color.border.subtle}"
+      boxShadow: "{shadow.xl}"
+      color: "{color.text.primary}"
+      fontSize: "{font.size.bodyMd}"
+      fontWeight: "{font.weight.normal}"
+      fontStyle: normal
+      lineHeight: "{font.lineHeight.relaxed}"
+      textAlign: left
+      whiteSpace: normal
+  citeQuote:
+    $value:
+      margin: "0 0 {space.4} 0"
+      color: "{color.text.primary}"
+      fontSize: "{font.size.bodyMd}"
+      lineHeight: "{font.lineHeight.relaxed}"
+      fontWeight: "{font.weight.medium}"
+  citeSource:
+    $value:
+      margin: "0 0 {space.4} 0"
+      paddingTop: "{space.3}"
+      borderTop: "{border.width.thin} solid {color.border.subtle}"
+      color: "{color.text.secondary}"
+      fontSize: "{font.size.caption}"
+      lineHeight: "{font.lineHeight.snug}"
+  citeOpen:
+    $value:
+      display: inline-flex
+      alignItems: center
+      padding: "{space.2} {space.4}"
+      borderRadius: "{radius.full}"
+      border: none
+      background: "{color.action.primary}"
+      color: "{color.action.primary-text}"
+      fontSize: "{font.size.labelMd}"
+      fontWeight: "{font.weight.semibold}"
+      lineHeight: "1"
+      cursor: pointer
   strong:
     $value:
       fontWeight: "{font.weight.semibold}"

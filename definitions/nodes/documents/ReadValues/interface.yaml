@@ -1,0 +1,28 @@
+inputs:
+  - name: documents
+    type: array
+    description: >-
+      Each parsed document: { file_name, tables, text }, as the parse kept them. Add `subject` and
+      `period` to say what it is about and when it speaks as of; leave them out and they are read
+      from the places its layout names
+    required: false
+
+outputs:
+  - name: readings
+    type: array
+    description: Every figure read, from the documents whose reading proved itself. One row per figure
+  - name: documents
+    type: array
+    description: >-
+      One per document: the layout recognised and that layout whole, what the document says it is
+      about and the date it speaks as of with where each was read, ok, unproven, how many readings,
+      coverage (how many numbered cells the document held, how many became readings, and the
+      tables no block of the layout named), error
+  - name: unproven
+    type: array
+    description: The documents whose reading did not prove itself against what they state about themselves. Their figures are NOT in `readings`
+  - name: total
+    type: number
+    description: How many readings are in `readings`
+
+credentials: []

@@ -27,7 +27,9 @@
 - name: cached
   # Switched off, or no thread id: either way nothing is read and the run starts a fresh
   # chain. Skipped leaves NO `calls.cached` at all, which is what `generate` tests.
-  when: "return !!config.enableConversationMemory && !!scope.conversationId"
+  # NEVER ON A CANVAS TEST (owner, 2026-09-14): every test on one canvas would join one thread
+  # that never ends, re-read in full on each question. `scope.debug` is the run's own debug mode.
+  when: "return !!config.enableConversationMemory && !!scope.conversationId && !scope.debug"
   state: read
   key: "openai:conversation:{{ scope.conversationId }}"
 
@@ -57,7 +59,12 @@
     # ROLE FIRST is not cosmetic: `instructions` is the cached prefix, so the stable text has
     # to come before the part that changes or a skill loading would throw away the whole
     # cached prefix instead of just its tail.
-    instructions: "{{ config.systemPrompt }}{{ skillsText }}"
+    #
+    # TODAY'S DATE LAST, on every model call (owner, 2026-09-15: "pass date as standard for any
+    # llm call"): a model has no clock, and asked for "the next six months" it took the newest
+    # document's date as today. The line sits at the tail, so the cached prefix is untouched and
+    # only the tail changes, once a day.
+    instructions: "return String(config.systemPrompt || '') + String(skillsText || '') + '\\n\\nToday is ' + Date.iso(Date.now()).split('T')[0] + '.'"
     max_output_tokens: "{{ config.maxTokens }}"
     stream: true
     reasoning:

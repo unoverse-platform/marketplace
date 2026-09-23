@@ -17,10 +17,17 @@
 # Accumulated, not the fragment: a consumer wants the answer so far, not one word. And
 # throttled, or a long answer becomes hundreds of events. Nothing held back is lost; it
 # is flushed when the run ends.
+#
+# THE BREAK BETWEEN TURNS, the same device the reasoning lane below uses and for the same
+# reason. A run that calls a tool speaks twice: once before the call ("I'm checking your
+# account activity for food spending last month.") and once after it with the answer. Both
+# accumulate into one value, and with nothing between them they ran together mid-sentence
+# — "last month.You spent SAR 726.78" (SAB Account Agent, 2026-09-08). `output_text.done`
+# closes each spoken block, so the next one starts a paragraph.
 - emit: stream
   from: response
-  match: response.output_text.delta
-  value: "return response.delta"
+  match: [response.output_text.delta, response.output_text.done]
+  value: 'return response.type === "response.output_text.done" ? "\n\n" : response.delta'
   accumulate: true
   throttleMs: 200
 

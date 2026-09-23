@@ -1,0 +1,17 @@
+# A duplex node cannot be proved by a fixture the way a request can: there is no single reply, and
+# nobody is talking. This starts the session, asserts the vendor accepted it, and asserts the voice
+# spoke its opening. `session.started` coming back proves the url, the key and every field in the
+# session block were acceptable.
+#
+# The audio path and the tools need a real call, which `unoverse node test` cannot stand in for.
+
+testData:
+  config:
+    model: gpt-live-1
+    systemPrompt: You are on a test call. Keep every reply to one short sentence.
+    voice: gleam
+    initialRequest: Say the single word hello.
+  inputs:
+    input: {}
+  expect:
+    transcript: "return output.transcript.includes('Assistant:')"

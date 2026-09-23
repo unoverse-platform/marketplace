@@ -1,0 +1,14 @@
+inputs: []
+
+outputs:
+  - name: documents
+    type: array
+    description: "Every document in the pack, by title: { id, title, objectType, reportType, kind, subject, asOf, address }"
+  - name: count
+    type: number
+    description: How many documents the pack holds
+  - name: text
+    type: string
+    description: The list as lines a model can read, one document each with its type and date
+
+credentials: []

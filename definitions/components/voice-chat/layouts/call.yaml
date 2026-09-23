@@ -21,6 +21,7 @@ children:
     props:
       size: orbSize
       orbColor: orbColor
+      portrait: portrait
   - type: Box
     style:
       direction: column

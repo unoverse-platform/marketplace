@@ -1,0 +1,12 @@
+inputs:
+  - name: file
+    type: object
+    description: "The file: { downloadUrl, key, etag } as S3 File Content emits"
+    required: false
+
+outputs:
+  - name: image
+    type: object
+    description: "{ base64, mimeType: image/png, width, height, page, box }: the rendered region"
+
+credentials: []

@@ -1,0 +1,11 @@
+# One row per output connector, in interface.yaml order. Whichever call ran is the one that
+# answered, so each row reads both and takes the one that is there.
+
+- emit: sent
+  value: "return ((calls.reply || calls.send || {}).state) === 'sent'"
+
+- emit: messageId
+  value: "return (calls.reply || calls.send || {}).id || ''"
+
+- emit: threadId
+  value: "return (calls.reply || calls.send || {}).threadId || ''"

@@ -1,0 +1,16 @@
+# THE LIST of a pack's documents, from the engine at loopback (package.yaml says why). Nothing is
+# ranked and nothing is cut off (docs/unoverse/data/documents/search-index.md, "The list").
+
+- name: list
+  method: POST
+  url: "return scope.engineUrl + '/index/documents'"
+  transport: json
+
+  body:
+    index: "{{ config.index }}"
+
+  timeoutMs: 30000
+
+  error:
+    when: "return !!response.error"
+    message: "return response.error"

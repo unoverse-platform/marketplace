@@ -33,9 +33,12 @@ children:
       - delay: 0s
       - delay: 0.15s
       - delay: 0.3s
+  # The line is the org's, passed by the hosting core via `with` (like assistantName):
+  # a universal component never names a client.
   - type: Text
+    bind:
+      value: lookupLabel
     style:
       font: body.sm
       weight: medium
       color: text.secondary
-    value: Searching BPP’s knowledge base…

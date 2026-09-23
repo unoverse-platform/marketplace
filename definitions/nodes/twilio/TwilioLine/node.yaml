@@ -1,0 +1,22 @@
+type: TwilioLine
+kind: Attachment
+
+name: Twilio Phone Line
+# On the canvas it is a sill under a node, beside its own logo, so the vendor is all it has to
+# say. The full name is for the picker, where it sits among a hundred others.
+displayName: Twilio
+category: Voice
+color: "#F22F46"
+
+description: Puts a voice node on a real phone call instead of in the browser
+
+whenToUse: >-
+  Pick when the conversation should happen on a real phone number rather than in a browser tab,
+  either because the workflow is calling someone or because someone is calling in. Clips onto a
+  voice node and changes nothing about it: the model, the voice, the prompt and the tools all
+  stay exactly as they are, because only the lane the audio travels on is different.
+
+# WHO MAY RUN THIS. An attachment never runs, so it adds no requirement of its own and there is
+# nothing here for a requirement to narrow. The node it is clipped to owns that question.
+auth:
+  required: false

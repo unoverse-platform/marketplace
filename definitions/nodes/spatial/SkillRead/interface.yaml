@@ -1,0 +1,11 @@
+inputs: []
+
+outputs:
+  - name: skill
+    type: object
+    description: "The skill in full ({ name, instructions, ... }), or the referenced file ({ path, content })"
+  - name: text
+    type: string
+    description: The skill's instructions, or the file's content, as text a model reads
+
+credentials: []

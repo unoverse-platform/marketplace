@@ -58,22 +58,14 @@ root:
           style:
             font: body.md
             color: text.secondary
-        - type: Button
-          bind:
+        # THE BUTTON IS THE ATOM. This was the `button` atom's style copied in by hand,
+        # byte for byte (Gavin, 2026-09-07: "why repeat this everywhere, it should just be
+        # a button component"). A Ref composes it: the words map from this card's field.
+        - type: Ref
+          ref: button
+          props:
             label: callToAction
           action: click
-          style:
-            display: inline-flex
-            align: center
-            justify: center
-            cursor: pointer
-            border: none
-            font: button
-            background: action.primary
-            color: action.primary-text
-            padding: [ "3", "6" ]
-            minHeight: "10"
-            radius: sm
           visibleWhen: callToAction
     - type: Box
       visibleWhen: image

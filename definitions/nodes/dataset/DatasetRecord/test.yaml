@@ -1,0 +1,21 @@
+# SAMPLE DATA, so the node can be loaded and run from the Nodes screen. It writes two rows
+# against an object that owns a table, for one owner, read from one document. Running it again
+# writes two and removes two: the same source replaces itself rather than doubling.
+testData:
+  config:
+    object: observation
+    org: example
+    of: row-1
+    document: doc-1
+    rows: >-
+      [{"fund":"Example Fund","measure":"exposure","dimension":"sectors","label":"Alpha",
+        "side":"long","value":"1.84","unit":"percent_of_aum","as_of":"2026-05-31",
+        "scope":"whole","basis":"reported","source":"2. Exposure, row 5"},
+       {"fund":"Example Fund","measure":"exposure","dimension":"sectors","label":"Alpha",
+        "side":"short","value":"-0.40","unit":"percent_of_aum","as_of":"2026-05-31",
+        "scope":"whole","basis":"reported","source":"2. Exposure, row 5"}]
+  inputs:
+    rows: []
+  expect:
+    written: "return output.written === 2"
+    removed: "return typeof output.removed === 'number'"

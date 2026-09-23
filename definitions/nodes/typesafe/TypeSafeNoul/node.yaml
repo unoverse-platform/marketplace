@@ -1,0 +1,28 @@
+type: TypeSafeNoul
+# One call, one reply: the endpoint answers synchronously.
+kind: PromiseNode
+
+name: TypeSafe Noul
+category: AI
+color: "#1D4ED8"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg
+
+description: Answer whether a statement holds for the state, as a probability from 0 to 1
+
+whenToUse: >-
+  Test one statement against a piece of text or data and get how likely it is to be true:
+  is this message a complaint, does this passage support the claim, is this field value
+  present, did the customer ask for a refund. The answer is a single number from 0 to 1,
+  so a guard or a threshold branches on it directly, and the number is also a signal in
+  its own right, usable as a feature or a filter. Right for one yes-or-no question;
+  picking among several named options is a choice, and grading on steps is a scale.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody
+# thought about cannot look the same as one deliberately left open.
+auth:
+  required: false
+
+capabilities:
+  # A pure read: the same state and statement give the same number, and nothing is
+  # written anywhere.
+  cacheable: true

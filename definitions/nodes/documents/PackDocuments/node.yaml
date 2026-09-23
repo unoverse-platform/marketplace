@@ -1,0 +1,24 @@
+type: PackDocuments
+kind: PromiseNode
+
+name: Pack Documents
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  List every document a pack holds, with what each is and its date: the inventory, never a search
+
+# Outcome first, disqualify by PROPERTY, never name another node.
+whenToUse: >-
+  Know what a set of documents holds before asking it anything: which documents a fund's pack
+  has, of what kind, dated when, and so what is missing or older than a year. Give it the pack's
+  folder and get every document back, none ranked and none cut off. It lists; it does not read
+  or answer, and it lists only the pack it is given.
+
+auth:
+  required: false
+
+capabilities:
+  # A pack's list changes with every run that reads a document; never served from memory.
+  cacheable: false

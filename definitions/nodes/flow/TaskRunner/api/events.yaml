@@ -1,0 +1,29 @@
+# ONE QUESTION, ASKED BY EVERY ROW: what does this task still need, given everything now held.
+# Recomputing it per row is deliberate, exactly as FieldValidator does it: the answer is a pure
+# function of the task and the state, and rows cannot share a binding.
+#
+# THE STATE IS THE SAVED ROW WITH THE NEW ANSWERS LAID OVER IT, here and in run.yaml both, and
+# the order is the point: a correction replaces, and a field nobody mentioned keeps what it had.
+#
+# WHAT THE TASK WANTS comes from the state as well, when nothing declared steps: a component
+# task's slice holds every field the form asks for, so an empty key IS an outstanding question.
+# `helpers.nextStep` falls back to that on its own, which is why nothing here passes a schema.
+#
+# `task` AND `done` ARE EACH OTHER'S OPPOSITE. While a step is short there is something
+# to ask and the task is not finished; the moment nextStep comes back null there is nothing to
+# ask and it is. Two gated rows rather than one row carrying a flag, so nothing downstream has
+# to test a field before acting: a connector that fires IS the instruction.
+
+- emit: task
+  when: >-
+    return helpers.nextStep(helpers.taskOf(signal.signal),
+      helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))) !== null
+  value: >-
+    return helpers.nextStep(helpers.taskOf(signal.signal),
+      helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))
+
+- emit: done
+  when: >-
+    return helpers.nextStep(helpers.taskOf(signal.signal),
+      helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))) === null
+  value: "return true"

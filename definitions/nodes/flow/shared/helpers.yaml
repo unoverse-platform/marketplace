@@ -98,3 +98,235 @@ helpers:
             : (missing.filter(f => info.requiredList.includes(f))[0] || missing[0]))
         )(helpers.missingFields(info.fieldNames, data))
       )(helpers.schemaInfo(schema))
+
+  # ── A TASK'S NEXT STEP ────────────────────────────────────────────────────────
+  # Beside the schema helpers above and for the same reason: two places ask the same question
+  # of one task, so the arithmetic lives once. FieldValidator answers "which field is missing
+  # from this schema"; these answer "which STEP of this task is still short", and a task
+  # declares its own steps rather than being handed a schema.
+  # A FIELD MAY BE A NAME OR A DECLARATION. A task that says `["national_id"]` and one that
+  # says `[{ name: "national_id", ask: "..." }]` mean the same thing, and every caller here
+  # wants the name, so the shape is flattened once.
+  fieldName:
+    args: [field]
+    body: >-
+      return typeof field === 'string'
+        ? field
+        : String((field || {}).name || (field || {}).field || (field || {}).key || '')
+
+  # HELD MEANS ANSWERED. Null, undefined and the empty string are all "not yet", which is the
+  # component's own rule: an empty field is correct, a guessed one is a defect. `false` and
+  # `0` ARE answers, which is why this is not a truthiness test.
+  isHeld:
+    args: [state, name]
+    body: >-
+      return !!name && (state || {})[name] !== undefined
+        && (state || {})[name] !== null && (state || {})[name] !== ''
+
+  # EVERY STEP, IN ORDER, whatever shape the task declared. A task with steps keeps them; a
+  # task with a flat list of fields becomes one unnamed step, so the rest of this file never
+  # has to ask which kind it was handed.
+  steps:
+    args: [task]
+    body: >-
+      return (() => {
+        const t = task || {};
+        if (Array.isArray(t.steps) && t.steps.length) {
+          return t.steps.map((s, i) => ({
+            step: String((s || {}).step || (s || {}).name || (s || {}).state || ('step ' + (i + 1))),
+            fields: Array.isArray((s || {}).fields) ? s.fields : []
+          }));
+        }
+        return Array.isArray(t.fields) && t.fields.length
+          ? [{ step: '', fields: t.fields }]
+          : [];
+      })()
+
+  # WHAT WE NOW HOLD. The saved state is the floor and the answers just given are laid over
+  # it, so a correction replaces rather than duplicates, and a field nobody mentioned keeps
+  # the value it already had.
+  merged:
+    args: [saved, collected]
+    body: >-
+      return Object.assign({}, saved || {}, collected || {})
+
+  # THE ONE STEP TO ASK FOR NOW: the first that is not finished. Null when the task is done,
+  # which is the whole completion test and the reason it is not written twice.
+  #
+  # Steps are walked in the order the task declared them, so a task cannot be answered out of
+  # order and a later step cannot be handed out while an earlier one is still short.
+  # THE TASK, DUG OUT OF WHATEVER ARRIVED. A wired input does not come in bare: it arrives
+  # nested by source node and output handle, `{ inputtrigger2: { output: … } }`, and a trigger
+  # that was handed JSON hands it on as a STRING under `message`. Both are the platform's
+  # envelope rather than anyone's data, so unwrapping belongs here and not in every caller.
+  #
+  # PEELED TO A FIXED DEPTH, never recursively: the sandbox has no way to define a function
+  # that calls itself. Two levels covers the envelope, which is all there ever is.
+  #
+  # A level is "the task itself" the moment it names steps or a ref, so a task that happens to
+  # arrive bare is passed straight through and nothing is peeled off it by mistake.
+  taskOf:
+    args: [arrived]
+    body: >-
+      return (() => {
+        const isTask = (v) => !!v && typeof v === 'object' && (v.ref || v.steps || v.state);
+        const down = (v) => (isTask(v) || !v || typeof v !== 'object') ? v : (Object.values(v)[0]);
+        const found = down(down(isTask(arrived) ? arrived : arrived));
+        const here = (found && typeof found === 'object') ? found : {};
+        const text = typeof here.message === 'string' ? here.message.trim() : '';
+        const parsed = (text.charAt(0) === '{' ? JSON.parse(text) : here);
+        return (parsed && parsed.task) ? parsed.task : (parsed || {});
+      })()
+
+  # THE ONE STEP TO ASK FOR NOW: the first that is not finished. Null when the task is done,
+  # which is the whole completion test and the reason it is not written twice.
+  #
+  # Steps are walked in the order the task declared them, so a task cannot be answered out of
+  # order and a later step cannot be handed out while an earlier one is still short.
+  #
+  # NO LOOP, because the sandbox refuses one (`disallowed expression: ForStatement`, caught on
+  # the first real run). Marking every step and taking the first short one says the same thing.
+  # THE TASK'S OWN QUESTIONS, TAKEN FROM ITS STATE, for a task that declares no steps.
+  #
+  # EVERY question, answered or not: `nextStep` does the splitting, so what comes back here is
+  # the step's whole field list. Filtering to the outstanding ones HERE instead left `held`
+  # permanently empty, because there was nothing held left in the list for it to find.
+  #
+  # A component task's saved state IS its props slice (mcp/dataPlane.ts saves `state: props`),
+  # so every field the form asks for is already a key in it: the ones answered carry a value
+  # and the ones outstanding are empty. That makes the list of questions a property of the
+  # record itself, and nothing has to be told twice.
+  #
+  # THE `Source` TWINS ARE NOT QUESTIONS. Every proposed field on a SAB application carries a
+  # `<field>Source` beside it, the chip saying where the value came from. Asking someone for
+  # their "national id source" is nonsense, so a key whose name ends in Source is skipped, and
+  # it is written back beside the answer rather than collected.
+  fromState:
+    args: [state]
+    body: >-
+      return Object.keys(state || {})
+        .filter(k => k.slice(-6) !== 'Source')
+
+  # THE ONE STEP TO ASK FOR NOW: the first that is not finished. Null when the task is done,
+  # which is the whole completion test and the reason it is not written twice.
+  #
+  # TWO WAYS A TASK SAYS WHAT IT WANTS, and the second needs nobody to have declared anything.
+  # A task that names its steps is walked in that order, so it cannot be answered out of order
+  # and a later step is never handed out while an earlier one is short. A task that names none
+  # falls back to its own saved state, where an empty key is a question outstanding, and the
+  # whole lot comes back as one step.
+  #
+  # NO LOOP, because the sandbox refuses one (`disallowed expression: ForStatement`, caught on
+  # the first real run). Marking every step and taking the first short one says the same thing.
+  # THE ANSWERS, WHATEVER SHAPE THEY ARRIVED IN.
+  #
+  # A voice that can call tools hands over ONE field at a time, named and typed:
+  # `{ call: 'record_field', arguments: { field: 'monthly_income', value: '8000' } }`. Anything
+  # else hands over a plain map. Both mean the same thing here, so both are turned into one.
+  #
+  # Peeled first, because a wired input arrives nested by source node and output handle.
+  #
+  # A NAMED FIELD WINS OVER A MAP. A tool call carries `field` and `value` as its arguments, so
+  # reading its `arguments` as a map would write `{ field: 'monthly_income' }` into the record:
+  # the NAME of the question stored as an answer, under a key nothing asked for.
+  answersOf:
+    args: [arrived]
+    body: >-
+      return (() => {
+        const bare = (v) => (!v || typeof v !== 'object') ? {} : v;
+        const named = (v) => bare(v).arguments || bare(v).answers || bare(v).field || bare(v).call;
+        const lvl = (v) => named(v) ? v : Object.values(bare(v))[0];
+        const here = bare(lvl(lvl(arrived)));
+        const args = bare(here.arguments || here);
+
+        // MANY AT ONCE, which is how a call that kept its answers in its head hands them back.
+        // Every pause in a conversation is a hand-off, so the voice collects everything and
+        // gives it all up at the end: `answers` is that list.
+        if (Array.isArray(args.answers)) {
+          return args.answers
+            .filter(a => a && typeof a.field === 'string' && a.field)
+            .reduce((acc, a) => Object.assign(acc, { [a.field]: a.value }), {});
+        }
+
+        // ONE, named. A tool call carries `field` and `value` as its arguments, so reading them
+        // as a map would store the NAME of the question as an answer, under a key nothing asked
+        // for. The named field wins.
+        // NOTHING ELSE IS AN ANSWER. Anything that is not a list of `answers` or one named
+        // `field` is some other shape entirely, and handing it back whole writes ITS keys into
+        // the record as though a person had said them. Measured 2026-09-22: a delegation
+        // hand-off put `id`, `request` and an entire call transcript into a customer's credit
+        // card application, and they survived every reset because a reset only empties the
+        // fields it was told to. An empty result is correct here: it means this pass collected
+        // nothing, which is a thing that happens.
+        return (typeof args.field === 'string' && args.field)
+          ? { [args.field]: args.value }
+          : {};
+      })()
+
+  # THE STATE THIS PASS WORKS FROM, and the one place the reset happens.
+  #
+  # Ordinarily it is what the record holds. With `startAgain` on it is the same KEYS with every
+  # value emptied, which is what "back to the first step" means for a task whose questions are
+  # its own state: keep the list, lose the answers. Dropping the keys instead would leave the
+  # node with nothing to ask for at all.
+  #
+  # Written as one helper because three places need the same answer: the events table, the call
+  # that saves, and the test for whether anything is outstanding.
+  # THE STATE THIS PASS WORKS FROM, and the one place a reset happens.
+  #
+  # Ordinarily it is what the record holds. When fields are named to clear, those keys are
+  # emptied and EVERYTHING ELSE IS LEFT ALONE: a task's state carries what the call is asking
+  # for and also what the task arrived with, the product, their name, their email, and wiping
+  # the second kind leaves a call that cannot say what it is ringing about.
+  #
+  # The keys are kept and emptied rather than removed, because for a task whose questions are
+  # its own state the key IS the question. Dropping it would leave nothing to ask.
+  # WHICH FIELDS THIS PASS IS ALLOWED TO WIPE, and the answer is none of them once the
+  # conversation has started. `startAgain` is a testing lever: it puts a task back to its first
+  # question. Applied on EVERY pass it does the opposite of what it says, because a pass that
+  # carries answers reads the record fresh, blanks it, and writes only what arrived — so the
+  # answer given two questions ago is gone. It wipes on the way in and never again.
+  clearing:
+    args: [collected, startAgain]
+    body: >-
+      return collected && Object.keys(collected).length ? '' : String(startAgain || '')
+
+  baseState:
+    args: [saved, clear]
+    body: >-
+      return (() => {
+        const names = String(clear || '').split(',').map(s => s.trim()).filter(s => s);
+        const held = saved || {};
+        return names.length
+          ? names.reduce((acc, k) => Object.assign(acc, { [k]: '' }), Object.assign({}, held))
+          : held;
+      })()
+
+  nextStep:
+    args: [task, state]
+    body: >-
+      return (() => {
+        const declared = helpers.steps(task);
+        const all = declared.length
+          ? declared
+          : [{ step: '', fields: helpers.fromState(state) }];
+        const marked = all.map((s, i) => ({
+          step: s.step,
+          stepNumber: i + 1,
+          stepsTotal: all.length,
+          fields: s.fields.filter(f => !helpers.isHeld(state, helpers.fieldName(f))),
+          // WHAT WE HOLD, WITH THE VALUES, not just the names. A name alone tells whoever is
+          // asking that a field is answered but not what it says, so a call knew it had the
+          // product's title and could not name the product: "your application" instead of
+          // "your AQSAT Credit Card application". The values are the person's own and the
+          // caller is already speaking to them, so there is nothing here they may not hear.
+          held: s.fields.filter(f => helpers.isHeld(state, helpers.fieldName(f)))
+                        .reduce((acc, f) => Object.assign(acc, {
+                          [helpers.fieldName(f)]: state[helpers.fieldName(f)]
+                        }), {})
+        }));
+        const short = marked.filter(m => m.fields.length > 0);
+        return short.length
+          ? Object.assign({}, short[0], { outstandingCount: short[0].fields.length })
+          : null;
+      })()

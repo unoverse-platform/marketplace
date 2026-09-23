@@ -1,0 +1,47 @@
+# A SERVICE NODE THAT ALSO RUNS, the shape HubspotMCP has: the graph may run it and read the
+# inbox's state from its output, AND an Agent may attach to it and call its tools. The two
+# channels never cross: `api/run.yaml` + `api/events.yaml` are the graph's, `api/service.yaml`
+# is the Agent's.
+
+inputs:
+  - name: signal
+    type: object
+    required: true
+    description: Trigger to fire the node
+
+outputs:
+  - name: overview
+    type: object
+    description: "The inbox at a glance: reachable, unanswered, drafts, volume"
+  - name: unanswered
+    type: array
+    description: Threads whose last message is theirs, oldest first
+
+# THE INBOX IS THE CREDENTIAL: which mailbox this node reads and this Agent works is decided by
+# the credential the author attaches, never by a config field and never by the model.
+credentials:
+  - name: mailboxCredential
+    required: true
+    displayName: Mailbox
+
+serviceConnectors:
+  - name: mailbox
+    serviceType: mcp
+    # PROVIDES. The node offers these tools to a consuming Agent.
+    isService: true
+    description: >-
+      One inbox as tools for an Agent: list_threads, read_thread, reply, send, save_draft.
+    instructions: >-
+      List the threads before answering anything, and read a thread in full before replying to
+      it: a reply is judged against the whole conversation, not its last line. Always reply IN
+      the thread with `reply`; `send` starts a NEW conversation and is never the way to answer
+      one. Save a draft instead of sending when a person should look first. A send comes back
+      with state "sent" or "failed" with the reason: never say a message went when it failed.
+      You work one inbox and cannot reach another.
+    # `getSchema` is tool DISCOVERY, a meta-method the harness calls, and must not be listed.
+    methods:
+      - list_threads
+      - read_thread
+      - reply
+      - send
+      - save_draft

@@ -1,0 +1,132 @@
+{
+  "kind": "node",
+  "name": "TypeSafeChoice",
+  "pack": "typesafe",
+  "fingerprint": "7071b890cf5b4341",
+  "title": "TypeSafe Choice",
+  "description": "Pick one option from a described list, with a probability for every option",
+  "category": "AI",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg",
+  "whenToUse": "Decide which of a fixed set of options fits a piece of text or data: route a message to a team, classify a document, pick the next action, pick the best of several candidates. The answer is the chosen option's key, a probability for every option and a confidence, so a branch can act on it without parsing prose. Right when the options are known before the run and each can be described; ordered levels of one quality are a scale, and a single yes-or-no is a statement to test.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "choice",
+        "type": "string",
+        "description": "The chosen option's key"
+      },
+      {
+        "name": "probabilities",
+        "type": "object",
+        "description": "Each option's probability"
+      },
+      {
+        "name": "confidence",
+        "type": "number",
+        "description": "0 to 1, how clear the winner is"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "model, inputTokens, outputTokens"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "typesafeCredential",
+        "required": true,
+        "displayName": "TypeSafe"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "state",
+        "instructions",
+        "options"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "title": "State",
+          "description": "What to judge: a message, a passage, a record. Text is sent as text; a JSON object or array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads better than prose when the data has named fields.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "instructions": {
+          "type": "string",
+          "title": "Instructions",
+          "description": "The decision to make, as a question. Shared blocks work here.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "options": {
+          "type": "object",
+          "title": "Options",
+          "description": "Option key to its description, as JSON. Describe what each option is for in concrete terms; the key is what comes back as the choice.",
+          "default": {},
+          "ui:field": "template"
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "jev-latest is the stable release; jev-preview is the newest build.",
+          "enum": [
+            "jev-latest",
+            "jev-preview"
+          ],
+          "default": "jev-latest"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "typesafe",
+      "packageFile": "# TYPESAFE, fully declarative.\n#\n# One vendor endpoint, POST /v1/systemone, answers typed questions about a piece of state:\n# pick an option, place on a scale, or say whether a statement holds. The answer is a value\n# and a probability distribution, never prose, so a workflow branches on it directly.\n#\n# Four nodes over the one call: three ask a single question of one type, and the fourth\n# sends a whole map of questions in one round trip, which is how the vendor is meant to be\n# used when several judgements share the same state.\n\nname: typesafe\ndisplayName: TypeSafe\ndescription: Typed decisions from Jev, TypeSafe's System One model; a value and a probability, never prose\nversion: 1.0.0\ncategory: ai\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\nfeatures:\n  - Choose one option from a described list, with a probability for each\n  - Score state on an ordered scale of described levels\n  - Answer whether a statement is true, as a probability\n  - Ask several questions of one state in a single call\n\nallowedHosts:\n  - api.typesafe.ai\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  credential: [bearer]\n  transport: [json]\n",
+      "credentials": {
+        "typesafeCredential.yaml": "name: typesafeCredential\ndisplayName: TypeSafe\ndescription: Credentials for the TypeSafe API\ndocumentationUrl: https://console.typesafe.ai/settings/keys\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your TypeSafe API key\n    placeholder: ts-\n"
+      },
+      "shared": {}
+    },
+    "dir": "TypeSafeChoice",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n\n- emit: choice\n  from: response\n  value: \"return response.answers.answer.choice\"\n\n- emit: probabilities\n  from: response\n  value: \"return response.answers.answer.probabilities || {}\"\n\n- emit: confidence\n  from: response\n  value: \"return response.answers.answer.confidence\"\n\n- emit: usage\n  from: response\n  value: >-\n    return {\n      model: response.model,\n      inputTokens: (response.usage || {}).input_tokens || 0,\n      outputTokens: (response.usage || {}).output_tokens || 0\n    }\n",
+      "api/run.yaml": "# One synchronous call. Every question type goes through the same endpoint; this node sends\n# exactly one, keyed `answer`, so the reply is read at a fixed path.\n#\n# STATE MAY BE STRUCTURE. The field is a string so it can be typed or templated, but the\n# vendor reads a JSON object or array as named fields rather than as prose, so a value that\n# is a whole JSON document is parsed before it is sent. Prose stays prose.\n\n- name: ask\n  method: POST\n  url: https://api.typesafe.ai/v1/systemone\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.typesafeCredential.apiKey }}\"\n  headers:\n    Content-Type: application/json\n  transport: json\n  timeoutMs: 60000\n  # 529 is the vendor's own overloaded code, alongside the usual rate limit and server errors.\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504, 529]\n\n  body:\n    model: \"return config.model || 'jev-latest'\"\n    state: >-\n      return (typeof config.state === 'string'\n        && ((config.state.trim().startsWith('{') && config.state.trim().endsWith('}'))\n          || (config.state.trim().startsWith('[') && config.state.trim().endsWith(']'))))\n        ? JSON.parse(config.state)\n        : config.state\n    questions: >-\n      return {\n        answer: {\n          type: 'choice',\n          instructions: config.instructions,\n          criteria: config.options\n        }\n      }\n\n  error:\n    # A reply without the one answer asked for is a failure whatever the status was.\n    when: \"return !((response.answers || {}).answer)\"\n    message: >-\n      return 'TypeSafe returned no answer.'\n        + (response.error ? ' ' + JSON.stringify(response.error) : '')\n        + (response.detail ? ' ' + JSON.stringify(response.detail) : '')\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [state, instructions, options]\n  properties:\n    state:\n      type: string\n      title: State\n      description: >-\n        What to judge: a message, a passage, a record. Text is sent as text; a JSON object or\n        array (for example {{ toJSON signal.x }}) is sent as structure, which the model reads\n        better than prose when the data has named fields.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    instructions:\n      type: string\n      title: Instructions\n      description: The decision to make, as a question. Shared blocks work here.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    options:\n      type: object\n      title: Options\n      description: >-\n        Option key to its description, as JSON. Describe what each option is for in concrete\n        terms; the key is what comes back as the choice.\n      default: {}\n      \"ui:field\": template\n    model:\n      type: string\n      title: Model\n      description: jev-latest is the stable release; jev-preview is the newest build.\n      enum: [jev-latest, jev-preview]\n      default: jev-latest\n\"ui:order\": [state, instructions, options, model]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes\n    required: false\n\noutputs:\n  - name: choice\n    type: string\n    description: The chosen option's key\n  - name: probabilities\n    type: object\n    description: Each option's probability\n  - name: confidence\n    type: number\n    description: 0 to 1, how clear the winner is\n  - name: usage\n    type: object\n    description: model, inputTokens, outputTokens\n\ncredentials:\n  - name: typesafeCredential\n    required: true\n    displayName: TypeSafe\n",
+      "node.yaml": "type: TypeSafeChoice\n# One call, one reply: the endpoint answers synchronously.\nkind: PromiseNode\n\nname: TypeSafe Choice\ncategory: AI\ncolor: \"#1D4ED8\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg\n\ndescription: Pick one option from a described list, with a probability for every option\n\nwhenToUse: >-\n  Decide which of a fixed set of options fits a piece of text or data: route a message to a\n  team, classify a document, pick the next action, pick the best of several candidates. The\n  answer is the chosen option's key, a probability for every option and a confidence, so a\n  branch can act on it without parsing prose. Right when the options are known before the\n  run and each can be described; ordered levels of one quality are a scale, and a single\n  yes-or-no is a statement to test.\n\n# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node, so that a node nobody\n# thought about cannot look the same as one deliberately left open.\nauth:\n  required: false\n\ncapabilities:\n  # A pure read: the same state and questions give the same distribution, and nothing is\n  # written anywhere.\n  cacheable: true\n",
+      "test.yaml": "# Asserts the SHAPE, not the verdict: the choice is one of the offered keys, the\n# probabilities cover every key and sum to 1, and confidence is a fraction.\n\ntestData:\n  config:\n    state: \"My card was charged twice for the same order and I want the second charge refunded.\"\n    instructions: Which team should handle this message?\n    options:\n      billing: Charges, refunds, invoices and payment methods\n      shipping: Where an order is, delivery dates, damaged parcels\n      account: Sign-in, password and profile problems\n    model: jev-latest\n  inputs:\n    signal: {}\n  expect:\n    choice: \"return ['billing', 'shipping', 'account'].includes(output.choice)\"\n    probabilities: >-\n      return Object.keys(output.probabilities).length === 3\n        && Math.abs(Object.values(output.probabilities).reduce((a, b) => a + b, 0) - 1) < 0.01\n    confidence: \"return output.confidence >= 0 && output.confidence <= 1\"\n    usage: \"return output.usage.inputTokens > 0 && typeof output.usage.model === 'string'\"\n"
+    }
+  }
+}

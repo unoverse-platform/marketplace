@@ -28,7 +28,9 @@ continuity:
   # `chatId`, which is minted per turn to address components and would give every turn its
   # own dead key.
   remember:
-    when: "return !!config.enableConversationMemory && !!scope.conversationId"
+    # NEVER ON A CANVAS TEST (owner, 2026-09-14): every test on one canvas would join one thread
+    # that never ends, re-read in full on each question. `scope.debug` is the run's own debug mode.
+    when: "return !!config.enableConversationMemory && !!scope.conversationId && !scope.debug"
     key: "openai:conversation:{{ scope.conversationId }}"
 
 # SKILLS IN FORCE, held against the CONVERSATION for the same reason the chain id is: a new

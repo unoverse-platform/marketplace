@@ -1,0 +1,83 @@
+# EVERY FIELD TAKES A TEMPLATE (`ui:field: template`), which is how a step sends what an earlier
+# one produced: bind the body to a rendered template, the recipient to a row's address, the
+# subject to a fund's name. A literal typed in works too.
+configSchema:
+  type: object
+  # A MESSAGE NEEDS A SUBJECT AND SOMETHING TO SAY, but the something has two sources now:
+  # a Body typed here, or a Design Template drawn by the door. Requiring `body` outright
+  # made a templated message impossible to configure — the form demanded a field the send
+  # would then ignore. The door is what knows whether a message is empty, and it says so.
+  required: [subject]
+  properties:
+    to:
+      type: string
+      title: To
+      description: Who it goes to. Separate several with commas. Leave blank when replying.
+      default: ""
+      ui:field: template
+
+    cc:
+      type: string
+      title: CC
+      description: Copied recipients, comma-separated
+      default: ""
+      ui:field: template
+
+    subject:
+      type: string
+      title: Subject
+      description: The subject line. Ignored when replying, which keeps the conversation's own.
+      default: ""
+      ui:field: template
+
+    body:
+      type: string
+      title: Body
+      description: >-
+        The message itself, as plain text or HTML depending on Body Type. Ignored when Body
+        Type is Design Template.
+      default: ""
+      ui:field: template
+
+    bodyType:
+      type: string
+      title: Body Type
+      description: >-
+        How the message is written. Plain Text and HTML send the Body as typed. Design
+        Template draws one of your templates instead and sends that, with a plain-text
+        version alongside it for readers whose client shows no pictures.
+      default: text
+      enum: [text, html, template]
+      enumNames: [Plain Text, HTML, Design Template]
+
+    template:
+      type: string
+      title: Template
+      description: >-
+        Which template to draw, scoped to its org, as in "sab/outreach-email". Only read
+        when Body Type is Design Template.
+      default: ""
+      ui:field: template
+      "ui:dependencies": { bodyType: [template] }
+
+    content:
+      type: object
+      title: What to write in
+      description: >-
+        What goes into each part of the template, keyed by the part's name. The keys are
+        the template's own sections, so { "subject": { "subject": "..." }, "opening":
+        { "message": "..." } }. Any part left out draws with what its designer wrote as
+        the default, so a half-filled template still sends a whole letter.
+      default: {}
+      ui:field: template
+      "ui:dependencies": { bodyType: [template] }
+
+    inReplyTo:
+      type: string
+      title: In reply to
+      description: >-
+        A message id to answer. Given one, this replies in that conversation and the recipients
+        and subject come from it. Blank starts a new one.
+      default: ""
+      ui:field: template
+"ui:order": [to, cc, subject, bodyType, body, template, content, inReplyTo]

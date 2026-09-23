@@ -1,0 +1,38 @@
+type: TaskRunner
+
+# A PROMISE NODE WITH A CONTINUE INPUT, which is not a contradiction and is exactly what
+# LoopStart is. It settles once per pass; what re-fires it is the next set of answers arriving
+# on `collected`, so each step of the task is a fresh execution of this node rather than one
+# execution holding itself open. Declaring CallbackNode would make the engine drive it as an
+# actor, and there is nothing here to keep alive between steps: the task's own paused row is
+# the memory, which is what lets a dropped call be carried on tomorrow.
+kind: PromiseNode
+
+name: Task Runner
+category: Flow
+color: "#0ea5e9"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Runs one task a step at a time, handing out what it still needs and taking back the answers
+
+whenToUse: >-
+  Carry a task that is waiting on a person through to the end: an application half filled in, a
+  form left at a step, anything held open for someone with some of it already answered. Give it
+  the task and what is already known, and it answers with the one step still outstanding and the
+  fields that step asks for, takes the answers back, and says when nothing is left. Deciding
+  WHICH task to do, and asking the questions out loud, are different jobs: this one only works
+  out what is still needed and keeps count as it comes in. It walks the steps in the order the
+  task declares them, so a later step is never handed out while an earlier one is short.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. It reaches nothing and decides nothing about a person, so there is nothing here to
+# narrow.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable. The whole point is to answer differently each time it is asked: a cached
+  # first reply would hand out step one forever and the task would never move.
+  cacheable: false

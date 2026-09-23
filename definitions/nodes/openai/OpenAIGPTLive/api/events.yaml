@@ -1,0 +1,85 @@
+# One row per output connector, in interface.yaml order.
+#
+# `said` is the conversation so far, in order, as { type, text }: one entry per run of the same
+# transcript event. The runtime keeps it, because GPT-Live streams both sides only as deltas and
+# no single event carries what was asked.
+
+# THE HAND-OFF. GPT-Live's delegation event carries an id and no task text (the vendor says so:
+# "metadata, not task text"), so the request is what the person said last, and the conversation
+# rides along for anything that needs more context.
+- emit: task
+  match: session.delegation.created
+  value: >-
+    return (() => {
+      // NOT WHEN OPENAI IS DOING THE THINKING. This event fires the INSTANT the voice hands
+      // over, before the backend has produced a word, so in `responses` mode it is a starting
+      // gun and not a request: the real ask arrives seconds later as a function call, on the
+      // row below. Firing here sent the canvas an empty hand-off and used up the turn, and the
+      // answers that followed had nowhere to go (measured 2026-09-22).
+      if (((response.delegation || {}).target) === 'responses') return undefined;
+      const asked = said.filter(s => s.type === 'session.input_transcript.delta').at(-1);
+      return {
+        id: response.delegation ? response.delegation.id : null,
+        request: asked ? asked.text.trim() : '',
+        conversation: said
+          .filter(s => s.type === 'session.input_transcript.delta' || s.type === 'session.output_transcript.delta')
+          .map(s => (s.type === 'session.input_transcript.delta' ? 'User: ' : 'Assistant: ') + s.text.trim())
+          .filter(line => !line.endsWith(': '))
+          .join('\n')
+      };
+    })()
+
+# THE SAME HAND-OFF, WHEN OPENAI IS DOING THE THINKING. A different vendor event, because a
+# different thing happened: the model behind the voice CALLED A TOOL, so this one carries what
+# it wants by name, with typed arguments, and nothing has to be guessed from the transcript.
+#
+# ON THE SAME CONNECTOR on purpose. To whatever is wired downstream the meaning is identical,
+# "the voice needs something", so a canvas built one way keeps working when the mode is
+# switched. The shape says which happened: `call` and `arguments` are present here and absent
+# above, and `request` reads the same either way.
+#
+# `arguments` ARRIVES AS A JSON STRING, as it does everywhere in the vendor's function calling,
+# and is parsed here so nothing downstream has to know that.
+#
+# NO try/catch. The expression sandbox BANS TryStatement, and an expression containing one
+# throws the moment it is evaluated rather than when the parse fails, so the whole hand-off is
+# lost and nothing says why. Lint does not catch it. `arguments` is complete and well formed by
+# the time `.done` fires, which is the only event this row reads.
+- emit: task
+  match: response.event
+  value: >-
+    return (() => {
+      const inner = response.event || {};
+      if (inner.type !== 'response.output_item.done') return undefined;
+      const item = inner.item;
+      if (!item || item.type !== 'function_call') return undefined;
+      // NEVER THE HANG-UP. The node declares `end_call`, answers it (api/run.yaml) and acts on
+      // it (api/audio.yaml). Handing it to a canvas asks something out there to execute a thing
+      // only the lane can do, and whatever it replied would be a second answer to a call the
+      // node had already settled.
+      if (item.name === 'end_call') return undefined;
+      const raw = typeof item.arguments === 'string' ? item.arguments : '';
+      const args = raw ? JSON.parse(raw) : (item.arguments || {});
+      return {
+        id: item.call_id || item.id || null,
+        delegationId: response.delegation_id || null,
+        call: item.name || '',
+        arguments: args,
+        request: item.name || '',
+        conversation: said
+          .filter(s => s.type === 'session.input_transcript.delta' || s.type === 'session.output_transcript.delta')
+          .map(s => (s.type === 'session.input_transcript.delta' ? 'User: ' : 'Assistant: ') + s.text.trim())
+          .filter(line => !line.endsWith(': '))
+          .join('\n')
+      };
+    })()
+
+# THE WHOLE CALL, once, when it ends.
+- emit: transcript
+  from: complete
+  value: >-
+    return said
+      .filter(s => s.type === 'session.input_transcript.delta' || s.type === 'session.output_transcript.delta')
+      .map(s => (s.type === 'session.input_transcript.delta' ? 'User: ' : 'Assistant: ') + s.text.trim())
+      .filter(line => !line.endsWith(': '))
+      .join('\n')

@@ -12,9 +12,19 @@
 # NO SDK. This is the wire format, described as data.
 
 # How ONE tool is offered to the model. `tool` is { name, description, parameters }.
+#
+# `strict: false`, said out loud. Left unsaid, the Responses API defaults it to true and
+# REWRITES the schema to fit: every property joins `required`, and `minLength` is enforced by
+# the decoder. A briefed component's contract is the opposite, `required: []`, "any subset is
+# a valid call" (core/markdown/compile.ts). Under the default the model could not open a task
+# without writing every field, so it asked the guest questions instead (SAB transfer,
+# 2026-09-15, read back from the stored responses). The server referees each call anyway.
+# `output_schema` when the tool declares what it returns (a component's `outputs` block, MCP
+# `outputSchema`): the model reads what comes back before it calls.
 tool: >-
   return { type: 'function', name: tool.name, description: tool.description,
-           parameters: tool.parameters }
+           parameters: tool.parameters, strict: false,
+           ...(tool.outputSchema ? { output_schema: tool.outputSchema } : {}) }
 toolsInto: tools
 
 # How a call ARRIVES in the stream.

@@ -1,7 +1,7 @@
 {
   "kind": "template",
   "name": "email-digest",
-  "fingerprint": "b6321fc8e7ff16bf",
+  "fingerprint": "018bb541363f3717",
   "bundle": "design-system",
   "title": "Email Digest",
   "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
@@ -216,7 +216,6 @@
           "face": "grid",
           "state": "grid",
           "pick": 3,
-          "rules": "The items most relevant to the reader, strongest matches first.",
           "preview": [
             "card",
             "card",

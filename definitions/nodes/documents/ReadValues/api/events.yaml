@@ -1,0 +1,21 @@
+# A READING THAT CANNOT PROVE ITSELF IS NOT OFFERED. `readings` carries only what came from a
+# document whose own checks held, so a caller cannot store unproven figures by forgetting to
+# look. What failed is in `unproven`, named, so it can be shown to a person instead.
+- emit: readings
+  value: >-
+    return ((response.result || {}).documents || []).filter(d => d && d.ok).flatMap(d => d.readings || [])
+
+# WHAT WE NEVER LOOKED AT travels with the document (`coverage`). A table no layout names and a
+# table with nothing in it are the same absence downstream, and without this a layout that
+# quietly loses one of a document's ten tables reads the other nine perfectly and says nothing.
+- emit: documents
+  value: >-
+    return ((response.result || {}).documents || []).map(d => ({ file_name: d.file_name, template: d.template, layout: d.layout || null, subject: d.subject || null, period: d.period || null, found_in: d.found_in || null, ok: d.ok, unproven: d.unproven || [], readings: (d.readings || []).length, coverage: d.coverage || null, error: d.error || null }))
+
+- emit: unproven
+  value: >-
+    return ((response.result || {}).documents || []).filter(d => d && !d.ok).map(d => ({ file_name: d.file_name, template: d.template, unproven: d.unproven || [], error: d.error || null }))
+
+- emit: total
+  value: >-
+    return ((response.result || {}).documents || []).filter(d => d && d.ok).reduce((n, d) => n + ((d.readings || []).length), 0)

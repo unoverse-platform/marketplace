@@ -1,0 +1,36 @@
+# THE TASK A CALL WAS GIVEN, FOUND RATHER THAN NAMED.
+#
+# A voice node is wired to whatever the canvas put upstream, so it cannot know the sending
+# node's id or the name of the output handle. What it does know is the SHAPE: a task carries a
+# list of `fields` still outstanding. So every wired value is looked at and the one with that
+# shape is the task.
+#
+# THREE LEVELS, because a wired input arrives nested and how deep depends on the wiring:
+# `signal.<input handle>.<sending node>.<its output>`. Measured 2026-09-22: written to look two
+# levels down it found nothing at all, the call opened with no brief and no record_answers tool,
+# and the model invented a customer's name on a live call rather than reading the one it held.
+
+helpers:
+  briefIn:
+    args: [signal]
+    body: >-
+      return (() => {
+        const flat = o => (o && typeof o === 'object' && !Array.isArray(o)) ? Object.values(o) : [];
+        const l1 = flat(signal);
+        const l2 = l1.reduce((acc, v) => acc.concat(flat(v)), []);
+        const l3 = l2.reduce((acc, v) => acc.concat(flat(v)), []);
+        const found = l1.concat(l2).concat(l3)
+          .map(v => (v && typeof v === 'object') ? (v.requirements || v) : null)
+          .filter(r => r && Array.isArray(r.fields));
+        return found.length ? found[0] : null;
+      })()
+
+  # THE NAMES ONLY. A task's `fields` are sometimes plain strings and sometimes objects with a
+  # name; what a tool's enum needs is the words either way.
+  fieldNamesIn:
+    args: [brief]
+    body: >-
+      return ((brief || {}).fields || [])
+        .map(f => (typeof f === 'string' ? f
+          : String((f || {}).name || (f || {}).field || (f || {}).key || '')))
+        .filter(n => n)

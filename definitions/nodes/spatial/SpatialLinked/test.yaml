@@ -1,0 +1,15 @@
+# Runs against the LOCAL platform (loopback engine), so it needs the runtime up and a row on the
+# tester's own map: put one of your universal ids in `universalId` and a line that row carries in
+# `line` before running. Same stance as Spatial Detail's fixture: this proves the SHAPE, not any
+# content, so an unlinked row passing with no rows is a pass and not a hole in the test.
+
+testData:
+  config:
+    universalId: ""
+    line: ""
+    direction: in
+  expect:
+    rows: >-
+      return Array.isArray(output.rows)
+        && output.rows.every(r => typeof r.universal_id === 'string' && r.embedding === undefined)
+    total: "return typeof output.total === 'number' && output.total >= output.rows.length"

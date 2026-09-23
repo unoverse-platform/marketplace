@@ -24,9 +24,7 @@ children:
     children:
       # No `state:` pin: arrivals keep their own state, so the tap-to-detail dance
       # is free — a card writing itself into `page` activates that state by name.
-      # The rule is UNIVERSAL wording (the reader's relevance, no client words) —
-      # the shelf's sensible default. An org wanting bespoke judgment ships its
-      # own template; the director's brain has ONE home, this section.
+      # The band holds what arrives in search rank, up to six.
       - director:
-          rules: The items most relevant to the user, strongest matches first.
+          pick: 6
           preview: [ card, card, card ]
