@@ -1,7 +1,7 @@
 {
   "kind": "pipeline",
   "name": "images",
-  "fingerprint": "3defc586c876c507",
+  "fingerprint": "98043ee883a6c411",
   "bundle": "design-system",
   "title": "Images",
   "description": "The pictures in a Cloudinary folder. Each picture is placed on the map by the need or product it represents, written as the business's own copy, never as a description of the scene.",

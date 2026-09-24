@@ -1,5 +1,5 @@
 {
-  "release": "0.1.86",
+  "release": "0.1.87",
   "items": [
     {
       "kind": "component",
@@ -581,7 +581,7 @@
     {
       "kind": "object",
       "name": "brand",
-      "fingerprint": "e595705ed71933b0",
+      "fingerprint": "f0dfde97a071c1b4",
       "bundle": "design-system",
       "title": "Brand",
       "description": "What the brand stands for: its promise, whom it speaks to, what sets it apart, and how it sounds.",
@@ -590,7 +590,7 @@
     {
       "kind": "object",
       "name": "document",
-      "fingerprint": "0c383552b22bb494",
+      "fingerprint": "3da17f46ac312edd",
       "bundle": "design-system",
       "title": "Document",
       "description": "Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.",
@@ -599,7 +599,7 @@
     {
       "kind": "object",
       "name": "figure",
-      "fingerprint": "df0e2459b98a7819",
+      "fingerprint": "4fe1d9406469f1cb",
       "bundle": "design-system",
       "title": "Figure",
       "description": "One picture a document holds, a chart, a diagram, a photograph or a screenshot, with the page and the box it sits in, and a chart's values when they were read.",
@@ -608,7 +608,7 @@
     {
       "kind": "object",
       "name": "image",
-      "fingerprint": "86811980dda90c63",
+      "fingerprint": "a8e7633de8442cdd",
       "bundle": "design-system",
       "title": "Image",
       "description": "A picture the business publishes, such as a product photo or a banner.",
@@ -617,7 +617,7 @@
     {
       "kind": "object",
       "name": "need",
-      "fingerprint": "9c7028d93b07ff65",
+      "fingerprint": "53bff1ac3e913899",
       "bundle": "design-system",
       "title": "Need",
       "description": "What one person wants, in their own words. The atom: every other object is placed on the map by the needs it serves. A page speaks to several; each distinct one is its own entry, never one entry that summarises the page, and every one is traceable to a statement in the content. Granular: one entry for each thing a person could come to this page to get done, each step they take, each question it answers and each condition it sets. A product page holds five to ten; one entry that stands for the page is wrong. Each is a need someone brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}: write it as the thing that person wants from that organisation, in their words.",
@@ -626,7 +626,7 @@
     {
       "kind": "object",
       "name": "organisation",
-      "fingerprint": "7191d76786e96916",
+      "fingerprint": "bd5191c23264a1e9",
       "bundle": "design-system",
       "title": "Organisation",
       "description": "Who this organisation is and what it does, in its own words and its own vocabulary.",
@@ -635,7 +635,7 @@
     {
       "kind": "object",
       "name": "product",
-      "fingerprint": "5a351cf89742d66d",
+      "fingerprint": "5d95d0b4915febb0",
       "bundle": "design-system",
       "title": "Product",
       "description": "Something the business offers, a product or a service, in the business's own approved words.",
@@ -644,7 +644,7 @@
     {
       "kind": "object",
       "name": "purpose",
-      "fingerprint": "b19641389bb8a798",
+      "fingerprint": "75cf0342ec0f829a",
       "bundle": "design-system",
       "title": "Purpose",
       "description": "Why the organisation exists: what its people believe in, what it aims to achieve, and the goals it is working toward.",
@@ -653,7 +653,7 @@
     {
       "kind": "object",
       "name": "skill",
-      "fingerprint": "538382c9cca945af",
+      "fingerprint": "002604cbcaa98280",
       "bundle": "design-system",
       "title": "Skill",
       "description": "Know-how the business follows to help a person with something hard, such as a complaint or an application.",
@@ -662,7 +662,7 @@
     {
       "kind": "object",
       "name": "story",
-      "fingerprint": "333b525237768f78",
+      "fingerprint": "48883bcc4d42a361",
       "bundle": "design-system",
       "title": "Story",
       "description": "Where the organisation came from, what it is now and where it is going, and what that story says it is for.",
@@ -671,7 +671,7 @@
     {
       "kind": "object",
       "name": "table",
-      "fingerprint": "3f0470b87a547183",
+      "fingerprint": "dec592d754119dde",
       "bundle": "design-system",
       "title": "Table",
       "description": "One table a document holds: its header and its rows exactly as the document lays them out, with the page and the box it sits in.",
@@ -680,7 +680,7 @@
     {
       "kind": "object",
       "name": "task",
-      "fingerprint": "186f0b0961c3a446",
+      "fingerprint": "354dde05d3c40743",
       "bundle": "design-system",
       "title": "Task",
       "description": "Something a person can get done here, with the page, flow or tool that does it.",
@@ -689,7 +689,7 @@
     {
       "kind": "pipeline",
       "name": "bucket",
-      "fingerprint": "ff2ba6cf14fa64b6",
+      "fingerprint": "12d0c8350ea6aafc",
       "bundle": "design-system",
       "title": "Bucket",
       "description": "The documents in a folder of your S3 bucket. Each file is read whole and placed on the map by the needs it answers.",
@@ -698,7 +698,7 @@
     {
       "kind": "pipeline",
       "name": "images",
-      "fingerprint": "3defc586c876c507",
+      "fingerprint": "98043ee883a6c411",
       "bundle": "design-system",
       "title": "Images",
       "description": "The pictures in a Cloudinary folder. Each picture is placed on the map by the need or product it represents, written as the business's own copy, never as a description of the scene.",
@@ -707,7 +707,7 @@
     {
       "kind": "pipeline",
       "name": "spreadsheet",
-      "fingerprint": "0c22324f607cc577",
+      "fingerprint": "99c931f720680c9e",
       "bundle": "design-system",
       "title": "Spreadsheet",
       "description": "The rows of a Google Sheet. Each row is read for the needs and products it holds; a row that holds none is set aside.",
@@ -716,7 +716,7 @@
     {
       "kind": "pipeline",
       "name": "website",
-      "fingerprint": "0d462cda8354717f",
+      "fingerprint": "6c577058617fa0e6",
       "bundle": "design-system",
       "title": "Website",
       "description": "The pages of a finished website crawl. Each page is read for the products and needs it holds; a page that holds none is set aside.",

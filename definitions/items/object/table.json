@@ -1,7 +1,7 @@
 {
   "kind": "object",
   "name": "table",
-  "fingerprint": "3f0470b87a547183",
+  "fingerprint": "dec592d754119dde",
   "bundle": "design-system",
   "title": "Table",
   "description": "One table a document holds: its header and its rows exactly as the document lays them out, with the page and the box it sits in.",

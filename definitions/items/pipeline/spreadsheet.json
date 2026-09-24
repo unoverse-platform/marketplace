@@ -1,7 +1,7 @@
 {
   "kind": "pipeline",
   "name": "spreadsheet",
-  "fingerprint": "0c22324f607cc577",
+  "fingerprint": "99c931f720680c9e",
   "bundle": "design-system",
   "title": "Spreadsheet",
   "description": "The rows of a Google Sheet. Each row is read for the needs and products it holds; a row that holds none is set aside.",

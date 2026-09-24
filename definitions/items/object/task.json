@@ -1,7 +1,7 @@
 {
   "kind": "object",
   "name": "task",
-  "fingerprint": "186f0b0961c3a446",
+  "fingerprint": "354dde05d3c40743",
   "bundle": "design-system",
   "title": "Task",
   "description": "Something a person can get done here, with the page, flow or tool that does it.",

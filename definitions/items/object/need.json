@@ -1,7 +1,7 @@
 {
   "kind": "object",
   "name": "need",
-  "fingerprint": "9c7028d93b07ff65",
+  "fingerprint": "53bff1ac3e913899",
   "bundle": "design-system",
   "title": "Need",
   "description": "What one person wants, in their own words. The atom: every other object is placed on the map by the needs it serves. A page speaks to several; each distinct one is its own entry, never one entry that summarises the page, and every one is traceable to a statement in the content. Granular: one entry for each thing a person could come to this page to get done, each step they take, each question it answers and each condition it sets. A product page holds five to ten; one entry that stands for the page is wrong. Each is a need someone brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}: write it as the thing that person wants from that organisation, in their words.",

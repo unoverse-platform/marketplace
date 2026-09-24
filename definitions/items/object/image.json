@@ -1,7 +1,7 @@
 {
   "kind": "object",
   "name": "image",
-  "fingerprint": "86811980dda90c63",
+  "fingerprint": "a8e7633de8442cdd",
   "bundle": "design-system",
   "title": "Image",
   "description": "A picture the business publishes, such as a product photo or a banner.",

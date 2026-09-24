@@ -1,7 +1,7 @@
 {
   "kind": "pipeline",
   "name": "website",
-  "fingerprint": "0d462cda8354717f",
+  "fingerprint": "6c577058617fa0e6",
   "bundle": "design-system",
   "title": "Website",
   "description": "The pages of a finished website crawl. Each page is read for the products and needs it holds; a page that holds none is set aside.",

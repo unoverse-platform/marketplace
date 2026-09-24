@@ -1,4 +1,4 @@
-# The site is not ready to be found. See storefront/src/site/seo.ts.
+# The marketplace is not ready to be found. Closed like the website (packages/website/src/seo.ts).
 # Nothing is open: no search engines, no AI training, no AI retrieval.
 
 User-agent: *

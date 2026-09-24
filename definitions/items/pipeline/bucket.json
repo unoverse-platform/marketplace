@@ -1,7 +1,7 @@
 {
   "kind": "pipeline",
   "name": "bucket",
-  "fingerprint": "ff2ba6cf14fa64b6",
+  "fingerprint": "12d0c8350ea6aafc",
   "bundle": "design-system",
   "title": "Bucket",
   "description": "The documents in a folder of your S3 bucket. Each file is read whole and placed on the map by the needs it answers.",

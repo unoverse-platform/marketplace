@@ -1,7 +1,7 @@
 {
   "kind": "object",
   "name": "figure",
-  "fingerprint": "df0e2459b98a7819",
+  "fingerprint": "4fe1d9406469f1cb",
   "bundle": "design-system",
   "title": "Figure",
   "description": "One picture a document holds, a chart, a diagram, a photograph or a screenshot, with the page and the box it sits in, and a chart's values when they were read.",

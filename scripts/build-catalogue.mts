@@ -11,9 +11,9 @@
  * Definitions are stripped. The list is for browsing; the definition is fetched on
  * install, from its own path in this same folder.
  *
- * Also ships the STOREFRONT (storefront/index.html), which is the marketplace's own user
- * experience and the reason this deploys separately from the platform. It doubles as the
- * index a static host needs to recognise the folder as servable.
+ * Also ships the STOREFRONT (storefront/marketplace/index.html), which is the marketplace's
+ * own user experience and the reason this deploys separately from the platform. The
+ * website is not here: it is its own site (packages/website).
  *
  * Runs after bundle-defs.mjs, which is what puts the definitions on disk to read.
  */
