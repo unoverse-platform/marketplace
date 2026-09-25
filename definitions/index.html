@@ -2,17 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <!--
-      THE SITE ROOT SERVES THE CATALOGUE (catalogue.json, items/), and the browse page is one
-      folder down, where Studio's frame already looks for it. A visitor who types the bare
-      address is sent there.
-    -->
-    <meta http-equiv="refresh" content="0; url=./marketplace/" />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Marketplace · unoverse</title>
-    <link rel="canonical" href="./marketplace/" />
+    <meta
+      name="description"
+      content="Components, atoms and styles, prompt blocks, skills and declarative nodes for the unoverse platform."
+    />
+    <!-- Closed to crawlers, like the site root's robots.txt (static/robots.txt). -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="robots" content="noai, noimageai" />
+    <link rel="icon" href="https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png" />
+    <script type="module" crossorigin src="./assets/marketplace-F6IWBfO1.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/marketplace-6fx4BC8C.css">
   </head>
-  <body>
-    <a href="./marketplace/">Marketplace</a>
+  <!--
+    WHERE THE DATA IS. The catalogue and the item files are published beside this page, at the
+    site root. `dataUrl()` in src/host.tsx reads this and nothing else.
+  -->
+  <body data-catalogue="./">
+    <!--
+      THE MARKETPLACE APP, ON ITS OWN DOCUMENT.
+      It is not prerendered and should not be: everything on it comes from `catalogue.json`
+      at runtime, so a build-time snapshot would only serve a stale catalogue that the
+      first fetch replaces.
+    -->
+    <div id="root"></div>
   </body>
 </html>
