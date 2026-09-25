@@ -8,7 +8,7 @@ description: Semantic and spatial search over the platform's own knowledge base
 #
 # 1. AUTH. The retired node forwarded the caller's JWT as a bearer token, and §9.13 forbids a
 #    manifest from holding one. That looked like a hard block. It was not: the runtime
-#    listener is never published or proxied (AUTH_REMEDIATION.md, superseded July 2026 —
+#    listener is never published or proxied (docs/auth-security/legacy/AUTH_REMEDIATION_2026.md, superseded July 2026 —
 #    Docker network isolation IS the trust boundary), so a node calling the platform is
 #    already inside it and needs no token. The retired client agreed without anyone noticing:
 #    its `authHeaders` returned {} when there was none.

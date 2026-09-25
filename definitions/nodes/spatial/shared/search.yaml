@@ -5,7 +5,7 @@
 
 # THE PLATFORM'S OWN SEARCH, on the loopback runtime. No credential and no forwarded token:
 # the listener is never published or proxied, so a node calling it is already inside the
-# trust boundary (AUTH_REMEDIATION.md, superseded July 2026).
+# trust boundary (docs/auth-security/legacy/AUTH_REMEDIATION_2026.md, superseded July 2026).
 #
 # `scope.engineUrl` is the ENGINE on :4101, NOT `scope.platformUrl` (the runtime on :4106).
 # Two internal listeners with different routes: search and dictionary reads are the engine's,
