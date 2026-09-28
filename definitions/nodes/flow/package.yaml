@@ -64,15 +64,17 @@ features:
   - Validate collected data against a schema and get the next missing field to ask for
   - Walk a task's steps, handing out what is still outstanding and taking the answers back
   - Push suggested FAQs, actions and recommendations to the live chat UI
+  - Fill a task already on the person's screen with a workflow's findings
 
 requires:
   # 1.7.0 for named helpers (shared/helpers.yaml), which FieldValidator's emit rows call —
   # the same floor spatial set when helpers landed. Previously 1.5.0.
   executorVersion: ">=1.7.0"
-  # TaskRunner's three calls to the engine. Declared for the same reason as everything else
-  # here: the package says which capabilities its nodes need, so an install against an
-  # executor without them fails at install rather than at run.
-  transport: [json]
+  # TaskRunner's calls to the engine, and to the platform's MCP when it loads a task by URI:
+  # `headers` because the MCP session id arrives in one. Declared for the same reason as
+  # everything else here: the package says which capabilities its nodes need, so an install
+  # against an executor without them fails at install rather than at run.
+  transport: [json, headers]
   # Code's "Save to Context" toggle. Declared even though it cannot silently no-op the way a cache
   # read can — an executor without `save` throws rather than shrugging — because the reason to
   # declare is the same either way: the package says which platform capabilities its nodes need, so
@@ -86,7 +88,7 @@ requires:
     - open
     - read
     - advance
-  # Suggestions' whole job. Declared because on an executor without the publish lane the node
-  # would emit its connector and never reach the screen — "worked" everywhere except the one
-  # place it matters.
+  # Suggestions' whole job, and TaskRunner's position on screen (tasks.<ref>). Declared because
+  # on an executor without the publish lane the node would emit its connector and never reach
+  # the screen — "worked" everywhere except the one place it matters.
   publish: true

@@ -1,0 +1,24 @@
+inputs:
+  - name: signal
+    type: object
+    description: The profile URLs or handles to read
+    required: false
+
+outputs:
+  - name: profiles
+    type: array
+    description: Every profile the actor returned, as the actor returned it
+  - name: profile
+    type: object
+    description: The first profile, or null when none came back
+  - name: photo
+    type: string
+    description: The first profile's photo URL, or empty when it has none
+  - name: found
+    type: boolean
+    description: Whether at least one profile came back
+
+credentials:
+  - name: apifyCredential
+    required: true
+    displayName: Apify API

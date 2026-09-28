@@ -1,7 +1,7 @@
 {
   "kind": "template",
   "name": "email-digest",
-  "fingerprint": "018bb541363f3717",
+  "fingerprint": "7f8aee02e999c651",
   "bundle": "design-system",
   "title": "Email Digest",
   "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
@@ -108,9 +108,9 @@
                       "from": "all",
                       "where": {
                         "field": "state",
-                        "eq": "grid"
+                        "eq": "items"
                       },
-                      "limit": 3
+                      "limit": 1
                     }
                   }
                 ]
@@ -173,10 +173,15 @@
       "email"
     ],
     "initialView": "email",
+    "stateTree": [
+      {
+        "name": "email"
+      }
+    ],
     "sections": {
       "email": [
         {
-          "kind": "static",
+          "kind": "part",
           "face": "masthead",
           "component": "components/masthead",
           "ref": "email-digest/masthead",
@@ -188,7 +193,7 @@
           }
         },
         {
-          "kind": "copywriter",
+          "kind": "part",
           "face": "subject",
           "component": "components/subject",
           "ref": "email-digest/subject",
@@ -199,7 +204,7 @@
           }
         },
         {
-          "kind": "copywriter",
+          "kind": "part",
           "face": "body",
           "component": "components/body",
           "ref": "email-digest/body",
@@ -212,26 +217,37 @@
           }
         },
         {
-          "kind": "director",
-          "face": "grid",
-          "state": "grid",
-          "pick": 3,
-          "preview": [
-            "card",
-            "card",
-            "card"
-          ],
+          "kind": "part",
+          "face": "items",
+          "component": "components/items",
+          "ref": "email-digest/items",
           "seeds": {
-            "card": {
-              "title": "Lightsaber Combat Training",
-              "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
-              "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
-              "callToAction": "Begin Training"
+            "email-digest/items": {
+              "items": [
+                {
+                  "title": "Lightsaber Combat Training",
+                  "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[BEGIN TRAINING](https://example.com)"
+                },
+                {
+                  "title": "Starship Piloting Fundamentals",
+                  "description": "Learn to fly by instruments and by feel, from first launch to a clean landing.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[START FLYING](https://example.com)"
+                },
+                {
+                  "title": "The Way of the Force",
+                  "description": "A guided course in focus and patience, taught live with on-demand catch-up.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[FIND OUT MORE](https://example.com)"
+                }
+              ]
             }
           }
         },
         {
-          "kind": "copywriter",
+          "kind": "part",
           "face": "signoff",
           "component": "components/signoff",
           "ref": "email-digest/signoff",
@@ -244,7 +260,7 @@
           }
         },
         {
-          "kind": "static",
+          "kind": "part",
           "face": "footer",
           "component": "components/footer",
           "ref": "email-digest/footer",
@@ -268,10 +284,8 @@
       "body": [
         "email-digest/body"
       ],
-      "grid": [
-        "card",
-        "card",
-        "card"
+      "items": [
+        "email-digest/items"
       ],
       "signoff": [
         "email-digest/signoff"
@@ -378,9 +392,9 @@
                         "from": "all",
                         "where": {
                           "field": "state",
-                          "eq": "grid"
+                          "eq": "items"
                         },
-                        "limit": 3
+                        "limit": 1
                       }
                     }
                   ]

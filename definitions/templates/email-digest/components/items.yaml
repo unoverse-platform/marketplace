@@ -1,0 +1,104 @@
+unoverse: "1.0"
+# THE LETTER'S ITEMS: what the email is showing the reader, stacked one under another as a
+# newsletter lists them. The Agent picks each item by ref from what its search found, and
+# the item's own name, words, picture and link arrive with the result, so nothing about
+# an item is ever written.
+type: component
+name: items
+category: Communication
+nodeSize:
+  width: 600
+  height: 900
+props:
+  items:
+    type: array
+    input: true
+    description: >-
+      The items worth this reader's attention, most relevant first, each one a result the
+      search found, picked by its ref. Only what the source actually supports for this
+      reader; fewer is better than a padded list.
+    minItems: 1
+    maxItems: 3
+    preview:
+      - title: Lightsaber Combat Training
+        description: Master the seven forms of lightsaber combat with guidance from Jedi Masters.
+        image: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
+        link: "[BEGIN TRAINING](https://example.com)"
+      - title: Starship Piloting Fundamentals
+        description: Learn to fly by instruments and by feel, from first launch to a clean landing.
+        image: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
+        link: "[START FLYING](https://example.com)"
+      - title: The Way of the Force
+        description: A guided course in focus and patience, taught live with on-demand catch-up.
+        image: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
+        link: "[FIND OUT MORE](https://example.com)"
+    items:
+      title:
+        type: string
+        description: The item's own name, exactly as it is published. Comes from the referenced result.
+        hydrate: title
+        override: false
+      description:
+        type: string
+        description: What the item is, in its own published words. Comes from the referenced result.
+        hydrate: body
+        override: false
+      image:
+        type: string
+        description: The item's own picture, drawn from the referenced result. Never authored.
+        hydrate: image
+      link:
+        type: string
+        description: The way into this item, drawn from the referenced result. Never authored.
+        hydrate: link
+root:
+  type: Each
+  bind:
+    items: items
+  style:
+    direction: column
+    gap: "5"
+    width: full
+  item:
+    type: Box
+    style:
+      width: full
+      direction: column
+      background: surface.base
+      border: subtle
+      shadow: lg
+      overflow: hidden
+      textAlign: start
+    children:
+      - type: Ref
+        ref: cover-image
+        visibleWhen: image
+        props:
+          src: image
+          alt: title
+      - type: Box
+        style:
+          direction: column
+          padding: "6"
+          gap: "3"
+          align: start
+        children:
+          - type: Text
+            bind:
+              value: title
+            style:
+              font: headline.sm
+              weight: semibold
+              color: text.primary
+          - type: Text
+            visibleWhen: description
+            bind:
+              value: description
+            style:
+              font: body.md
+              color: text.secondary
+          - type: Ref
+            ref: cta-link
+            visibleWhen: link
+            props:
+              link: link

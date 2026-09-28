@@ -12,17 +12,17 @@ props:
   orgName:
     type: string
     description: "The organisation sending the email, as it should appear in the footer."
-    input: true
+    input: false
     default: Your organisation
   note:
     type: string
     description: "Why this person is receiving the email, in one line."
-    input: true
+    input: false
     default: You are receiving this because you asked to hear from us.
   legal:
     type: string
     description: "Any legal line the footer must carry, such as a registered address. Empty means none."
-    input: true
+    input: false
     default: ""
 root:
   type: Box

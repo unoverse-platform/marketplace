@@ -27,3 +27,10 @@ capabilities:
   # NOT cacheable, and not even coherently so: there is no single request to reuse. A cached
   # conversation is a contradiction.
   cacheable: false
+
+# TALK TO IT ON THE CANVAS. A tab on this node's panel that opens a live call: it starts the
+# workflow from the trigger upstream, with that trigger's Testing inputs, and carries the
+# person's microphone and speakers on the browser lane while the tab is open.
+menu:
+  - label: Talk
+    service: voice

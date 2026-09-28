@@ -1,0 +1,112 @@
+{
+  "kind": "node",
+  "name": "ApifyLinkedInProfile",
+  "pack": "apify",
+  "fingerprint": "7d7806b96f76598c",
+  "title": "Apify LinkedIn Profile",
+  "description": "Read public LinkedIn profiles through an Apify actor, photo included",
+  "category": "Web Scraping",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png",
+  "whenToUse": "Pick to read one or more PEOPLE's public LinkedIn profiles from their profile URLs or handles: name, headline, current role, experience and profile photo. It runs the actor and waits for the profiles in one step, so no run id to follow. It reads people, not company pages, job posts or search results.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "The profile URLs or handles to read",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "profiles",
+        "type": "array",
+        "description": "Every profile the actor returned, as the actor returned it"
+      },
+      {
+        "name": "profile",
+        "type": "object",
+        "description": "The first profile, or null when none came back"
+      },
+      {
+        "name": "photo",
+        "type": "string",
+        "description": "The first profile's photo URL, or empty when it has none"
+      },
+      {
+        "name": "found",
+        "type": "boolean",
+        "description": "Whether at least one profile came back"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "apifyCredential",
+        "required": true,
+        "displayName": "Apify API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "profiles"
+      ],
+      "properties": {
+        "profiles": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "title": "Profiles",
+          "description": "LinkedIn profile URLs or handles (the part after /in/), one or a JSON array. Use a template to take them from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "actorId": {
+          "type": "string",
+          "title": "Actor",
+          "description": "The Apify actor that reads the profiles. It must take `queries`, as harvestapi/linkedin-profile-scraper does.",
+          "default": "harvestapi/linkedin-profile-scraper",
+          "placeholder": "harvestapi/linkedin-profile-scraper"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "apify",
+      "packageFile": "# FULLY DECLARATIVE. Three nodes, one token.\n#\n# THE LAST HALF OF THE OLD `crawl` PACKAGE. Its three Hyperbrowser nodes became\n# `nodes/hyperbrowser/`; these two are Apify, which shares no endpoint, credential or shape\n# with them and was only ever in the same package because both are \"web scraping\".\n#\n# I RECORDED THIS PACKAGE AS UNMIGRATABLE ONCE, and that was wrong twice over. The claim was\n# that ApifyResults is a stateful iterator, so computation. Reading it properly:\n#\n#   1. The iterator is DEAD. It emits one item per `continue` signal and declares that input\n#      via `getTriggerInputs()`, a hook that exists in NO base class any more — not in\n#      plugin-base, not in the engine's CallbackNode. Only two nodes in the tree override\n#      it and nothing calls it. So the node fetches the list, emits item[0], and waits for a\n#      signal that is never routed.\n#\n#   2. Iterating is not this node's job. LoopStart/LoopEnd own it, in the marketplace\n#      `flow` package, and LOOP_NODES_SPEC.md names the self-continuing CallbackNode as the\n#      exact design they replaced. So ApifyResults returns the whole list and a canvas that\n#      wants one at a time wires a loop, which is the platform's answer rather than this\n#      node's re-invention of it.\n#\n# The real gaps were two small capabilities, both now built: `offset` pagination, and\n# `sha256` in the expression sandbox for the content ids.\n#\n# The retired TypeScript is at `_legacy/nodes/crawl/`.\n\nname: apify\ndisplayName: Apify\ndescription: Run Apify actors and tasks, and read their results\nversion: 1.0.0\ncategory: ingest\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png\n\nfeatures:\n  - Start an actor or a saved task from a list of URLs\n  - Read a finished run's dataset, following every page\n  - Stable universal and content ids for dedup\n  - Read public LinkedIn profiles, photo included\n\nallowedHosts:\n  - api.apify.com\n\nrequires:\n  credential: [bearer]\n  transport: [json]\n  # The dataset endpoint counts ROWS, not pages, so the walk steps by the page size.\n  paginate: [offset]\n  # ApifyStarter follows the run when asked to wait for it.\n  poll: true\n  executorVersion: \">=1.1.0\"\n",
+      "credentials": {
+        "apifyCredential.yaml": "# Transcribed from the retired crawl/src/credentials/index.ts, NAME AND FIELD UNCHANGED so\n# credentials already stored against `apifyCredential` keep resolving after the move. Note\n# the field is `token`, not `apiKey`: Apify calls it a token and the stored rows say token.\n\nname: apifyCredential\ndisplayName: Apify\ndescription: Apify API credentials for starting actor runs and reading their results\ndocumentationUrl: https://docs.apify.com/api/v2\n\nproperties:\n  - name: token\n    displayName: API Token\n    type: string\n    required: true\n    secret: true\n    description: Your Apify API token from console.apify.com\n    placeholder: \"\"\n"
+      },
+      "shared": {
+        "apify.yaml": "# What both nodes share: how to reach Apify, and how a URL list is read.\n\ncall: &call\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.apifyCredential.token }}\"\n  headers:\n    Accept: application/json\n  transport: json\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n\n# THE URL LIST, normalised. The panel's field is a template that usually carries a JSON\n# array as a STRING, and an upstream node may hand over a real array instead.\n#\n# ONE DELIBERATE DIFFERENCE from the retired parseUrls: a string that opens with `[` and\n# fails to parse THROWS rather than being treated as a single URL. The sandbox has no\n# try/catch, and the retired node was inconsistent with itself anyway — its own validation\n# rejected unparseable JSON with \"URLs must be a valid JSON array\" while the service it\n# called fell back to scraping the broken string. One of those had to go, and the error is\n# the honest one.\nurls: &urls >-\n  return Array.isArray(config.urls)\n    ? config.urls.map(u => String(u)).filter(Boolean)\n    : typeof config.urls === 'string' && config.urls.trim().startsWith('[')\n      ? JSON.parse(config.urls.trim()).map(u => String(u)).filter(Boolean)\n      : typeof config.urls === 'string' && config.urls.trim()\n        ? [config.urls.trim()]\n        : []\n"
+      }
+    },
+    "dir": "ApifyLinkedInProfile",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n\n- emit: profiles\n  from: response\n  value: \"return Array.isArray(response) ? response : []\"\n\n- emit: profile\n  from: response\n  value: \"return Array.isArray(response) && response.length ? response[0] : null\"\n\n- emit: photo\n  from: response\n  value: \"return Array.isArray(response) && response.length && response[0] ? (response[0].photo || '') : ''\"\n\n- emit: found\n  from: response\n  value: \"return Array.isArray(response) && response.length > 0\"\n",
+      "api/run.yaml": "# ONE CALL: start the actor and wait for its dataset in the same request.\n#\n# `run-sync-get-dataset-items` holds the request until the run finishes and answers with the\n# dataset's items, so there is no run id to follow and no second node to read it. Apify\n# ends a synchronous run at five minutes, well past a handful of profiles.\n#\n# The actor id travels in the path with `~` for `/`, which is how Apify's API names an\n# actor by its username.\n\n# NOTHING TO READ, NOTHING RUN: a person with no LinkedIn handle skips the call, and the node\n# answers found false rather than failing the loop it sits in.\n- $ref: apify#call\n  name: profiles\n  when: >-\n    return (Array.isArray(config.profiles)\n      ? config.profiles.filter(u => String(u || '').trim()).length\n      : String(config.profiles || '').trim().replace(/^\\[\\s*\\]$/, '').length) > 0\n  method: POST\n  url: >-\n    return 'https://api.apify.com/v2/acts/'\n      + String(config.actorId || 'harvestapi/linkedin-profile-scraper').trim().replace('/', '~')\n      + '/run-sync-get-dataset-items'\n  timeoutMs: 300000\n\n  # AN ACTOR REFUSES IN ITS DATA, not its status: a refused run still answers 201 with items\n  # that carry only `error` (a free plan run through the API, for one). Every item an error\n  # means nothing was read, so the node fails with the actor's own words.\n  error:\n    when: \"return Array.isArray(response) && response.length > 0 && response.every(i => i && i.error)\"\n    message: \"return response.map(i => i.error).join('; ')\"\n\n  # A bare handle becomes the profile URL; a URL is passed as it is.\n  body:\n    # Details only, never the email search: Hunter already finds the email, and the search\n    # costs more than twice as much per profile.\n    profileScraperMode: Profile details no email ($4 per 1k)\n    queries: >-\n      return (Array.isArray(config.profiles)\n        ? config.profiles.map(u => String(u).trim()).filter(Boolean)\n        : typeof config.profiles === 'string' && config.profiles.trim().startsWith('[')\n          ? JSON.parse(config.profiles.trim()).map(u => String(u).trim()).filter(Boolean)\n          : typeof config.profiles === 'string' && config.profiles.trim()\n            ? [config.profiles.trim()]\n            : []).map(u => u.startsWith('http') ? u : 'https://www.linkedin.com/in/' + u.replace(/^\\/+|\\/+$/g, ''))\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [profiles]\n  properties:\n    profiles:\n      # Both, because both arrive: a typed handle or JSON array is a string, and an upstream\n      # node's output may be a real array.\n      type: [array, string]\n      title: Profiles\n      description: >-\n        LinkedIn profile URLs or handles (the part after /in/), one or a JSON array. Use a\n        template to take them from an upstream node.\n      default: \"\"\n      \"ui:field\": template\n    actorId:\n      type: string\n      title: Actor\n      description: >-\n        The Apify actor that reads the profiles. It must take `queries`, as\n        harvestapi/linkedin-profile-scraper does.\n      default: harvestapi/linkedin-profile-scraper\n      placeholder: harvestapi/linkedin-profile-scraper\n\"ui:order\": [profiles, actorId]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: The profile URLs or handles to read\n    required: false\n\noutputs:\n  - name: profiles\n    type: array\n    description: Every profile the actor returned, as the actor returned it\n  - name: profile\n    type: object\n    description: The first profile, or null when none came back\n  - name: photo\n    type: string\n    description: The first profile's photo URL, or empty when it has none\n  - name: found\n    type: boolean\n    description: Whether at least one profile came back\n\ncredentials:\n  - name: apifyCredential\n    required: true\n    displayName: Apify API\n",
+      "node.yaml": "type: ApifyLinkedInProfile\nkind: PromiseNode\n\nname: Apify LinkedIn Profile\ncategory: Web Scraping\ncolor: \"#00B4A6\"\n\ndescription: Read public LinkedIn profiles through an Apify actor, photo included\n\nwhenToUse: >-\n  Pick to read one or more PEOPLE's public LinkedIn profiles from their profile URLs or\n  handles: name, headline, current role, experience and profile photo. It runs the actor and\n  waits for the profiles in one step, so no run id to follow. It reads people, not company\n  pages, job posts or search results.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13).\nauth:\n  required: false\n\ncapabilities:\n  # NEVER cacheable: every run is billed per profile by the actor.\n  cacheable: false\n",
+      "test.yaml": "# RUNS THE ACTOR FOR REAL and is billed for one profile.\n\ntestData:\n  config:\n    profiles: williamhgates\n    actorId: harvestapi/linkedin-profile-scraper\n  inputs:\n    signal: williamhgates\n  expect:\n    profiles: \"return Array.isArray(output.profiles) && output.profiles.length === 1\"\n    found: \"return output.found === true\"\n"
+    }
+  }
+}

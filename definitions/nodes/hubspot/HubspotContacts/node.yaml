@@ -1,0 +1,25 @@
+type: HubspotContacts
+# Every tool is a short chain of settling calls. Nothing streams, so this is a PromiseNode.
+kind: PromiseNode
+name: HubSpot Contacts
+category: Go To Market
+color: "#FF7A59"
+# Drawn as a service node: it is ATTACHED to an agent over a service edge and never wired in
+# sequence, so the compact card is the honest shape.
+template: service
+description: Create and update HubSpot contacts by email, link them to their company, and note what was learned.
+whenToUse: >
+  Pick to record people in HubSpot: add a new lead or update an existing contact by their
+  email, link them to their company, and leave a note on their record, such as research
+  about them. It writes to any contact the Agent names, not only the signed-in person, so
+  give it only to an Agent trusted to write to the CRM. Attach it via a service edge to an
+  agent node.
+
+# WHO MAY RUN THIS. `required: false` adds no requirement of its own: the node runs for
+# whoever the trigger admitted, and the trigger owns the door.
+auth:
+  required: false
+
+capabilities:
+  # Every tool writes. A cached reply would skip the write it stands for.
+  cacheable: false

@@ -1,0 +1,5 @@
+# NO CALLS. The engine resolves every config field before the node runs, so the task and its
+# values are emitted as they are and pushed to the screen by api/publish.yaml.
+
+- emit: task
+  value: "return { ref: config.task, step: config.step || undefined, props: config.props }"

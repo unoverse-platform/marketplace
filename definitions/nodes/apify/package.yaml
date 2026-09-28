@@ -1,4 +1,4 @@
-# FULLY DECLARATIVE. Two nodes, one token.
+# FULLY DECLARATIVE. Three nodes, one token.
 #
 # THE LAST HALF OF THE OLD `crawl` PACKAGE. Its three Hyperbrowser nodes became
 # `nodes/hyperbrowser/`; these two are Apify, which shares no endpoint, credential or shape
@@ -35,6 +35,7 @@ features:
   - Start an actor or a saved task from a list of URLs
   - Read a finished run's dataset, following every page
   - Stable universal and content ids for dedup
+  - Read public LinkedIn profiles, photo included
 
 allowedHosts:
   - api.apify.com

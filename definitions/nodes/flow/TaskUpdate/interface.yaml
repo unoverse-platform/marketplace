@@ -1,0 +1,11 @@
+inputs:
+  - name: signal
+    type: object
+    description: >-
+      Upstream data. The config's templates read it; nothing is read from it directly.
+    required: false
+
+outputs:
+  - name: task
+    type: object
+    description: "The task and the values it was filled with: { ref, props }"

@@ -1,0 +1,44 @@
+# ONE CALL: start the actor and wait for its dataset in the same request.
+#
+# `run-sync-get-dataset-items` holds the request until the run finishes and answers with the
+# dataset's items, so there is no run id to follow and no second node to read it. Apify
+# ends a synchronous run at five minutes, well past a handful of profiles.
+#
+# The actor id travels in the path with `~` for `/`, which is how Apify's API names an
+# actor by its username.
+
+# NOTHING TO READ, NOTHING RUN: a person with no LinkedIn handle skips the call, and the node
+# answers found false rather than failing the loop it sits in.
+- $ref: apify#call
+  name: profiles
+  when: >-
+    return (Array.isArray(config.profiles)
+      ? config.profiles.filter(u => String(u || '').trim()).length
+      : String(config.profiles || '').trim().replace(/^\[\s*\]$/, '').length) > 0
+  method: POST
+  url: >-
+    return 'https://api.apify.com/v2/acts/'
+      + String(config.actorId || 'harvestapi/linkedin-profile-scraper').trim().replace('/', '~')
+      + '/run-sync-get-dataset-items'
+  timeoutMs: 300000
+
+  # AN ACTOR REFUSES IN ITS DATA, not its status: a refused run still answers 201 with items
+  # that carry only `error` (a free plan run through the API, for one). Every item an error
+  # means nothing was read, so the node fails with the actor's own words.
+  error:
+    when: "return Array.isArray(response) && response.length > 0 && response.every(i => i && i.error)"
+    message: "return response.map(i => i.error).join('; ')"
+
+  # A bare handle becomes the profile URL; a URL is passed as it is.
+  body:
+    # Details only, never the email search: Hunter already finds the email, and the search
+    # costs more than twice as much per profile.
+    profileScraperMode: Profile details no email ($4 per 1k)
+    queries: >-
+      return (Array.isArray(config.profiles)
+        ? config.profiles.map(u => String(u).trim()).filter(Boolean)
+        : typeof config.profiles === 'string' && config.profiles.trim().startsWith('[')
+          ? JSON.parse(config.profiles.trim()).map(u => String(u).trim()).filter(Boolean)
+          : typeof config.profiles === 'string' && config.profiles.trim()
+            ? [config.profiles.trim()]
+            : []).map(u => u.startsWith('http') ? u : 'https://www.linkedin.com/in/' + u.replace(/^\/+|\/+$/g, ''))

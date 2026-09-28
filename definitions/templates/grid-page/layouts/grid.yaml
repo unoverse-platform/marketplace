@@ -1,8 +1,8 @@
-# The BROWSE arrangement: the director's set as a RESPONSIVE grid — column count per
-# breakpoint band (served container widths, semantic/breakpoints): stacked on mobile,
-# two across on tablet, three on desktop, four at full. The OUTER box is the
-# measuring context (`container`): the bands read the width this arrangement actually
-# has, wherever it is placed — a grid in a narrow rail stacks on a wide screen.
+# The BROWSE arrangement: the tiles part, a RESPONSIVE grid whose column count is set per
+# breakpoint band inside the part (stacked on mobile, two across on tablet, three on
+# desktop, four at full). The OUTER box is the measuring context (`container`): the bands
+# read the width this arrangement actually has, wherever it is placed, so a grid in a
+# narrow rail stacks on a wide screen.
 type: Box
 style:
   width: full
@@ -10,21 +10,11 @@ style:
 children:
   - type: Box
     style:
-      columns:
-        mobile: "1"
-        tablet: "2"
-        desktop: "3"
-        full: "4"
-      gap: "4"
       width: full
       # The browse arrangement's own top breathing room — the mount frame
       # deliberately carries no top padding (it would break the page state's
       # sticky header).
       padding: [ "4", "0", "0", "0" ]
     children:
-      # No `state:` pin: arrivals keep their own state, so the tap-to-detail dance
-      # is free — a card writing itself into `page` activates that state by name.
-      # The band holds what arrives in search rank, up to six.
-      - director:
-          pick: 6
-          preview: [ card, card, card ]
+      - type: Ref
+        ref: components/tiles

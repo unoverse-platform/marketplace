@@ -39,12 +39,16 @@
               + '\n\nEnding the call is a tool, not a sentence. When the call is finished, say your'
               + ' goodbye and then call end_call IN THE SAME TURN. A goodbye on its own leaves the'
               + ' line open and the person listening to silence.'
+              + '\n\nFilling in the task is a hand-off, not a sentence. Every time the person gives an'
+              + ' answer to one of the task\'s fields, hand off at once so record_answers puts it on'
+              + ' screen, carrying every answer given so far, before you ask the next question. One'
+              + ' hand-off at a time. Saying you have put it in without handing off leaves the screen'
+              + ' empty.'
               + (brief
-                ? '\n\nThis is the task you are calling about.\n' + JSON.stringify(brief)
-                  + '\n\n`held` is what we already hold: USE it and NEVER ask for it, not even to'
-                  + ' confirm it — their name is in there, and so is what the task is about.'
-                  + ' `fields` is what is still outstanding, and it is what this call is for.'
-                  + ' Ask for those one at a time, in your own words.'
+                ? '\n\nThis is the task you are working through, as data.\n' + JSON.stringify(brief)
+                  + '\n\n`step` is where you are, with its number out of the total; `held` is what is'
+                  + ' on this step or already known; `fields` is what the step waits on; `next` is'
+                  + ' the step after it. How to work it is in your instructions.'
                 : '');
           })()
         audio:
@@ -99,15 +103,15 @@
             // which fails the call before it dials (measured 2026-09-22).
             const fields = helpers.fieldNamesIn(helpers.briefIn(signal));
 
-            // A TIME TO RING BACK IS ALWAYS COLLECTABLE, on any task, whether or not the task
-            // asked for it: "not now, try Thursday" is an answer to a call even when the form
-            // has no field for it.
+            // WHEN TO COME BACK IS ALWAYS COLLECTABLE, on any task, whether or not the task asked
+            // for it: every task has a wake time (SIGNAL.md 6b), and "not now, try Thursday" is an
+            // answer to any task, a form, a deck or a call.
             const collectable = fields.concat(['callback_when', 'callback_at']);
 
             const record = fields.length ? [{
               type: 'function',
               name: 'record_answers',
-              description: 'Record what the caller gave, once, at the end of the call. Only the fields listed are askable; a field they did not answer is simply left out.',
+              description: 'Record values for the task\'s fields as they are settled. Your instructions say when. Only the fields listed can be recorded; a field with no value is simply left out.',
               parameters: {
                 type: 'object',
                 required: ['answers'],
@@ -122,9 +126,9 @@
                         field: {
                           type: 'string',
                           enum: collectable,
-                          description: 'Which field this answers. callback_when is a time to ring back in their own words; callback_at is that same moment as a full date and time, only when the day is beyond doubt.'
+                          description: 'Which field this answers. callback_when is when to come back to this task, in the person\'s own words; callback_at is that same moment as a full date and time, only when the day is beyond doubt.'
                         },
-                        value: { type: 'string', description: 'What the caller said, as they said it.' }
+                        value: { type: 'string', description: 'What the person said, as they said it.' }
                       },
                       additionalProperties: false
                     }
@@ -140,7 +144,7 @@
             const hangUp = {
               type: 'function',
               name: 'end_call',
-              description: 'Hang up the telephone. A farewell in words does NOT end a call: the line stays open and the person is left listening to silence. Any turn where you say goodbye, or thank them and close, or agree a time and finish, MUST call this in the same turn.',
+              description: 'End the conversation. A farewell in words does NOT end it: the line stays open and the person is left listening to silence. Any turn that closes the conversation MUST call this in the same turn.',
               parameters: {
                 type: 'object',
                 required: ['reason'],
@@ -171,7 +175,7 @@
     - >-
       return String(config.initialRequest || '').trim()
         ? [{ type: 'session.instructions.append', delegation_id: null,
-             content: 'Speak first, right now, without waiting for the caller: ' + String(config.initialRequest) +
+             content: 'Speak first, right now, without waiting for the person: ' + String(config.initialRequest) +
                       ' Then pause and listen.' }]
         : []
 

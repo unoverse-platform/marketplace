@@ -1,13 +1,9 @@
 unoverse: "1.0"
-# THE FIRST SHELF TEMPLATE (docs/unoverse/design/models/UNOVERSE_TEMPLATE_MODEL.md §9b, the
-# three-word grammar ruled 2026-08-29). TWO STATES, one template: browse and detail
-# are the same template's life. States activate by the EXISTING name-match reaction
-# — an interface arriving (or a held one re-facing on the guest's tap) in a state
-# this template declares draws that state's arrangement; its ✕ writes the state
-# back and the grid returns. `grid`/`page` are the standard names every card
-# declares, so any org's card matches with zero mapping. Each layout holds one
-# `director:` section; the grants and rules are written where the template is
-# placed (a universal thing carries no context).
+# THE FIRST SHELF TEMPLATE (docs/unoverse/design/models/UNOVERSE_TEMPLATE_MODEL.md §9b).
+# TWO STATES, one template: browse and detail are the same template's life, `grid` and
+# `page`, the standard names. Each layout places one part: the tiles the Agent picked in
+# `grid`, one item in full in `page`. A universal thing carries no context, so every
+# word on the page comes from the results the Agent picked.
 type: template
 name: grid-page
 states:

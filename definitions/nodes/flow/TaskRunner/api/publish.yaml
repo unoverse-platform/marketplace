@@ -1,0 +1,19 @@
+# WHERE THE TASK IS, on the person's live screen (SIGNAL.md 6c). Every time a step is handed out,
+# the task's position is merged into the caller's app state under `tasks.<ref>`: whatever shows
+# that task on screen (a template a page draws, an app's place) follows it to the same step, in
+# any conversation, voice or chat. The producer names the key; the SDK merges it opaquely
+# (UNOVERSE_STATE_MODEL §8).
+#
+# `output.task`, not a second expression over the inputs, so the screen and the graph never
+# drift: the step on screen IS the step the voice was handed.
+
+when: "return !!(output.task && output.task.ref && output.task.step)"
+# THE ANSWERS, beside it: a task that collects hands back what it holds so far under the names it
+# collects them by, into the app state the page's templates read beneath their own values, so a
+# form fills as the person answers. A task that collects nothing adds nothing here.
+data: >-
+  return Object.assign({}, output.task.answers || {}, { tasks: { [output.task.ref]: {
+    step: output.task.step,
+    stepNumber: output.task.stepNumber,
+    stepsTotal: output.task.stepsTotal
+  } } })

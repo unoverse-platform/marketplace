@@ -1,0 +1,139 @@
+# The tools an attached agent gets. Unlike the signed-in reader in this package, these act on
+# ANY contact the agent names by email: that is the point of the node, and why it is its own.
+#
+# Every field is optional except the email that identifies the person. Empty and null are
+# dropped, never sent: a strict tool schema fills unused fields with null, and a null would
+# wipe what HubSpot already holds.
+
+getSchema:
+  description: Tool discovery for HubSpot contacts
+  calls: []
+  returns: { $ref: schema#contacts }
+
+upsert_contact:
+  description: >-
+    Create a HubSpot contact, or update the one with this email if it exists. Pass the
+    email and any of firstName, lastName, phone, company, website, jobTitle, city, country,
+    linkedinUrl and lifecycleStage (such as lead). Only the fields you pass are written. Returns the
+    contact's id and whether it was new.
+  calls:
+    - name: upsert
+      when: "return !!params.email"
+      method: POST
+      url: { $ref: endpoints#contactsUpsert }
+      credential:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      body: >-
+        return { inputs: [{
+          idProperty: 'email',
+          id: String(params.email).trim().toLowerCase(),
+          properties: Object.fromEntries(Object.entries({
+            email: String(params.email).trim().toLowerCase(),
+            firstname: params.firstName,
+            lastname: params.lastName,
+            phone: params.phone,
+            company: params.company,
+            website: params.website,
+            jobtitle: params.jobTitle,
+            city: params.city,
+            country: params.country,
+            hs_linkedin_url: params.linkedinUrl,
+            lifecyclestage: params.lifecycleStage
+          }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+        }] }
+      transport: json
+      retry:
+        attempts: 3
+        backoff: exponential
+        on: [429, 500, 502, 503, 504]
+  returns: >-
+    return !calls.upsert
+      ? { ok: false, error: 'NO_EMAIL', hint: 'Pass the email of the person to create or update.' }
+      : [((calls.upsert.results) || [])[0] || null].map(r => r
+          ? { ok: true, id: r.id, created: r.new === true }
+          : { ok: false, error: 'NOT_WRITTEN', errors: calls.upsert.errors || [] })[0]
+
+add_note:
+  description: >-
+    Add a note to the HubSpot contact with this email, such as research about them or their
+    company. Pass the email and the note. Returns NO_CONTACT if nobody has that email, so
+    create them with upsert_contact first.
+  calls:
+    - { $ref: contact#search }
+
+    - name: note
+      when: "return !!params.note && (((calls.search || {}).results) || []).length > 0"
+      method: POST
+      url: { $ref: endpoints#notes }
+      credential:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      # The stamp is a WIRE MARKER shared with this package's other note writers: notes are
+      # read back by matching it, so its wording is fixed. associationTypeId 202 is HubSpot's
+      # own Note-to-Contact type.
+      body: >-
+        return {
+          properties: {
+            hs_note_body: 'Gravity AI — machine-authored, unverified\n\n' + params.note,
+            hs_timestamp: Date.now()
+          },
+          associations: [{
+            to: { id: calls.search.results[0].id },
+            types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }]
+          }]
+        }
+      transport: json
+  returns: >-
+    return calls.note
+      ? { ok: !!calls.note.id, id: calls.note.id || null }
+      : !params.email || !params.note
+        ? { ok: false, error: 'MISSING', hint: 'Pass both the email and the note.' }
+        : { ok: false, error: 'NO_CONTACT', hint: 'No contact has that email. Create them with upsert_contact first.' }
+
+associate_company:
+  description: >-
+    Link the HubSpot contact with this email to their company, found by the company's
+    domain. It never creates a company: HubSpot creates one company per email domain on its
+    own, and a second writer racing it is how duplicates are made. Returns NO_COMPANY when
+    HubSpot has none yet.
+  calls:
+    - { $ref: contact#search }
+
+    - name: found
+      when: "return !!params.domain && (((calls.search || {}).results) || []).length > 0"
+      method: POST
+      url: { $ref: endpoints#companySearch }
+      credential:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      body: >-
+        return {
+          filterGroups: [{ filters: [{ propertyName: 'domain', operator: 'EQ',
+            value: String(params.domain).trim().toLowerCase() }] }],
+          properties: ['name', 'domain'],
+          sorts: [{ propertyName: 'createdate', direction: 'ASCENDING' }],
+          limit: 1
+        }
+      transport: json
+
+    # The OLDEST company on the domain, so every contact lands on the same record even if a
+    # duplicate already exists. The default association needs no type id.
+    - name: link
+      when: "return ((calls.found || {}).results || []).length > 0"
+      method: PUT
+      url: >-
+        return 'https://api.hubapi.com/crm/v4/objects/contacts/' + calls.search.results[0].id
+          + '/associations/default/companies/' + calls.found.results[0].id
+      credential:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      transport: json
+  returns: >-
+    return calls.link
+      ? { ok: true, contactId: calls.search.results[0].id, companyId: calls.found.results[0].id }
+      : !params.email || !params.domain
+        ? { ok: false, error: 'MISSING', hint: 'Pass the email and the company domain.' }
+        : !((calls.search || {}).results || []).length
+          ? { ok: false, error: 'NO_CONTACT', hint: 'No contact has that email. Create them with upsert_contact first.' }
+          : { ok: false, error: 'NO_COMPANY', hint: 'HubSpot has no company on this domain yet. Nothing was created; HubSpot links the contact itself once it makes the company.' }

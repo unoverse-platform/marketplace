@@ -1,0 +1,23 @@
+configSchema:
+  type: object
+  required: [profiles]
+  properties:
+    profiles:
+      # Both, because both arrive: a typed handle or JSON array is a string, and an upstream
+      # node's output may be a real array.
+      type: [array, string]
+      title: Profiles
+      description: >-
+        LinkedIn profile URLs or handles (the part after /in/), one or a JSON array. Use a
+        template to take them from an upstream node.
+      default: ""
+      "ui:field": template
+    actorId:
+      type: string
+      title: Actor
+      description: >-
+        The Apify actor that reads the profiles. It must take `queries`, as
+        harvestapi/linkedin-profile-scraper does.
+      default: harvestapi/linkedin-profile-scraper
+      placeholder: harvestapi/linkedin-profile-scraper
+"ui:order": [profiles, actorId]

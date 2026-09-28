@@ -1,18 +1,18 @@
 - emit: url
-  value: "return response.url || ''"
+  value: "return (response || {}).url || ''"
 
 - emit: secureUrl
-  value: "return response.secure_url || response.url || ''"
+  value: "return (response || {}).secure_url || (response || {}).url || ''"
 
 - emit: publicId
-  value: "return response.public_id || ''"
+  value: "return (response || {}).public_id || ''"
 
 - emit: format
-  value: "return response.format || ''"
+  value: "return (response || {}).format || ''"
 
 - emit: metadata
   value: >-
-    return {
+    return !response ? {} : {
       width: response.width,
       height: response.height,
       bytes: response.bytes,

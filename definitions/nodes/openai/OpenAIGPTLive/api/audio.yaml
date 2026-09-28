@@ -12,8 +12,12 @@ in:
 out:
   match: session.output_audio.delta
   value: "return response.delta"
-  # NO `done` AND NO `interruptOn`: GPT-Live sends no end-of-speech or speech-started event. The
-  # model decides when to stop talking, so a person speaking never cuts its audio.
+  # THE PERSON TALKING OVER IT. GPT-Live decides for itself to stop, but it streams speech faster
+  # than it is played, so seconds of it are already queued in the browser and kept playing: the
+  # model had stopped and the person still heard it talking (transcripts 2026-09-27 show it yield).
+  # GPT-Live sends no speech-started event; the person's own words arriving are the first sign.
+  # Everything queued is thrown away then, here and in the browser (`control.userSpeaking`).
+  interruptOn: session.input_transcript.delta
 
 control:
   # THE MODEL HANGING UP. `endOn` below is the LANE's list and every entry means the PERSON
@@ -32,5 +36,15 @@ control:
   endOn: [END_CALL, stop]
   # The call state's "thinking": a hand-off starts the backend's work, and the vendor's
   # acknowledgement of the answer (see the `send` rule in api/run.yaml) ends it.
+  # The browser stops playing and shows "listening" when the person's words arrive, and goes back
+  # when the model answers: the same two events as above, the only ones GPT-Live has for it.
+  # WHAT COUNTS AS SOMEONE SPEAKING, for the minute of silence that ends a call. Words, not
+  # audio: GPT-Live streams silent audio, so its audio deltas never stop.
+  speech: [session.input_transcript.delta, session.output_transcript.delta]
+  userSpeaking: session.input_transcript.delta
+  userStopped: session.output_transcript.delta
   toolUse: session.delegation.created
-  toolUseCompleted: session.commentary.appended
+  # Ended by the model speaking again, not by the answer's acknowledgement: with `delegation:
+  # responses` the answer goes back as a tool result, `session.commentary.appended` never comes,
+  # and the call sat on "thinking" for good while the model talked (seen live 2026-09-27).
+  toolUseCompleted: session.output_transcript.delta

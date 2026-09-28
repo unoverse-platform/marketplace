@@ -14,12 +14,12 @@ props:
   wordmark:
     type: string
     description: "The organisation's name as it reads at the top of the email."
-    input: true
+    input: false
     default: Your organisation
   kicker:
     type: string
     description: "The short line above or beside the wordmark naming this edition."
-    input: true
+    input: false
     default: This month's edition
 root:
   type: Box

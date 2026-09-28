@@ -1,0 +1,22 @@
+type: ApifyLinkedInProfile
+kind: PromiseNode
+
+name: Apify LinkedIn Profile
+category: Web Scraping
+color: "#00B4A6"
+
+description: Read public LinkedIn profiles through an Apify actor, photo included
+
+whenToUse: >-
+  Pick to read one or more PEOPLE's public LinkedIn profiles from their profile URLs or
+  handles: name, headline, current role, experience and profile photo. It runs the actor and
+  waits for the profiles in one step, so no run id to follow. It reads people, not company
+  pages, job posts or search results.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13).
+auth:
+  required: false
+
+capabilities:
+  # NEVER cacheable: every run is billed per profile by the actor.
+  cacheable: false

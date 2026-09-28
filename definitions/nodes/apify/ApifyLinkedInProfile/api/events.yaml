@@ -1,0 +1,17 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: profiles
+  from: response
+  value: "return Array.isArray(response) ? response : []"
+
+- emit: profile
+  from: response
+  value: "return Array.isArray(response) && response.length ? response[0] : null"
+
+- emit: photo
+  from: response
+  value: "return Array.isArray(response) && response.length && response[0] ? (response[0].photo || '') : ''"
+
+- emit: found
+  from: response
+  value: "return Array.isArray(response) && response.length > 0"

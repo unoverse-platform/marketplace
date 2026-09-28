@@ -11,7 +11,86 @@
 # proxied, so a node calling it is already inside the trust boundary (package.yaml, and the
 # reasoning the spatial package sets out at length).
 
+# LOADED BY URI: two calls, the same two the page makes. The platform serves every task at
+# its URI over MCP, and MCP opens a session first: the first call opens it and keeps only the
+# reply's headers, because the session id travels in one; the second reads the task with it.
+- name: session
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) === 'uri'"
+  method: POST
+  url: "return scope.platformUrl + '/mcp'"
+  headers:
+    Content-Type: application/json
+    Accept: application/json, text/event-stream
+  body:
+    jsonrpc: "2.0"
+    id: 1
+    method: initialize
+    params:
+      protocolVersion: "2025-06-18"
+      capabilities: {}
+      clientInfo:
+        name: task-runner
+        version: "1"
+  transport: headers
+  timeoutMs: 15000
+  error:
+    when: "return !response || !response['mcp-session-id']"
+    message: "return 'no MCP session opened: ' + JSON.stringify(response || {}).slice(0, 200)"
+
+- name: definition
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) === 'uri' && !helpers.agentTool(config.task, signal.signal, signal.collected)"
+  method: POST
+  url: "return scope.platformUrl + '/mcp'"
+  headers:
+    Content-Type: application/json
+    Accept: application/json, text/event-stream
+    mcp-session-id: "return String((calls.session || {})['mcp-session-id'] || '')"
+  body:
+    jsonrpc: "2.0"
+    id: 2
+    method: resources/read
+    params:
+      uri: "return helpers.taskRef(config.task, signal.signal, signal.collected)"
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !response || !!response.error || !(((response.result || {}).contents || [])[0] || {}).text"
+    message: "return 'no task at ' + helpers.taskRef(config.task, signal.signal, signal.collected) + ': ' + JSON.stringify(response || {}).slice(0, 200)"
+
+# AN AGENT TASK IS RUN, the native MCP way (UNOVERSE_MCP_COMPLETE_GUIDE, "every task is a native
+# MCP tool"): the same `tools/call` an Agent makes when it finds the task in Spatial, on the
+# session opened above, as the person this run is for. The server does the rest exactly as it
+# does for an Agent: it starts the run, shows its card and progress in the conversation, and
+# answers with the result. The call waits for that result, so it is given a run's length.
+- name: execute
+  when: "return !!helpers.agentTool(config.task, signal.signal, signal.collected)"
+  method: POST
+  url: "return scope.platformUrl + '/mcp'"
+  headers:
+    Content-Type: application/json
+    Accept: application/json, text/event-stream
+    mcp-session-id: "return String((calls.session || {})['mcp-session-id'] || '')"
+  body:
+    jsonrpc: "2.0"
+    id: 3
+    method: tools/call
+    params:
+      name: "return helpers.agentTool(config.task, signal.signal, signal.collected)"
+      arguments: >-
+        return Object.assign({}, helpers.runInput(signal.signal), {
+          userId: String(scope.userId || ''),
+          conversationId: String(scope.conversationId || ''),
+          chatId: String(scope.chatId || '')
+        })
+  transport: json
+  timeoutMs: 1800000
+  error:
+    when: "return !response || !!response.error || !!(response.result || {}).isError"
+    message: "return 'the task did not run: ' + JSON.stringify(response || {}).slice(0, 300)"
+
 - name: run
+  # A TASK LOADED BY URI is never looked up: there is no row, and nothing is saved.
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) !== 'uri'"
   # THE ROW ITSELF. It answers who and what; it cannot answer WITH WHAT, because the state is
   # encrypted at rest and this route hands the column over as it is stored. That is the whole
   # reason there is a second call below rather than one.
@@ -24,16 +103,17 @@
   method: GET
   url: >-
     return scope.engineUrl + '/executions/' + encodeURIComponent(
-      String(config.runId || helpers.taskOf(signal.signal).runId || '').trim())
+      helpers.taskRef(config.task, signal.signal, signal.collected))
   transport: json
   timeoutMs: 15000
   error:
     when: "return !response || !!response.error || !response.task_ref"
     message: >-
-      return 'no paused task at ' + String(config.runId || '') + ': '
+      return 'no paused task at ' + helpers.taskRef(config.task, signal.signal, signal.collected) + ': '
         + JSON.stringify(response || {}).slice(0, 200)
 
 - name: saved
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) !== 'uri'"
   # WHAT IS ALREADY HELD, decrypted by the route that owns the key, and read fresh every pass
   # rather than carried in a variable. On the first pass it is what an earlier conversation
   # left behind; on a later one it is what the pass before this one wrote. Reading it back
@@ -51,6 +131,26 @@
     when: "return !response || !!response.error"
     message: "return 'runs/paused failed: ' + JSON.stringify(response || {}).slice(0, 300)"
 
+# FINISHED BY THE PERSON'S SUBMIT, however the task was loaded. Once every field a collecting task
+# asks for is held, the node
+# waits for the submit of that task on the person's screen, as a form node on the canvas does, and
+# the task is finished with what was submitted. The wait is the person's, so it is given long.
+- name: submitted
+  when: >-
+    return !helpers.agentTool(config.task, signal.signal, signal.collected)
+      && !!scope.conversationId
+      && helpers.awaitsSubmit(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
+           helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))
+  method: POST
+  url: "return scope.engineUrl + '/runs/await-submit'"
+  transport: json
+  timeoutMs: 1800000
+  body:
+    conversationId: "return String(scope.conversationId || '')"
+  error:
+    when: "return !response || !!response.error"
+    message: "return 'the submit never came back: ' + JSON.stringify(response || {}).slice(0, 200)"
+
 - name: reset
   # THE WIPE ITSELF, and it has to be written down or it is not a reset: every pass reads the
   # record fresh, so blanking the state only in memory would ask for everything once and then
@@ -60,7 +160,7 @@
   # answers must not wipe, or the record it reads fresh is blanked and rewritten with only what
   # arrived just now, and the answer given two questions ago is gone. Written the obvious way
   # this lever quietly destroys the conversation it was meant to restart.
-  when: "return String(helpers.clearing(signal.collected, config.startAgain) || '').trim() !== ''"
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) !== 'uri' && String(helpers.clearing(signal.collected, config.startAgain) || '').trim() !== ''"
   method: POST
   url: "return scope.engineUrl + '/runs/pause'"
   transport: json
@@ -70,7 +170,7 @@
     userId: "return String(calls.run.user_id || '')"
     taskRef: "return String(calls.run.task_ref || '')"
     state: >-
-      return helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain))
+      return helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain))
     wake: "return 'reply'"
     # `Date.iso`, NOT `new Date(...)`: the expression sandbox refuses a NewExpression and names
     # this exact case, so the constructor fails at run time rather than at lint.
@@ -85,7 +185,7 @@
   # ONLY WHEN SOMETHING WAS JUST GIVEN. A pass that merely asks the next question writes
   # nothing, so the expiry is not pushed out by a call where the person said nothing, and the
   # row is not rewritten with what it already holds.
-  when: "return !!signal.collected && Object.keys(helpers.answersOf(signal.collected)).length > 0"
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) !== 'uri' && !!signal.collected && Object.keys(helpers.answersOf(signal.collected)).length > 0"
   method: POST
   url: "return scope.engineUrl + '/runs/pause'"
   transport: json
@@ -97,7 +197,7 @@
     # THE WHOLE STATE, NEVER A PATCH. The route replaces what it is given, so sending only the
     # new answers would drop every earlier one. The merge is the helper's, so the state written
     # here and the state emitted on the connector are one object computed one way.
-    state: "return helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))"
+    state: "return helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))"
     # WHAT WAKES IT, and the person decides which.
     #
     # `reply` is the ordinary case: this task is carried by a conversation, so what resumes it
@@ -107,7 +207,7 @@
     # hold it, so a declined call becomes a scheduled one rather than a task nobody returns to.
     wake: >-
       return String(helpers.merged(
-        helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)),
+        helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)),
         helpers.answersOf(signal.collected)
       )[String(config.followUpField || '')] || '').trim() ? 'timer' : 'reply'
 
@@ -115,7 +215,7 @@
     # blank here must be ABSENT rather than an empty string that parses to nothing.
     wakeAt: >-
       return String(helpers.merged(
-        helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)),
+        helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)),
         helpers.answersOf(signal.collected)
       )[String(config.followUpField || '')] || '').trim() || undefined
     # `Date.iso`, NOT `new Date(...)`: the expression sandbox refuses a NewExpression and names
@@ -133,10 +233,10 @@
   # how an author says so. The completion test is helpers.nextStep returning null, the same
   # test the `done` connector fires on, written once.
   when: >-
-    return config.completeWhenDone !== false
+    return helpers.loadMode(config.task, signal.signal, signal.collected) !== 'uri' && config.completeWhenDone !== false
       && helpers.nextStep(
-           helpers.taskOf(signal.signal),
-           helpers.merged(helpers.baseState(((calls.saved || {}).paused || {}).state, helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))
+           helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
+           helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))
          ) === null
   method: POST
   url: "return scope.engineUrl + '/runs/complete'"

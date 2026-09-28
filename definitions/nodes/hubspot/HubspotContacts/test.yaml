@@ -1,0 +1,16 @@
+# Every tool here writes, so there is no read to test instead. The fixture upserts ONE fixed
+# test contact: an upsert by email is idempotent, so running it again updates the same record
+# rather than leaving a new one behind each time.
+testData:
+  config: {}
+  call:
+    method: upsert_contact
+    params:
+      email: node-test@unoverse.ai
+      firstName: Node
+      lastName: Test
+      company: unoverse
+  expect:
+    # The call completed and HubSpot returned the record's id. Whether it was new depends on
+    # whether this portal has run the fixture before, so `created` is not asserted.
+    output: "return output.ok === true && typeof output.id === 'string'"

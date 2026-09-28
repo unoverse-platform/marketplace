@@ -28,6 +28,7 @@ logoUrl: https://res.cloudinary.com/sonik/image/upload/v1784461921/gravity/icons
 features:
   - Resolve the signed-in user to their CRM contact
   - Append machine-authored insight notes to a contact
+  - Create and update contacts by email, link them to their company, and note them
 
 # The ONLY hosts this package's nodes may call. The executor refuses anything else.
 #

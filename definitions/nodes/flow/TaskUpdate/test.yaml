@@ -1,0 +1,14 @@
+# Every field arrives already resolved, so the fixture supplies finished values. With no live
+# session the publish no-ops; the emitted task is what is checked.
+testData:
+  config:
+    task: unoverse://templates/acme/company-profile
+    step: profile
+    props:
+      profile:
+        name: Acme
+        summary: A test company.
+  inputs:
+    signal: {}
+  expect:
+    task: "return output.task.ref === 'unoverse://templates/acme/company-profile' && output.task.step === 'profile' && output.task.props.profile.name === 'Acme'"

@@ -1,0 +1,28 @@
+configSchema:
+  type: object
+  required: [task, props]
+  properties:
+    task:
+      type: string
+      title: Task
+      description: >-
+        The task on screen, by its URI, such as unoverse://templates/acme/company-profile.
+      default: ""
+      "ui:field": template
+    step:
+      type: string
+      title: Step
+      description: >-
+        The step to move it to as it is filled, such as company. Leave empty to fill it
+        where it is.
+      default: ""
+      "ui:field": template
+    props:
+      type: object
+      title: Values
+      description: >-
+        The values to fill it with, keyed by the part they fill, then by its props. Example:
+        return { profile: { name: signal.enrich.company.name, people: signal.loop.done.collected } }
+      default: ""
+      "ui:field": template
+"ui:order": [task, step, props]

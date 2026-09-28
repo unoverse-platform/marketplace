@@ -19,6 +19,9 @@
       if (((response.delegation || {}).target) === 'responses') return undefined;
       const asked = said.filter(s => s.type === 'session.input_transcript.delta').at(-1);
       return {
+        // THE TASK THIS IS ABOUT, as it was handed to the voice, so whatever takes the hand-back
+        // knows which task it belongs to without anything else being delivered.
+        ref: (helpers.briefIn(signal) || {}).ref || undefined,
         id: response.delegation ? response.delegation.id : null,
         request: asked ? asked.text.trim() : '',
         conversation: said
@@ -61,6 +64,7 @@
       const raw = typeof item.arguments === 'string' ? item.arguments : '';
       const args = raw ? JSON.parse(raw) : (item.arguments || {});
       return {
+        ref: (helpers.briefIn(signal) || {}).ref || undefined,
         id: item.call_id || item.id || null,
         delegationId: response.delegation_id || null,
         call: item.name || '',

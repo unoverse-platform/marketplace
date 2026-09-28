@@ -1,0 +1,88 @@
+# TOOL DISCOVERY, as DATA: what an attached Agent reads before writing to HubSpot. The wording
+# IS the routing: a model reads these descriptions when choosing a tool, so rephrasing is a
+# behaviour change, never a tidy-up. The argument shapes are what the model fills in.
+
+contacts:
+  name: HubSpot Contacts
+  version: "0.1.0"
+  description: Create and update HubSpot contacts by email, link them to their company, and note what was learned.
+  instructions: |-
+    HUBSPOT CONTACTS PROTOCOL:
+    - upsert_contact first, for every person. add_note and associate_company find the contact
+      by email and answer NO_CONTACT until it exists.
+    - Set lifecycleStage only for a person you are adding for the first time: HubSpot refuses
+      to move a contact back to an earlier stage.
+    - Never write a value you were not given. Leave a field out rather than guess it.
+    - Companies are HubSpot's to create. associate_company only links; NO_COMPANY is not an error.
+    - A tool that answers ok: false carries the reason. Say so rather than claiming it was recorded.
+  methods:
+    upsert_contact:
+      description: >-
+        Create a HubSpot contact, or update the one with this email if it exists. Only the
+        fields you pass are written. Returns the contact's id and whether it was new.
+      input:
+        type: object
+        required: [email]
+        properties:
+          email:
+            type: string
+            description: The person's email address. It identifies the contact.
+          firstName:
+            type: string
+            description: Their first name.
+          lastName:
+            type: string
+            description: Their last name.
+          phone:
+            type: string
+            description: Their phone number, with its country code.
+          company:
+            type: string
+            description: The company they work for.
+          website:
+            type: string
+            description: Their company's website.
+          jobTitle:
+            type: string
+            description: Their job title.
+          city:
+            type: string
+            description: The city they are based in.
+          country:
+            type: string
+            description: The country they are based in.
+          linkedinUrl:
+            type: string
+            description: The URL of their LinkedIn profile.
+          lifecycleStage:
+            type: string
+            description: Their stage, such as lead. Only for a person being added for the first time.
+    add_note:
+      description: >-
+        Add a note to the HubSpot contact with this email, such as research about them or
+        their company. Returns NO_CONTACT if nobody has that email.
+      input:
+        type: object
+        required: [email, note]
+        properties:
+          email:
+            type: string
+            description: The email of the contact the note is about.
+          note:
+            type: string
+            description: The note, in full. Markdown is kept as text.
+    associate_company:
+      description: >-
+        Link the HubSpot contact with this email to their company, found by the company's
+        domain. It never creates a company. Returns NO_COMPANY when HubSpot has none yet,
+        which is fine: HubSpot links the contact itself once it makes the company.
+      input:
+        type: object
+        required: [email, domain]
+        properties:
+          email:
+            type: string
+            description: The email of the contact to link.
+          domain:
+            type: string
+            description: The company's domain, such as example.com, with no https or www.

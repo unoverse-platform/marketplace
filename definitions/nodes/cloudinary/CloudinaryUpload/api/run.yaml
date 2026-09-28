@@ -8,7 +8,10 @@
 # THE RESOURCE TYPE IS IN THE PATH, so the url is an expression: it defaults rather than producing
 # `/v1_1/cloud//upload`, a URL that 404s about a route instead of about a missing field.
 
+# NOTHING TO UPLOAD, NOTHING SENT: an empty file skips the call and every output comes back empty,
+# so a person without a photo passes through a loop rather than failing it.
 - name: upload
+  when: "return !!String(config.imageData || '').trim()"
   method: POST
   url: >-
     return 'https://api.cloudinary.com/v1_1/'

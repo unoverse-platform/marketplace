@@ -1,5 +1,5 @@
 unoverse: "1.0"
-# THE LETTER'S BODY — the copywriter's main slot: a greeting, the message itself, and
+# THE LETTER'S BODY — the main part an Agent writes: a greeting, the message itself, and
 # the line that hands off to whatever the email is showing. Three separately briefed
 # fields, because they are three different writing jobs and one description could not
 # govern all of them.

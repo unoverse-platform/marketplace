@@ -1,0 +1,11 @@
+# RUNS THE ACTOR FOR REAL and is billed for one profile.
+
+testData:
+  config:
+    profiles: williamhgates
+    actorId: harvestapi/linkedin-profile-scraper
+  inputs:
+    signal: williamhgates
+  expect:
+    profiles: "return Array.isArray(output.profiles) && output.profiles.length === 1"
+    found: "return output.found === true"

@@ -1,21 +1,23 @@
 configSchema:
   type: object
-  required: [runId]
   properties:
-    # THE ONE THING THIS NODE IS TOLD. A paused task is a row, and the row already holds which
-    # component it is, whose it is and what is filled in, so naming the row names all of it.
-    # Passing the ref and the owner alongside would be asking a caller to repeat what the
-    # record already says, and to be right about it.
+    # THE ONE THING THIS NODE IS TOLD: the task, by its ID or its URI, and the string itself
+    # says which. A URI (unoverse://...) is a task the platform serves at that address, loaded
+    # and started from its first step; anything else is the id of a task someone has already
+    # started, read from the task table. Every task is built the same way, steps and props, so
+    # either one names a whole task and nothing else has to be passed alongside it.
     #
     # A CONFIG FIELD RATHER THAN A CONNECTOR, the same choice SpatialDetail makes with its
     # universal id: the engine resolves the template before the node runs, so the node fires
-    # once already holding everything it needs.
-    runId:
+    # once already holding everything it needs. Left blank, the task is read from what
+    # arrived: the request's `metadata.task`, or the `runId` an older caller sends.
+    task:
       type: string
       title: The task
       description: >-
-        The paused task's run id. Upstream data works here, which is how one workflow carries
-        a different person's task each time it is called.
+        The task's ID or URI. A URI, as in unoverse://templates/unoverse/introduction, loads
+        that task and starts it from its first step. Anything else is the id of a task already
+        started, read from the task table. Leave blank to use the task the request carries.
       default: ""
       ui:field: template
 
@@ -83,4 +85,4 @@ configSchema:
       default: true
       ui:widget: toggle
 
-  ui:order: [runId, keepForDays, completeWhenDone, startAgain]
+  ui:order: [task, keepForDays, completeWhenDone, startAgain]

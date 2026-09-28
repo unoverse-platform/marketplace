@@ -8,3 +8,5 @@ base: https://api.hubapi.com
 contactSearch: https://api.hubapi.com/crm/v3/objects/contacts/search
 notes: https://api.hubapi.com/crm/v3/objects/notes
 notesBatch: https://api.hubapi.com/crm/v3/objects/notes/batch/create
+contactsUpsert: https://api.hubapi.com/crm/v3/objects/contacts/batch/upsert
+companySearch: https://api.hubapi.com/crm/v3/objects/companies/search

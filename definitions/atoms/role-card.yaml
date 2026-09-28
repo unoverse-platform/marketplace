@@ -1,0 +1,104 @@
+unoverse: "1.0"
+type: atom
+name: role-card
+description: "One role on a team: an optional icon, a short tag, the role's title, what they do, and their time commitment on a rule at the foot. The lead role carries an ink outline in place of the shadow. Owns its full style, references tokens only."
+whenToUse: Introduce the people a piece of work needs, one card per role, such as a delivery team, a project squad or a support rota. Compose via a Ref per role, mapping the fields to host fields, and set lead on the one who leads. For a person with a photo and contact details, use a profile card instead.
+props:
+  tag:
+    type: string
+    description: The role's discipline in two or three words, such as 'Pod lead' or 'UI / UX'.
+    maxLength: 28
+    default: Pod lead
+  title:
+    type: string
+    description: The role's title, as the team names it.
+    maxLength: 32
+    default: Architect
+  body:
+    type: string
+    description: What this role does, in one or two short sentences.
+    maxLength: 140
+    default: Shapes the solution and owns it from the first sprint to production.
+  commitment:
+    type: string
+    description: How much of their time the role gives, such as 'Full time' or 'As needed'.
+    maxLength: 36
+    default: Full time
+  icon:
+    type: string
+    description: An icon name from the design system's icon set that stands for the role. Empty for none.
+    default: ""
+  lead:
+    type: boolean
+    description: True for the one role that leads the team.
+    default: false
+root:
+  type: Box
+  style:
+    direction: column
+    gap: "2"
+    width: full
+    height: full
+    padding: "6"
+    background: surface.base
+    radius: lg
+    shadow: sm
+    when:
+      - field: lead
+        eq: true
+        apply:
+          shadow: none
+          border: thin text.primary
+  children:
+    - type: Box
+      visibleWhen: icon
+      style:
+        width: "10"
+        height: "10"
+        margin: [ "0", "0", "2", "0" ]
+        radius: full
+        background: action.subtle
+        direction: row
+        align: center
+        justify: center
+      children:
+        - type: Icon
+          bind:
+            name: icon
+          style:
+            width: "5"
+            height: "5"
+            color: action.primary
+    - type: Text
+      bind:
+        value: tag
+      style:
+        font: caption
+        weight: semibold
+        color: action.primary
+    - type: Text
+      bind:
+        value: title
+      style:
+        font: headline.sm
+        weight: semibold
+        color: text.primary
+        lineHeight: tight
+    - type: Text
+      bind:
+        value: body
+      style:
+        flex: "1"
+        font: body.sm
+        color: text.secondary
+        lineHeight: snug
+    - type: Text
+      visibleWhen: commitment
+      bind:
+        value: commitment
+      style:
+        padding: [ "3", "0", "0", "0" ]
+        borderTop: subtle
+        font: body.sm
+        weight: semibold
+        color: text.primary

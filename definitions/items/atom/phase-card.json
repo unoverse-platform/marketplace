@@ -1,0 +1,87 @@
+{
+  "kind": "atom",
+  "name": "phase-card",
+  "fingerprint": "b1b40c763e5cf6fa",
+  "bundle": "design-system",
+  "title": "phase-card",
+  "description": "One stage of a process: its name, an optional duration above it, and one line on what happens. A raised card on the page. Owns its full style, references tokens only.",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "phase-card",
+    "description": "One stage of a process: its name, an optional duration above it, and one line on what happens. A raised card on the page. Owns its full style, references tokens only.",
+    "whenToUse": "A single stage in a sequence someone moves through, such as a phase of a project, a step of onboarding or a stage of a programme. Compose several in a row, one Ref each, mapping title, duration and body to host fields. For work plotted against weeks, use a timeline instead.",
+    "props": {
+      "duration": {
+        "type": "string",
+        "description": "How long the stage lasts, as stated, such as '6 weeks' or 'Ongoing'. Empty when the stage has no fixed length.",
+        "maxLength": 24,
+        "default": "6 weeks"
+      },
+      "title": {
+        "type": "string",
+        "description": "The stage's name, in two or three words.",
+        "maxLength": 32,
+        "default": "Discovery"
+      },
+      "body": {
+        "type": "string",
+        "description": "What happens in this stage, in one short sentence.",
+        "maxLength": 90,
+        "default": "Understand the goals and choose where to start."
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "justify": "center",
+        "gap": "1",
+        "width": "full",
+        "height": "full",
+        "padding": "5",
+        "background": "surface.base",
+        "radius": "lg",
+        "shadow": "sm"
+      },
+      "children": [
+        {
+          "type": "Text",
+          "visibleWhen": "duration",
+          "bind": {
+            "value": "duration"
+          },
+          "style": {
+            "font": "caption",
+            "color": "text.tertiary"
+          }
+        },
+        {
+          "type": "Text",
+          "bind": {
+            "value": "title"
+          },
+          "style": {
+            "font": "body.lg",
+            "weight": "semibold",
+            "color": "text.primary",
+            "lineHeight": "tight"
+          }
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "body",
+          "bind": {
+            "value": "body"
+          },
+          "style": {
+            "font": "body.sm",
+            "color": "text.secondary",
+            "lineHeight": "snug"
+          }
+        }
+      ]
+    },
+    "file": "phase-card.yaml",
+    "kind": "atom"
+  }
+}

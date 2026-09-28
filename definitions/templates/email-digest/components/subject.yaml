@@ -1,5 +1,5 @@
 unoverse: "1.0"
-# THE LETTER'S SUBJECT — the copywriter's first slot in the email-digest template.
+# THE LETTER'S SUBJECT — the first part an Agent writes in the email-digest template.
 # A BRIEFED component: the brief rides on the node that BINDS the field, which is the
 # only place the schema compiler reads it from (design/CLAUDE.md §3).
 type: component

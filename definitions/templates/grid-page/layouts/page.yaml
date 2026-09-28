@@ -1,10 +1,8 @@
-# The DETAIL arrangement (`page` state): the ONE interface the guest opened, full
-# width. Its occupant fills it; the ✕ writing the state back releases it and the
-# grid returns — all by name-match, no director judgment needed for the dance.
+# The DETAIL arrangement (`page` state): one item, full width.
 type: Box
 style:
   direction: column
   width: full
 children:
-  - director:
-      pick: 1
+  - type: Ref
+    ref: components/detail

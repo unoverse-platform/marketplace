@@ -14,7 +14,7 @@
 
 testData:
   config:
-    runId: task_wf-vhmlce_1790006335623_73f886d
+    task: task_wf-vhmlce_1790006335623_73f886d
     completeWhenDone: false
   inputs:
     signal: {}

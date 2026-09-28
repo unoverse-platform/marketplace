@@ -150,6 +150,128 @@ helpers:
     body: >-
       return Object.assign({}, saved || {}, collected || {})
 
+  # WHICH TASK: the ID or URI in the config box, else the one that arrived. A request carries
+  # its task as `metadata.task`, beside a message that is only ever text, so it is recognised
+  # there without anyone wiring it; the `runId` an older caller sends still works.
+  taskRef:
+    args: [text, arrived, back]
+    body: >-
+      return (() => {
+        const given = String(text || '').trim();
+        if (given) return given;
+        const t = helpers.taskOf(arrived);
+        const here = (t && typeof t === 'object') ? t : {};
+        const started = String(((here.metadata || {}).task) || here.task || here.runId || '').trim();
+        if (started) return started;
+        // A LATER PASS IS WOKEN BY A HAND-BACK ALONE: the input that started this node is not
+        // delivered again, so the task is named by the hand-back, which carries the `ref` this
+        // node handed out with the step.
+        const flat = o => (o && typeof o === 'object' && !Array.isArray(o)) ? Object.values(o) : [];
+        const l1 = flat(back);
+        const l2 = l1.reduce((acc, v) => acc.concat(flat(v)), []);
+        const named = l1.concat(l2).find(v => v && typeof v === 'object' && typeof v.ref === 'string' && v.ref);
+        return named ? String(named.ref).trim() : '';
+      })()
+
+  # HOW TO LOAD IT, read off the string: a URI is served by the platform, anything else is a
+  # row in the task table.
+  loadMode:
+    args: [text, arrived, back]
+    body: >-
+      return helpers.taskRef(text, arrived, back).indexOf('unoverse://') === 0 ? 'uri' : 'id'
+
+  # AN AGENT TASK, told apart by its address (unoverse://agents/<org>/<name>). It has no steps
+  # and nothing to ask: it is RUN, over MCP, exactly as an Agent that found it in Spatial would
+  # call it, and its result is what the run produced. Anything else is walked a step at a time.
+  agentTool:
+    args: [text, arrived, back]
+    body: >-
+      return (() => {
+        const ref = String(helpers.taskRef(text, arrived, back) || '');
+        const head = 'unoverse://agents/';
+        if (ref.indexOf(head) !== 0) return '';
+        const parts = ref.slice(head.length).split('/');
+        return parts.length === 2 && parts[0] && parts[1] ? parts[0] + '.' + parts[1] : '';
+      })()
+
+  # WHAT AN AGENT TASK IS RUN WITH: the answers the task before it finished with, as they
+  # arrived on `signal` (nested by the node and connector that sent them), else the request's
+  # own input. The run's schema keeps the fields it declares and drops the rest.
+  runInput:
+    args: [arrived]
+    body: >-
+      return (() => {
+        const lvl = v => (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
+        const top = lvl(arrived);
+        const found = Object.values(top).map(lvl).map(v => lvl(v.result))
+          .find(r => Object.keys(r).length > 0);
+        return found || lvl(top.output || top);
+      })()
+
+  # WHAT A FINISHED TASK HANDS ON: every answer it holds, the step marker aside, so the node
+  # after it can start the next task with them.
+  finishedWith:
+    args: [task, state]
+    body: >-
+      return (() => {
+        const t = task || {};
+        const tree = (Array.isArray(t.stateTree) ? t.stateTree : []).find(x => x && x.on);
+        const marker = tree ? tree.on : null;
+        return Object.keys(state || {})
+          .filter(k => k !== marker && helpers.isHeld(state, k))
+          .reduce((acc, k) => Object.assign(acc, { [k]: state[k] }), {});
+      })()
+
+  # A TASK THAT COLLECTS WAITS FOR ITS SUBMIT, and only once everything it asks for is held: the
+  # step it is on asks for nothing more, so what finishes it is the person's own submit, exactly
+  # as a form node on the canvas finishes (UNOVERSE_NODE_RUNTIME, "Component outputs").
+  awaitsSubmit:
+    args: [task, state]
+    body: >-
+      return (() => {
+        const t = task || {};
+        const tree = (Array.isArray(t.stateTree) ? t.stateTree : []).find(x => x && x.on);
+        const step = helpers.templateStep(t, state);
+        return !!tree && Object.keys(t.outputs || {}).length > 0 && !!step
+          && step.fields.length === 1 && step.fields[0] === tree.on;
+      })()
+
+  # THE SUBMIT, LAID OVER WHAT IS HELD. What the person submitted wins for the answers it carries,
+  # and the task is past its last step: finished.
+  submittedOver:
+    args: [submitted, task, state]
+    body: >-
+      return (() => {
+        const got = submitted && submitted.state && typeof submitted.state === 'object' ? submitted.state : null;
+        if (!got) return state;
+        const t = task || {};
+        const tree = (Array.isArray(t.stateTree) ? t.stateTree : []).find(x => x && x.on);
+        const answers = Object.keys(t.outputs || {}).filter(k => helpers.isHeld(got, k))
+          .reduce((acc, k) => Object.assign(acc, { [k]: got[k] }), {});
+        return Object.assign({}, state || {}, answers, tree ? { [tree.on]: 'done' } : {});
+      })()
+
+  # THE TASK, WHICHEVER WAY IT CAME. Loaded by URI it is the definition the platform served,
+  # the JSON text of the one resource read; otherwise it is dug out of what arrived, as it
+  # always was.
+  givenTask:
+    args: [loadBy, read, arrived]
+    body: >-
+      return (() => {
+        if (loadBy !== 'uri') return helpers.taskOf(arrived);
+        const text = ((((read || {}).result || {}).contents || [])[0] || {}).text;
+        return typeof text === 'string' && text.trim() ? JSON.parse(text) : {};
+      })()
+
+  # WHAT THE TASK ALREADY HOLDS. A task loaded by URI starts from its own state, where its
+  # steps begin; one read by id holds what the task table saved.
+  heldState:
+    args: [loadBy, read, saved]
+    body: >-
+      return loadBy === 'uri'
+        ? (helpers.givenTask('uri', read, null).state || {})
+        : ((saved || {}).paused || {}).state
+
   # THE ONE STEP TO ASK FOR NOW: the first that is not finished. Null when the task is done,
   # which is the whole completion test and the reason it is not written twice.
   #
@@ -302,10 +424,89 @@ helpers:
           : held;
       })()
 
+  # A TEMPLATE'S STEPS ARE ITS OWN STEP TREE. A slide deck, a stepped page: the steps are the
+  # substates of the state that declares `on`, and `state[on]` is where it is now, the same
+  # marker its own Back and Next move. Such a step asks for nothing, so it is finished when
+  # the marker moves past it: the one thing handed back is the marker, set to `next`
+  # ('done' after the last). Its props are what is on it. Undefined when the task is not a
+  # stepped template, so a declared list of steps is walked exactly as before.
+  templateStep:
+    args: [task, state]
+    body: >-
+      return (() => {
+        const t = task || {};
+        const tree = (Array.isArray(t.stateTree) ? t.stateTree : [])
+          .find(s => s && s.on && Array.isArray(s.states) && s.states.length);
+        if (!tree || (Array.isArray(t.steps) && t.steps.length)) return undefined;
+        const names = tree.states.map(s => String((s || {}).name || ''));
+        const at = String((state || {})[tree.on] || tree.initial || names[0]);
+        const collects = Object.keys(t.outputs || {});
+        const missing = collects.filter(k => !helpers.isHeld(state, k));
+        const reached = at === 'done' ? names.length : names.indexOf(at);
+        // NOT PAST THE ASKING STEP WHILE ANYTHING IS MISSING: a step marker moved on early (by a
+        // voice, a click, anything) is held back to the step before the last until every answer
+        // is in, so a task that collects can never finish, or show its last step, short.
+        const i = missing.length && names.length > 1 ? Math.min(reached, names.length - 2) : reached;
+        if (i < 0 || i >= names.length) return null;
+        const parts = Object.values(t.sections || {})
+          .reduce((all, list) => all.concat(Array.isArray(list) ? list : []), []);
+        const props = parts.filter(p => p && p.face === names[i])
+          .reduce((acc, p) => Object.assign(acc, ((p.seeds || {})[p.ref]) || {}), {});
+        // WHAT IT COLLECTS IS ASKED FOR BEFORE IT MOVES ON. A task that hands answers back names
+        // them in `outputs`; while any is empty, the step does not pass: the empty ones are handed
+        // out as the fields, with what is already held. A presentation collects nothing, so it
+        // moves step by step as before.
+        // THE ANSWERS HELD SO FAR, by the names the task collects them under. Published to the
+        // page's app state, where the template's own fields read them, so the form fills as they
+        // are given.
+        const answers = collects.filter(k => helpers.isHeld(state, k))
+          .reduce((acc, k) => Object.assign(acc, { [k]: state[k] }), {});
+        if (missing.length && i < names.length - 1) {
+          return {
+            answers,
+            step: names[i],
+            stepNumber: i + 1,
+            stepsTotal: names.length,
+            fields: missing,
+            held: collects.filter(k => helpers.isHeld(state, k))
+              .reduce((acc, k) => Object.assign(acc, { [k]: state[k] }), Object.assign({}, props)),
+            next: names[i],
+            outstandingCount: missing.length
+          };
+        }
+        return {
+          answers,
+          step: names[i],
+          stepNumber: i + 1,
+          stepsTotal: names.length,
+          fields: [tree.on],
+          held: props,
+          next: names[i + 1] || 'done',
+          outstandingCount: 1
+        };
+      })()
+
+  # WHAT THE TASK IS, in its own words: the title, description and whenToUse every task
+  # already carries for discovery. Handed over with each step so whoever works it can say what
+  # it is about and offer it, with nothing authored for any one task. Empty for a task that
+  # arrived without them (one read by id carries only its state).
+  aboutOf:
+    args: [task]
+    body: >-
+      return (() => {
+        const t = task || {};
+        const about = ['title', 'description', 'whenToUse']
+          .filter(k => t[k])
+          .reduce((acc, k) => Object.assign(acc, { [k]: String(t[k]) }), {});
+        return Object.keys(about).length ? { about } : {};
+      })()
+
   nextStep:
     args: [task, state]
     body: >-
       return (() => {
+        const stepped = helpers.templateStep(task, state);
+        if (stepped !== undefined) return stepped ? Object.assign({}, stepped, helpers.aboutOf(task)) : stepped;
         const declared = helpers.steps(task);
         const all = declared.length
           ? declared
@@ -327,6 +528,6 @@ helpers:
         }));
         const short = marked.filter(m => m.fields.length > 0);
         return short.length
-          ? Object.assign({}, short[0], { outstandingCount: short[0].fields.length })
+          ? Object.assign({}, short[0], { outstandingCount: short[0].fields.length }, helpers.aboutOf(task))
           : null;
       })()

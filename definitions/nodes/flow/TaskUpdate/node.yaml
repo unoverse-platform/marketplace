@@ -1,0 +1,22 @@
+type: TaskUpdate
+kind: PromiseNode
+
+name: Update Task
+category: Output
+color: "#8B5CF6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Fill a task already on the person's screen with values a workflow found
+
+whenToUse: >-
+  Show a workflow's findings in a template the person is already looking at: a page's company
+  profile filled with research, a form filled with what was learned. It fills the task on
+  screen in place rather than sending a new one into the conversation. Name the task by its
+  URI and give the values its props take.
+
+auth:
+  required: false
+
+capabilities:
+  # A push to a live screen is a side effect, and a cached one silently stops happening.
+  cacheable: false

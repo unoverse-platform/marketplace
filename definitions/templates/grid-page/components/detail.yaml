@@ -1,0 +1,93 @@
+unoverse: "1.0"
+# THE OPEN ITEM: one item, full width, in its own detail arrangement. The item arrives
+# with the result it references, so nothing about it is ever written.
+type: component
+name: detail
+category: Content
+nodeSize:
+  width: 960
+  height: 900
+props:
+  item:
+    type: array
+    input: true
+    description: >-
+      The one item shown in full, picked by its ref from what the search found.
+    minItems: 1
+    maxItems: 1
+    preview:
+      - title: Lightsaber Combat Training
+        description: Master the seven forms of lightsaber combat with guidance from Jedi Masters.
+        image: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
+        link: "[BEGIN TRAINING](https://example.com)"
+    items:
+      title:
+        type: string
+        description: The item's own name, exactly as it is published. Comes from the referenced result.
+        hydrate: title
+        override: false
+      description:
+        type: string
+        description: What the item is, in its own published words. Comes from the referenced result.
+        hydrate: body
+        override: false
+      image:
+        type: string
+        description: The item's own picture, drawn from the referenced result. Never authored.
+        hydrate: image
+      link:
+        type: string
+        description: The way into this item, drawn from the referenced result. Never authored.
+        hydrate: link
+root:
+  type: Each
+  bind:
+    items: item
+  style:
+    direction: column
+    width: full
+  item:
+    type: Box
+    style:
+      width: full
+      direction: column
+      gap: "6"
+      textAlign: start
+    children:
+      - type: Ref
+        ref: cover-image
+        visibleWhen: image
+        props:
+          src: image
+          alt: title
+        style:
+          height: "100"
+      - type: Box
+        style:
+          direction: column
+          gap: "4"
+          padding: [ "0", "6", "6", "6" ]
+          width: full
+          maxWidth: reading
+          align: start
+        children:
+          - type: Text
+            bind:
+              value: title
+            style:
+              font: headline.lg
+              weight: bold
+              color: text.primary
+              lineHeight: tight
+          - type: Text
+            visibleWhen: description
+            bind:
+              value: description
+            style:
+              font: body.lg
+              color: text.secondary
+          - type: Ref
+            ref: cta-link
+            visibleWhen: link
+            props:
+              link: link

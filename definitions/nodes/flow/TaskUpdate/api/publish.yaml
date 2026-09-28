@@ -1,0 +1,8 @@
+# THE TASK ON SCREEN, FILLED IN PLACE (SIGNAL.md 6c). Merged into the caller's app state under
+# `tasks.<ref>`: `props`, and `step` when one is given, the same step TaskRunner publishes
+# there; a template the page draws with that URI moves to the step and merges each part's values
+# into that part.
+# `output.task`, so the screen and the graph never drift.
+
+when: "return !!(output.task && output.task.ref && output.task.props && typeof output.task.props === 'object')"
+data: "return { tasks: { [output.task.ref]: output.task.step ? { step: output.task.step, props: output.task.props } : { props: output.task.props } } }"

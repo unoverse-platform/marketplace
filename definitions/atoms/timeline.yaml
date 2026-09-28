@@ -1,0 +1,255 @@
+unoverse: "1.0"
+type: atom
+name: timeline
+description: 'A plan drawn against weeks: one row per piece of work, each with its name and who leads it on the left and its time on the right. A row is a bar across the weeks it runs, a run of check-ins (dots on a thread), or a single decision (a diamond at the point it is made). Composed from Box + Each (not a chart primitive): every position is a producer-supplied share of the width (`start`, `span`, `at`, e.g. "33%"), so nothing is computed here.'
+whenToUse: Show how a piece of work unfolds week by week, such as a pilot, an onboarding or a launch plan, with what runs in parallel, where people check in and where a decision is made. Pick when the weeks matter; for stages without dates use phase cards, and for comparing numbers use a bar chart.
+props:
+  weeks:
+    type: array
+    description: "The columns, first to last, each with its label such as 'Week 1'. Every position in a row is a share of this width."
+    default:
+      - label: Week 1
+      - label: Week 2
+      - label: Week 3
+      - label: Week 4
+      - label: Week 5
+      - label: Week 6
+    items:
+      label:
+        type: string
+        description: The column's name.
+        maxLength: 10
+  rows:
+    type: array
+    description: "The work, top to bottom in the order it starts. Each row is one kind: `work` (a bar), `build` (the main bar, drawn strongest), `platform` (a bar for technology rather than people), `checkpoints` (repeated check-ins at `marks`) or `milestone` (one decision at `start`)."
+    default:
+      - label: Requirements
+        detail: Led by the analyst
+        kind: work
+        start: 0%
+        span: 16.6%
+      - label: Build
+        detail: The team, in sprints
+        kind: build
+        start: 16.6%
+        span: 66.6%
+      - label: Feedback
+        detail: Real users, every week
+        kind: checkpoints
+        start: 41.6%
+        span: 33.3%
+        marks:
+          - at: 41.6%
+          - at: 58.3%
+          - at: 75%
+      - label: Decide
+        detail: Go ahead?
+        kind: milestone
+        start: 100%
+    items:
+      label:
+        type: string
+        description: The piece of work, in two or three words.
+        maxLength: 28
+      detail:
+        type: string
+        description: Who leads it, or what it involves, in a few words.
+        maxLength: 40
+      kind:
+        type: string
+        description: How the row is drawn.
+        enum: [ work, build, platform, checkpoints, milestone ]
+      start:
+        type: string
+        description: Where the row begins, as a share of the width, such as '33.3%'. For a milestone, where the decision sits.
+      span:
+        type: string
+        description: How much of the width the row covers, as a share. Not used by a milestone.
+      marks:
+        type: array
+        description: For checkpoints only, where each check-in falls, as a share of the width.
+  note:
+    type: string
+    description: One quiet line under the plan, such as how to read it or how long it usually runs.
+    maxLength: 120
+    default: Each dot is a round of testing and feedback.
+root:
+  type: Box
+  style:
+    direction: column
+    width: full
+  children:
+    # THE WEEKS: a label column's worth of space, then one column per week.
+    - type: Box
+      style:
+        direction: row
+        width: full
+        padding: [ "0", "0", "2", "0" ]
+      children:
+        - type: Box
+          style:
+            flex: 0 0 auto
+            width: "50"
+        - type: Each
+          bind:
+            items: weeks
+          style:
+            flex: "1"
+            direction: row
+          item:
+            type: Text
+            bind:
+              value: label
+            style:
+              flex: "1"
+              padding: [ "0", "2" ]
+              borderLeft: subtle
+              font: caption
+              weight: semibold
+              color: text.tertiary
+    # THE ROWS, over the same week columns drawn as faint guides.
+    - type: Box
+      style:
+        position: relative
+        direction: column
+        width: full
+      children:
+        - type: Each
+          bind:
+            items: weeks
+          style:
+            position: absolute
+            top: "0"
+            bottom: "0"
+            left: "50"
+            right: "0"
+            direction: row
+          item:
+            type: Box
+            style:
+              flex: "1"
+              borderLeft: subtle
+        - type: Each
+          bind:
+            items: rows
+          style:
+            direction: column
+            width: full
+          item:
+            type: Box
+            style:
+              direction: row
+              align: center
+              width: full
+              minHeight: "12"
+              borderTop: subtle
+            children:
+              - type: Box
+                style:
+                  flex: 0 0 auto
+                  width: "50"
+                  direction: column
+                  gap: "0"
+                  padding: [ "2", "4", "2", "0" ]
+                children:
+                  - type: Text
+                    bind:
+                      value: label
+                    style:
+                      font: body.md
+                      weight: semibold
+                      color: text.primary
+                      lineHeight: tight
+                  - type: Text
+                    visibleWhen: detail
+                    bind:
+                      value: detail
+                    style:
+                      font: caption
+                      color: text.tertiary
+              - type: Box
+                style:
+                  position: relative
+                  flex: "1"
+                  direction: row
+                  align: center
+                  height: "12"
+                children:
+                  # A BAR: work, build or platform.
+                  - type: Box
+                    visibleWhen:
+                      field: kind
+                      in: [ work, build, platform ]
+                    style:
+                      position: absolute
+                      left: "{{start}}"
+                      width: "{{span}}"
+                      height: "6"
+                      radius: md
+                      background: action.subtle
+                      when:
+                        - field: kind
+                          eq: build
+                          apply:
+                            background: text.primary
+                        - field: kind
+                          eq: platform
+                          apply:
+                            background: surface.sunken
+                            border: thin action.primary
+                  # CHECK-INS: a thread across their span, a dot at each mark.
+                  - type: Box
+                    visibleWhen:
+                      field: kind
+                      eq: checkpoints
+                    style:
+                      position: absolute
+                      left: "{{start}}"
+                      width: "{{span}}"
+                      height: "1"
+                      radius: full
+                      background: action.subtle
+                  - type: Each
+                    visibleWhen:
+                      field: kind
+                      eq: checkpoints
+                    bind:
+                      items: marks
+                    style:
+                      position: absolute
+                      left: "0"
+                      right: "0"
+                      direction: row
+                      align: center
+                      height: "12"
+                    item:
+                      type: Box
+                      style:
+                        position: absolute
+                        left: "{{at}}"
+                        width: "4"
+                        height: "4"
+                        radius: full
+                        background: action.primary
+                        border: thin surface.base
+                        transform: translateX(-50%)
+                  # A DECISION: one diamond at the point it is made.
+                  - type: Box
+                    visibleWhen:
+                      field: kind
+                      eq: milestone
+                    style:
+                      position: absolute
+                      left: "{{start}}"
+                      width: "4"
+                      height: "4"
+                      background: action.primary
+                      transform: translateX(-50%) rotate(45deg)
+    - type: Text
+      visibleWhen: note
+      bind:
+        value: note
+      style:
+        padding: [ "3", "0", "0", "0" ]
+        font: caption
+        color: text.tertiary

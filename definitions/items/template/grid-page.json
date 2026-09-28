@@ -1,7 +1,7 @@
 {
   "kind": "template",
   "name": "grid-page",
-  "fingerprint": "8ffee6136bfc9f84",
+  "fingerprint": "bdfbe176d8449d88",
   "bundle": "design-system",
   "title": "Browse Grid",
   "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -27,13 +27,6 @@
           {
             "type": "Box",
             "style": {
-              "columns": {
-                "mobile": "1",
-                "tablet": "2",
-                "desktop": "3",
-                "full": "4"
-              },
-              "gap": "4",
               "width": "full",
               "padding": [
                 "4",
@@ -49,9 +42,9 @@
                   "from": "all",
                   "where": {
                     "field": "state",
-                    "eq": "grid"
+                    "eq": "tiles"
                   },
-                  "limit": 6
+                  "limit": 1
                 }
               }
             ]
@@ -71,7 +64,7 @@
               "from": "all",
               "where": {
                 "field": "state",
-                "eq": "page"
+                "eq": "detail"
               },
               "limit": 1
             }
@@ -88,40 +81,74 @@
       "page"
     ],
     "initialView": "grid",
+    "stateTree": [
+      {
+        "name": "grid"
+      },
+      {
+        "name": "page"
+      }
+    ],
     "sections": {
       "grid": [
         {
-          "kind": "director",
-          "face": "grid",
-          "pick": 6,
-          "preview": [
-            "card",
-            "card",
-            "card"
-          ],
+          "kind": "part",
+          "face": "tiles",
+          "component": "components/tiles",
+          "ref": "grid-page/tiles",
           "seeds": {
-            "card": {
-              "title": "Lightsaber Combat Training",
-              "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
-              "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
-              "callToAction": "Begin Training"
+            "grid-page/tiles": {
+              "items": [
+                {
+                  "title": "Lightsaber Combat Training",
+                  "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[BEGIN TRAINING](https://example.com)"
+                },
+                {
+                  "title": "Starship Piloting Fundamentals",
+                  "description": "Learn to fly by instruments and by feel, from first launch to a clean landing.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[START FLYING](https://example.com)"
+                },
+                {
+                  "title": "The Way of the Force",
+                  "description": "A guided course in focus and patience, taught live with on-demand catch-up.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[FIND OUT MORE](https://example.com)"
+                }
+              ]
             }
           }
         }
       ],
       "page": [
         {
-          "kind": "director",
-          "face": "page",
-          "pick": 1
+          "kind": "part",
+          "face": "detail",
+          "component": "components/detail",
+          "ref": "grid-page/detail",
+          "seeds": {
+            "grid-page/detail": {
+              "item": [
+                {
+                  "title": "Lightsaber Combat Training",
+                  "description": "Master the seven forms of lightsaber combat with guidance from Jedi Masters.",
+                  "image": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg",
+                  "link": "[BEGIN TRAINING](https://example.com)"
+                }
+              ]
+            }
+          }
         }
       ]
     },
     "preview": {
-      "grid": [
-        "card",
-        "card",
-        "card"
+      "tiles": [
+        "grid-page/tiles"
+      ],
+      "detail": [
+        "grid-page/detail"
       ]
     },
     "root": {
@@ -145,13 +172,6 @@
                 {
                   "type": "Box",
                   "style": {
-                    "columns": {
-                      "mobile": "1",
-                      "tablet": "2",
-                      "desktop": "3",
-                      "full": "4"
-                    },
-                    "gap": "4",
                     "width": "full",
                     "padding": [
                       "4",
@@ -167,9 +187,9 @@
                         "from": "all",
                         "where": {
                           "field": "state",
-                          "eq": "grid"
+                          "eq": "tiles"
                         },
-                        "limit": 6
+                        "limit": 1
                       }
                     }
                   ]
@@ -189,7 +209,7 @@
                     "from": "all",
                     "where": {
                       "field": "state",
-                      "eq": "page"
+                      "eq": "detail"
                     },
                     "limit": 1
                   }
@@ -206,13 +226,6 @@
                 {
                   "type": "Box",
                   "style": {
-                    "columns": {
-                      "mobile": "1",
-                      "tablet": "2",
-                      "desktop": "3",
-                      "full": "4"
-                    },
-                    "gap": "4",
                     "width": "full",
                     "padding": [
                       "4",
@@ -228,9 +241,9 @@
                         "from": "all",
                         "where": {
                           "field": "state",
-                          "eq": "grid"
+                          "eq": "tiles"
                         },
-                        "limit": 6
+                        "limit": 1
                       }
                     }
                   ]

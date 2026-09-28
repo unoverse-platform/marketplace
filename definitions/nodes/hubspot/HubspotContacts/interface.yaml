@@ -1,0 +1,25 @@
+# A pure service: it answers the Agent it is attached to and is never reached by the graph,
+# so it has no inputs and no outputs.
+inputs: []
+outputs: []
+
+credentials:
+  - name: hubspotPrivateApp
+    required: true
+    displayName: HubSpot
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [upsert_contact, add_note, associate_company]
+    description: >-
+      MCP tools for an agent: upsert_contact (create or update a contact by email),
+      add_note (a note on a contact) and associate_company (link a contact to its company).
+    instructions: >-
+      Always call upsert_contact first for a person, then add_note and associate_company
+      with the same email: both find the contact by email and fail with NO_CONTACT until
+      it exists. associate_company never creates a company, so NO_COMPANY is not an error.
+      Only set lifecycleStage for a person you are adding for the first time,
+      because HubSpot refuses to move a contact back to an earlier stage. Never write a
+      value you were not given; leave a field out rather than guess it.

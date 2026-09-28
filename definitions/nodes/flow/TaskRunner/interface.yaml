@@ -38,4 +38,10 @@ outputs:
     type: boolean
     description: Nothing left to ask
 
+  # WHAT IT FINISHED WITH: the answers a walked task holds at the end, or an Agent task's result.
+  # Wire it into the next Task Runner to start the next task with them.
+  - name: result
+    type: object
+    description: What the finished task hands on
+
 credentials: []
