@@ -222,18 +222,16 @@ helpers:
           .reduce((acc, k) => Object.assign(acc, { [k]: state[k] }), {});
       })()
 
-  # A TASK THAT COLLECTS WAITS FOR ITS SUBMIT, and only once everything it asks for is held: the
-  # step it is on asks for nothing more, so what finishes it is the person's own submit, exactly
-  # as a form node on the canvas finishes (UNOVERSE_NODE_RUNTIME, "Component outputs").
-  awaitsSubmit:
-    args: [task, state]
+  # THE PERSON'S SUBMIT, WHEN THIS CALL IS ONE (design/tasks.md, "The submit"). Nothing waits
+  # for it: the submit is the last call, made at the task's own trigger with the answers under
+  # `metadata.submit` beside `metadata.task`. Null on every other call.
+  submitOf:
+    args: [arrived]
     body: >-
       return (() => {
-        const t = task || {};
-        const tree = (Array.isArray(t.stateTree) ? t.stateTree : []).find(x => x && x.on);
-        const step = helpers.templateStep(t, state);
-        return !!tree && Object.keys(t.outputs || {}).length > 0 && !!step
-          && step.fields.length === 1 && step.fields[0] === tree.on;
+        const here = helpers.taskOf(arrived) || {};
+        const got = (here.metadata || {}).submit;
+        return got && typeof got === 'object' && !Array.isArray(got) ? { state: got } : null;
       })()
 
   # THE SUBMIT, LAID OVER WHAT IS HELD. What the person submitted wins for the answers it carries,

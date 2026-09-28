@@ -17,18 +17,18 @@
 - emit: task
   when: >-
     return helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-      helpers.submittedOver(calls.submitted, helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) !== null
+      helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) !== null
   # THE TASK NAMES ITSELF. `ref` rides with every step so whatever works it can hand it back,
   # and a later pass, woken by that hand-back alone, still knows which task it is on.
   value: >-
     return Object.assign({ ref: helpers.taskRef(config.task, signal.signal, signal.collected) },
       helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-      helpers.submittedOver(calls.submitted, helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))))
+      helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))))
 
 - emit: done
   when: >-
     return helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-      helpers.submittedOver(calls.submitted, helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null
+      helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null
   value: "return true"
 
 # WHAT THE FINISHED TASK HANDS ON, beside `done`, so the next node can start the next task with
@@ -37,10 +37,10 @@
   when: >-
     return !!helpers.agentTool(config.task, signal.signal, signal.collected)
       || helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-      helpers.submittedOver(calls.submitted, helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null
+      helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null
   value: >-
     return helpers.agentTool(config.task, signal.signal, signal.collected)
       ? (((calls.execute || {}).result || {}).structuredContent
           || { text: ((((calls.execute || {}).result || {}).content || [])[0] || {}).text || '' })
       : helpers.finishedWith(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-          helpers.submittedOver(calls.submitted, helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))))
+          helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected))))

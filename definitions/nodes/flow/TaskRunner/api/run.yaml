@@ -131,26 +131,6 @@
     when: "return !response || !!response.error"
     message: "return 'runs/paused failed: ' + JSON.stringify(response || {}).slice(0, 300)"
 
-# FINISHED BY THE PERSON'S SUBMIT, however the task was loaded. Once every field a collecting task
-# asks for is held, the node
-# waits for the submit of that task on the person's screen, as a form node on the canvas does, and
-# the task is finished with what was submitted. The wait is the person's, so it is given long.
-- name: submitted
-  when: >-
-    return !helpers.agentTool(config.task, signal.signal, signal.collected)
-      && !!scope.conversationId
-      && helpers.awaitsSubmit(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
-           helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))
-  method: POST
-  url: "return scope.engineUrl + '/runs/await-submit'"
-  transport: json
-  timeoutMs: 1800000
-  body:
-    conversationId: "return String(scope.conversationId || '')"
-  error:
-    when: "return !response || !!response.error"
-    message: "return 'the submit never came back: ' + JSON.stringify(response || {}).slice(0, 200)"
-
 - name: reset
   # THE WIPE ITSELF, and it has to be written down or it is not a reset: every pass reads the
   # record fresh, so blanking the state only in memory would ask for everything once and then
