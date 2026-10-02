@@ -1,0 +1,146 @@
+{
+  "kind": "node",
+  "name": "TavusConversation",
+  "pack": "tavus",
+  "fingerprint": "8ed8fb6c09d85021",
+  "title": "Tavus Conversation",
+  "description": "Starts a live video conversation with an AI face and returns its link",
+  "category": "Voice",
+  "icon": null,
+  "whenToUse": "Pick when someone should talk face to face with an AI: a live video call where a talking face listens, sees and answers in real time. The call runs on the video service with the persona and tools configured there, so the workflow starts it and hands back the link rather than writing each reply. Wire the link to a component that shows the call.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "conversationUrl",
+        "type": "string",
+        "description": "The link a page opens to join the call"
+      },
+      {
+        "name": "conversationId",
+        "type": "string",
+        "description": "The conversation's id at Tavus"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "tavusCredential",
+        "required": true,
+        "displayName": "Tavus API",
+        "description": "Tavus API key for starting conversations"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "palId"
+      ],
+      "properties": {
+        "palId": {
+          "type": "string",
+          "title": "PAL ID",
+          "description": "The PAL who takes the call, from your Tavus dashboard. It sets the voice, behaviour and tools."
+        },
+        "faceId": {
+          "type": "string",
+          "title": "Face ID",
+          "description": "The face to show. Leave empty to use the PAL's own face.",
+          "default": ""
+        },
+        "conversationalContext": {
+          "type": "string",
+          "title": "Context",
+          "description": "What this call is about, added to the PAL's own context. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "customGreeting": {
+          "type": "string",
+          "title": "Greeting",
+          "description": "The first thing the face says once someone joins. Leave empty for the PAL's own greeting.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxCallDuration": {
+          "type": "number",
+          "title": "Longest call (seconds)",
+          "description": "The call ends at this length whatever is happening, so a forgotten tab stops costing.",
+          "default": 600,
+          "minimum": 10,
+          "maximum": 3600
+        },
+        "participantLeftTimeout": {
+          "type": "number",
+          "title": "End after leaving (seconds)",
+          "description": "How long the call stays open once the person has left.",
+          "default": 30,
+          "minimum": 0,
+          "maximum": 3600
+        },
+        "participantAbsentTimeout": {
+          "type": "number",
+          "title": "End if nobody joins (seconds)",
+          "description": "How long the call waits for the person to join before it closes.",
+          "default": 120,
+          "minimum": 10,
+          "maximum": 3600
+        },
+        "testMode": {
+          "type": "boolean",
+          "title": "Test mode",
+          "description": "Creates the call without the face joining, so nothing is charged.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "emitOnTestRun": {
+          "type": "boolean",
+          "title": "Perform on test runs",
+          "description": "This step acts outside the platform and cannot be undone, so test runs trace it rather than perform it. Enable only while testing this step, then switch it off.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "tavus",
+      "packageFile": "# TAVUS — a live talking face for a page.\n#\n# THE FACE, NOT THE BRAIN. Tavus runs the call on its own servers: it listens, sees, takes turns and\n# renders the face. What the face knows comes from the PAL configured in Tavus and the tools that PAL\n# is given there, which is where an MCP connector to our own /mcp goes. Nothing about the persona is\n# copied into this package: the PAL lives in Tavus and the node only names it.\n\nname: tavus\ndisplayName: Tavus\ndescription: Live video conversations with an AI face\nversion: 1.0.0\ncategory: communication\n\nfeatures:\n  - Start a live video conversation with a PAL and hand its link to a page\n\nallowedHosts:\n  - tavusapi.com\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  credential: [apiKeyHeader]\n  transport: [json]\n",
+      "credentials": {
+        "tavusCredential.yaml": "name: tavusCredential\ndisplayName: Tavus\ndescription: Tavus API key for starting live video conversations\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your Tavus API key, from the API Keys page of the Tavus dashboard\n    placeholder: Enter your Tavus API key\n"
+      },
+      "shared": {}
+    },
+    "dir": "TavusConversation",
+    "files": {
+      "api/events.yaml": "- emit: conversationUrl\n  value: \"return response.conversation_url\"\n\n- emit: conversationId\n  value: \"return response.conversation_id\"\n",
+      "api/run.yaml": "# ONE CALL. Tavus answers the POST with the room already made, so there is nothing to poll: the\n# node settles on the link and the call itself happens between the page and Tavus.\n- name: start\n  method: POST\n  url: https://tavusapi.com/v2/conversations\n\n  credential:\n    scheme: apiKeyHeader\n    header: x-api-key\n    value: \"{{ credentials.tavusCredential.apiKey }}\"\n\n  # BUILT, not mutated: each optional field is left out when empty, because Tavus reads an empty\n  # face id or greeting as a value rather than as \"use the PAL's own\".\n  body: |\n    return Object.assign(\n      {\n        pal_id: config.palId,\n        properties: {\n          max_call_duration: config.maxCallDuration,\n          participant_left_timeout: config.participantLeftTimeout,\n          participant_absent_timeout: config.participantAbsentTimeout\n        }\n      },\n      config.faceId ? { face_id: config.faceId } : {},\n      config.conversationalContext ? { conversational_context: config.conversationalContext } : {},\n      config.customGreeting ? { custom_greeting: config.customGreeting } : {},\n      config.testMode ? { test_mode: true } : {}\n    );\n\n  timeoutMs: 30000\n\n  # NOT 400. Tavus answers 400 when the account is at its concurrent-call limit, and starting the\n  # same call again would only open a second one once the first frees up.\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n\n  transport: json\n\n  error:\n    when: \"return !response.conversation_url\"\n    message: \"return response.message || response.error || 'Tavus returned no conversation link'\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [palId]\n  properties:\n    palId:\n      type: string\n      title: PAL ID\n      description: The PAL who takes the call, from your Tavus dashboard. It sets the voice, behaviour and tools.\n    faceId:\n      type: string\n      title: Face ID\n      description: The face to show. Leave empty to use the PAL's own face.\n      default: \"\"\n    conversationalContext:\n      type: string\n      title: Context\n      description: What this call is about, added to the PAL's own context. Usually wired in from an upstream node.\n      default: \"\"\n      ui:field: template\n    customGreeting:\n      type: string\n      title: Greeting\n      description: The first thing the face says once someone joins. Leave empty for the PAL's own greeting.\n      default: \"\"\n      ui:field: template\n    maxCallDuration:\n      type: number\n      title: Longest call (seconds)\n      description: The call ends at this length whatever is happening, so a forgotten tab stops costing.\n      default: 600\n      minimum: 10\n      maximum: 3600\n    participantLeftTimeout:\n      type: number\n      title: End after leaving (seconds)\n      description: How long the call stays open once the person has left.\n      default: 30\n      minimum: 0\n      maximum: 3600\n    participantAbsentTimeout:\n      type: number\n      title: End if nobody joins (seconds)\n      description: How long the call waits for the person to join before it closes.\n      default: 120\n      minimum: 10\n      maximum: 3600\n    testMode:\n      type: boolean\n      title: Test mode\n      description: Creates the call without the face joining, so nothing is charged.\n      default: false\n      ui:widget: toggle\n\nui:order:\n  [palId, faceId, conversationalContext, customGreeting, maxCallDuration, participantLeftTimeout, participantAbsentTimeout, testMode]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes that can be referenced in templates\n\noutputs:\n  - name: conversationUrl\n    type: string\n    description: The link a page opens to join the call\n  - name: conversationId\n    type: string\n    description: The conversation's id at Tavus\n\ncredentials:\n  - name: tavusCredential\n    required: true\n    displayName: Tavus API\n    description: Tavus API key for starting conversations\n",
+      "node.yaml": "type: TavusConversation\nkind: PromiseNode\n\nname: Tavus Conversation\ncategory: Voice\ncolor: \"#5B3DF5\"\n\ndescription: Starts a live video conversation with an AI face and returns its link\n\nwhenToUse: >-\n  Pick when someone should talk face to face with an AI: a live video call where a talking face\n  listens, sees and answers in real time. The call runs on the video service with the persona and\n  tools configured there, so the workflow starts it and hands back the link rather than writing\n  each reply. Wire the link to a component that shows the call.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node\n# nobody thought about cannot look the same as one deliberately left open.\n#\n# `required: false` adds no requirement of its own: the node runs for whoever the trigger\n# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements\n# only ever narrow.\nauth:\n  required: false\n\ncapabilities:\n  # A new call every run: never served from a previous one.\n  cacheable: false\n  # A CHARGE. Every conversation is billed from the moment the face joins, and that cannot be\n  # taken back. Canvas test runs therefore withhold this node; the Nodes screen in studio still\n  # runs it for real, and `testMode` there starts a call with no face and no charge.\n  emitsExternally: true\n",
+      "test.yaml": "# TEST MODE, so a run makes the room and no face joins: no charge. It reaches the real API, so it\n# needs TAVUS_API_KEY in your .env and a PAL id from your own dashboard in place of the one below.\ntestData:\n  config:\n    palId: p0000000000\n    conversationalContext: The person wants a short tour of what the platform does.\n    maxCallDuration: 60\n    participantLeftTimeout: 10\n    participantAbsentTimeout: 60\n    testMode: true\n  inputs:\n    signal:\n      topic: A short tour of the platform\n  expect:\n    conversationUrl: \"return typeof output.conversationUrl === 'string' && output.conversationUrl.startsWith('https://')\"\n    conversationId: \"return typeof output.conversationId === 'string' && output.conversationId.length > 0\"\n"
+    }
+  }
+}

@@ -7,14 +7,14 @@ configSchema:
       title: Model
       description: Which Gemini image model to generate with
       enum:
-        - gemini-3.1-flash-image-preview
-        - gemini-3-pro-image-preview
-        - gemini-2.5-flash-image
+        - gemini-3-pro-image
+        - gemini-3.1-flash-image
+        - gemini-3.1-flash-lite-image
       enumNames:
-        - Gemini 3.1 Flash Image (best for character consistency)
-        - Gemini 3 Pro (Nano Banana Pro)
-        - Gemini 2.5 Flash Image (Nano Banana)
-      default: gemini-3.1-flash-image-preview
+        - Gemini 3 Pro Image (Nano Banana Pro), best quality
+        - Gemini 3.1 Flash Image (Nano Banana 2), the all-rounder
+        - Gemini 3.1 Flash Lite Image (Nano Banana 2 Lite), fastest and cheapest
+      default: gemini-3.1-flash-image
     prompt:
       type: string
       title: Image Prompt
@@ -38,4 +38,15 @@ configSchema:
         directs the scene.
       default: ""
       "ui:field": template
-"ui:order": [model, prompt, fileName, referenceImageUrl]
+    guideImageUrls:
+      type: string
+      title: Guide Images
+      description: >-
+        Up to four images, one URL per line, that the prompt directs: a character sheet, an
+        approved scene, a style to match. They reach the model as Image 1, Image 2 and so on,
+        in this order, with no instruction of their own, so the prompt says what each is for
+        ("keep the character in Image 1 exactly; keep the layout of Image 2; change only...").
+        Leave empty to generate from the prompt alone.
+      default: ""
+      "ui:field": template
+"ui:order": [model, prompt, fileName, referenceImageUrl, guideImageUrls]

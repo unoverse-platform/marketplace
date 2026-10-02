@@ -4,7 +4,7 @@
 
 testData:
   config:
-    model: gemini-2.5-flash-image
+    model: gemini-3.1-flash-lite-image
     prompt: >-
       A serene mountain landscape at sunrise, photorealistic, golden-hour lighting, mist
       rolling over pine forests, wide-angle composition
@@ -17,9 +17,9 @@ testData:
       return output.images.length > 0
         && output.images[0].data.length > 1000
         && output.images[0].mimeType.startsWith('image/')
-        && output.images[0].fileName === 'generated_image_0.png'
+        && output.images[0].fileName.startsWith('generated_image_0.')
     text: "return typeof output.text === 'string'"
     metadata: >-
       return output.metadata.imageCount === output.images.length
-        && output.metadata.model === 'gemini-2.5-flash-image'
+        && output.metadata.model === 'gemini-3.1-flash-lite-image'
         && output.metadata.generatedAt > 0

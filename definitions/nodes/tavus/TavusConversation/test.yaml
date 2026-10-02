@@ -1,0 +1,16 @@
+# TEST MODE, so a run makes the room and no face joins: no charge. It reaches the real API, so it
+# needs TAVUS_API_KEY in your .env and a PAL id from your own dashboard in place of the one below.
+testData:
+  config:
+    palId: p0000000000
+    conversationalContext: The person wants a short tour of what the platform does.
+    maxCallDuration: 60
+    participantLeftTimeout: 10
+    participantAbsentTimeout: 60
+    testMode: true
+  inputs:
+    signal:
+      topic: A short tour of the platform
+  expect:
+    conversationUrl: "return typeof output.conversationUrl === 'string' && output.conversationUrl.startsWith('https://')"
+    conversationId: "return typeof output.conversationId === 'string' && output.conversationId.length > 0"

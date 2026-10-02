@@ -1,0 +1,28 @@
+type: Publish
+kind: PromiseNode
+
+name: Publish
+category: Flow
+color: "#10B981"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: Pass what arrives straight on, and publish it to whoever is listening to the run
+
+whenToUse: >-
+  Hand the caller of a run the data a step produced, as it is: search rows, a decision, a
+  record, sent on the run's own stream to the one session that started it, while the same data
+  carries on to the next step unchanged. For a workflow called from outside, such as a
+  connector tool, it is how the caller receives the context the run found. It shapes nothing
+  and renders nothing, and it reaches only the session that started the run, never another
+  conversation. Wire in every output that should go back; each arrives under the name of the
+  step that made it.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). It publishes only to the session that started
+# the run, and adds no requirement of its own.
+auth:
+  required: false
+
+capabilities:
+  # A push to a live session is a side effect, and a cached side effect silently stops
+  # happening: the second run would "succeed" without the caller receiving anything.
+  cacheable: false

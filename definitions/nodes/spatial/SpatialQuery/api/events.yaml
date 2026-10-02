@@ -10,3 +10,15 @@
 
 - emit: count
   value: "return response.count != null ? response.count : (response.results || []).length"
+
+# WHAT THE ROWS CAN BE ASKED, the search's own `functions` (objects-in-spatial.md, "Found
+# objects' functions as tools"): an Agent mints a tool per name from it, and a lane hands it on
+# so a caller outside the run (an MCP host, through Publish) can call them too.
+- emit: functions
+  value: "return response.functions && typeof response.functions === 'object' ? response.functions : {}"
+
+# THE SKILLS WHERE THE QUERY LANDED (`regionSkills`). Absent when the query was not placed; a
+# downstream step reads that the same as "none apply here".
+- emit: skills
+  value: "return Array.isArray(response.regionSkills) ? response.regionSkills : []"
+

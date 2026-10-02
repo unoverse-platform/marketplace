@@ -11,5 +11,9 @@ outputs:
   - name: count
     type: number
     description: How many rows matched
-
-credentials: []
+  - name: functions
+    type: object
+    description: What the rows can be asked, by function name
+  - name: skills
+    type: array
+    description: The skills in force where the query landed

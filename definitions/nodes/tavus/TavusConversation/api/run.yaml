@@ -1,0 +1,43 @@
+# ONE CALL. Tavus answers the POST with the room already made, so there is nothing to poll: the
+# node settles on the link and the call itself happens between the page and Tavus.
+- name: start
+  method: POST
+  url: https://tavusapi.com/v2/conversations
+
+  credential:
+    scheme: apiKeyHeader
+    header: x-api-key
+    value: "{{ credentials.tavusCredential.apiKey }}"
+
+  # BUILT, not mutated: each optional field is left out when empty, because Tavus reads an empty
+  # face id or greeting as a value rather than as "use the PAL's own".
+  body: |
+    return Object.assign(
+      {
+        pal_id: config.palId,
+        properties: {
+          max_call_duration: config.maxCallDuration,
+          participant_left_timeout: config.participantLeftTimeout,
+          participant_absent_timeout: config.participantAbsentTimeout
+        }
+      },
+      config.faceId ? { face_id: config.faceId } : {},
+      config.conversationalContext ? { conversational_context: config.conversationalContext } : {},
+      config.customGreeting ? { custom_greeting: config.customGreeting } : {},
+      config.testMode ? { test_mode: true } : {}
+    );
+
+  timeoutMs: 30000
+
+  # NOT 400. Tavus answers 400 when the account is at its concurrent-call limit, and starting the
+  # same call again would only open a second one once the first frees up.
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  transport: json
+
+  error:
+    when: "return !response.conversation_url"
+    message: "return response.message || response.error || 'Tavus returned no conversation link'"

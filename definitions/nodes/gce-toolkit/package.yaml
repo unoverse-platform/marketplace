@@ -14,8 +14,8 @@
 
 name: gce-toolkit
 displayName: Google Gemini
-description: Generate images with Google Gemini models
-version: 2.0.0
+description: Generate images with Google Gemini and videos with Google Veo
+version: 2.1.0
 category: media
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png
 
@@ -23,10 +23,11 @@ features:
   - Text to image, several images per request
   - An optional reference photo, used for facial likeness only
   - The model's own text response alongside the images
+  - Short videos with sound from Veo, from a first frame, a last frame and reference images
 
 allowedHosts:
   - generativelanguage.googleapis.com
-  # Any host, for the UNAUTHENTICATED reference-photo fetch only. The url is one a person
+  # Any host, for the UNAUTHENTICATED image fetches only (reference photo, video frames). The url is one a person
   # supplies, so it cannot be declared in advance. That call sends no credential, and the
   # executor refuses "*" the moment one does.
   - "*"
@@ -34,4 +35,7 @@ allowedHosts:
 requires:
   credential: [apiKeyHeader]
   transport: [json, binary]
-  executorVersion: ">=1.4.0"
+  executorVersion: ">=1.6.0"
+  # The video node waits on a render. Without `poll` it would settle on the operation RECEIPT
+  # and emit that as the answer, with nothing anywhere reporting a problem.
+  poll: true

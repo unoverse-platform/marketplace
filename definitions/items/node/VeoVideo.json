@@ -1,0 +1,162 @@
+{
+  "kind": "node",
+  "name": "VeoVideo",
+  "pack": "gce-toolkit",
+  "fingerprint": "911c8a6a7fd51ba3",
+  "title": "Veo Video",
+  "description": "Generate short videos with Google Veo, from a prompt, a first frame and a last frame",
+  "category": "Media & Design",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png",
+  "whenToUse": "Turn still images and a description into a short video with sound, four to eight seconds. Give it the frame to open on and, optionally, the frame to end on, and it animates the transition between them; up to three reference images keep a character or product looking the same. A still image, and a live spoken conversation, are different jobs.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes, referenceable in the prompt and image urls",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "video",
+        "type": "object",
+        "description": "The finished video: dataUri, mimeType, fileName, bytes"
+      },
+      {
+        "name": "metadata",
+        "type": "object",
+        "description": "model, durationSeconds, generatedAt"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "geminiCredential",
+        "required": true,
+        "displayName": "Google Gemini API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "Which Veo model to render with",
+          "enum": [
+            "veo-3.1-generate-preview",
+            "veo-3.1-fast-generate-preview",
+            "veo-3.1-lite-generate-preview"
+          ],
+          "enumNames": [
+            "Veo 3.1, best quality",
+            "Veo 3.1 Fast, quicker and cheaper",
+            "Veo 3.1 Lite, fastest and cheapest"
+          ],
+          "default": "veo-3.1-generate-preview"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Motion Prompt",
+          "description": "What happens in the video, the motion, camera, mood and sound.",
+          "default": "",
+          "ui:field": "template",
+          "ui:ai": {
+            "editable": true
+          }
+        },
+        "firstFrameUrl": {
+          "type": "string",
+          "title": "First Frame URL",
+          "description": "The image the video opens on. Leave empty to generate from the prompt alone.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "lastFrameUrl": {
+          "type": "string",
+          "title": "Last Frame URL",
+          "description": "The image the video ends on. Needs a first frame. Leave empty to let Veo decide.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "referenceImageUrls": {
+          "type": "string",
+          "title": "Reference Image URLs",
+          "description": "Up to three images, one URL per line, of a character or product to keep looking the same. Using any forces an 8 second video.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "durationSeconds": {
+          "type": "string",
+          "title": "Duration (seconds)",
+          "description": "1080p, 4k and reference images all need 8.",
+          "enum": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "8"
+        },
+        "aspectRatio": {
+          "type": "string",
+          "title": "Aspect Ratio",
+          "enum": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        "resolution": {
+          "type": "string",
+          "title": "Resolution",
+          "description": "720p is fastest; 1080p and 4k need 8 seconds.",
+          "enum": [
+            "720p",
+            "1080p",
+            "4k"
+          ],
+          "default": "720p"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "gce-toolkit",
+      "packageFile": "# GEMINI IMAGE GENERATION AS A MANIFEST. Needed nothing new: an api-key header, a JSON POST,\n# and `transport: binary` for the optional reference photo, which S3Upload had already forced.\n#\n# TWO THINGS CHANGED, both recorded on the node itself:\n#\n#   the instruction text  The retired service held two long instruction strings inline. They\n#                         are prompt BLOCKS now, because a node holding a copy of words that\n#                         also live in a block is a copy that drifts.\n#   generateContent       The retired service used the SDK's generateContentStream and\n#                         accumulated the chunks. This asks the non-streaming endpoint for the\n#                         same thing, so the node still settles once and stays a PromiseNode.\n#\n# The retired TypeScript is at `_legacy/nodes/gce-toolkit/`.\n\nname: gce-toolkit\ndisplayName: Google Gemini\ndescription: Generate images with Google Gemini and videos with Google Veo\nversion: 2.1.0\ncategory: media\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png\n\nfeatures:\n  - Text to image, several images per request\n  - An optional reference photo, used for facial likeness only\n  - The model's own text response alongside the images\n  - Short videos with sound from Veo, from a first frame, a last frame and reference images\n\nallowedHosts:\n  - generativelanguage.googleapis.com\n  # Any host, for the UNAUTHENTICATED image fetches only (reference photo, video frames). The url is one a person\n  # supplies, so it cannot be declared in advance. That call sends no credential, and the\n  # executor refuses \"*\" the moment one does.\n  - \"*\"\n\nrequires:\n  credential: [apiKeyHeader]\n  transport: [json, binary]\n  executorVersion: \">=1.6.0\"\n  # The video node waits on a render. Without `poll` it would settle on the operation RECEIPT\n  # and emit that as the answer, with nothing anywhere reporting a problem.\n  poll: true\n",
+      "credentials": {
+        "geminiCredential.yaml": "# Transcribed from the retired GeminiCredential, NAME AND FIELD UNCHANGED so credentials\n# already stored against `geminiCredential` keep resolving.\n\nname: geminiCredential\ndisplayName: Google Gemini\ndescription: Credentials for the Google Gemini API\ndocumentationUrl: https://ai.google.dev/gemini-api/docs/api-key\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your Google Gemini API key\n    placeholder: AIza...\n"
+      },
+      "shared": {}
+    },
+    "dir": "VeoVideo",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n\n- emit: video\n  from: response\n  value: >-\n    return {\n      dataUri: 'data:' + ((calls.download || {}).contentType || 'video/mp4') + ';base64,' + ((calls.download || {}).base64 || ''),\n      mimeType: (calls.download || {}).contentType || 'video/mp4',\n      fileName: 'veo_video.mp4',\n      bytes: (calls.download || {}).bytes || 0\n    }\n\n# `generatedAt` is epoch milliseconds: the sandbox exposes Date.now() and refuses `new`.\n- emit: metadata\n  from: response\n  value: >-\n    return {\n      model: config.model,\n      durationSeconds: (config.referenceImageUrls || config.resolution === '1080p' || config.resolution === '4k')\n        ? 8\n        : Number(config.durationSeconds || 8),\n      generatedAt: Date.now()\n    }\n",
+      "api/run.yaml": "# Fetch the frames (when given), start the render, poll until done, download the file.\n#\n# The image fetches carry NO credential, which is why \"*\" is allowed for them in the package:\n# the urls are ones a person supplies. Unlike the image node's reference photo they ARE fatal\n# when they fail, because a video told to open on a frame it never received is not the video\n# that was asked for.\n\n- name: first\n  when: \"return !!String(config.firstFrameUrl || '').trim()\"\n  method: GET\n  url: \"return String(config.firstFrameUrl).trim()\"\n  # { base64, contentType, bytes }. predictLongRunning takes images as\n  # { bytesBase64Encoded, mimeType }, NOT the inlineData parts generateContent uses: Veo answers\n  # 400 \"inlineData isn't supported by this model\" to the other shape (seen live 2026-09-29).\n  transport: binary\n  timeoutMs: 60000\n\n- name: last\n  when: \"return !!String(config.lastFrameUrl || '').trim()\"\n  method: GET\n  url: \"return String(config.lastFrameUrl).trim()\"\n  transport: binary\n  timeoutMs: 60000\n\n# Up to three references, one url per line. Three named calls rather than a loop: the vendor\n# caps it at three, so the ceiling is the API's, not a guess.\n- name: ref1\n  when: \"return String(config.referenceImageUrls || '').split('\\\\n').map(s => s.trim()).filter(Boolean).length > 0\"\n  method: GET\n  url: \"return String(config.referenceImageUrls).split('\\\\n').map(s => s.trim()).filter(Boolean)[0]\"\n  transport: binary\n  timeoutMs: 60000\n\n- name: ref2\n  when: \"return String(config.referenceImageUrls || '').split('\\\\n').map(s => s.trim()).filter(Boolean).length > 1\"\n  method: GET\n  url: \"return String(config.referenceImageUrls).split('\\\\n').map(s => s.trim()).filter(Boolean)[1]\"\n  transport: binary\n  timeoutMs: 60000\n\n- name: ref3\n  when: \"return String(config.referenceImageUrls || '').split('\\\\n').map(s => s.trim()).filter(Boolean).length > 2\"\n  method: GET\n  url: \"return String(config.referenceImageUrls).split('\\\\n').map(s => s.trim()).filter(Boolean)[2]\"\n  transport: binary\n  timeoutMs: 60000\n\n# ONE RENDER, polled. The POST answers { name: \"models/<model>/operations/<id>\" }; GET on that\n# name reports { done, response } and is what produces the video (ai.google.dev/gemini-api/docs/veo).\n- name: generate\n  method: POST\n  url: >-\n    return 'https://generativelanguage.googleapis.com/v1beta/models/'\n      + config.model + ':predictLongRunning'\n  credential:\n    scheme: apiKeyHeader\n    header: x-goog-api-key\n    value: \"{{ credentials.geminiCredential.apiKey }}\"\n  headers:\n    Content-Type: application/json\n  transport: json\n  timeoutMs: 120000\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n\n  body:\n    instances: >-\n      return [Object.assign(\n        { prompt: String(config.prompt || '') },\n        calls.first ? { image: { bytesBase64Encoded: calls.first.base64, mimeType: calls.first.contentType || 'image/png' } } : {},\n        calls.last ? { lastFrame: { bytesBase64Encoded: calls.last.base64, mimeType: calls.last.contentType || 'image/png' } } : {},\n        (calls.ref1 || calls.ref2 || calls.ref3)\n          ? { referenceImages: [calls.ref1, calls.ref2, calls.ref3].filter(Boolean).map(r => ({\n              image: { bytesBase64Encoded: r.base64, mimeType: r.contentType || 'image/png' },\n              referenceType: 'asset'\n            })) }\n          : {}\n      )]\n    parameters: >-\n      return {\n        aspectRatio: config.aspectRatio || '16:9',\n        resolution: config.resolution || '720p',\n        // A NUMBER: the docs list \"4\" | \"6\" | \"8\" but the API answers 400 \"needs to be a number\"\n        // to a string (seen live 2026-09-29).\n        durationSeconds: (calls.ref1 || config.resolution === '1080p' || config.resolution === '4k')\n          ? 8\n          : Number(config.durationSeconds || 8)\n      }\n\n  # The reply is the FINAL operation payload, not the start receipt. 10s x 60 = ten minutes; a\n  # render usually takes one to three, and a bound set for the fast job fails exactly the slow one.\n  poll:\n    url: \"return 'https://generativelanguage.googleapis.com/v1beta/' + response.name\"\n    until: \"return response.done === true\"\n    failed: \"return !!response.error\"\n    message: \"return 'Veo failed. ' + JSON.stringify(response.error || response)\"\n    intervalMs: 10000\n    maxAttempts: 60\n\n  # A render the safety filters removed finishes `done` with no sample and says why here.\n  # `done` FIRST: `error` is also asked of the start receipt, which has no samples yet, and\n  # without the guard every render failed on its own receipt (seen live 2026-09-29).\n  error:\n    when: >-\n      return response.done === true\n        && !((((response.response || {}).generateVideoResponse || {}).generatedSamples) || []).length\n    message: >-\n      return 'Veo returned no video. '\n        + JSON.stringify(((response.response || {}).generateVideoResponse || {}).raiMediaFilteredReasons || response.response || response)\n\n# The file. Veo's link needs the same API key, so nothing downstream could fetch it; the node\n# downloads it and hands on the bytes.\n- name: download\n  method: GET\n  url: >-\n    return ((((calls.generate.response || {}).generateVideoResponse || {}).generatedSamples || [])[0] || {}).video.uri\n  credential:\n    scheme: apiKeyHeader\n    header: x-goog-api-key\n    value: \"{{ credentials.geminiCredential.apiKey }}\"\n  transport: binary\n  timeoutMs: 300000\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [model, prompt]\n  properties:\n    model:\n      type: string\n      title: Model\n      description: Which Veo model to render with\n      enum:\n        - veo-3.1-generate-preview\n        - veo-3.1-fast-generate-preview\n        - veo-3.1-lite-generate-preview\n      enumNames:\n        - Veo 3.1, best quality\n        - Veo 3.1 Fast, quicker and cheaper\n        - Veo 3.1 Lite, fastest and cheapest\n      default: veo-3.1-generate-preview\n    prompt:\n      type: string\n      title: Motion Prompt\n      description: What happens in the video, the motion, camera, mood and sound.\n      default: \"\"\n      \"ui:field\": template\n      \"ui:ai\":\n        editable: true\n    firstFrameUrl:\n      type: string\n      title: First Frame URL\n      description: The image the video opens on. Leave empty to generate from the prompt alone.\n      default: \"\"\n      \"ui:field\": template\n    lastFrameUrl:\n      type: string\n      title: Last Frame URL\n      description: The image the video ends on. Needs a first frame. Leave empty to let Veo decide.\n      default: \"\"\n      \"ui:field\": template\n    referenceImageUrls:\n      type: string\n      title: Reference Image URLs\n      description: >-\n        Up to three images, one URL per line, of a character or product to keep looking the\n        same. Using any forces an 8 second video.\n      default: \"\"\n      \"ui:field\": template\n    durationSeconds:\n      type: string\n      title: Duration (seconds)\n      description: 1080p, 4k and reference images all need 8.\n      enum: [\"4\", \"6\", \"8\"]\n      default: \"8\"\n    aspectRatio:\n      type: string\n      title: Aspect Ratio\n      enum: [\"16:9\", \"9:16\"]\n      default: \"16:9\"\n    resolution:\n      type: string\n      title: Resolution\n      description: 720p is fastest; 1080p and 4k need 8 seconds.\n      enum: [720p, 1080p, 4k]\n      default: 720p\n\"ui:order\": [model, prompt, firstFrameUrl, lastFrameUrl, referenceImageUrls, durationSeconds, aspectRatio, resolution]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes, referenceable in the prompt and image urls\n    required: false\n\noutputs:\n  # The file itself, as a data URI a storage step can take directly. Veo's own link needs the\n  # API key to download, so it is useless to anything downstream and is not emitted.\n  - name: video\n    type: object\n    description: \"The finished video: dataUri, mimeType, fileName, bytes\"\n  - name: metadata\n    type: object\n    description: model, durationSeconds, generatedAt\n\ncredentials:\n  - name: geminiCredential\n    required: true\n    displayName: Google Gemini API\n",
+      "node.yaml": "type: VeoVideo\n# PromiseNode WITH `poll`: Veo renders as a long-running operation (the POST answers an\n# operation name, GET on that name reports progress), then one more call downloads the file.\n# The node's answer is still one settled reply, the finished video.\nkind: PromiseNode\n\nname: Veo Video\ncategory: Media & Design\ncolor: \"#4285F4\"\n\ndescription: Generate short videos with Google Veo, from a prompt, a first frame and a last frame\n\nwhenToUse: >-\n  Turn still images and a description into a short video with sound, four to eight seconds.\n  Give it the frame to open on and, optionally, the frame to end on, and it animates the\n  transition between them; up to three reference images keep a character or product looking\n  the same. A still image, and a live spoken conversation, are different jobs.\n\n# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node.\nauth:\n  required: false\n\ncapabilities:\n  # NOT cacheable: generation is non-deterministic, two runs are meant to differ.\n  cacheable: false\n",
+      "test.yaml": "# Text-to-video, short and at the lowest resolution: the cheapest honest render (Veo bills per\n# second). Asserts the SHAPE: real video bytes came back, never anything about the scene.\n\ntestData:\n  config:\n    model: veo-3.1-lite-generate-preview\n    prompt: >-\n      A paper boat drifting across a puddle in light rain, gentle ripples, soft ambient\n      sound, slow push-in\n    firstFrameUrl: \"\"\n    lastFrameUrl: \"\"\n    referenceImageUrls: \"\"\n    durationSeconds: \"4\"\n    aspectRatio: \"16:9\"\n    resolution: 720p\n  inputs:\n    signal: {}\n  expect:\n    video: >-\n      return output.video.dataUri.startsWith('data:video/')\n        && output.video.bytes > 10000\n    metadata: \"return output.metadata.generatedAt > 0\"\n"
+    }
+  }
+}

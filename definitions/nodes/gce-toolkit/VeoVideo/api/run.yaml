@@ -1,0 +1,124 @@
+# Fetch the frames (when given), start the render, poll until done, download the file.
+#
+# The image fetches carry NO credential, which is why "*" is allowed for them in the package:
+# the urls are ones a person supplies. Unlike the image node's reference photo they ARE fatal
+# when they fail, because a video told to open on a frame it never received is not the video
+# that was asked for.
+
+- name: first
+  when: "return !!String(config.firstFrameUrl || '').trim()"
+  method: GET
+  url: "return String(config.firstFrameUrl).trim()"
+  # { base64, contentType, bytes }. predictLongRunning takes images as
+  # { bytesBase64Encoded, mimeType }, NOT the inlineData parts generateContent uses: Veo answers
+  # 400 "inlineData isn't supported by this model" to the other shape (seen live 2026-09-29).
+  transport: binary
+  timeoutMs: 60000
+
+- name: last
+  when: "return !!String(config.lastFrameUrl || '').trim()"
+  method: GET
+  url: "return String(config.lastFrameUrl).trim()"
+  transport: binary
+  timeoutMs: 60000
+
+# Up to three references, one url per line. Three named calls rather than a loop: the vendor
+# caps it at three, so the ceiling is the API's, not a guess.
+- name: ref1
+  when: "return String(config.referenceImageUrls || '').split('\\n').map(s => s.trim()).filter(Boolean).length > 0"
+  method: GET
+  url: "return String(config.referenceImageUrls).split('\\n').map(s => s.trim()).filter(Boolean)[0]"
+  transport: binary
+  timeoutMs: 60000
+
+- name: ref2
+  when: "return String(config.referenceImageUrls || '').split('\\n').map(s => s.trim()).filter(Boolean).length > 1"
+  method: GET
+  url: "return String(config.referenceImageUrls).split('\\n').map(s => s.trim()).filter(Boolean)[1]"
+  transport: binary
+  timeoutMs: 60000
+
+- name: ref3
+  when: "return String(config.referenceImageUrls || '').split('\\n').map(s => s.trim()).filter(Boolean).length > 2"
+  method: GET
+  url: "return String(config.referenceImageUrls).split('\\n').map(s => s.trim()).filter(Boolean)[2]"
+  transport: binary
+  timeoutMs: 60000
+
+# ONE RENDER, polled. The POST answers { name: "models/<model>/operations/<id>" }; GET on that
+# name reports { done, response } and is what produces the video (ai.google.dev/gemini-api/docs/veo).
+- name: generate
+  method: POST
+  url: >-
+    return 'https://generativelanguage.googleapis.com/v1beta/models/'
+      + config.model + ':predictLongRunning'
+  credential:
+    scheme: apiKeyHeader
+    header: x-goog-api-key
+    value: "{{ credentials.geminiCredential.apiKey }}"
+  headers:
+    Content-Type: application/json
+  transport: json
+  timeoutMs: 120000
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
+
+  body:
+    instances: >-
+      return [Object.assign(
+        { prompt: String(config.prompt || '') },
+        calls.first ? { image: { bytesBase64Encoded: calls.first.base64, mimeType: calls.first.contentType || 'image/png' } } : {},
+        calls.last ? { lastFrame: { bytesBase64Encoded: calls.last.base64, mimeType: calls.last.contentType || 'image/png' } } : {},
+        (calls.ref1 || calls.ref2 || calls.ref3)
+          ? { referenceImages: [calls.ref1, calls.ref2, calls.ref3].filter(Boolean).map(r => ({
+              image: { bytesBase64Encoded: r.base64, mimeType: r.contentType || 'image/png' },
+              referenceType: 'asset'
+            })) }
+          : {}
+      )]
+    parameters: >-
+      return {
+        aspectRatio: config.aspectRatio || '16:9',
+        resolution: config.resolution || '720p',
+        // A NUMBER: the docs list "4" | "6" | "8" but the API answers 400 "needs to be a number"
+        // to a string (seen live 2026-09-29).
+        durationSeconds: (calls.ref1 || config.resolution === '1080p' || config.resolution === '4k')
+          ? 8
+          : Number(config.durationSeconds || 8)
+      }
+
+  # The reply is the FINAL operation payload, not the start receipt. 10s x 60 = ten minutes; a
+  # render usually takes one to three, and a bound set for the fast job fails exactly the slow one.
+  poll:
+    url: "return 'https://generativelanguage.googleapis.com/v1beta/' + response.name"
+    until: "return response.done === true"
+    failed: "return !!response.error"
+    message: "return 'Veo failed. ' + JSON.stringify(response.error || response)"
+    intervalMs: 10000
+    maxAttempts: 60
+
+  # A render the safety filters removed finishes `done` with no sample and says why here.
+  # `done` FIRST: `error` is also asked of the start receipt, which has no samples yet, and
+  # without the guard every render failed on its own receipt (seen live 2026-09-29).
+  error:
+    when: >-
+      return response.done === true
+        && !((((response.response || {}).generateVideoResponse || {}).generatedSamples) || []).length
+    message: >-
+      return 'Veo returned no video. '
+        + JSON.stringify(((response.response || {}).generateVideoResponse || {}).raiMediaFilteredReasons || response.response || response)
+
+# The file. Veo's link needs the same API key, so nothing downstream could fetch it; the node
+# downloads it and hands on the bytes.
+- name: download
+  method: GET
+  url: >-
+    return ((((calls.generate.response || {}).generateVideoResponse || {}).generatedSamples || [])[0] || {}).video.uri
+  credential:
+    scheme: apiKeyHeader
+    header: x-goog-api-key
+    value: "{{ credentials.geminiCredential.apiKey }}"
+  transport: binary
+  timeoutMs: 300000

@@ -18,6 +18,38 @@
   transport: binary
   timeoutMs: 60000
 
+# GUIDE IMAGES, up to four, one url per line: the images the prompt directs by position
+# (Image 1, Image 2...). FATAL when a fetch fails, unlike the likeness photo: a frame told to
+# keep the scene in Image 2 without Image 2 is not the frame that was asked for. Four named
+# calls rather than a loop, because the ceiling is small and fixed.
+- name: guide1
+  when: "return String(config.guideImageUrls || '').split('\\n').map(u => u.trim()).filter(Boolean).length > 0"
+  method: GET
+  url: "return String(config.guideImageUrls).split('\\n').map(u => u.trim()).filter(Boolean)[0]"
+  transport: binary
+  timeoutMs: 60000
+
+- name: guide2
+  when: "return String(config.guideImageUrls || '').split('\\n').map(u => u.trim()).filter(Boolean).length > 1"
+  method: GET
+  url: "return String(config.guideImageUrls).split('\\n').map(u => u.trim()).filter(Boolean)[1]"
+  transport: binary
+  timeoutMs: 60000
+
+- name: guide3
+  when: "return String(config.guideImageUrls || '').split('\\n').map(u => u.trim()).filter(Boolean).length > 2"
+  method: GET
+  url: "return String(config.guideImageUrls).split('\\n').map(u => u.trim()).filter(Boolean)[2]"
+  transport: binary
+  timeoutMs: 60000
+
+- name: guide4
+  when: "return String(config.guideImageUrls || '').split('\\n').map(u => u.trim()).filter(Boolean).length > 3"
+  method: GET
+  url: "return String(config.guideImageUrls).split('\\n').map(u => u.trim()).filter(Boolean)[3]"
+  transport: binary
+  timeoutMs: 60000
+
 - name: generate
   method: POST
   url: >-
@@ -54,6 +86,11 @@
                     data: calls.reference.base64
                   } }]
               : [])
+            .concat([calls.guide1, calls.guide2, calls.guide3, calls.guide4].filter(Boolean)
+              .flatMap((g, i) => [
+                { text: 'Image ' + (i + 1) + ':' },
+                { inline_data: { mime_type: g.contentType || 'image/png', data: g.base64 } }
+              ]))
             .concat([{ text: (calls.reference ? prompt.geminiLikenessPreface + '\n\n' : '')
               + String(config.prompt || '') }])
 

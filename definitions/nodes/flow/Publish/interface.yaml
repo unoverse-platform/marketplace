@@ -1,0 +1,10 @@
+inputs:
+  - name: signal
+    type: object
+    description: Everything to publish. Wire in each output that should go back to the caller.
+    required: false
+
+outputs:
+  - name: signal
+    type: object
+    description: What arrived, one entry per source step, exactly as it was published

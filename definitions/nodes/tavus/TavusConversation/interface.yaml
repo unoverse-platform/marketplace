@@ -1,0 +1,18 @@
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes that can be referenced in templates
+
+outputs:
+  - name: conversationUrl
+    type: string
+    description: The link a page opens to join the call
+  - name: conversationId
+    type: string
+    description: The conversation's id at Tavus
+
+credentials:
+  - name: tavusCredential
+    required: true
+    displayName: Tavus API
+    description: Tavus API key for starting conversations

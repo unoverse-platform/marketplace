@@ -1,0 +1,31 @@
+type: TavusConversation
+kind: PromiseNode
+
+name: Tavus Conversation
+category: Voice
+color: "#5B3DF5"
+
+description: Starts a live video conversation with an AI face and returns its link
+
+whenToUse: >-
+  Pick when someone should talk face to face with an AI: a live video call where a talking face
+  listens, sees and answers in real time. The call runs on the video service with the persona and
+  tools configured there, so the workflow starts it and hands back the link rather than writing
+  each reply. Wire the link to a component that shows the call.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # A new call every run: never served from a previous one.
+  cacheable: false
+  # A CHARGE. Every conversation is billed from the moment the face joins, and that cannot be
+  # taken back. Canvas test runs therefore withhold this node; the Nodes screen in studio still
+  # runs it for real, and `testMode` there starts a call with no face and no charge.
+  emitsExternally: true

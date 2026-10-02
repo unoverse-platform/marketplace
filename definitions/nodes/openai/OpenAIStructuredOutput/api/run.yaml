@@ -21,7 +21,7 @@
   # "incomplete" and carries its usage, so the spend is also in the token log; a call cut
   # off by the timeout instead is billed and never counted.
   body: >-
-    return {
+    return Object.assign({
       model: config.model,
       instructions: config.instructions,
       input: [{
@@ -48,9 +48,10 @@
         },
         verbosity: 'low'
       }
-    }
+    }, config.webSearch ? { tools: [{ type: 'web_search' }] } : {})
 
-  timeoutMs: 120000
+  # Long enough for a model that searches and reads the web before it answers.
+  timeoutMs: 300000
 
   retry:
     attempts: 3

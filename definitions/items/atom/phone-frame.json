@@ -1,0 +1,51 @@
+{
+  "kind": "atom",
+  "name": "phone-frame",
+  "fingerprint": "4008d1c476c82629",
+  "bundle": "design-system",
+  "title": "phone-frame",
+  "description": "A screenshot of a phone app held in a phone's dark rounded body, the picture at its own height. Owns its full style; size it via the Ref's style (width).",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "phone-frame",
+    "description": "A screenshot of a phone app held in a phone's dark rounded body, the picture at its own height. Owns its full style; size it via the Ref's style (width).",
+    "whenToUse": "Show a phone app's screen as the phone itself, on a slide or a page, from a screenshot that already carries the phone's status bar. Compose via a Ref, mapping src/alt to host fields; set width on the Ref's style.",
+    "props": {
+      "src": {
+        "type": "string",
+        "default": ""
+      },
+      "alt": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "flex": "0 0 auto",
+        "width": "50",
+        "padding": "2",
+        "radius": "2xl",
+        "background": "surface.inverse",
+        "shadow": "xl",
+        "overflow": "hidden"
+      },
+      "children": [
+        {
+          "type": "Image",
+          "bind": {
+            "src": "src",
+            "alt": "alt"
+          },
+          "style": {
+            "width": "full",
+            "radius": "xl"
+          }
+        }
+      ]
+    },
+    "file": "phone-frame.yaml",
+    "kind": "atom"
+  }
+}

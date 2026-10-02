@@ -1,0 +1,23 @@
+# NO CALLS. This node reaches no host: it passes on what arrived, and `publish.yaml` sends it.
+#
+# ONE ENTRY PER SOURCE, NOT JUST THE FIRST. An incoming signal is nested by SOURCE NODE ID, then
+# by that source's OUTPUT HANDLE:
+#
+#     { signal: { spatialquery1: { results: [...] }, typesafechoice1: { choice: "…", … } } }
+#
+# Each source keeps its name, so the caller can tell what came from where. A source with ONE
+# output handle is peeled to that handle's value (its rows, not `{ results: rows }`); a source
+# with several keeps them all, because there is no single value to choose.
+#
+# The shape the expression sandbox allows, as the shipped airtable and apify nodes use it: a
+# plain parameter (no destructuring) and a new object built by fromEntries (no assignment to a
+# property, which the sandbox refuses).
+
+- emit: signal
+  value: >-
+    return !response.signal
+      ? response
+      : Object.fromEntries(Object.entries(response.signal).map(e =>
+          [e[0], e[1] && typeof e[1] === 'object' && !Array.isArray(e[1]) && Object.keys(e[1]).length === 1
+            ? Object.values(e[1])[0]
+            : e[1]]))

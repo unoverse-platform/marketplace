@@ -17,6 +17,7 @@
     offset: "return String(Math.round(config.offset || 0))"
   transport: json
   error: { $ref: hunter#error }
+  okOn: [404]
   retry:
     attempts: 3
     backoff: exponential

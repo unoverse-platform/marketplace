@@ -19,6 +19,7 @@
       return String(config.fullName || '').trim() ? '' : String(config.lastName || '').trim()
   transport: json
   error: { $ref: hunter#error }
+  okOn: [404]
   retry:
     attempts: 3
     backoff: exponential

@@ -1,0 +1,5 @@
+- emit: conversationUrl
+  value: "return response.conversation_url"
+
+- emit: conversationId
+  value: "return response.conversation_id"

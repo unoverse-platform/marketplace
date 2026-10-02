@@ -55,4 +55,16 @@ configSchema:
         the shape and the content fixes the facts (owner ruling 2026-09-09).
       enum: [none, low, medium, high]
       default: none
-ui:order: [model, content, schema, instructions, schemaName, reasoning]
+
+    # OPENAI'S OWN WEB SEARCH, the Responses API's built-in tool: the model searches, reads and
+    # cites the pages itself before it answers, on top of what it already knows. Off by default,
+    # so an extraction answers only from the content it is given.
+    webSearch:
+      type: boolean
+      title: Search the web
+      description: >-
+        Let the model search the web and read what it finds before it answers. On for research;
+        off when the answer must come only from the content given.
+      default: false
+      ui:widget: toggle
+ui:order: [model, content, schema, instructions, schemaName, reasoning, webSearch]

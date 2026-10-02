@@ -1,0 +1,25 @@
+type: VeoVideo
+# PromiseNode WITH `poll`: Veo renders as a long-running operation (the POST answers an
+# operation name, GET on that name reports progress), then one more call downloads the file.
+# The node's answer is still one settled reply, the finished video.
+kind: PromiseNode
+
+name: Veo Video
+category: Media & Design
+color: "#4285F4"
+
+description: Generate short videos with Google Veo, from a prompt, a first frame and a last frame
+
+whenToUse: >-
+  Turn still images and a description into a short video with sound, four to eight seconds.
+  Give it the frame to open on and, optionally, the frame to end on, and it animates the
+  transition between them; up to three reference images keep a character or product looking
+  the same. A still image, and a live spoken conversation, are different jobs.
+
+# WHO MAY RUN THIS (who-can-run-it.md). Compulsory on every node.
+auth:
+  required: false
+
+capabilities:
+  # NOT cacheable: generation is non-deterministic, two runs are meant to differ.
+  cacheable: false

@@ -1,0 +1,10 @@
+# THE WHOLE POINT OF THE NODE: what it passed on, pushed to the session that started the run
+# (the `publish` capability, the same lane Suggestions uses: an APP_DATA frame, merged opaquely).
+#
+# `output.signal`, not a second expression over the inputs, so what the caller receives and
+# what the next step receives can never drift.
+#
+# `when`: nothing arrived means nothing to send.
+
+when: "return !!output.signal && typeof output.signal === 'object' && Object.keys(output.signal).length > 0"
+data: "return output.signal"

@@ -1,0 +1,23 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: video
+  from: response
+  value: >-
+    return {
+      dataUri: 'data:' + ((calls.download || {}).contentType || 'video/mp4') + ';base64,' + ((calls.download || {}).base64 || ''),
+      mimeType: (calls.download || {}).contentType || 'video/mp4',
+      fileName: 'veo_video.mp4',
+      bytes: (calls.download || {}).bytes || 0
+    }
+
+# `generatedAt` is epoch milliseconds: the sandbox exposes Date.now() and refuses `new`.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      model: config.model,
+      durationSeconds: (config.referenceImageUrls || config.resolution === '1080p' || config.resolution === '4k')
+        ? 8
+        : Number(config.durationSeconds || 8),
+      generatedAt: Date.now()
+    }

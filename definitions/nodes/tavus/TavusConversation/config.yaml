@@ -1,0 +1,55 @@
+configSchema:
+  type: object
+  required: [palId]
+  properties:
+    palId:
+      type: string
+      title: PAL ID
+      description: The PAL who takes the call, from your Tavus dashboard. It sets the voice, behaviour and tools.
+    faceId:
+      type: string
+      title: Face ID
+      description: The face to show. Leave empty to use the PAL's own face.
+      default: ""
+    conversationalContext:
+      type: string
+      title: Context
+      description: What this call is about, added to the PAL's own context. Usually wired in from an upstream node.
+      default: ""
+      ui:field: template
+    customGreeting:
+      type: string
+      title: Greeting
+      description: The first thing the face says once someone joins. Leave empty for the PAL's own greeting.
+      default: ""
+      ui:field: template
+    maxCallDuration:
+      type: number
+      title: Longest call (seconds)
+      description: The call ends at this length whatever is happening, so a forgotten tab stops costing.
+      default: 600
+      minimum: 10
+      maximum: 3600
+    participantLeftTimeout:
+      type: number
+      title: End after leaving (seconds)
+      description: How long the call stays open once the person has left.
+      default: 30
+      minimum: 0
+      maximum: 3600
+    participantAbsentTimeout:
+      type: number
+      title: End if nobody joins (seconds)
+      description: How long the call waits for the person to join before it closes.
+      default: 120
+      minimum: 10
+      maximum: 3600
+    testMode:
+      type: boolean
+      title: Test mode
+      description: Creates the call without the face joining, so nothing is charged.
+      default: false
+      ui:widget: toggle
+
+ui:order:
+  [palId, faceId, conversationalContext, customGreeting, maxCallDuration, participantLeftTimeout, participantAbsentTimeout, testMode]

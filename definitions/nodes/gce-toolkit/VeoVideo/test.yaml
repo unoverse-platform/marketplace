@@ -1,0 +1,22 @@
+# Text-to-video, short and at the lowest resolution: the cheapest honest render (Veo bills per
+# second). Asserts the SHAPE: real video bytes came back, never anything about the scene.
+
+testData:
+  config:
+    model: veo-3.1-lite-generate-preview
+    prompt: >-
+      A paper boat drifting across a puddle in light rain, gentle ripples, soft ambient
+      sound, slow push-in
+    firstFrameUrl: ""
+    lastFrameUrl: ""
+    referenceImageUrls: ""
+    durationSeconds: "4"
+    aspectRatio: "16:9"
+    resolution: 720p
+  inputs:
+    signal: {}
+  expect:
+    video: >-
+      return output.video.dataUri.startsWith('data:video/')
+        && output.video.bytes > 10000
+    metadata: "return output.metadata.generatedAt > 0"

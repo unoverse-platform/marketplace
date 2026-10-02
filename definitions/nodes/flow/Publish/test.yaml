@@ -1,0 +1,15 @@
+# Two sources, one with a single handle and one with several: the single-handle source is peeled
+# to its value, the other keeps every handle, and both keep their source name.
+
+testData:
+  config: {}
+  inputs:
+    signal:
+      search1:
+        results:
+          - title: A row
+      decide1:
+        choice: row-1
+        confidence: 0.9
+  expect:
+    signal: "return Array.isArray(output.signal.search1) && output.signal.search1[0].title === 'A row' && output.signal.decide1.choice === 'row-1' && output.signal.decide1.confidence === 0.9"

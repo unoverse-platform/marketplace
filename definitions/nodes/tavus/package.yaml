@@ -1,0 +1,23 @@
+# TAVUS — a live talking face for a page.
+#
+# THE FACE, NOT THE BRAIN. Tavus runs the call on its own servers: it listens, sees, takes turns and
+# renders the face. What the face knows comes from the PAL configured in Tavus and the tools that PAL
+# is given there, which is where an MCP connector to our own /mcp goes. Nothing about the persona is
+# copied into this package: the PAL lives in Tavus and the node only names it.
+
+name: tavus
+displayName: Tavus
+description: Live video conversations with an AI face
+version: 1.0.0
+category: communication
+
+features:
+  - Start a live video conversation with a PAL and hand its link to a page
+
+allowedHosts:
+  - tavusapi.com
+
+requires:
+  executorVersion: ">=1.6.0"
+  credential: [apiKeyHeader]
+  transport: [json]

@@ -14,6 +14,11 @@
     domain: "return String(config.domain || '').trim()"
   transport: json
   error: { $ref: hunter#error }
+  okOn: [404]
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
 
 - name: person
   when: >-
@@ -28,6 +33,11 @@
       return String(config.linkedinHandle || '').trim() ? '' : String(config.email || '').trim()
   transport: json
   error: { $ref: hunter#error }
+  okOn: [404]
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]
 
 - name: combined
   when: >-
@@ -39,3 +49,8 @@
     email: "return String(config.email || '').trim()"
   transport: json
   error: { $ref: hunter#error }
+  okOn: [404]
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504]

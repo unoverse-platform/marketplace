@@ -1,0 +1,20 @@
+inputs:
+  - name: signal
+    type: object
+    description: Data from previous nodes, referenceable in the prompt and image urls
+    required: false
+
+outputs:
+  # The file itself, as a data URI a storage step can take directly. Veo's own link needs the
+  # API key to download, so it is useless to anything downstream and is not emitted.
+  - name: video
+    type: object
+    description: "The finished video: dataUri, mimeType, fileName, bytes"
+  - name: metadata
+    type: object
+    description: model, durationSeconds, generatedAt
+
+credentials:
+  - name: geminiCredential
+    required: true
+    displayName: Google Gemini API

@@ -16,8 +16,13 @@ headerCredential: &headerCredential
 
 # Hunter wraps every payload in `data` and reports failures in `errors`, sometimes with a
 # 200. Without this a quota error would emit an empty result and read as "not found".
+#
+# NOT FOUND IS AN ANSWER, not a failure: Hunter says it with a 404 and `not_found` when it has
+# no record of a domain or a person. Each call declares `okOn: [404]` so the reply arrives
+# here, and here it is let through, so the node emits its empty result and the workflow
+# carries on without it.
 error: &error
-  when: "return !!(response.errors && response.errors.length)"
+  when: "return !!(response.errors && response.errors.some(e => e.id !== 'not_found'))"
   message: "return response.errors.map(e => e.details || e.id).join('; ')"
 
 # A LinkedIn URL to the handle Hunter wants. split/join rather than a regex, because the

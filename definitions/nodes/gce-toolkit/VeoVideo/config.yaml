@@ -1,0 +1,63 @@
+configSchema:
+  type: object
+  required: [model, prompt]
+  properties:
+    model:
+      type: string
+      title: Model
+      description: Which Veo model to render with
+      enum:
+        - veo-3.1-generate-preview
+        - veo-3.1-fast-generate-preview
+        - veo-3.1-lite-generate-preview
+      enumNames:
+        - Veo 3.1, best quality
+        - Veo 3.1 Fast, quicker and cheaper
+        - Veo 3.1 Lite, fastest and cheapest
+      default: veo-3.1-generate-preview
+    prompt:
+      type: string
+      title: Motion Prompt
+      description: What happens in the video, the motion, camera, mood and sound.
+      default: ""
+      "ui:field": template
+      "ui:ai":
+        editable: true
+    firstFrameUrl:
+      type: string
+      title: First Frame URL
+      description: The image the video opens on. Leave empty to generate from the prompt alone.
+      default: ""
+      "ui:field": template
+    lastFrameUrl:
+      type: string
+      title: Last Frame URL
+      description: The image the video ends on. Needs a first frame. Leave empty to let Veo decide.
+      default: ""
+      "ui:field": template
+    referenceImageUrls:
+      type: string
+      title: Reference Image URLs
+      description: >-
+        Up to three images, one URL per line, of a character or product to keep looking the
+        same. Using any forces an 8 second video.
+      default: ""
+      "ui:field": template
+    durationSeconds:
+      type: string
+      title: Duration (seconds)
+      description: 1080p, 4k and reference images all need 8.
+      enum: ["4", "6", "8"]
+      default: "8"
+    aspectRatio:
+      type: string
+      title: Aspect Ratio
+      enum: ["16:9", "9:16"]
+      default: "16:9"
+    resolution:
+      type: string
+      title: Resolution
+      description: 720p is fastest; 1080p and 4k need 8 seconds.
+      enum: [720p, 1080p, 4k]
+      default: 720p
+"ui:order": [model, prompt, firstFrameUrl, lastFrameUrl, referenceImageUrls, durationSeconds, aspectRatio, resolution]

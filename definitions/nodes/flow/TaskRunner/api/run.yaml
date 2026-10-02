@@ -1,4 +1,4 @@
-# FOUR CALLS, ALL TO THE PLATFORM'S OWN ENGINE, and each one guarded so exactly the ones that
+# CALLS, ALL TO THE PLATFORM'S OWN ENGINE, and each one guarded so exactly the ones that
 # apply run. A task IS a run (migration 056): a component task half filled in is a run of one
 # node paused at the person, one row per owner and task, the values encrypted, saved again at
 # every step and cleared when it finishes.
@@ -229,3 +229,42 @@
   error:
     when: "return !response || !!response.error"
     message: "return 'runs/complete failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+# THE TASK'S OWN EVENTS (design/tasks.md, "Its events"; design/analytics.md, "Analytics is not
+# events"). A task is a node, and it sends its events itself, however it was run: a page, an
+# app, a conversation, a workflow. They go to the person's journey, which Signal shows. They are
+# never analytics and never wait on an `analytics` declaration.
+#
+# OPENED on the call that starts the task: nothing handed back yet, and not the submit.
+- name: opened
+  when: >-
+    return !!scope.userId && !!scope.workflowId
+      && !signal.collected && !helpers.submitOf(signal.signal)
+  method: POST
+  url: "return scope.engineUrl + '/needs/journey/start'"
+  transport: json
+  timeoutMs: 15000
+  body:
+    workflowId: "return String(scope.workflowId)"
+    userId: "return String(scope.userId)"
+    event: opened
+    ref: "return helpers.taskRef(config.task, signal.signal, signal.collected)"
+    source: app
+
+# FINISHED on the call that finishes it, the same test the `done` and `result` rows fire on. Its
+# evidence is the task's ref and `.finished`, so Signal pairs it with the opened event above.
+- name: finished
+  when: >-
+    return !!scope.userId && !!scope.workflowId && (!!helpers.agentTool(config.task, signal.signal, signal.collected)
+      || helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
+      helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null)
+  method: POST
+  url: "return scope.engineUrl + '/needs/journey/action'"
+  transport: json
+  timeoutMs: 15000
+  body:
+    workflowId: "return String(scope.workflowId)"
+    userId: "return String(scope.userId)"
+    event: finished
+    source: form
+    evidence: "return helpers.taskRef(config.task, signal.signal, signal.collected) + '.finished'"
