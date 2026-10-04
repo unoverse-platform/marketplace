@@ -1,5 +1,5 @@
 {
-  "release": "0.1.96",
+  "release": "0.1.97",
   "items": [
     {
       "kind": "component",
@@ -1110,7 +1110,7 @@
       "kind": "node",
       "name": "DatasetQuery",
       "pack": "dataset",
-      "fingerprint": "24c691d370b26c42",
+      "fingerprint": "072ba69def3520dd",
       "title": "Dataset Query",
       "description": "Read rows back from the table an object owns: filtered by any declared column, limited, and summed only ever within one unit",
       "category": "Storage & Data",
@@ -1121,7 +1121,7 @@
       "kind": "node",
       "name": "DatasetRecord",
       "pack": "dataset",
-      "fingerprint": "c856db11d31d2a12",
+      "fingerprint": "2ec5bbc13064079b",
       "title": "Dataset Record",
       "description": "Write a read's rows into the table an object owns, replacing what the same document wrote last time rather than landing a second set beside it",
       "category": "Storage & Data",

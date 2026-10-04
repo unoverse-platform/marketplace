@@ -4,7 +4,7 @@
   transport: json
   body:
     object: "{{ config.object }}"
-    org: "{{ config.org }}"
+    org: "{{ scope.org }}"
     of: "{{ config.of }}"
     where: >-
       return (() => { const r = config.where; return Array.isArray(r) ? r : (String(r || '').trim() ? JSON.parse(String(r)) : []); })()

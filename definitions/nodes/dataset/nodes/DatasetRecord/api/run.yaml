@@ -4,7 +4,7 @@
   transport: json
   body:
     object: "{{ config.object }}"
-    org: "{{ config.org }}"
+    org: "{{ scope.org }}"
     of: "{{ config.of }}"
     document: "{{ config.document }}"
     rows: >-
