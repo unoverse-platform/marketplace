@@ -1,0 +1,24 @@
+# A SKILL'S OWN FIELDS: assigned from the skill file and the registry, none written by a model.
+name:
+  type: string
+  input: false
+  description: The skill's name, org-qualified, the row's identity. Assigned by the registry.
+  maxLength: 120
+whenToUse:
+  type: string
+  input: false
+  description: The skill's own selection text, kept as the source the extraction read. Assigned from the skill file.
+instructions:
+  type: string
+  input: false
+  description: What the Agent does when it follows the skill. Assigned from the skill file.
+category:
+  type: string
+  input: false
+  description: The domain of the job. Assigned from the skill file.
+  maxLength: 64
+version:
+  type: string
+  input: false
+  description: The skill's version. Assigned from the skill file.
+  maxLength: 32

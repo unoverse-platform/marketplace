@@ -1,0 +1,25 @@
+unoverse: "1.0"
+# A picture the business publishes. Positioned by the service or need it represents, written as
+# service copy in the business's vocabulary, never as a description of the scene (the one
+# deliberate exception to strict grounding, so a picture lands beside the needs it serves).
+type: object
+name: image
+element: content
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: image
+extends: need
+uniqueBy: [source_url]
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: [universal_id, object_type, title, description, key_need, source_url, source_id]
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Image
+description: >-
+  A picture the business publishes, such as a product photo or a banner.
+whenToUse: >-
+  Show me what it looks like. Is there a picture of it? Let me see it.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

@@ -1,0 +1,24 @@
+unoverse: "1.0"
+# A skill with its Available switch on: what the business is able to do. It declares no element,
+# so it is its own group, Skill (objects-in-spatial.md rule 2). Positioned by the customer needs it meets,
+# never from the agent's side. The base plus the words the registry assigns.
+type: object
+name: skill
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: sparkles
+extends: need
+uniqueBy: [name]
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: all
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Skill
+description: >-
+  Know-how the business follows to help a person with something hard, such as a complaint or an application.
+whenToUse: >-
+  I want to make a complaint. Help me with my application. Can you assess my situation? Help me sort this out.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

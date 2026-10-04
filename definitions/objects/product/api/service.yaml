@@ -1,0 +1,12 @@
+# THE PRODUCT'S PUBLIC FUNCTIONS (docs/unoverse/data/objects/README.md 4b): each may be called
+# from outside, by an Agent in Spatial when it finds a product, and by a component. The private make
+# function is api/make.yaml.
+#
+#   getDetail    the row in full when a product is opened, bodyCopy included
+
+getDetail:
+  description: >-
+    The row in full when the product is opened, bodyCopy included. A product's detail is its
+    row, so nothing is fetched. An object whose detail lives elsewhere (a file in the store,
+    a live SKU) names a node here.
+  returns: "{{ row }}"

@@ -1,5 +1,5 @@
 {
-  "release": "0.1.94",
+  "release": "0.1.95",
   "items": [
     {
       "kind": "component",
@@ -622,7 +622,7 @@
     {
       "kind": "object",
       "name": "document",
-      "fingerprint": "3da17f46ac312edd",
+      "fingerprint": "a90985a27ab8db72",
       "bundle": "design-system",
       "title": "Document",
       "description": "Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.",
@@ -1154,7 +1154,7 @@
       "kind": "node",
       "name": "ParseDocument",
       "pack": "documents",
-      "fingerprint": "6613a35a491ebe1a",
+      "fingerprint": "15e2f9676903137e",
       "title": "Parse Document",
       "description": "Read a file into its structure. Text in order, tables as rows, figures, lists, dates, and where each sits on the page",
       "category": "Documents",
@@ -1649,7 +1649,7 @@
       "kind": "node",
       "name": "MailboxMCP",
       "pack": "mail",
-      "fingerprint": "1f1d095e510baeba",
+      "fingerprint": "577666485c35af29",
       "title": "Mailbox",
       "description": "Give an Agent one inbox as tools: list its threads, read one, reply in it, send a new message, keep a draft",
       "category": "Communication",
@@ -1748,7 +1748,7 @@
       "kind": "node",
       "name": "OpenAIStream",
       "pack": "openai",
-      "fingerprint": "012ca35f7a349fba",
+      "fingerprint": "5e75ca47761d9424",
       "title": "OpenAI Stream",
       "description": "Text generation with tokens streamed live as they are produced",
       "category": "AI",

@@ -1,0 +1,27 @@
+unoverse: "1.0"
+# The org's story document (docs/unoverse/data/objects/elements/story.md). The document in the pack
+# (design/<org>/identity/story.yaml) is the truth; this row is its presence, positioned like
+# everything else so an agent finds it the way it finds a product. One per org: uniqueBy says so.
+# A document has no call to action, so it embeds on five of the base's six.
+type: object
+name: story
+element: story
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: book-open
+# NEVER A ROW (owner, 2026-09-14): the shape of an identity document, like organisation. An
+# agent reads it through {{identity.<document>}} and the prompt blocks, never by search, so it
+# extends nothing and declares no embed: it has no place on the map.
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Story
+description: >-
+  Where the organisation came from, what it is now and where it is going, and what that
+  story says it is for.
+whenToUse: >-
+  Answer when and how the organisation began, its milestones, what it is today, its scale
+  and its lines of business, and where it says it is going. Events along a timeline: dates,
+  numbers and what happened.
+category: Identity
+version: 1.0.0
+
+props: { $include: props }

@@ -1,0 +1,68 @@
+# THE STORY DOCUMENT'S OWN FIELDS: every brief is the writer's instruction; the org's answers live in its pack.
+history:
+  type: string
+  input: true
+  description: >-
+    Where the enterprise came from, one paragraph of 60 to 120 words: founding year and
+    place, the names it has carried, the mergers and milestones its about or history page
+    states, in order. Only dated facts it gives; empty when it gives none.
+  maxLength: 900
+milestones:
+  type: array
+  input: true
+  description: >-
+    The story's beats, in order: one entry per dated event the enterprise itself records
+    (a founding, a merger, a name, a first, a listing), with the year as its name and one
+    sentence on what happened and why it mattered. From its history page, its timeline or
+    its annual report. Empty when it records none; never invented.
+  maxItems: 20
+  items:
+    name:
+      type: string
+      description: >-
+        The year, or the date as the organisation gives it.
+      maxLength: 80
+    what:
+      type: string
+      description: >-
+        One sentence, in the organisation's words.
+      maxLength: 240
+present:
+  type: string
+  input: true
+  description: >-
+    What the enterprise is now, one paragraph of 60 to 120 words: its scale as it states
+    it (customers, branches, countries, staff, assets), its main lines of business, its
+    position in its market in its own words, with the date those figures carry.
+  maxLength: 900
+vision:
+  type: string
+  input: true
+  description: >-
+    Where the enterprise is going, one paragraph: the vision, strategy or ambition it
+    publishes, quoted where a vision statement exists, with the horizon it names (a year,
+    a plan). Empty when it says nothing about the future.
+  maxLength: 900
+people:
+  type: string
+  input: true
+  description: >-
+    Whom the story is about and for: the people the enterprise names as the protagonists
+    of its story and the ones it tells it to (customers, employees, partners, a country, a
+    community), in its own words. Empty when it names none.
+  maxLength: 400
+meaning:
+  type: string
+  input: true
+  description: >-
+    What the story says the enterprise is for: one paragraph on how the history, the
+    present and the vision explain why it does what it does, connecting them to the
+    purpose (read purpose.yaml first). In the enterprise's own words where it makes the
+    connection; empty when it does not.
+  maxLength: 500
+whenToUse:
+  type: string
+  input: false
+  description: >-
+    When an agent should reach for this document, from the side of whoever is asking. Assigned from
+    the object's manifest.

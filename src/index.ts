@@ -1,11 +1,12 @@
 /**
  * Unoverse MARKETPLACE — CONTENT ONLY.
  *
- * This package is the deployable marketplace: the definitions catalogue
- * (`definitions/` — components, atoms, styles, prompt blocks, skills, node manifests,
- * recipes) and the storefront app (`storefront/`). Individual items are tracked by
- * content fingerprint, so a universe installs and updates PER ITEM as database rows.
- * See scripts/bundle-defs.mjs for how the catalogue is cut.
+ * This package is the deployable marketplace: the definitions themselves, AUTHORED HERE
+ * (`definitions/`: components, atoms, templates, styles, objects, pipelines, prompt blocks,
+ * skills, node manifests, recipes; base paths.ts `marketplace` points every reader at it)
+ * and the storefront app (`storefront/`). Individual items are tracked by content
+ * fingerprint, so a universe installs and updates PER ITEM as database rows. See
+ * scripts/build-catalogue.mts for how the catalogue is cut.
  *
  * NO PLATFORM CODE. The universal Component node (the executor that renders these
  * definitions, and the briefed-component read/fill service) is platform computation and

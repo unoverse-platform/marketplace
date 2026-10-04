@@ -1,0 +1,23 @@
+# THE OBJECT UNDER GUARD: the node make names faked, the returns asserted. The item is a
+# page the website pipeline put in the inbox that the first look said may be a product; the
+# whole read renders the page through HyperbrowserScrape and hands the platform its html and
+# markdown. What the model writes from that page is the platform's one call and is not faked.
+testData:
+  row:
+    source: website
+    sourceUrl: https://www.example.com/cards/aqsat
+    sourceId: 9b8c7d6e5f4a
+    suggested: product
+    content:
+      title: AQSAT Credit Card
+      handler: make
+  fake:
+    page:
+      html: "<html><body><main><h1>AQSAT Credit Card</h1><p>Shop now and pay in instalments.</p></main></body></html>"
+      markdown: "# AQSAT Credit Card\n\nShop now and pay in instalments."
+      metadata: { title: AQSAT Credit Card }
+  expect:
+    html: "return output.html.includes('<h1>AQSAT Credit Card</h1>')"
+    markdown: "return output.markdown.startsWith('# AQSAT Credit Card')"
+    title: "return output.title === 'AQSAT Credit Card'"
+    read: "return output.read === 'make'"

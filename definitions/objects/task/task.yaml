@@ -1,0 +1,26 @@
+unoverse: "1.0"
+# An outcome a person can get done, with a door: an interface to render, a workflow to run, or
+# an MCP to call (docs/unoverse/data/objects/elements/task.md, ruled 2026-09-06). Not authored: an
+# asset becomes a task when its Available switch is on; a bare Agent is the one file written
+# for the map. Every task is a native MCP tool.
+type: object
+name: task
+element: task
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: square-check
+extends: need
+uniqueBy: [task]
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: all
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Task
+description: >-
+  Something a person can get done here, with the page, flow or tool that does it.
+whenToUse: >-
+  Compare these for me. Work out what I spent. Help me find the right one. Help me apply. Do it for me.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

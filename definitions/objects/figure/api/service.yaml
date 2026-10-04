@@ -1,0 +1,48 @@
+# THE FIGURE'S FUNCTIONS (docs/unoverse/data/objects/README.md 4b). A figure of a document (ruled
+# 2026-09-11) shows the picture kept at read time, or is rendered from its page on request,
+# the region its box names, on the platform's own document service: nothing is stored, and the
+# picture goes to the screen, never into a model's context. A chart whose values a vision read
+# found (docs/unoverse/data/documents/review.md) returns them as rows beside its picture.
+getDetail:
+  description: The figure's picture, kept at read time or rendered from its page and box, and a chart's values as rows.
+  calls:
+    # THE PICTURE KEPT AT READ TIME: a link to it, and the browser loads it.
+    - name: stored
+      node: S3FileContent
+      when: "return !!row.content.pictureKey"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.pictureKey }}"
+        includeContent: false
+    # Drawn from the page only for a figure read before pictures were kept.
+    - name: file
+      node: S3FileContent
+      when: "return !calls.stored && !!row.content.partId && !!row.content.key && !!row.content.page"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.key }}"
+        includeContent: false
+    - name: picture
+      node: RenderDocument
+      when: "return !calls.stored && !!row.content.partId && !!row.content.key && !!row.content.page"
+      config:
+        fileUrl: "{{ calls.file.file.downloadUrl }}"
+        fileName: "return String(row.content.key).split('/').at(-1)"
+        page: "{{ row.content.page }}"
+        box: "return row.content.box ? JSON.stringify(row.content.box) : ''"
+        dpi: 150
+    - name: rows
+      node: S3FileContent
+      when: "return !!row.content.rowsKey"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.rowsKey }}"
+        includeContent: true
+  returns: >-
+    return (() => {
+      const t = calls.rows && calls.rows.file && calls.rows.file.content ? JSON.parse(calls.rows.file.content) : null;
+      const rows = t && Array.isArray(t.rows) ? t.rows : [];
+      const image = calls.stored && calls.stored.file ? { url: calls.stored.file.downloadUrl, mimeType: 'image/png' } : calls.picture ? calls.picture.image : null;
+      return Object.assign({}, image ? { image: image } : {},
+        rows.length ? { header: t.header || [], rows: rows, total: rows.length, matched: rows.length } : {});
+    })()

@@ -1,0 +1,21 @@
+# THE PIPELINE UNDER GUARD: the collect step faked with a fixture listing, the rows it
+# yields asserted. Two pictures in, two inbox rows out, each addressed by the picture's
+# own URL, identified by its version-free public id, its content the picture and what the
+# library says about it, stamped with this pipeline's yields.
+testData:
+  config:
+    folder: brand/services/
+    tags: ""
+  fake:
+    files:
+      count: 2
+      files:
+        - { public_id: brand/services/cashback-card, version: 1751000000, width: 1200, height: 800, format: jpg, resource_type: image, created_at: "2026-07-01T00:00:00Z", tags: [cards], bytes: 123456, folder: brand/services, url: http://res.example.com/image/upload/v1751000000/brand/services/cashback-card.jpg, secure_url: https://res.example.com/image/upload/v1751000000/brand/services/cashback-card.jpg, universalId: 3f1a9c2b7d4e }
+        - { public_id: brand/services/branch-visit, version: 1751000001, width: 1600, height: 900, format: png, resource_type: image, created_at: "2026-07-02T00:00:00Z", tags: [], bytes: 234567, folder: brand/services, url: http://res.example.com/image/upload/v1751000001/brand/services/branch-visit.png, secure_url: https://res.example.com/image/upload/v1751000001/brand/services/branch-visit.png, universalId: 9b8c7d6e5f4a }
+  expect:
+    rows: "return output.rows.length === 2"
+    source: "return output.rows[0].sourceUrl === 'https://res.example.com/image/upload/v1751000000/brand/services/cashback-card.jpg'"
+    identity: "return output.rows[0].sourceId === 'brand/services/cashback-card' && output.rows[1].sourceId === 'brand/services/branch-visit'"
+    picture: "return output.rows.every(r => r.content.imageUrl === r.sourceUrl && r.content.text === undefined)"
+    title: "return output.rows[0].content.title === 'cashback-card' && output.rows[0].content.width === 1200 && output.rows[0].content.format === 'jpg'"
+    yields: "return output.rows.every(r => r.yields.join(',') === 'image')"

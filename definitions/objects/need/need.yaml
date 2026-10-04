@@ -1,0 +1,30 @@
+unoverse: "1.0"
+# THE ATOM. What one person wants, in their own words, and who that person is (audience:
+# customer, employee, partner). Extracted from content, many per page. Every other object extends it (owner ruling 2026-09-08): a need's fields are what
+# every row carries, and an object adds only what is its own.
+type: object
+name: need
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: target
+uniqueBy: [title, description]   # what the id is minted from; thousands of needs share a title across pages
+embed: [title, description, key_need, related_needs, questions, callToAction]   # the one field set every positioned object embeds on
+search: [universal_id, object_type, title, description, key_need, action, app, source_url, source_id]   # the rest comes with getDetail
+meta: open                       # anything else a writer puts in metadata rides along, undeclared
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Need
+description: >-
+  What one person wants, in their own words. The atom: every other object is placed on the
+  map by the needs it serves. A page speaks to several; each distinct one is its own entry,
+  never one entry that summarises the page, and every one is traceable to a statement in the
+  content. Granular: one entry for each thing a person could come to this page to get done,
+  each step they take, each question it answers and each condition it sets. A product page
+  holds five to ten; one entry that stands for the page is wrong. Each is a need someone
+  brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}:
+  write it as the thing that person wants from that organisation, in their words.
+whenToUse: >-
+  I want to get something done. I have a question. What can I do here? What do I need to know?
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

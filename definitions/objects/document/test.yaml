@@ -1,0 +1,76 @@
+# THE OBJECT UNDER GUARD: the nodes make names faked, the returns asserted. The item is a file the
+# bucket pipeline put in the inbox, carried as listed: the file got, one parse on the document
+# service (ParseDocument) that says what to save by name, one save beside the file in its own
+# folder under `_parsed/`, one text for the model (the first two pages, the outline, the parts),
+# and the tables and meaningful figures as parts: the logo never, the chart with where it sits
+# and no bytes. The service offers a flagged table and two charts for a vision read: the table's
+# part carries the read's columns, a chart read into rows is a table part, and only a chart with
+# no rows stays an image. What the model writes from the text is not faked here.
+testData:
+  row:
+    source: bucket
+    sourceUrl: s3://example-docs/guides/onboarding.pdf
+    sourceId: 3f1a9c2b7d4e
+    suggested: document
+    content:
+      coverSubject: Example Onboarding Programme
+      coverPeriod: "2026-07-31"
+      coverFoundIn: "subject: page 1"
+      # A LAYOUT WAS HANDED TO THIS READ, so its figures are read from the tables the parse kept.
+      # A document carrying none skips the call entirely and states no figures.
+      valueTemplates:
+        - name: onboarding
+          match: Onboarding
+          observations:
+            - sheets: [Fees]
+              measures: [{ measure: fee, unit: percent_of_aum }]
+      title: onboarding.pdf
+      bucket: example-docs
+      key: guides/onboarding.pdf
+      handler: make
+  fake:
+    get:
+      file: { key: guides/onboarding.pdf, bucket: example-docs, size: 812345, universalId: 3f1a9c2b7d4e, downloadUrl: "https://example-docs.s3.amazonaws.com/guides/onboarding.pdf?sig=1", content: "" }
+    parse:
+      document: { title: Onboarding, pages: 4, kind: pdf, scanned: false, dates: [{ text: "31 July 2026", iso: "2026-07-31", where: footer, page: 1 }], content_hash: abc123, parser_version: docling-2.126.0 }
+      text: "# Onboarding\n\nHow a new customer opens an account in three steps."
+      firstPages: "# Onboarding\n\nHow a new customer opens an account in three steps."
+      outline: [{ id: s1, page: 1, title: Onboarding, firstWords: "" }]
+      review: [{ id: t2, kind: table, reasons: [read from a picture by OCR], page: 3, image_png_base64: CCCC }, { id: f2, kind: chart, reasons: ["a chart: its values read as a table"], page: 3, image_png_base64: BBBB }, { id: f3, kind: chart, reasons: ["a chart: its values read as a table"], page: 4, image_png_base64: DDDD }]
+      parts:
+        tables:
+          - { partId: t1, title: "Table, page 2 (Step, Owner)", caption: null, description: "2 rows; columns: Step, Owner", page: 2, box: null, columns: [Step, Owner], rowCount: 2, firstRows: "Open the form | Customer / Verify identity | Bank", stitchedFrom: null, checks: { read_by: text, cells_in_text: 1, totals_checked: 0, totals_agree: 0, review: [] }, rowsFile: tables/t1.json, pictureFile: pictures/t1.png }
+          - { partId: t2, title: Fees, caption: Fees, description: "1 rows; columns: Fee, Rate", page: 3, box: null, columns: [Fee, Rate], rowCount: 1, firstRows: "Annual | 1%", stitchedFrom: null, checks: null, rowsFile: tables/t2.json, pictureFile: pictures/t2.png }
+        figures:
+          - { partId: f2, title: Accounts opened by month, caption: Accounts opened by month, description: "chart on page 3: Accounts opened by month", kind: chart, page: 3, box: { x0: 72, y0: 300, x1: 300, y1: 420 }, pictureFile: pictures/f2.png }
+          - { partId: f3, title: "chart, page 4", caption: null, description: chart on page 4, kind: chart, page: 4, box: null, pictureFile: pictures/f3.png }
+      files: [{ name: text.md, contentType: text/markdown, text: x }, { name: structure.json, contentType: application/json, text: "{}" }, { name: tables/t1.json, contentType: application/json, text: "{}" }, { name: tables/t2.json, contentType: application/json, text: "{}" }, { name: pictures/t1.png, contentType: image/png, base64: TTTT }, { name: pictures/t2.png, contentType: image/png, base64: UUUU }, { name: pictures/f2.png, contentType: image/png, base64: BBBB }, { name: pictures/f3.png, contentType: image/png, base64: DDDD }]
+      quality: { warnings: [] }
+    vision:
+      - result: { title: Fees, header: [Fee, Rate, Basis], rows: [[Annual, "1%", Assets]] }
+      - result: { title: Accounts opened by month, header: [Month, Accounts], rows: [[Jan, "120"], [Feb, "140"]] }
+      - result: { title: Wait times, header: [Quarter, Days, Target, Industry], rows: [[Q1, "4", "", ""], [Q2, "6", "", ""], [Q3, "5", "", ""]] }
+    save:
+      - output: { key: guides/_parsed/onboarding.pdf/text.md, bucket: example-docs }
+    values:
+      readings: [{ fund: Example, measure: fee, value: 1, unit: percent_of_aum, as_of: "2026-07-31", scope: whole, basis: reported, source: "Fees, row 1" }]
+      documents: [{ file_name: onboarding.pdf, template: onboarding, ok: true, readings: 1 }]
+      total: 1
+  expect:
+    text: "return output.text.startsWith('# onboarding.pdf') && output.text.includes('three steps') && output.text.includes('# Parts of this document') && output.text.includes('- t1 (table, page 2). Columns: Step | Owner') && output.text.includes('- f2 (chart, page 3): Accounts opened by month') && !output.text.includes('- f1 ')"
+    title: "return output.title === 'onboarding'"
+    pages: "return output.pages === 4"
+    saved: "return output.parsedKey === 'guides/_parsed/onboarding.pdf/text.md' && output.bucket === 'example-docs' && output.key === 'guides/onboarding.pdf'"
+    read: "return output.read === 'make'"
+    structure: "return output.structureKey === 'guides/_parsed/onboarding.pdf/structure.json' && output.dates[0].iso === '2026-07-31'"
+    tables: "return output.tables.length === 3 && output.tables[1].title === 'Fees' && output.tables[1].rowsKey === 'guides/_parsed/onboarding.pdf/tables/t2.json' && output.tables[0].partId === 't1' && output.tables[0].rowCount === 2 && output.tables[0].columns.join(',') === 'Step,Owner' && output.tables[0].structureKey === 'guides/_parsed/onboarding.pdf/structure.json' && output.tables[0].rowsKey === 'guides/_parsed/onboarding.pdf/tables/t1.json' && output.tables[0].page === 2"
+    figures: "return output.figures.length === 1 && output.figures[0].partId === 'f3' && output.figures[0].kind === 'chart' && output.figures[0].key === 'guides/onboarding.pdf' && output.figures[0].image_png_base64 === undefined && output.figures[0].rowsKey === undefined"
+    checks: "return output.tables[0].checks.read_by === 'text' && output.tables[1].checks.read_by === 'vision' && output.tables[1].columns.join(',') === 'Fee,Rate,Basis' && output.tables[1].rowCount === 1"
+    chart: "return output.tables.some(c => c.partId === 'f2' && c.rowsKey === 'guides/_parsed/onboarding.pdf/tables/f2.json' && c.rowCount === 2 && c.checks.read_by === 'vision' && c.title === 'Accounts opened by month' && c.box.x0 === 72 && c.pictureKey === 'guides/_parsed/onboarding.pdf/pictures/f2.png') && !output.figures.some(f => f.partId === 'f2') && output.figures[0].title === 'chart, page 4'"
+    parsedWith: "return output.parsedWith === 'docling-2.126.0'"
+    # WHAT THE DOCUMENT STATED comes through untouched, and no model is on that path.
+    stated: "return output.statedSubject === 'Example Onboarding Programme' && output.statedPeriod === '2026-07-31' && output.statedWhere === 'subject: page 1'"
+    # THE FIGURES THE DOCUMENT STATED, a part like its tables and its figures, read from the
+    # parse's own tables and never from the file again.
+    readings: "return output.readings.length === 1 && output.readings[0].measure === 'fee' && output.readings[0].unit === 'percent_of_aum'"
+    pictures: "return output.figures[0].pictureKey === 'guides/_parsed/onboarding.pdf/pictures/f3.png' && output.tables[1].pictureKey === 'guides/_parsed/onboarding.pdf/pictures/t2.png'"

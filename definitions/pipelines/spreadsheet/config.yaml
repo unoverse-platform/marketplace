@@ -1,0 +1,24 @@
+# WHAT A PERSON SETS TO RUN THIS PIPELINE: the Import form, rendered by the canvas the way a
+# node's config is. Only what the collect step does not know by itself: which sheet, which
+# range. The credential is the node's, found by type in the org's store.
+configSchema:
+  type: object
+  required: [spreadsheetId]
+  properties:
+    spreadsheetId:
+      type: string
+      title: Spreadsheet
+      description: >-
+        The id from the sheet's URL, the part between /d/ and /edit. The sheet must be shared
+        so that anyone with the link can view it.
+      default: ""
+      placeholder: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms
+    range:
+      type: string
+      title: Range
+      description: >-
+        The sheet to read, by name, or an A1 range such as Sheet1!A1:D100. The first row of
+        the range is the header row.
+      default: Sheet1
+      placeholder: Sheet1
+"ui:order": [spreadsheetId, range]

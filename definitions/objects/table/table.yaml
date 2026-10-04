@@ -1,0 +1,27 @@
+unoverse: "1.0"
+# A TABLE A DOCUMENT HOLDS (ruled 2026-09-11, docs/unoverse/data/README.md, two levels): rows
+# you can filter, sum and compare, found by walking from its document or through a need's
+# `of`, never by searching the map. No embed, so it is never positioned; it is a row only
+# because a pipeline makes it as a part (`partsOf: document`, docs/unoverse/data/pipelines/README.md
+# layer 1, parts). Its rows live in the store, in the document's structure under `_parsed/`;
+# the row holds what the table is and where it sits, and getDetail returns the rows.
+type: object
+name: table
+element: content
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: table
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Table
+description: >-
+  One table a document holds: its header and its rows exactly as the document lays them out,
+  with the page and the box it sits in.
+whenToUse: >-
+  Read, filter or compare the figures a document lays out as a table: exposures by sector, a
+  fee schedule, a track record, a holdings list, a scorecard. Open it from the document it is
+  part of, then ask its detail for the rows that match what you need.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

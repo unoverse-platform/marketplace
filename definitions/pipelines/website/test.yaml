@@ -1,0 +1,19 @@
+# THE PIPELINE UNDER GUARD: the collect steps faked with a fixture, the rows they yield
+# asserted. Two pages in, two inbox rows out, each with its source identity and its
+# content, stamped with this pipeline's yields. The objects those rows become are the
+# objects' own tests (objects/product/test.yaml), not this one.
+testData:
+  config:
+    runId: run_fixture
+  fake:
+    pages:
+      total: 2
+      items:
+        - { url: https://www.example.com/cards/aqsat, metadata: { title: AQSAT Credit Card, description: Shop now and pay later., openGraph: [{ property: "og:image", content: https://www.example.com/aqsat.png }] }, text: "Shop now...", markdown: "# AQSAT\n\nShop now and pay in instalments with no interest...", universalId: 3f1a9c2b7d4e, contentId: 9b8c7d6e5f4a }
+        - { url: https://www.example.com/help/fees, metadata: { title: Fees and charges }, text: "Fees...", markdown: "# Fees\n\nAnnual fee, late payment fee, cash advance fee...", universalId: 5e6f7a8b9c0d, contentId: 1a2b3c4d5e6f }
+  expect:
+    rows: "return output.rows.length === 2"
+    identity: "return output.rows.every(r => r.sourceUrl && r.sourceId)"
+    content: "return output.rows.every(r => r.content.title && r.content.text.startsWith('# '))"
+    image: "return output.rows[0].content.image === 'https://www.example.com/aqsat.png' && output.rows[1].content.image === undefined"
+    yields: "return output.rows.every(r => r.yields.join(',') === 'need,product')"

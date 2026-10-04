@@ -1,0 +1,107 @@
+# THE BRAND DOCUMENT'S OWN FIELDS: every brief is the writer's instruction; the org's answers live in its pack.
+name:
+  type: string
+  input: true
+  description: >-
+    The brand name as the enterprise presents it, which may differ from its trading name
+    (a bank's card brand, a group's consumer brand). The site's logo text or title, not
+    the legal entity.
+  maxLength: 80
+pronunciation:
+  type: string
+  input: true
+  description: >-
+    How the name is said out loud, written the way it sounds, for anything that speaks it: a
+    voice, a call, a presenter. Leave empty where the name is said just as it is written.
+  maxLength: 120
+standsFor:
+  type: string
+  input: true
+  description: >-
+    What the name stands for, in one sentence, in the enterprise's own words where it says
+    so (a tagline, a strapline, the meaning of the name, a 'who we are' line). Empty when
+    it does not say.
+  maxLength: 300
+promise:
+  type: string
+  input: true
+  description: >-
+    The expectation the brand sets: what people can expect from it, in one or two
+    sentences, drawn from the promises the site repeats on its home, about and brand
+    pages. Written to the customer.
+  maxLength: 400
+represents:
+  type: string
+  input: true
+  description: >-
+    How the brand carries the purpose (read purpose.yaml first): in one paragraph, how the
+    name, the promise and the way it presents itself express why the enterprise exists. In
+    the enterprise's own words where it connects the two; empty when it does not.
+  maxLength: 500
+positioning:
+  type: string
+  input: true
+  description: >-
+    Whom the brand speaks to and how it wants to be seen by them, in one or two sentences,
+    from the way the site addresses its customers and describes its position. Never
+    invented segments.
+  maxLength: 400
+differentiators:
+  type: array
+  input: true
+  description: >-
+    What the enterprise claims sets its brand apart, three to six items, each in its own
+    words (a first, a leadership claim, a partnership, a heritage). Only claims it makes
+    itself.
+  maxItems: 6
+  items:
+    type: string
+brands:
+  type: array
+  input: true
+  description: >-
+    The brand tree: the sub-brands and product brands the enterprise presents under this
+    brand (a card family, an app, a loyalty programme, a subsidiary), one entry per brand
+    with its name as written and one sentence on what it is for, nested in `brands` where
+    the enterprise nests them. Empty when it presents none; never invented.
+  maxItems: 20
+  items:
+    name:
+      type: string
+      description: >-
+        The name as the organisation writes it.
+      maxLength: 80
+    what:
+      type: string
+      description: >-
+        One sentence, in the organisation's words.
+      maxLength: 240
+    brands:
+      type: array
+      description: >-
+        The nested brands, in the same shape, where the organisation nests them.
+rules:
+  type: array
+  input: true
+  description: >-
+    Three to six rules the site's copy visibly follows, each as 'Do this' or 'Never that':
+    the person it addresses (you, we), its register (plain, formal, warm), sentence
+    length, what it capitalises, what it never says.
+  maxItems: 6
+  items:
+    type: string
+examples:
+  type: array
+  input: true
+  description: >-
+    Three to five sentences copied verbatim from the site that show the voice. Quotes,
+    never paraphrase.
+  maxItems: 5
+  items:
+    type: string
+whenToUse:
+  type: string
+  input: false
+  description: >-
+    When an agent should reach for this document, from the side of whoever is asking. Assigned from
+    the object's manifest.

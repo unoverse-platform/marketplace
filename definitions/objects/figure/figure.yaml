@@ -1,0 +1,25 @@
+unoverse: "1.0"
+type: object
+name: figure
+element: content
+icon: chart-column
+meta: open
+
+# A PICTURE A DOCUMENT HOLDS (owner, 2026-09-14: "when we extract images inside a document, we
+# should call it something else"): a chart, a diagram, a photograph or a screenshot taken from a
+# document, made as a part of it (`partsOf`), off the map like a table. Walked to from its
+# document and never searched: it declares no `embed`. A picture the business publishes is an
+# `image`, on the map.
+
+title: Figure
+description: >-
+  One picture a document holds, a chart, a diagram, a photograph or a screenshot, with the page
+  and the box it sits in, and a chart's values when they were read.
+whenToUse: >-
+  See or read a picture from a document: a performance chart, an exposure breakdown, an
+  organisation chart, a process diagram. Open it from the document it is part of; a chart whose
+  values were read also answers with them as rows.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

@@ -1,0 +1,23 @@
+unoverse: "1.0"
+# THE ORGANISATION (docs/unoverse/data/objects/elements/organisation.md): the one that owns this
+# spatial. Never a row: it is the scope on every row (`org`) and the grounding every run wakes
+# with, so it declares no embed, no search, no uniqueBy, and does not extend the base.
+type: object
+name: organisation
+element: organisation
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: building-2
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Organisation
+description: >-
+  Who this organisation is and what it does, in its own words and its own vocabulary.
+whenToUse: >-
+  Ground any extraction, any agent or any piece of writing in who the organisation is and
+  how it speaks. Read whole at wake, never searched for. The plain facts of the business and
+  its vocabulary: what it is, and the words it uses for its products, its customers and
+  itself.
+category: Identity
+version: 1.0.0
+
+props: { $include: props }

@@ -1,0 +1,58 @@
+unoverse: "1.0"
+# A PIPELINE IS THE SOURCE SIDE: how content is collected and which objects it may yield.
+# It never knows how an object is built; that is the object's own api/service.yaml. Between
+# collect and the map sit the platform's steps, the same for every pipeline and every
+# object: known, understand, make detail, match, retire, save (docs/unoverse/data/pipelines/README.md).
+# A pipeline fills the collect slot and names its yields. It adds no step of its own.
+type: pipeline
+name: images
+
+# THE FACE, as a node's node.yaml carries it.
+title: Images
+description: >-
+  The pictures in a Cloudinary folder. Each picture is placed on the map by the need or
+  product it represents, written as the business's own copy, never as a description of the
+  scene.
+whenToUse: >-
+  Bring a library of pictures onto the map so an Agent can find the right one for a need,
+  a product or a page. Give it the folder, and a tag if only some of the folder is wanted.
+  Every picture lands in the inbox, held, until you run it.
+category: Pipelines
+version: 1.0.0
+color: "#3448C5"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1754502687/gravity/icons/cloudinary_logo.png
+
+# COLLECT: one step, the folder's pictures, through the CloudinaryFiles node. The node
+# carries the org's Cloudinary credential, found by type; nothing is repeated here. Pictures
+# only: a video or a raw file is not an image.
+collect:
+  - name: files
+    node: CloudinaryFiles
+    config:
+      folder: "{{ config.folder }}"
+      tags: "{{ config.tags }}"
+      resourceType: image
+      maxFiles: 500
+
+# THE ROW each picture becomes. A row whose content is an `imageUrl` and no text IS the
+# picture: the one model call is shown it, with the fields beside it as its metadata
+# (docs/unoverse/data/pipelines/README.md layer 1). The source is the picture's own address, which is the
+# image object's identity (uniqueBy source_url); the source id is the asset's public id,
+# version-free, so a re-upload of the same asset is the same source with new content.
+
+# WHAT THIS PIPELINE MAKES: one image per picture. The picture is the content; the one model
+# call is shown it. The source is the picture's own address.
+make:
+  # EACH PICTURE, READ ONCE: an image.
+  - each: "{{ collect.files.files }}"
+    sourceUrl: "{{ item.secure_url }}"
+    sourceId: "{{ item.public_id }}"
+    content:
+      imageUrl: "{{ item.secure_url }}"
+      title: "return String(item.public_id).split('/').at(-1)"
+      folder: "{{ item.folder }}"
+      tags: "{{ item.tags }}"
+      format: "{{ item.format }}"
+      width: "{{ item.width }}"
+      height: "{{ item.height }}"
+    image: { cardinality: one }

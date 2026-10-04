@@ -1,0 +1,11 @@
+# THE NEED'S PUBLIC FUNCTIONS (docs/unoverse/data/objects/README.md 4b). Every object extends need,
+# so what is declared here is what every row can be asked unless its own object says otherwise: a
+# document reads its file, a table its rows, a product its bodyCopy; the rest answer with the row.
+#
+#   getDetail    the row in full: every field the lean search result left out
+
+getDetail:
+  description: >-
+    The row in full: every field the lean search result left out. A need's detail is its row,
+    so nothing is fetched.
+  returns: "{{ row }}"

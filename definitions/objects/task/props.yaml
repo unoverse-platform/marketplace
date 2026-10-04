@@ -1,0 +1,76 @@
+# A TASK'S OWN FIELDS: the door and the face, every one assigned from the asset's manifest or the Agent file.
+whenToUse:
+  type: string
+  input: false
+  description: >-
+    The authored selection text, kept as the source the extraction read. Assigned from the
+    manifest.
+instructions:
+  type: string
+  input: false
+  description: >-
+    What to do: the steps the Agent follows while doing the task. Assigned from the Agent
+    file.
+skills:
+  type: array
+  input: false
+  description: >-
+    The skills the task requires, by name. Assigned from the Agent file.
+  items:
+    type: string
+category:
+  type: string
+  input: false
+  description: >-
+    The domain of the job. Assigned from the manifest.
+  maxLength: 64
+version:
+  type: string
+  input: false
+  description: >-
+    The definition's version. Assigned from the manifest.
+  maxLength: 32
+task:
+  type: string
+  input: false
+  description: >-
+    unoverse://tasks/<org>/<name>, the row's identity. Assigned by the registry.
+  maxLength: 200
+app:
+  description: >-
+    The face: unoverse://components/<org>/<name>. Assigned from the manifest, default the
+    agent card.
+workflow:
+  type: string
+  input: false
+  description: >-
+    Door, workflow: the canvas id. Assigned from the Agent file.
+  maxLength: 64
+trigger:
+  type: string
+  input: false
+  description: >-
+    Door, workflow: the Input Trigger node id. Assigned from the Agent file.
+  maxLength: 64
+output:
+  type: string
+  input: false
+  description: >-
+    Door, workflow: the node whose output is the result. Assigned from the Agent file.
+  maxLength: 64
+message:
+  type: string
+  input: false
+  description: >-
+    What the face says while a workflow task runs. Assigned from the Agent file.
+  maxLength: 200
+inputSchema:
+  type: object
+  input: false
+  description: >-
+    The tool's input schema, as the manifest declares it. Assigned from the manifest.
+autoTrigger:
+  type: boolean
+  input: false
+  description: >-
+    Whether the door fires on arrival. Assigned from the manifest.

@@ -1,0 +1,292 @@
+# THE DOCUMENT'S MAKE FUNCTION (docs/unoverse/data/objects/README.md 4b), private: only the
+# pipeline runs it, once per file. Four steps, each one job, so a store can be swapped for another
+# without touching the reading (owner, 2026-09-15): GET the file, PARSE it on the platform's own
+# document service (docs/unoverse/data/documents/README.md), read what needs a second look with a
+# vision model, and SAVE the reading beside the file, in its own folder under `_parsed/`. The
+# parse says what to save by name; this says where. The one model call that names the document
+# reads its first two pages and its outline, never its whole text.
+
+description: Get the file, parse it, read its pictures, save the reading beside it.
+calls:
+  - name: get
+    node: S3FileContent
+    config:
+      bucket: "{{ row.content.bucket }}"
+      key: "{{ row.content.key }}"
+      includeContent: false
+  - name: parse
+    node: ParseDocument
+    config:
+      fileUrl: "{{ calls.get.file.downloadUrl }}"
+      fileName: "return String(row.content.key).split('/').at(-1)"
+      includeFigures: true
+      ocr: true
+    # WHICH FILE THIS IS, so a parse already done is not done again. The node declares its own
+    # memory (`cacheable: { ignore: [fileUrl], key: [etag] }`): the link is transport and changes
+    # on every listing, the etag is the file. Handed nothing to key on, the engine refuses to
+    # remember rather than remember wrongly (NodeMemoization.ts), and this call handed it nothing:
+    # measured 2026-09-19, twenty-four parses in one run, none served from memory, eight files
+    # parsed two and three times over.
+    inputs:
+      etag: "return String((calls.get.file && calls.get.file.etag) || row.content.etag || '')"
+  # A SECOND READ OF WHAT NEEDS ONE (docs/unoverse/data/documents/review.md): the tables that
+  # failed a check and every chart, offered by the service already rendered and capped per
+  # document. A vision model reads each picture into a title, a header and rows as printed.
+  # Optional: a read that fails leaves the parse as it was.
+  - name: vision
+    node: OpenAIStructuredOutput
+    for: "return calls.parse.review || []"
+    optional: true
+    # READ ONCE PER PICTURE, NOT ONCE PER RUN (2026-09-20). A model call is not remembered by
+    # default and that default is right: a prompt and a model are a caller's, and a completion
+    # is not a lookup. THIS call is narrower than that. Its prompt is fixed here, its model is
+    # named here, and what it is given is a PICTURE cut from a page that cannot change, named by
+    # the hash of its own bytes. Asking the same question of the same picture twice costs the
+    # same money and the same seconds for the same answer.
+    #
+    # Measured: reading fifteen documents spent about twelve minutes on these, and every one of
+    # them was paid again on each re-read of the same unchanged files.
+    cacheable:
+      ignore: [content]
+      key: [pictureHash]
+    inputs:
+      # WHAT THIS PICTURE IS. The parse names every region it offers for a read by the SHA-256
+      # of the PNG it rendered, so the same picture is the same key whatever document, run or
+      # machine it came from.
+      pictureHash: "return String(item.hash || '')"
+    config:
+      # THE MODEL IS NAMED, never left to a default (owner, 2026-09-14).
+      model: gpt-5.6-luna
+      instructions: >-
+        You read one picture of a table or a chart taken from a document. Return its title as
+        printed, or a short plain title when none is printed; its column names, left to right;
+        and every row, each cell exactly as printed, numbers with their signs, brackets, units
+        and percent signs. For a chart, return one row per category or date and one column per
+        series, with the values its labels print. Leave a value the chart does not label empty;
+        never estimate it.
+      schemaName: table_picture
+      reasoning: none
+      content: "return { type: 'image', imageUrl: 'data:image/png;base64,' + item.image_png_base64, metadata: { kind: item.kind, page: item.page } }"
+      schema:
+        type: object
+        additionalProperties: false
+        required: [title, header, rows]
+        properties:
+          title:
+            type: string
+            description: The title as printed, or a short plain one.
+          header:
+            type: array
+            description: The column names, left to right.
+            items:
+              type: string
+          rows:
+            type: array
+            description: Every row, each cell exactly as printed.
+            items:
+              type: array
+              items:
+                type: string
+  # THE READING, SAVED BESIDE THE FILE (ruled 2026-09-11; one folder per document since
+  # 2026-09-15): what the parse says to save, and what the vision read found in a picture, a
+  # table's rows or a chart's values, in place of the parse's rows for that table.
+  - name: save
+    node: S3Upload
+    for: >-
+      return (() => {
+        const review = calls.parse.review || [];
+        const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length && (() => { const cells = v.rows.flatMap(r => Array.isArray(r) ? r.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; })() ? v : null; };
+        const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v);
+        const replaced = seen.map(x => 'tables/' + x.r.id + '.json');
+        return (calls.parse.files || []).filter(f => !replaced.includes(f.name))
+          .concat(seen.map(x => ({ name: 'tables/' + x.r.id + '.json', contentType: 'application/json', text: JSON.stringify({ id: x.r.id, caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows, readBy: 'vision' }) })));
+      })()
+    config:
+      bucket: "{{ row.content.bucket }}"
+      key: "return String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1), item.name]).join('/')"
+      sourceType: "return item.base64 ? 'base64' : 'text'"
+      textData: "return item.base64 ? undefined : String(item.text || '')"
+      base64Data: "return item.base64 || undefined"
+      contentType: "{{ item.contentType }}"
+  # WHAT A STANDARDISED DOCUMENT SAYS ABOUT ITSELF, AND THE FIGURES IT STATES
+  # (../../../../../docs/unoverse/data/documents/README.md, ruled 2026-09-18, made one call
+  # 2026-09-19), where the read was handed a layout that describes this kind of document.
+  #
+  # ONE PASS OVER A FILE, NOT TWO. This used to be two: a cover read that opened every file in the
+  # folder before any of them was read, to take two cells off each, and then this. Nothing needed
+  # the first one early: what it read is used when the row is written and when its lines are drawn,
+  # both of which happen after the parse. So it cost a second download of every file, a wait before
+  # any document could start (measured 110 seconds for fifteen), and a join back onto the file it
+  # came from, which was silently wrong for months. The layout says where a document keeps its name,
+  # its date and its figures; all three are read here, from the parse, in one call.
+  # Deterministic: no model, no second parse, and never the file again. A layout says which sheets
+  # hold figures and which column holds which measure; it knows nothing of any industry, and the
+  # layouts are the caller's, as the cover read's are.
+  #
+  # FROM WHAT THE PARSE ALREADY HOLDS, in memory, not fetched back from the store it was just
+  # saved to. A parse keeps what a document PRINTS, and the workbook beneath a cell printing
+  # 1.838% holds 0.01838; measured 2026-09-17, reading the file instead put the long column's
+  # figure under short, scaled by a hundredth, and nothing about it looked wrong.
+  #
+  # Skipped entirely when no layout was handed to the read, which is every document by default.
+  - name: values
+    node: ReadValues
+    when: "return ((row.content.layouts || row.content.valueTemplates || []).length > 0)"
+    optional: true
+    config:
+      documents: >-
+        return [{
+          file_name: String(row.content.key || '').split('/').at(-1),
+          subject: row.content.coverSubject || null,
+          period: row.content.coverPeriod || null,
+          text: String(calls.parse.firstPages || ''),
+          tables: (() => {
+            const review = calls.parse.review || [];
+            const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length ? v : null; };
+            const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v);
+            const replaced = seen.map(x => 'tables/' + x.r.id + '.json');
+            const parsed = (calls.parse.files || [])
+              .filter(f => String(f.name || '').indexOf('tables/') === 0 && !replaced.includes(f.name) && String(f.text || '').trim().indexOf('{') === 0)
+              .map(f => JSON.parse(f.text))
+              .filter(t => t && Array.isArray(t.rows));
+            return parsed.concat(seen.map(x => ({ id: x.r.id, caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows })));
+          })()
+        }]
+      templates: "return row.content.layouts || row.content.valueTemplates || []"
+returns:
+  # THE DOCUMENT NAMES ITSELF (owner, 2026-09-10; moved from the pipelines 2026-09-15): the file's
+  # name without its extensions, as a person reads it ("WM Summary", never "WM Summary.docx.pdf").
+  title: >-
+    return String(row.content.title || String(row.content.key || '').split('/').at(-1))
+      .split('.').filter((p, i, a) => i === 0 || a.slice(i).some(q => !['pdf', 'docx', 'pptx', 'xlsx', 'xlsm', 'md', 'txt', 'doc', 'ppt', 'xls', 'csv'].includes(q.toLowerCase()))).join('.')
+  # THE TEXT THE MODEL READS (owner, 2026-09-14: "take the first two pages"): the first two
+  # pages, then every heading with its first words, then the parts by id. The one model call
+  # names the document, its sections (sectionNames) and its parts (partNames) from it.
+  text: >-
+    return '# ' + String(row.content.title || String(row.content.key || '').split('/').at(-1)) + '\n\n'
+      + String(calls.parse.firstPages || '')
+      + (String(calls.parse.firstPages || '').length < String(calls.parse.text || '').length ? '\n\n(The first two pages. The rest of the document is in its sections, headed below.)' : '')
+      + (() => {
+        const o = calls.parse.outline || [];
+        return o.length > 1 ? '\n\n# Headings of this document\n\n' + o.map(x => '- ' + x.id + ' (page ' + (x.page || '') + '): ' + x.title + (x.firstWords ? ' | ' + x.firstWords : '')).join('\n') : '';
+      })()
+      + (() => {
+        const p = calls.parse.parts || {};
+        const tables = (p.tables || []).map(t => {
+          const cols = (t.columns || []).filter(c => c).slice(0, 10).join(' | ');
+          return '- ' + t.partId + ' (table, page ' + (t.page == null ? '' : t.page) + ')' + (t.caption ? ': ' + t.caption : '') + (cols ? '. Columns: ' + cols : '') + (t.firstRows ? '. First rows: ' + t.firstRows : '');
+        });
+        const figures = (p.figures || []).map(f => '- ' + f.partId + ' (' + f.kind + ', page ' + (f.page == null ? '' : f.page) + ')' + (f.caption ? ': ' + f.caption : ''));
+        const all = tables.concat(figures).slice(0, 30);
+        return all.length ? '\n\n# Parts of this document\n\n' + all.join('\n') : '';
+      })()
+  # WHAT THE DOCUMENT STATED ABOUT ITSELF, where it was read from a known place before this ran
+  # (docs/unoverse/data/documents/arriving.md). Carried on the item by whoever collected it, and
+  # passed through untouched: no model has seen these, and none should. Empty where nothing read
+  # them, which is the honest answer and leaves the model's own reading to stand.
+  # WHAT THE DOCUMENT STATED ABOUT ITSELF: read here from the place its layout names, or carried
+  # on the item where whoever collected it read it first. No model has seen these, and none should.
+  statedSubject: "return String(row.content.coverSubject || ((calls.values && calls.values.documents && calls.values.documents[0]) || {}).subject || '')"
+  statedPeriod: "return String(row.content.coverPeriod || ((calls.values && calls.values.documents && calls.values.documents[0]) || {}).period || '')"
+  statedType: "return String(((calls.values && calls.values.documents && calls.values.documents[0]) || {}).template || '')"
+  statedWhere: "return String(row.content.coverFoundIn || ((calls.values && calls.values.documents && calls.values.documents[0]) || {}).found_in || '')"
+  # WHETHER THE READ IS FINISHED, ON THE ROW (2026-09-22). The layout names the tables it wants;
+  # the read is finished when every one of them was found and gave something. That is the whole
+  # judgement, and it is the only one that scales: it is made from the layout, written once per
+  # KIND of document, and never from the document in front of us. A table nobody asked for is not
+  # a failure and is not counted as one. The four figure counts below say how much of the document
+  # any layout reaches at all, which is a fact about the layout's ambition, not a mark out of ten.
+  figuresCells: "return Number(((((calls.values || {}).documents || [])[0] || {}).coverage || {}).cells || 0)"
+  figuresSaying: "return Number(((((calls.values || {}).documents || [])[0] || {}).coverage || {}).saying || 0)"
+  figuresRead: "return Number(((((calls.values || {}).documents || [])[0] || {}).coverage || {}).read || 0)"
+  figuresTook: "return Number(((((calls.values || {}).documents || [])[0] || {}).coverage || {}).took || 0)"
+  tablesAsked: "return Number(((((calls.values || {}).documents || [])[0] || {}).coverage || {}).asked || 0)"
+  tablesMissing: "return (((((calls.values || {}).documents || [])[0] || {}).coverage || {}).missing || []).length"
+  tablesMissingNames: >-
+    return (((((calls.values || {}).documents || [])[0] || {}).coverage || {}).missing || []).slice(0, 20)
+  figuresElsewhere: >-
+    return (((((calls.values || {}).documents || [])[0] || {}).coverage || {}).elsewhere || [])
+      .reduce((n, u) => n + Number(u.saying || 0), 0)
+  pages: "{{ calls.parse.document.pages }}"
+  bucket: "{{ row.content.bucket }}"
+  key: "{{ row.content.key }}"
+  parsedKey: "return String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1), 'text.md']).join('/')"
+  structureKey: "return String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1), 'structure.json']).join('/')"
+  # THE PARTS (pipelines README, make, parts): the parse's tables, with what a vision read found
+  # in place of what the text gave; and a chart the vision read into rows, a table of its own, its
+  # picture the evidence. CELLS MEAN VALUES (owner, 2026-09-12): a read counts only when at least
+  # half its value cells hold one.
+  tables: >-
+    return (() => {
+      const review = calls.parse.review || [];
+      const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length && (() => { const cells = v.rows.flatMap(r => Array.isArray(r) ? r.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; })() ? v : null; };
+      const base = String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1)]).join('/') + '/';
+      const VISION = { read_by: 'vision', cells_in_text: null, totals_checked: 0, totals_agree: 0, review: ['read from a picture by a vision model'] };
+      const p = calls.parse.parts || {};
+      const tables = (p.tables || []).map(t => {
+        const v = read(t.partId);
+        const columns = v ? (v.header || []).map(x => String(x || '')) : (t.columns || []);
+        const named = columns.filter(c => c);
+        const rows = v ? v.rows.length : t.rowCount;
+        return {
+          partId: t.partId,
+          title: t.caption || (v && v.title) || t.title,
+          description: rows + ' rows' + (named.length ? '; columns: ' + named.slice(0, 10).join(', ') : ''),
+          page: t.page, box: t.box, columns: columns, rowCount: rows, stitchedFrom: t.stitchedFrom,
+          checks: v ? VISION : t.checks,
+          bucket: row.content.bucket, structureKey: base + 'structure.json', rowsKey: base + t.rowsFile,
+          pictureKey: t.pictureFile ? base + t.pictureFile : null
+        };
+      });
+      const charts = (p.figures || [])
+        .filter(f => review.some(r => r.id === f.partId && r.kind === 'chart'))
+        .map(f => ({ f: f, v: read(f.partId) })).filter(x => x.v)
+        .map(x => {
+          const f = x.f;
+          const v = x.v;
+          const columns = (v.header || []).map(x => String(x || ''));
+          const named = columns.filter(c => c);
+          return {
+            partId: f.partId,
+            title: f.caption || v.title || ('Table, page ' + f.page),
+            description: v.rows.length + ' rows' + (named.length ? '; columns: ' + named.slice(0, 10).join(', ') : '') + '; read from a picture by a vision model',
+            page: f.page, box: f.box, columns: columns, rowCount: v.rows.length, checks: VISION,
+            bucket: row.content.bucket, structureKey: base + 'structure.json', rowsKey: base + 'tables/' + f.partId + '.json',
+            pictureKey: f.pictureFile ? base + f.pictureFile : null
+          };
+        });
+      return tables.concat(charts);
+    })()
+  # What stays a picture: a meaningful figure the vision read found no rows in.
+  figures: >-
+    return (() => {
+      const review = calls.parse.review || [];
+      const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length && (() => { const cells = v.rows.flatMap(r => Array.isArray(r) ? r.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; })() ? v : null; };
+      const base = String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1)]).join('/') + '/';
+      return ((calls.parse.parts || {}).figures || [])
+        .filter(f => !(review.some(r => r.id === f.partId && r.kind === 'chart') && read(f.partId)))
+        .map(f => ({ partId: f.partId, title: f.title, description: f.description, kind: f.kind, page: f.page, box: f.box, bucket: row.content.bucket, key: row.content.key, pictureKey: f.pictureFile ? base + f.pictureFile : null }));
+    })()
+  # THE FIGURES THIS DOCUMENT STATED, one row per figure, each proved against what the document
+  # states about itself. A part of the document like its tables and its figures, and written into
+  # the table its object owns (../../../../../docs/unoverse/data/objects/dataset.md). Empty for a
+  # document of no layout we know, which is the honest answer and is not a failure.
+  # A DOCUMENT THAT COULD NOT PROVE ITSELF SAYS NOTHING, IT DOES NOT SAY "NOTHING". An empty
+  # list means this document states no figures any more, and what it stated before is removed;
+  # a refused read means we do not know what it states, and what was stored must stand. Those
+  # are different answers and only one of them is a list. Measured 2026-09-19: a check refused
+  # one sheet, the read offered nothing, and four hundred and eighty figures already stored were
+  # deleted as though the document had withdrawn them.
+  readings: >-
+    return (() => {
+      const v = calls.values;
+      if (!v) return [];
+      if ((v.unproven || []).length) return null;
+      return v.readings || [];
+    })()
+  dates: "{{ calls.parse.document.dates }}"
+  scanned: "{{ calls.parse.document.scanned }}"
+  # THE READER IT WAS READ WITH (pipelines README, One row per item): a new parser reads it again.
+  parsedWith: "{{ calls.parse.document.parser_version }}"
+  # WHAT THE READER HAD TO WORK AROUND, said on the row and on its inbox line (2026-09-13).
+  readWarnings: "return (calls.parse.quality && Array.isArray(calls.parse.quality.warnings)) ? calls.parse.quality.warnings : []"

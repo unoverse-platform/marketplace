@@ -1,0 +1,69 @@
+# THE TABLE'S FUNCTIONS (docs/unoverse/data/objects/README.md 4b). A table is made by no
+# function of its own: the pipeline writes it as a part of its document. Its detail is its
+# rows, read from its own file in the store (a few kilobytes, never the whole document) and
+# filtered here, so an Agent asking
+# for the commodities rows gets those and not four hundred others.
+#
+#   params.where   a phrase: only the rows with a cell containing it, any case
+#   params.limit   how many rows at most; 200 when not said
+#
+# A TABLE THAT IS A PICTURE (2026-09-11, a ROKOS manager review: two tables pasted as images,
+# no text in their region) has no rows to read. Its detail renders its region instead, so it
+# can be seen; reading the picture into rows is a model's job, not this one's.
+getDetail:
+  description: The table's header and rows from the store, filtered by params.where and bounded by params.limit.
+  input:
+    type: object
+    properties:
+      where:
+        type: string
+        description: A word or phrase; only the rows with a cell containing it come back (Commodities, Crude, Financials).
+      limit:
+        type: number
+        description: How many rows at most. 200 when not said.
+  calls:
+    - name: rows
+      node: S3FileContent
+      when: "return !!row.content.rowsKey"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.rowsKey }}"
+        includeContent: true
+    # THE PICTURE KEPT AT READ TIME, for a table read from a picture: the evidence, as a link.
+    - name: stored
+      node: S3FileContent
+      when: "return !!row.content.pictureKey"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.pictureKey }}"
+        includeContent: false
+    - name: file
+      node: S3FileContent
+      when: >-
+        return !calls.stored && !!row.content.page && !!row.source_url
+          && !(calls.rows && calls.rows.file && (JSON.parse(calls.rows.file.content || '{}').rows || []).length)
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "return String(row.source_url).replace(/^s3:\\/\\/[^/]+\\//, '')"
+        includeContent: false
+    - name: picture
+      node: RenderDocument
+      when: "return !!calls.file"
+      config:
+        fileUrl: "{{ calls.file.file.downloadUrl }}"
+        fileName: "return String(row.source_url).split('/').at(-1)"
+        page: "{{ row.content.page }}"
+        box: "return row.content.box ? JSON.stringify(row.content.box) : ''"
+        dpi: 150
+  returns: >-
+    return (() => {
+      const t = calls.rows && calls.rows.file && calls.rows.file.content ? JSON.parse(calls.rows.file.content) : {};
+      const all = t.rows || [];
+      const where = params && params.where ? String(params.where).toLowerCase() : '';
+      const hit = where ? all.filter(r => r.join(' ').toLowerCase().includes(where)) : all;
+      const limit = params && params.limit ? Number(params.limit) : 200;
+      return Object.assign(
+        { header: t.header || [], rows: hit.slice(0, limit), total: all.length, matched: hit.length },
+        calls.stored && calls.stored.file ? { image: { url: calls.stored.file.downloadUrl, mimeType: 'image/png' }, asPicture: !all.length } : calls.picture ? { image: calls.picture.image, asPicture: true } : {}
+      );
+    })()

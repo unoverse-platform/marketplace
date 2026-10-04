@@ -1,0 +1,20 @@
+# AN IMAGE'S OWN FIELDS. Its source_url is the image itself. A picture a document holds is a
+# `figure` (2026-09-14), a part of its document, off the map; an image is published and on it.
+visualElements:
+  type: array
+  input: true
+  description: >-
+    What is in the picture, three to eight things, each a noun phrase.
+  minItems: 3
+  maxItems: 8
+  items:
+    type: string
+colors:
+  type: array
+  input: true
+  description: >-
+    The dominant colours, two to five, as plain colour names.
+  minItems: 2
+  maxItems: 5
+  items:
+    type: string

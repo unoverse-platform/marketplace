@@ -1,0 +1,23 @@
+# WHAT A PERSON SETS TO RUN THIS PIPELINE: the Import form, rendered by the canvas the way a
+# node's config is. Only what the collect step does not know by itself: which bucket, which
+# folder. The credential is the node's, found by type in the org's store.
+configSchema:
+  type: object
+  required: [bucket]
+  properties:
+    bucket:
+      type: string
+      title: Bucket
+      description: The S3 bucket your documents are uploaded to.
+      default: ""
+      # AN S3 BUCKET NAME: 3 to 63 lowercase letters, digits, dots and hyphens, starting and ending
+      # with a letter or digit. A path pasted here ("my-bucket/folder/") is refused before the run.
+      pattern: "^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$"
+      placeholder: acme-documents
+    prefix:
+      type: string
+      title: Folder
+      description: The folder in the bucket to read. Ends with a slash. Leave blank for the whole bucket.
+      default: ""
+      placeholder: guides/
+"ui:order": [bucket, prefix]

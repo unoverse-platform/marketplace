@@ -1,0 +1,68 @@
+# THE PURPOSE DOCUMENT'S OWN FIELDS: every brief is the writer's instruction; the org's answers live in its pack.
+statement:
+  type: string
+  input: true
+  description: >-
+    Why the enterprise exists, in its own words: the purpose or mission statement it
+    publishes, quoted where one exists. When it publishes none, one sentence composed only
+    from what its about page says it is for. Never a marketing slogan.
+  maxLength: 400
+values:
+  type: array
+  input: true
+  description: >-
+    What the people of the enterprise believe in and consider valuable: the values it
+    publishes, each with its name as the enterprise writes it and the one sentence it
+    gives for it. From the values, culture or about pages. Empty when none are published;
+    never invented.
+  maxItems: 8
+  items:
+    name:
+      type: string
+      description: >-
+        The name as the organisation writes it.
+      maxLength: 80
+    what:
+      type: string
+      description: >-
+        One sentence, in the organisation's words.
+      maxLength: 240
+ambition:
+  type: string
+  input: true
+  description: >-
+    The far end of the purpose: what the enterprise says it aims to achieve for its
+    customers, its country or society, in one paragraph, quoted where a vision or ambition
+    statement exists, with the horizon it names. Not the goals below; the outcome they
+    serve.
+  maxLength: 700
+goals:
+  type: array
+  input: true
+  description: >-
+    The goal tree: the strategic goals, pillars or commitments the enterprise names (a
+    strategy page, a strategy section of the annual report, 'our commitments'). One entry
+    per goal with its name as the enterprise writes it and one sentence on why, nested in
+    `goals` where it nests them. Empty when none are named; never invented.
+  maxItems: 12
+  items:
+    name:
+      type: string
+      description: >-
+        The name as the organisation writes it.
+      maxLength: 80
+    why:
+      type: string
+      description: >-
+        One sentence on why, in the organisation's words.
+      maxLength: 240
+    goals:
+      type: array
+      description: >-
+        The nested goals, in the same shape, where the organisation nests them.
+whenToUse:
+  type: string
+  input: false
+  description: >-
+    When an agent should reach for this document, from the side of whoever is asking. Assigned from
+    the object's manifest.

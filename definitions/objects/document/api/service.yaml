@@ -1,0 +1,118 @@
+# THE DOCUMENT'S PUBLIC FUNCTIONS (docs/unoverse/data/objects/README.md 4b): each may be called
+# from outside, by an Agent in Spatial when it finds a document, and by a component. The private make
+# function is api/make.yaml.
+#
+#   getDetail    the row, its outline, the parsed text or one section of it (params.section), and a fresh link to the original
+
+getDetail:
+  description: >-
+    The row, its outline, and either the parsed text when the document is short (or when
+    params.whole asks for it) or, with params.section, that one section read forward through the
+    headings after it, up to the heading params.until names (the next section's start) or until
+    params.chars of text; with params.sections, every section with its text, for the section
+    store to cut into pieces; with params.link, only the fresh link, the rest being answered
+    from the section store; with params.chunks, only the document's chunks (chunks.json), for
+    the index to embed; and a fresh link to the original file.
+  # WHAT A CALLER PASSES (README 4b): the Agent's tool arguments beside the row's universal_id.
+  input:
+    type: object
+    properties:
+      section:
+        type: string
+        description: >-
+          The id of ONE section from the document's outline (s12). The answer is that section's
+          text instead of the whole document's. Open the document once without it to see the
+          outline.
+      until:
+        type: string
+        description: Read forward from the section up to the heading with this id; by default, the next named section.
+      chars:
+        type: number
+        description: Read forward from the section until this much text is in hand; 40000 at most.
+      whole:
+        type: boolean
+        description: The whole parsed text however long the document is. Rarely right; open a section instead.
+      chunks:
+        type: boolean
+        description: Only the document's chunks, as the reader cut them, for the index to embed. Never for an Agent.
+  calls:
+    # HOW LONG THE TEXT IS, asked before it is read (2026-09-13: the ROKOS memorandum's 721,070
+    # characters reached every Agent that opened it). A long document answers with its outline
+    # and a section is opened by its id; a short one answers with its whole text. `params.whole`
+    # asks for the whole text whatever its length: the deal's make function still joins its
+    # documents' texts until it is made through searchDetail.
+    - name: parsedSize
+      node: S3FileContent
+      when: "return !(params && (params.section || params.sections || params.link || params.chunks))"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.parsedKey }}"
+        includeContent: false
+    - name: parsed
+      node: S3FileContent
+      when: >-
+        return !(params && (params.section || params.sections || params.link || params.chunks)) && ((params && params.whole === true)
+          || (!!calls.parsedSize && !!calls.parsedSize.file && Number(calls.parsedSize.file.size) <= 40000))
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.parsedKey }}"
+        includeContent: true
+    # THE OUTLINE AND ONE SECTION (ruled 2026-09-11: sections are addressed, not stored as rows).
+    # THE CHUNKS (UNO-100), beside the text: asked by the index alone.
+    - name: chunks
+      node: S3FileContent
+      when: "return !!(params && params.chunks) && !!row.content.parsedKey"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "return String(row.content.parsedKey).replace(/[^/]+$/, 'chunks.json')"
+        includeContent: true
+    - name: structure
+      node: S3FileContent
+      when: "return !!row.content.structureKey && !(params && (params.link || params.chunks))"
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.structureKey }}"
+        includeContent: true
+    - name: file
+      node: S3FileContent
+      config:
+        bucket: "{{ row.content.bucket }}"
+        key: "{{ row.content.key }}"
+        includeContent: false
+  returns: >-
+    return (() => {
+      const s = calls.structure && calls.structure.file && calls.structure.file.content ? JSON.parse(calls.structure.file.content) : {};
+      const sections = s.sections || [];
+      // THE OUTLINE IS THE NAMED SECTIONS (docs/unoverse/data/objects/README.md, "The parser's
+      // headings are not sections"): the ones the read named, each with its face and the heading it
+      // starts at. The parser's own headings stay in the structure file as bookmarks and are never
+      // shown. A document the read named no sections in has no outline: it is short, and answers
+      // with its text.
+      const names = Array.isArray(row.content.sectionNames) ? row.content.sectionNames.filter(n => n && n.startsAt) : [];
+      const pageOf = (id) => { const x = sections.find(y => y.id === id); return x ? x.page_from : null; };
+      const outline = names.map(n => ({ id: n.startsAt, title: n.title, description: n.description, whenToUse: n.whenToUse, page_from: pageOf(n.startsAt) }));
+      const at = params && params.section ? sections.findIndex(x => x.id === params.section) : -1;
+      // A NAMED SECTION ENDS WHERE THE NEXT ONE STARTS, the same bounds the section store cuts it by.
+      const named = names.findIndex(n => n.startsAt === (params && params.section));
+      // A SECTION READ FORWARD: a heading alone ("TERMS") says nothing, and its words sit in
+      // the headings after it. With params.until (a named section's end: the next section's
+      // start) it reads up to that heading, at most 40,000 characters; with params.chars alone
+      // it reads on until it has that much text. It never starts again once it has stopped.
+      const want = params && params.chars ? Number(params.chars) : 0;
+      const until = params && params.until ? String(params.until) : (named >= 0 && names[named + 1] ? String(names[named + 1].startsAt) : '');
+      const cap = until || named >= 0 ? 40000 : want;
+      const read = at < 0 ? null : sections.slice(at).reduce((acc, n, i) =>
+        !acc.stopped && (i === 0 || ((!until || n.id !== until) && acc.text.length < cap))
+          ? { text: acc.text + (i ? '\n\n## ' + (n.title || '') + '\n' : '') + (n.text || ''), end: n, stopped: false }
+          : Object.assign({}, acc, { stopped: true }), { text: '', end: sections[at], stopped: false });
+      const body = read
+        ? { section: { id: sections[at].id, title: sections[at].title, page_from: sections[at].page_from, page_to: read.end.page_to, through: read.end.id, text: read.text } }
+        : calls.parsed && calls.parsed.file ? { text: calls.parsed.file.content }
+        : { textWithheld: 'A long document: open one section of its outline by its id (params.section).' };
+      // EVERY SECTION WITH ITS TEXT, for the section store (section-store.md): one read of the
+      // structure, cut into pieces by the engine, never sent to an Agent.
+      const all = params && params.sections === true ? { parsedSections: sections } : {};
+      // THE CHUNKS, for the index (UNO-100): none when the document was read before they existed.
+      const cut = params && params.chunks === true ? { chunks: calls.chunks && calls.chunks.file && calls.chunks.file.content ? JSON.parse(calls.chunks.file.content) : [] } : {};
+      return Object.assign({}, row, { downloadUrl: calls.file.file.downloadUrl }, outline.length ? { outline: outline } : {}, body, all, cut);
+    })()

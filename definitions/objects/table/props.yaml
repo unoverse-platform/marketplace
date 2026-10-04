@@ -1,0 +1,79 @@
+# A TABLE'S FIELDS. Every one is written from the parse by the pipeline, never by the model
+# (input: false): the document's make function shapes each table once, and the part writer keeps
+# the fields by name (docs/unoverse/data/pipelines/README.md layer 1, parts).
+universal_id:
+  type: string
+  input: false
+  description: The row's permanent handle, minted from the document's id and the table's own, so a re-read finds the same row.
+title:
+  type: string
+  input: false
+  description: The table's caption, or its sheet's name, or where it sits and its first columns.
+description:
+  type: string
+  input: false
+  description: One line on what the table holds, its size and its columns, so a walk can choose without opening it.
+org:
+  type: string
+  input: false
+  description: The organisation whose row this is. Assigned by the run.
+source_url:
+  type: string
+  input: false
+  description: The file the table sits in, the same address as its document.
+source_id:
+  type: string
+  input: false
+  description: The file's source id, the same as its document's.
+partId:
+  type: string
+  input: false
+  description: The table's id within its document's structure, such as t5.
+page:
+  type: number
+  input: false
+  description: The page the table starts on, counted from 1; for a spreadsheet, the sheet's place.
+box:
+  type: object
+  input: false
+  description: Where on the page the table sits, in points with the origin top-left, as x0, y0, x1, y1. Absent for a spreadsheet.
+columns:
+  type: array
+  input: false
+  description: The column names, left to right, a multi-row header's levels joined.
+  items:
+    type: string
+rowCount:
+  type: number
+  input: false
+  description: How many body rows the table has.
+stitchedFrom:
+  type: array
+  input: false
+  description: The pages of a table continued across pages, stitched into this one.
+  items:
+    type: number
+bucket:
+  type: string
+  input: false
+  description: The bucket the document and its structure sit in.
+structureKey:
+  type: string
+  input: false
+  description: The key of the document's structure in the store, under `_parsed/`, which holds this table's header and place beside the rest of the document.
+rowsKey:
+  type: string
+  input: false
+  description: The key of this table's own rows in the store, under the document's folder in `_parsed/`, which its detail reads.
+whenToUse:
+  type: string
+  input: false
+  description: The question this part answers, as its document's read named it, so a walk can choose it without opening it.
+checks:
+  type: object
+  input: false
+  description: How far the table can be trusted. How its rows were read, the share of its cells found in the page text, how many of its totals add up, and why it needs a second look (docs/unoverse/data/documents/checks.md).
+pictureKey:
+  type: string
+  input: false
+  description: For a table read from a picture, the key of that picture kept at read time as the evidence, under the document's folder in `_parsed/`, which its detail shows from S3.

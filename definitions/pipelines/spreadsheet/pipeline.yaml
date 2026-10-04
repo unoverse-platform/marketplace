@@ -1,0 +1,56 @@
+unoverse: "1.0"
+# A PIPELINE IS THE SOURCE SIDE: how content is collected and which objects it may yield.
+# It never knows how an object is built; that is the object's own api/service.yaml. Between
+# collect and the map sit the platform's steps, the same for every pipeline and every
+# object: known, understand, make detail, match, retire, save (docs/unoverse/data/pipelines/README.md).
+# A pipeline fills the collect slot and names its yields. It adds no step of its own.
+type: pipeline
+name: spreadsheet
+
+# THE FACE, as a node's node.yaml carries it.
+title: Spreadsheet
+description: >-
+  The rows of a Google Sheet. Each row is read for the needs and products it holds; a row
+  that holds none is set aside.
+whenToUse: >-
+  Bring a sheet onto the map: a list of products, a register of requests, a table of
+  offers, one thing per row, with a header row naming the columns. The sheet must be shared
+  so that anyone with the link can view it. Every row lands in the inbox, held, until you
+  run it.
+category: Pipelines
+version: 1.0.0
+color: "#34A853"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1753618586/gravity/icons/googleSheetIcon.png
+
+# COLLECT: one step, the sheet's rows, through the GoogleSheet node. The node carries the
+# org's Google API key, found by type; nothing is repeated here. Headers are always on, so
+# each row arrives keyed by its column names and the row can be read as "column: value".
+collect:
+  - name: sheet
+    node: GoogleSheet
+    config:
+      spreadsheetId: "{{ config.spreadsheetId }}"
+      range: "{{ config.range }}"
+      useHeaders: true
+
+# THE ROW each sheet row becomes. Every row of a sheet shares ONE source, the sheet's own
+# address, so "same source, same title" matches within the sheet and a re-read of the sheet
+# retires the rows it no longer holds (docs/unoverse/data/pipelines/README.md, the merge rule: "a
+# spreadsheet by that sheet"). The row's own identity is its position in the sheet, which is
+# what the known step compares on: an edited row is the same row changed, not a new one.
+# The title is the first column; the text is every filled cell as "column: value", one per
+# line, so the first sweep reads the row as the sheet's author laid it out.
+
+# WHAT THIS PIPELINE MAKES: every row is read for its needs, and a row MAY be a product. A
+# row is short, never a document. The two entries merge into one inbox item per row.
+make:
+  # EACH ROW, READ ONCE: one need (owner, 2026-09-13), and at most one product when the model
+  # says the row is one.
+  - each: "{{ collect.sheet.rows }}"
+    sourceUrl: "https://docs.google.com/spreadsheets/d/{{ config.spreadsheetId }}"
+    sourceId: "{{ config.spreadsheetId }}#{{ index }}"
+    content:
+      title: "return String(Object.values(item)[0] == null ? '' : Object.values(item)[0])"
+      text: "return Object.entries(item).filter(e => e[1] != null && String(e[1]).trim() !== '').map(e => e[0] + ': ' + e[1]).join('\\n')"
+    need: { cardinality: one }
+    product: { cardinality: one, any: true }

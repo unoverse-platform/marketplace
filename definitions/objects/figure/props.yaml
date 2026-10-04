@@ -1,0 +1,67 @@
+# A FIGURE'S FIELDS. Every one is written from the parse by the pipeline, never by the model
+# (input: false): the document's make function shapes each figure once, and the part writer keeps
+# the fields by name (docs/unoverse/data/pipelines/README.md layer 1, parts).
+universal_id:
+  type: string
+  input: false
+  description: The row's permanent handle, minted from the document's id and the figure's own, so a re-read finds the same row.
+title:
+  type: string
+  input: false
+  description: The figure's caption, or what it shows and where it sits.
+description:
+  type: string
+  input: false
+  description: One line on what the figure shows, so a walk can choose without opening it.
+org:
+  type: string
+  input: false
+  description: The organisation whose row this is. Assigned by the run.
+source_url:
+  type: string
+  input: false
+  description: The file the figure sits in, the same address as its document.
+source_id:
+  type: string
+  input: false
+  description: The file's source id, the same as its document's.
+kind:
+  type: string
+  input: false
+  description: What the picture is, from the figure classifier. Chart, diagram, flowchart, photograph or screenshot.
+partId:
+  type: string
+  input: false
+  description: The figure's id within its document's structure, such as f12.
+page:
+  type: number
+  input: false
+  description: The page the figure sits on, counted from 1.
+box:
+  type: object
+  input: false
+  description: Where on the page the figure sits, in points with the origin top-left, as x0, y0, x1, y1.
+bucket:
+  type: string
+  input: false
+  description: The bucket the document sits in.
+key:
+  type: string
+  input: false
+  description: The document's key in the bucket; the figure is drawn from its page when no picture was kept.
+whenToUse:
+  type: string
+  input: false
+  description: The question this part answers, as its document's read named it, so a walk can choose it without opening it.
+rowsKey:
+  type: string
+  input: false
+  description: For a chart whose values were read into rows, the key of those rows in the store, under the document's folder in `_parsed/`, which its detail reads.
+checks:
+  type: object
+  input: false
+  description: For a chart whose values were read into rows, how they were read and why to check a value against the picture (docs/unoverse/data/documents/checks.md).
+pictureKey:
+  type: string
+  input: false
+  description: The key of the picture kept at read time, under the document's folder in `_parsed/`, which its detail shows from S3.

@@ -1,0 +1,60 @@
+unoverse: "1.0"
+# A PIPELINE IS THE SOURCE SIDE: how content is collected and which objects it may yield.
+# It never knows how an object is built; that is the object's own api/service.yaml. Between
+# collect and the map sit the platform's steps, the same for every pipeline and every
+# object: known, understand, make detail, match, retire, save (docs/unoverse/data/pipelines/README.md).
+# A pipeline fills the collect slot and names its yields. It adds no step of its own.
+type: pipeline
+name: website
+
+# THE FACE, as a node's node.yaml carries it.
+title: Website
+description: >-
+  The pages of a finished website crawl. Each page is read for the products and needs it
+  holds; a page that holds none is set aside.
+whenToUse: >-
+  Bring a crawled site onto the map. The crawl has already run; give this the run to read.
+  Every page lands in the inbox, held, until you run it.
+category: Pipelines
+version: 1.0.0
+color: "#00B4A6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751511484/gravity/icons/apifyLogo.png
+
+# COLLECT: the nodes that fetch, in order. Each step names a marketplace node and fills its
+# config; a later step would read an earlier step's outputs by name (`{{ collect.pages.total }}`).
+# The nodes carry their own credentials, hosts and interface; nothing is repeated here. The
+# org's Apify key is found by type, or picked in the form when the org holds more than one.
+# The crawl itself is not this pipeline's to start (owner, 2026-09-09: "we can assume that's
+# done; it will collect the output of a run"): one step, the run's pages.
+collect:
+  - name: pages
+    node: ApifyResults
+    config:
+      runId: "{{ config.runId }}"
+
+# THE ROW each collected item becomes: the inbox's fields from the item's, and nothing else
+# the crawl returns (its html, screenshot, debug, keywords, JSON-LD die here). `sourceId` is
+# what the platform's known step hashes against; the crawl already derives it from the
+# content, so an unchanged page is known before any model call. The text is the page's
+# markdown when the crawl saved it, the whole page, so the first sweep sees what the page
+# says (owner ruling 2026-09-09: the crawl's 300-character summary found one need where the
+# page held five); a crawl run with text only gives its text. The image is the page's own
+# Open Graph choice, a list, so one `return` expression.
+
+# WHAT THIS PIPELINE MAKES (docs/unoverse/data/pipelines/README.md layer 1, ruled 2026-09-10): every page is
+# read for its needs, and a page MAY be a product, which the model says on the thin look and
+# the product then reads whole. Two entries over the same page merge into one inbox item,
+# so a page is still one model call. Only the source knows what identifies its content, so
+# the address and content are said here.
+make:
+  # EACH PAGE, READ ONCE: the needs it speaks to, and maybe a product; the model says.
+  - each: "{{ collect.pages.items }}"
+    sourceUrl: "{{ item.url }}"
+    sourceId: "{{ item.contentId }}"
+    content:
+      title: "{{ item.metadata.title }}"
+      description: "{{ item.metadata.description }}"
+      image: "return ((item.metadata.openGraph || []).find(g => g.property === 'og:image') || {}).content"
+      text: "return item.markdown || item.text"
+    need: { cardinality: many }
+    product: { cardinality: one, any: true }

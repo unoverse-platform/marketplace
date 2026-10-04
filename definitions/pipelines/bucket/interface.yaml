@@ -1,0 +1,18 @@
+# A PIPELINE ON A CANVAS, as a node: the folder may be named by an upstream node instead of
+# the form, and its rows go downstream. The collect step's node carries its own credential,
+# so this declares none.
+inputs:
+  - name: signal
+    type: object
+    description: The folder to read, as { bucket, prefix }, when wired from an upstream node instead of the form
+    required: false
+
+outputs:
+  - name: rows
+    type: array
+    description: The inbox rows this run collected, one per file, held until they are run
+  - name: total
+    type: number
+    description: How many rows this run collected
+
+credentials: []

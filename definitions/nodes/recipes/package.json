@@ -1,0 +1,11 @@
+{
+  "name": "@unoverse-platform/recipes",
+  "version": "0.1.0",
+  "description": "Curated Unoverse recipes: whole workflows to read, copy and learn from",
+  "files": ["recipes", "manifest.json"],
+  "gravity": {
+    "kind": "recipes",
+    "displayName": "Recipes"
+  },
+  "publishConfig": { "access": "public" }
+}

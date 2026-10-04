@@ -5,7 +5,7 @@
  * what it can install. This script runs the SAME function at build time and saves its
  * answer, so a universe fetching the published file gets exactly what it would have
  * computed for itself. The previous file was written by a second implementation inside
- * bundle-defs.mjs, and the two agreed on nothing: different keys, different hashes, zero
+ * a copying script (bundle-defs.mjs, since removed), and the two agreed on nothing: different keys, different hashes, zero
  * of 114 items matching.
  *
  * Definitions are stripped. The list is for browsing; the definition is fetched on
@@ -15,7 +15,8 @@
  * own user experience and the reason this deploys separately from the platform. The
  * website is not here: it is its own site (packages/website).
  *
- * Runs after bundle-defs.mjs, which is what puts the definitions on disk to read.
+ * Reads the definitions where they are authored, `definitions/` beside this script (base
+ * paths.ts `marketplace`), and writes the catalogue and the item files into the same folder.
  */
 import { writeFileSync, readFileSync, mkdirSync, rmSync, copyFileSync } from "node:fs";
 import { join, dirname } from "node:path";

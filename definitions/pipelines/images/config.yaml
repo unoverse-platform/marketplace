@@ -1,0 +1,19 @@
+# WHAT A PERSON SETS TO RUN THIS PIPELINE: the Import form, rendered by the canvas the way a
+# node's config is. Only what the collect step does not know by itself: which folder, which
+# tag. The credential is the node's, found by type in the org's store.
+configSchema:
+  type: object
+  required: []
+  properties:
+    folder:
+      type: string
+      title: Folder
+      description: Only pictures whose public id starts with this. Leave blank for the whole account.
+      default: ""
+      placeholder: brand/services/
+    tags:
+      type: string
+      title: Tag
+      description: Only pictures carrying this tag. Leave blank for all.
+      default: ""
+"ui:order": [folder, tags]

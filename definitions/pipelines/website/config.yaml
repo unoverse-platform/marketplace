@@ -1,0 +1,15 @@
+# WHAT A PERSON SETS TO RUN THIS PIPELINE: the Import form, rendered by the canvas the way a
+# node's config is. Only what the collect steps do not know by themselves.
+configSchema:
+  type: object
+  required: [runId]
+  properties:
+    runId:
+      type: string
+      title: Crawl run
+      description: >-
+        The finished Apify run to read, its run id from the Apify console. Every page the
+        run produced lands in the inbox.
+      default: ""
+      placeholder: abc123XYZ
+"ui:order": [runId]

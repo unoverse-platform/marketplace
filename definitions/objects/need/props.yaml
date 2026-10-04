@@ -1,0 +1,113 @@
+# THE ATOM'S FIELDS, AND THE COMMON BLOCK EVERY OBJECT INHERITS (docs/unoverse/data/objects/README.md
+# section 5): every object extends need, so every row carries these. Field names are the row's
+# names as stored: columns snake_case, metadata keys camelCase. `input: true` is filled from
+# outside the engine (an extraction, a promotion, an author); `input: false` is the engine's.
+universal_id:
+  type: string
+  input: false
+  description: The row's permanent handle, assigned by the engine when the row is first written. Never changes.
+org:
+  type: string
+  input: false
+  description: The organisation whose row this is. Assigned by the run.
+source_url:
+  type: string
+  input: false
+  description: The page or record this row was extracted or promoted from. Assigned by the engine.
+source_id:
+  type: string
+  input: false
+  description: The source record this row came from. Assigned by the engine.
+llmObjectType:
+  type: string
+  input: true
+  description: >-
+    The model's own specific word for what this is, such as 'apprenticeship programme' or
+    'complaint handling'. Never a generic kind word. Kept on the row's metadata and used as
+    the prefix of its embedding text.
+  maxLength: 60
+title:
+  type: string
+  input: true
+  description: >-
+    The outcome, as a verb phrase with no person in it: 'Keep a message confidential', 'Earn
+    cashback with a Visa credit card'. Never 'I', 'my', 'we' or 'our'; who has the need is
+    the audience field. Never the organisation's name ({{identity.organisation.name}}), and
+    never its internal label for the thing.
+  maxLength: 120
+audience:
+  type: string
+  input: true
+  description: >-
+    Who has this need, in one or two words: customer, employee, partner, applicant, a named
+    business unit. Read it from the content and from who {{identity.organisation.name}}
+    serves ({{identity.brand.positioning}}); a public page is for its customers unless the
+    content says otherwise.
+  maxLength: 40
+description:
+  type: string
+  input: true
+  description: >-
+    The need itself, said plainly, with no person in it: no 'you', 'I', 'we', 'customers' or
+    'the bank'; who has the need is the audience field. Three sentences: what is wanted, what
+    is on offer for it, and what makes it work, with the real figures, terms and conditions.
+    Like this: 'Building a home on land already owned. The construction is financed in stages
+    as the work progresses, under a Shariah-compliant Tawarruq structure, and repaid in fixed
+    monthly instalments over up to 25 years. Available to REDF and Ministry of Housing
+    beneficiaries.' Not a word about the page, what it highlights or how it presents things:
+    never 'the page', 'the content', 'is presented', 'states', 'the product provides'.
+    Specific to what {{identity.organisation.name}} offers, never generic.
+  minLength: 150
+  maxLength: 700
+key_need:
+  type: string
+  input: true
+  description: >-
+    The one need this answers, in one line, with no person in it: 'Finance for building a home on
+    owned land', never 'I want' or 'you can'. It anchors the row on the map.
+  maxLength: 160
+related_needs:
+  type: array
+  input: true
+  description: >-
+    The smaller goals inside this one need, each a short verb phrase in the title's style
+    with no person in it: 'Confirm investment-team capacity', 'Review planned hiring needs'.
+    Each names its subject, so it reads on its own: 'Escalate an unresolved valet complaint',
+    never 'Escalate unresolved concerns'. A phrase that could sit on any page of the site is
+    not one. Only what sits inside this need. A goal a person could come for on its own is
+    its own need entry, never a line here.
+  minItems: 2
+  maxItems: 7
+  items:
+    type: string
+    maxLength: 160
+questions:
+  type: array
+  input: true
+  description: >-
+    The questions this answers, each self-contained: it names the subject, so it reads
+    without the page around it. Only what the content actually answers.
+  minItems: 2
+  maxItems: 4
+  items:
+    type: string
+    maxLength: 160
+callToAction:
+  type: string
+  input: true
+  description: The sentence behind the button, written to the audience. The page's own where it has one.
+  maxLength: 160
+action:
+  type: string
+  input: true
+  description: The button label, one to three words, drawn from the call to action.
+  maxLength: 24
+
+# ── THE DOOR (owner, 2026-09-11: any object may name the interface its rows wear, and every
+# object extends need, so the field is declared once, here) ───────────────────────────────
+app:
+  type: string
+  input: false
+  description: >-
+    The interface this row arrives on screen wearing, as unoverse://components/<org>/<name>.
+    Stamped from the object's envelope at save, or assigned when a person picks the card.

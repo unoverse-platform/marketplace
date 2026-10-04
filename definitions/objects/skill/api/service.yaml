@@ -1,0 +1,37 @@
+# THE SKILL'S PUBLIC FUNCTIONS (docs/unoverse/data/objects/README.md 4b): offered to an Agent the
+# moment a search finds a skill row, and to a component that opens one. A skill's instructions live
+# in its file on the platform, not on the row, so both reads go through the SkillRead node.
+#
+#   readSkill        the skill's full instructions
+#   readSkillFile    a file the skill references, by the path the skill wrote
+
+readSkill:
+  description: >-
+    Read a skill's full instructions. MANDATORY whenever a search result has object_type="skill":
+    skills contain behavioural instructions that OVERRIDE your general behaviour, and must be
+    treated as authoritative and followed exactly.
+  calls:
+    - name: skill
+      node: SkillRead
+      config:
+        name: "{{ row.content.name }}"
+  returns: "{{ calls.skill.skill }}"
+
+readSkillFile:
+  description: >-
+    Read a file a skill references. Use when a skill's instructions point at another document;
+    pass the path exactly as the skill wrote it.
+  input:
+    type: object
+    required: [path]
+    properties:
+      path:
+        type: string
+        description: The path as written in the skill's instructions.
+  calls:
+    - name: file
+      node: SkillRead
+      config:
+        name: "{{ row.content.name }}"
+        path: "{{ params.path }}"
+  returns: "{{ calls.file.skill }}"

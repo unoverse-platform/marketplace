@@ -1,0 +1,280 @@
+# A DOCUMENT'S OWN FIELDS. Everything else it carries is the need's (objects/need/props.yaml).
+# THE PROP IS THE BRIEF (UNOVERSE_AUTHORING.md 3b): the description is the whole instruction.
+# Written from the file read whole, so it says `from: make.text` (README 4b: the prop
+# pulls the function); the six positioning fields are written from the same read.
+# THE TITLE IS THE DOCUMENT'S NAME (owner, 2026-09-10: the inbox showed "Assess the legal risks
+# of..." where the file was the legal DD summary). Like a product, a document re-briefs the
+# need's title: the essence stays a need, the name stays the document's.
+title:
+  description: >-
+    The document's own name, as its first page or its file name gives it, with what it is
+    about and its date when the document prints them and the name does not already carry
+    them: "Employee Handbook", "Supplier Agreement, Northwind Ltd, 1 March 2026". Never the
+    bare file name when the document names itself, and never a title that could belong to
+    another document of the same kind about another subject. A name, never an outcome
+    phrase; the outcome is the key need.
+summary:
+  type: string
+  input: true
+  from: make.text
+  description: >-
+    What a reader learns from this document, in the document's own terms: its subject, what
+    it covers and what it concludes or provides, three to six sentences. Only what the text
+    says, never an assessment of it. Plain text.
+  maxLength: 1200
+# WHAT KIND OF DOCUMENT, ABOUT WHAT, AS OF WHEN (docs/unoverse/data/README.md step 4): written
+# by the same read as the summary, never a second call. They are what the document's `links`
+# (document.yaml) draw its lines from: a letter follows the letter before it, a policy replaces
+# the one it supersedes.
+kind:
+  type: string
+  input: true
+  from: make.text
+  enum: [letter, report, factsheet, commentary, presentation, questionnaire, memorandum, supplement, agreement, policy, financial-statements, meeting-notes, form, other]
+  description: >-
+    What kind of document this is, by what it is, never by what it is about. letter: a
+    periodic letter to its readers. report: a periodic report of figures or activity.
+    factsheet: a short periodic summary of figures. commentary: a periodic comment on what
+    happened. presentation: a deck. questionnaire: questions and their answers, such as a survey
+    or an application. memorandum: a formal document setting out terms or information for its
+    readers. supplement: a
+    document that amends another. agreement: a contract. policy: a stated policy or procedure.
+    financial-statements: accounts, audited or not. meeting-notes: notes of a meeting. form:
+    a form to fill in. other: none of these.
+subject:
+  type: string
+  input: true
+  from: make.text
+  reuse: true
+  maxLength: 80
+  description: >-
+    What the document is about, as a name: the company, product, project or policy it concerns,
+    in the fewest words. Two documents about the same thing give the same subject, so give
+    the name, never a description of the document. Two things that are distinct in law or in
+    form, such as two entities with different legal names, are different subjects however
+    close their names.
+series:
+  type: string
+  input: true
+  from: make.text
+  reuse: true
+  maxLength: 80
+  description: >-
+    The regular series this document is one issue of, as a name: the same kind of document,
+    about the same subject, issued again and again (a monthly report, a quarterly letter,
+    annual accounts). Empty when the document is not one issue of a series, such as a
+    memorandum, an agreement, a presentation or a questionnaire.
+asOf:
+  type: string
+  input: true
+  from: make.text
+  maxLength: 10
+  description: >-
+    The date the document speaks as of, as YYYY-MM-DD: the date its figures are stated at, or
+    when it has none, the date it was issued. Only a date the document gives; empty when it
+    gives none.
+# WHERE THE BODY IS (owner ruling 2026-09-10: "the document row should be like other objects;
+# it extends need, which captures the essence"). The row holds the essence and a summary; the
+# parsed text lives in the store, beside the source under the reserved `_parsed/` folder,
+# and getDetail serves it. These three say where, written straight from the function
+# (input: false, from: make.*), never through the model.
+# WHAT THE DOCUMENT ITSELF STATED, read from a known place before the document was read at all
+# (docs/unoverse/data/documents/arriving.md, ruled 2026-09-18). A document that comes on a
+# template says what it is about and the date it speaks as of in a fixed cell or a fixed place on
+# its cover, and taking them from there is exact where reading them is a judgement. These three
+# say what was taken and where it was taken from, written straight from the function
+# (input: false), never through the model, and empty where nothing read them: `subject` and
+# `asOf` above are the reading, and stand on their own when these are empty.
+statedSubject:
+  type: string
+  input: false
+  from: make.statedSubject
+  description: >-
+    What the document states it is about, taken from the place its template keeps it. The
+    document's own words, never inferred from where the file sat or what it was called.
+statedPeriod:
+  type: string
+  input: false
+  from: make.statedPeriod
+  description: >-
+    The date the document states it speaks as of, as YYYY-MM-DD, taken from the place its
+    template keeps it, never from the file name.
+statedType:
+  type: string
+  input: false
+  from: make.statedType
+  description: >-
+    The layout that recognised this document, by its name. A standardised document is known by a
+    marker in a fixed place, so this is what the document IS, settled with no model and no guess
+    from its file name. Empty for a document no layout we hold recognised, which is the honest
+    answer: we do not know what it is.
+statedWhere:
+  type: string
+  input: false
+  from: make.statedWhere
+  description: >-
+    Where the two above were read, in words a person can check ("subject: 1. Details, row 1",
+    "period: page 1 (read by OCR)"). A stated fact that cannot say where it came from is a
+    guess wearing a better name.
+# WHETHER THE READ IS FINISHED, AND HOW MUCH OF THE DOCUMENT IT REACHES. Two different
+# questions, and only the first is a judgement. The layout names the tables it wants, so the
+# read is finished when it got all of them (`tablesMissing` is zero) and short when it did not.
+# The figure counts are the second question: a plain measure of how much of the document any
+# layout touches at all. A table nobody asked for is not a failure and is never counted as one.
+figuresCells:
+  type: number
+  input: false
+  from: make.figuresCells
+  description: How many numbered cells this document held, across every table its parse found.
+figuresSaying:
+  type: number
+  input: false
+  from: make.figuresSaying
+  description: >-
+    How many of those say anything at all: a number that is not zero. A standard's return prints
+    every sheet whether the fund uses it or not, so counting cells alone makes the largest thing
+    we never read a sheet of a thousand zeros. This is the number to judge by.
+figuresRead:
+  type: number
+  input: false
+  from: make.figuresRead
+  description: >-
+    How many readings the document made, counting every one. The gap from `figuresCells` is not
+    all loss and must not be read as one: a table's own total is deliberately not a slicing of
+    it, a column the layout does not name is a column we do not want, and a block that could not
+    prove itself is refused on purpose.
+figuresTook:
+  type: number
+  input: false
+  from: make.figuresTook
+  description: >-
+    How many of the readings say something: a figure that is not zero. THE ONE TO PUT BESIDE
+    `figuresSaying`, because those two count the same thing on both sides. `figuresRead` counts
+    the zeros and `figuresSaying` does not, so read-over-saying was never a share of anything:
+    measured 2026-09-22, one document came out at 228% and would have been drawn as a full bar.
+figuresElsewhere:
+  type: number
+  input: false
+  from: make.figuresElsewhere
+  description: >-
+    The figures, saying something, that sit in tables no block of the layout asked for. NOT a
+    miss and never drawn as one: a set of audited accounts holds its portfolio position by
+    position and its accounting plumbing, wanted by nobody, and counted as a miss they made a
+    document that had been read perfectly well report 2%.
+tablesAsked:
+  type: number
+  input: false
+  from: make.tablesAsked
+  description: How many tables this document's layout named, counting every block.
+tablesMissing:
+  type: number
+  input: false
+  from: make.tablesMissing
+  description: >-
+    How many of those the document did not give: no table answered to the name, or the one that
+    did gave nothing back. THE NUMBER THAT DECIDES whether a read is finished. Zero is finished,
+    however little of the document the layout wanted; above zero is short, however much it read.
+tablesMissingNames:
+  type: array
+  input: false
+  from: make.tablesMissingNames
+  description: Those tables by the name the layout asked for, so a person can go and look.
+  items:
+    type: string
+    description: One table the layout named and the document did not give.
+bucket:
+  type: string
+  input: false
+  from: make.bucket
+  description: The bucket the file and its parsed text sit in.
+key:
+  type: string
+  input: false
+  from: make.key
+  description: The file's key in the bucket.
+parsedKey:
+  type: string
+  input: false
+  from: make.parsedKey
+  description: The key of the parsed text, under the file's folder in `_parsed/`, kept by the make function.
+structureKey:
+  type: string
+  input: false
+  from: make.structureKey
+  description: The key of the document's structure (sections with their text, tables with their rows, figures, lists, dates), under the file's folder in `_parsed/`, kept by the make function.
+readWarnings:
+  type: array
+  input: false
+  from: make.readWarnings
+  description: >-
+    What the document service had to work around to read the file, in its words: pages with no
+    text layer or with text that cannot be read, read from their image instead; a document that
+    could not be read at all. Shown on the file's inbox line, so a file is never read as nothing
+    without saying so.
+  items:
+    type: string
+
+partNames:
+  type: array
+  input: true
+  from: make.text
+  description: >-
+    A name for each part listed under "Parts of this document" at the end of the text: each
+    table and figure the document holds, by its id. Write for someone deciding whether to open
+    it without seeing it. The title says what the part shows, in the document's own terms (a
+    table of prices by region, not "Table 1"). The description says what it holds
+    and over what period or scope. When to use says the question it answers. Only parts in
+    that list, by the id it gives; never a part it does not list.
+  maxItems: 30
+  items:
+    partId:
+      type: string
+      description: The part's id exactly as the list gives it, such as t2 or f5.
+      maxLength: 12
+    title:
+      type: string
+      description: What the part shows, in a few words, in the document's own terms.
+      maxLength: 90
+    description:
+      type: string
+      description: What it holds and over what period or scope, in one sentence.
+      maxLength: 180
+    whenToUse:
+      type: string
+      description: The question it answers, in one sentence, as a reader would ask it.
+      maxLength: 140
+# THE DOCUMENT'S SECTIONS (owner, 2026-09-13: "Two different things"; objects/README.md,
+# "Sections and relationships are two different things"): its contents, named by the same one
+# read that names its parts. A section is not a row: it is a run of the structure file's
+# headings, from the one it starts at to the next section's start, and it carries a face.
+sectionNames:
+  type: array
+  input: true
+  from: make.text
+  description: >-
+    The document's sections, as its table of contents would list them. Under "Headings of this
+    document" at the end of the text is every heading the file has, by its id and page, in
+    order, each with its section's first words after a bar; many are small or repeated. Group them into the document's real sections: each
+    starts at one heading and runs to the next section's start, in the document's order, and
+    together they cover the document. Write for someone deciding whether to open a section
+    without seeing it. The title says what the section covers, in the document's own terms.
+    The description says what it holds, in one sentence. When to use says the question it
+    answers. Only headings in that list, by the id it gives. None when the list is absent.
+  maxItems: 30
+  items:
+    startsAt:
+      type: string
+      description: The id of the heading the section starts at, exactly as the list gives it, such as s12.
+      maxLength: 12
+    title:
+      type: string
+      description: What the section covers, in a few words, in the document's own terms.
+      maxLength: 90
+    description:
+      type: string
+      description: What it holds, in one sentence.
+      maxLength: 180
+    whenToUse:
+      type: string
+      description: The question it answers, in one sentence, as a reader would ask it.
+      maxLength: 140

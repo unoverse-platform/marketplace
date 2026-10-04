@@ -1,0 +1,25 @@
+unoverse: "1.0"
+# What the business offers. A person promotes it from the Content tree: the page is fetched
+# fresh and its copy kept as it is, as one document. Once per URL. `app` names the component
+# it arrives on screen wearing; the row fills its props by name.
+type: object
+name: product
+element: product
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: package
+extends: need
+uniqueBy: [source_url]
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: [universal_id, object_type, title, description, key_need, tagline, shortDescription, introParagraph, callToAction, app, source_url, source_id]
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Product
+description: >-
+  Something the business offers, a product or a service, in the business's own approved words.
+whenToUse: >-
+  What is it? What does it include? What does it cost? What are the fees? What should I watch out for?
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

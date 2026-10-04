@@ -1,0 +1,19 @@
+# THE PRODUCT'S MAKE FUNCTION (docs/unoverse/data/objects/README.md 4b), private: only the
+# pipeline runs it, at step 3, because props.yaml asks for it: bodyCopy is written
+# `from: make.markdown`, images and primaryImage from make.html. Nothing calls it by name; a
+# prop pulls it. The crawl's thin text is not enough for a product, so the page is rendered
+# whole. Everything about WRITING the product is on props.yaml: the prop is the brief.
+
+description: >-
+  Render the page whole and hand it back. The crawl's thin text is not enough for a
+  product. The platform cleans the HTML that comes back (the page's own main region, chrome
+  removed) and harvests its image candidates before the model sees it.
+calls:
+  - name: page
+    node: HyperbrowserScrape
+    config:
+      url: "{{ row.source_url }}"
+returns:
+  html: "{{ calls.page.html }}"
+  markdown: "{{ calls.page.markdown }}"
+  title: "{{ calls.page.metadata.title }}"

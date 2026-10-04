@@ -1,0 +1,55 @@
+unoverse: "1.0"
+# A PIPELINE IS THE SOURCE SIDE: how content is collected and which objects it may yield.
+# It never knows how an object is built; that is the object's own api/service.yaml. Between
+# collect and the map sit the platform's steps, the same for every pipeline and every
+# object: known, understand, make detail, match, retire, save (docs/unoverse/data/pipelines/README.md).
+# A pipeline fills the collect slot and names its yields. It adds no step of its own.
+type: pipeline
+name: bucket
+
+# THE FACE, as a node's node.yaml carries it.
+title: Bucket
+description: >-
+  The documents in a folder of your S3 bucket. Each file is read whole and placed on the map
+  by the needs it answers.
+whenToUse: >-
+  Bring a folder of documents onto the map: guides, reports, policies, whatever the business
+  has written at length, uploaded to one folder in your bucket. Give it the bucket and the
+  folder. One file is one document. Every file lands in the inbox, held, until you run it.
+category: Pipelines
+version: 1.0.0
+color: "#FF9900"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png
+
+# COLLECT: the folder's listing, and only that. The node carries the org's AWS credential,
+# found by type; nothing is repeated here. Links are not minted here: the document's own
+# makeDetail mints one when it parses.
+collect:
+  - name: files
+    node: S3Files
+    config:
+      bucket: "{{ config.bucket }}"
+      prefix: "{{ config.prefix }}"
+      fileExtensions: [pdf, docx, pptx, xlsx, xlsm, md, txt]
+      maxKeys: 1000
+
+# ONE ROW PER FILE (owner ruling 2026-09-09), the bucket captured on it. The source is the
+# file's own address, which is what the document's makeDetail reads the bucket and key off
+# and what match and retire are scoped to; the source id is the listing's stable id, which
+# changes when the file is replaced. The content is thin on purpose: the file's name and
+# where it is, enough for the row's record; the whole read is the document's own.
+# `_parsed/` is the reserved name for parsed output at any depth (owner ruling 2026-09-09
+# evening): never a document; every other subfolder is read.
+
+# WHAT THIS PIPELINE MAKES: one document per file, parsed by the document's own function;
+# then the needs each document speaks to, read from the document's text, never the file
+# again. `_parsed/` is reserved at any depth and never read as a source.
+make:
+  # EACH FILE becomes one document, read from its first two pages and its headings; its tables
+  # and meaningful figures are rows of their own, off the map.
+  - each: "{{ collect.files.files }}"
+    document:
+      cardinality: one
+      parts:
+        table: "{{ detail.tables }}"
+        figure: "{{ detail.figures }}"

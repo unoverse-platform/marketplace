@@ -1,0 +1,21 @@
+# THE PIPELINE UNDER GUARD: the collect step faked with a fixture listing, the rows it
+# yields asserted. Two files in, two inbox rows out, each addressed by its own s3 address,
+# identified by the listing's stable id, carrying the file as listed, stamped with this
+# pipeline's yields. What a row becomes is the document object's own test.
+testData:
+  config:
+    bucket: example-docs
+    prefix: guides/
+  fake:
+    files:
+      count: 2
+      files:
+        - { key: guides/onboarding.pdf, name: onboarding.pdf, size: 812345, bucket: example-docs, address: "s3://example-docs/guides/onboarding.pdf", universalId: 3f1a9c2b7d4e }
+        - { key: guides/fees.docx, name: fees.docx, size: 91234, bucket: example-docs, address: "s3://example-docs/guides/fees.docx", universalId: 9b8c7d6e5f4a }
+  expect:
+    rows: "return output.rows.length === 2"
+    source: "return output.rows[0].sourceUrl === 's3://example-docs/guides/onboarding.pdf' && output.rows[1].sourceUrl === 's3://example-docs/guides/fees.docx'"
+    identity: "return output.rows[0].sourceId === '3f1a9c2b7d4e'"
+    content: "return output.rows[0].content.name === 'onboarding.pdf' && output.rows[0].content.bucket === 'example-docs' && output.rows[0].content.key === 'guides/onboarding.pdf' && output.rows[0].content.size === 812345"
+    yields: "return output.rows.every(r => r.yields.join(',') === 'document')"
+    parsed: "return output.rows.every(r => !r.content.key.includes('_parsed'))"

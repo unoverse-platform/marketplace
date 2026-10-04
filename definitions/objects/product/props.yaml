@@ -1,0 +1,88 @@
+# A PRODUCT'S OWN FIELDS. Everything else it carries is the need's (objects/need/props.yaml).
+# The body is for reading; matching is what the need's six fields are for, so none of these
+# embed. THE PROP IS THE BRIEF (UNOVERSE_AUTHORING.md 3b): each description is the whole
+# instruction for its field, and `bodyCopy` typed `unoverse-markdown` is the body as the
+# composer's typed components, its schema compiled from the atoms marked category: markdown.
+# A prop written from made detail says so with `from: <function>.<return>`, a function in
+# api/service.yaml and a key of its returns; the pipeline runs that function because the prop
+# asked. A prop with no `from` is written from the thin item (README 4b).
+# RE-BRIEFED from the need (README 5): the field is the need's, the brief is the product's.
+title:
+  description: >-
+    The offering's own name, exactly as the page names it: "AQSAT Credit Card", "SAB Umlaty
+    Card". A name, never an outcome phrase; the outcome is the key need.
+tagline:
+  type: string
+  input: true
+  description: >-
+    A few words, three to six, taken from the page's own framing of the offering, in
+    {{identity.organisation.name}}'s own voice. The caption under the title on a card.
+  maxLength: 60
+shortDescription:
+  type: string
+  input: true
+  description: >-
+    One line on what the page says this is: the core benefit, factual, never a pitch.
+  maxLength: 240
+introParagraph:
+  type: string
+  input: true
+  description: >-
+    A substantial introduction, three to five sentences: what the offering is, who it serves,
+    and the main things it provides, grounded in the source copy and written as
+    {{identity.organisation.name}}'s own website copy, whose promise is
+    {{identity.brand.promise}} Its writing rules: {{identity.brand.rules}} Plain text, not a
+    one-line hook.
+  maxLength: 900
+features:
+  type: array
+  input: true
+  description: >-
+    The distinct features or benefits the source explicitly states, for a feature list. Only
+    what the content says, never invented; empty when none are stated.
+  maxItems: 12
+  items:
+    title:
+      type: string
+      description: The feature's name, a few words, as the page has it.
+      maxLength: 80
+    description:
+      type: string
+      description: One line, grounded in the source copy.
+      maxLength: 240
+    icon:
+      type: string
+      hydrate: icon
+      description: An icon for the feature, from the design system's own set.
+images:
+  type: array
+  input: true
+  from: make.html
+  description: >-
+    One to three image URLs that best represent the offering, chosen ONLY from the list
+    under AVAILABLE IMAGES in the content (the page's own images, harvested by the read);
+    decorative ones skipped; empty when that list is empty.
+  maxItems: 3
+  items:
+    type: string
+bodyCopy:
+  type: unoverse-markdown
+  input: true
+  from: make.markdown
+  description: >-
+    The page's full substance as Unoverse Markdown: typed sections, never markdown text, in
+    the page's own order, mirroring the page's own topics rather than a fixed template, and
+    covering everything material the page says: what it is, what is included, how it works,
+    practical details. The facts are the page's and the phrasing is yours: never a benefit,
+    figure, date, rate, fee, eligibility rule, piece of social proof or offering the page
+    does not state; numbers and their qualifiers exactly as written; legal and terms text
+    verbatim; everything else rewritten to be read once, to the reader, in
+    {{identity.organisation.name}}'s voice ({{identity.brand.rules}}), never "the page
+    states that". The offering, not the shop: no price lists, payment options, start dates,
+    timetables, booking or checkout widgets, cross-sells, related products or navigation;
+    modules or units the offering includes are one short summary, never separate offerings.
+primaryImage:
+  type: string
+  input: false
+  from: make.html
+  description: The page's own hero image, chosen from the image candidates in the page, or the first of `images`.

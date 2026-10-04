@@ -1,0 +1,55 @@
+# THE ORGANISATION DOCUMENT'S FIELDS. Its `what` and `vocabulary` are the grounding.
+name:
+  type: string
+  input: true
+  description: >-
+    The org's name as it trades, exactly as its website writes it in its own header or
+    footer. Never a legal suffix unless the site uses one.
+  maxLength: 80
+what:
+  type: string
+  input: true
+  description: >-
+    One paragraph, 60 to 120 words, in the third person: what the business is, what it
+    does, whom it serves, where. Taken from the site's own about, home and footer copy.
+    This paragraph grounds every extraction, so it must name the business's actual lines
+    of work, not adjectives. Never a slogan, never an industry generality.
+  maxLength: 900
+units:
+  type: array
+  input: true
+  description: >-
+    The organisation map: every unit the organisation names in its own publications, the
+    ones that face customers (divisions, lines of business, regions) and the ones that run
+    the organisation (operations, technology, people and HR, finance, risk, legal,
+    marketing, and the rest). Sources: the about and careers pages, the annual report's
+    organisation or leadership section, a published org chart. One entry per unit with its
+    name as the organisation writes it and one sentence on what it does or serves, nested
+    in `units` where the organisation nests them. Empty when the sources name none; never
+    invented.
+  maxItems: 40
+  items:
+    name:
+      type: string
+      description: >-
+        The name as the organisation writes it.
+      maxLength: 80
+    what:
+      type: string
+      description: >-
+        One sentence, in the organisation's words.
+      maxLength: 240
+    units:
+      type: array
+      description: >-
+        The nested units, in the same shape, where the organisation nests them.
+vocabulary:
+  type: string
+  input: true
+  description: >-
+    The words the business uses, as one paragraph separated by semicolons: its product and
+    service names as it spells them, its programme and membership names, the terms it uses
+    for its customers, and anything it capitalises. Every name is copied from the site,
+    never paraphrased. This is the domain prompt every extraction reads, so completeness
+    beats elegance.
+  maxLength: 2000

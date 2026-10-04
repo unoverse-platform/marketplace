@@ -1,0 +1,21 @@
+# THE PIPELINE UNDER GUARD: the collect step faked with a fixture sheet, the rows it yields
+# asserted. Two sheet rows in, two inbox rows out, both addressed by the sheet, each
+# identified by its position, the empty cell left out of the text, stamped with this
+# pipeline's yields. The objects those rows become are the objects' own tests, not this one.
+testData:
+  config:
+    spreadsheetId: sheet_fixture
+    range: Sheet1
+  fake:
+    sheet:
+      total: 2
+      rows:
+        - { Name: AQSAT Credit Card, Description: Shop now and pay in instalments with no interest., Fee: 0 }
+        - { Name: Fees and charges, Description: null, Fee: 25 }
+  expect:
+    rows: "return output.rows.length === 2"
+    source: "return output.rows.every(r => r.sourceUrl === 'https://docs.google.com/spreadsheets/d/sheet_fixture')"
+    identity: "return output.rows[0].sourceId === 'sheet_fixture#0' && output.rows[1].sourceId === 'sheet_fixture#1'"
+    title: "return output.rows[0].content.title === 'AQSAT Credit Card'"
+    text: "return output.rows[0].content.text === 'Name: AQSAT Credit Card\\nDescription: Shop now and pay in instalments with no interest.\\nFee: 0' && output.rows[1].content.text === 'Name: Fees and charges\\nFee: 25'"
+    yields: "return output.rows.every(r => r.yields.join(',') === 'need,product')"

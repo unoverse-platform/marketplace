@@ -1,0 +1,48 @@
+unoverse: "1.0"
+# Long-form content the business publishes (Content, docs/unoverse/data/objects/elements/content.md),
+# placed whole by what it is about: a guide, an article, a report. Many per source, since a
+# document answers several needs. The base plus one field of its own, the summary, written
+# from the file read whole: api/service.yaml fetches the file's link and parses it, and the
+# summary prop pulls that function (README 4b, 5).
+type: object
+name: document
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: file-text
+extends: need
+uniqueBy: [source_url, title]
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: [universal_id, object_type, title, description, key_need, source_url, source_id]
+meta: open
+
+# THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
+title: Document
+description: >-
+  Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.
+whenToUse: >-
+  What do the terms say? What does the report say about this? Where is this written down? Show me the policy.
+category: Objects
+version: 1.0.0
+
+# THE LINES A DOCUMENT DRAWS TO ANOTHER (docs/unoverse/data/objects/relationships-and-labels.md):
+# among the documents of one folder, drawn again whenever one of them is written. An issue of a
+# series follows the issue before it and both stay true for their date; a new version of a
+# memorandum, agreement, policy, deck or questionnaire replaces the one before it, and current
+# is the one nothing replaces (docs/unoverse/data/README.md, "series and versions are different words").
+# The names are written by each document's own read, so one thing may be named several ways:
+# `alike` asks, once per folder, which names are the same. A series is one subject's: two companies
+# may both issue a "quarterly review", and one never follows the other's.
+links:
+  follows:
+    type: flow
+    between: [subject, series]
+    alike: [subject, series]
+    order: asOf
+    when: "return !!row.series"
+  replaces:
+    type: flow
+    between: [kind, subject]
+    alike: [subject]
+    order: asOf
+    when: "return !row.series && ['presentation', 'questionnaire', 'memorandum', 'agreement', 'policy'].includes(row.kind)"
+
+props: { $include: props }
