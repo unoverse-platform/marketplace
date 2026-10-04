@@ -289,4 +289,17 @@ returns:
   # THE READER IT WAS READ WITH (pipelines README, One row per item): a new parser reads it again.
   parsedWith: "{{ calls.parse.document.parser_version }}"
   # WHAT THE READER HAD TO WORK AROUND, said on the row and on its inbox line (2026-09-13).
-  readWarnings: "return (calls.parse.quality && Array.isArray(calls.parse.quality.warnings)) ? calls.parse.quality.warnings : []"
+  # WHAT THE READ SAYS ABOUT ITSELF, AFTER THE SECOND READ (UNO-104). The parse's notes describe
+  # the first read; a table the vision read replaced (the same rule the save step uses) says it
+  # was re-read, never "needs a second look" about a table that already had one (owner,
+  # 2026-10-04: "How can I trust the integrity of my document ingestion?").
+  readWarnings: >-
+    return (() => {
+      const warnings = (calls.parse.quality && Array.isArray(calls.parse.quality.warnings)) ? calls.parse.quality.warnings : [];
+      const review = calls.parse.review || [];
+      const replaced = review.filter((r, k) => { const v = calls.vision && calls.vision[k] ? calls.vision[k].result : null; if (!v || !Array.isArray(v.rows) || !v.rows.length) return false; const cells = v.rows.flatMap(row => Array.isArray(row) ? row.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; }).map(r => r.id);
+      return warnings.map(w => {
+        const m = String(w).match(/^(t\d+)((?: \([^)]*\))?(?: on page \d+)?)/);
+        return m && replaced.indexOf(m[1]) >= 0 ? m[1] + m[2] + ' was re-read from the page image' : w;
+      });
+    })()

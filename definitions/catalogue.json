@@ -1,5 +1,5 @@
 {
-  "release": "0.1.95",
+  "release": "0.1.96",
   "items": [
     {
       "kind": "component",
@@ -622,7 +622,7 @@
     {
       "kind": "object",
       "name": "document",
-      "fingerprint": "a90985a27ab8db72",
+      "fingerprint": "8814f7406903e4f8",
       "bundle": "design-system",
       "title": "Document",
       "description": "Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.",
