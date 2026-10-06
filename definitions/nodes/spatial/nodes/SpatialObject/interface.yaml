@@ -1,9 +1,10 @@
-# ONE INPUT, `signal`: the id is a config field templated from upstream (signal-routing.md,
-# "Two inputs never arrive together"), so this node fires once with everything it needs.
+# ONE INPUT, `signal`: the id, the function and its inputs are config fields templated from
+# upstream (signal-routing.md, "Two inputs never arrive together"), so this node fires once with
+# everything it needs.
 inputs:
   - name: signal
     type: object
-    description: Upstream data; the universal id is templated from it
+    description: Upstream data; the universal id, the function and its inputs are templated from it
     required: false
 
 outputs:
@@ -21,5 +22,10 @@ outputs:
     description: >-
       The row's own picture as a URL, for a component to show; empty when it has none. This is
       the one place the picture leaves the row, and it goes to a screen, never into a prompt
+  - name: result
+    type: object
+    description: >-
+      What the named function answered, exactly as the row's object returns it; empty when no
+      function was named
 
 credentials: []

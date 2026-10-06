@@ -39,7 +39,7 @@ configSchema:
     sourceId:
       type: string
       title: Source ID
-      description: Restrict searches to one source's entries (its source_id, e.g. from an upstream file node). Blank = whole map.
+      description: Restrict searches to one source's entries, or several (source ids, comma-separated), e.g. a fund's reports. Blank = whole map.
       default: ""
       "ui:field": template
 

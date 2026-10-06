@@ -1,10 +1,13 @@
 # Runs against the LOCAL platform (loopback engine), so it needs the runtime up and a row on
 # the tester's own map: put one of your universal ids in `universalId` before running. Same
-# stance as Spatial Query's fixture: this proves the PROJECTION, not any content.
+# stance as Spatial Query's fixture: this proves the PROJECTION, not any content. Name one of
+# that row's functions in `function` to see its answer under `result`.
 
 testData:
   config:
     universalId: ""
+    function: ""
+    inputs: {}
   expect:
     row: >-
       return output.row && typeof output.row.universal_id === 'string'
@@ -12,3 +15,4 @@ testData:
         && output.row.umap === undefined
     text: "return typeof output.text === 'string'"
     image: "return typeof output.image === 'string'"
+    result: "return output.result && typeof output.result === 'object'"

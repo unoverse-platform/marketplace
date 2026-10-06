@@ -23,6 +23,10 @@ getDetail:
           The id of ONE section from the document's outline (s12). The answer is that section's
           text instead of the whole document's. Open the document once without it to see the
           outline.
+      pages:
+        type: array
+        items: { type: number }
+        description: Page numbers to read (a need's pages). Each page's words, and the tables on those pages with their rows; 40 pages at most.
       until:
         type: string
         description: Read forward from the section up to the heading with this id; by default, the next named section.

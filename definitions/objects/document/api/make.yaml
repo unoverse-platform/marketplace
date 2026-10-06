@@ -48,22 +48,21 @@ calls:
     # them was paid again on each re-read of the same unchanged files.
     cacheable:
       ignore: [content]
-      key: [pictureHash]
+      key: [pictureHash, table]
     inputs:
       # WHAT THIS PICTURE IS. The parse names every region it offers for a read by the SHA-256
       # of the PNG it rendered, so the same picture is the same key whatever document, run or
       # machine it came from.
       pictureHash: "return String(item.hash || '')"
+      # WHICH TABLE ON THE PICTURE (2026-10-04): a page offered whole can hold more than one, and
+      # the read is told which. Part of the key, so a read of the same page for another table is
+      # its own answer.
+      table: "return String(item.caption || '')"
     config:
       # THE MODEL IS NAMED, never left to a default (owner, 2026-09-14).
       model: gpt-5.6-luna
       instructions: >-
-        You read one picture of a table or a chart taken from a document. Return its title as
-        printed, or a short plain title when none is printed; its column names, left to right;
-        and every row, each cell exactly as printed, numbers with their signs, brackets, units
-        and percent signs. For a chart, return one row per category or date and one column per
-        series, with the values its labels print. Leave a value the chart does not label empty;
-        never estimate it.
+        return 'You read one picture of a table or a chart taken from a document. Return its title as printed, or a short plain title when none is printed; its column names, left to right; and every row, each cell exactly as printed, numbers with their signs, brackets, units and percent signs. For a chart, return one row per category or date and one column per series, with the values its labels print. Leave a value the chart does not label empty; never estimate it.' + (item.caption ? ' The picture may hold more than one table: read only the one titled "' + item.caption + '", and return nothing from any other.' : '')
       schemaName: table_picture
       reasoning: none
       content: "return { type: 'image', imageUrl: 'data:image/png;base64,' + item.image_png_base64, metadata: { kind: item.kind, page: item.page } }"
@@ -92,6 +91,18 @@ calls:
   # table's rows or a chart's values, in place of the parse's rows for that table.
   - name: save
     node: S3Upload
+    # READ ONCE, SAVED ONCE (docs/unoverse/data/documents/README.md, "Read once", owner 2026-10-05:
+    # "we ingest once, we save to S3, and everything goes into our database"). Each file is
+    # uploaded once for what it holds: an upload identical to one already made (the same file, the
+    # same reader, the same files and the same picture reads, this file's name) is served from
+    # memory and nothing is written. Keyed by what would be written, never by a record kept
+    # elsewhere: the read's row is the inbox's, and the document's row is written after this step.
+    cacheable:
+      ignore: [textData, base64Data]
+      key: [savedAs]
+    inputs:
+      savedAs: >-
+        return [String((calls.get.file && calls.get.file.etag) || row.content.etag || ''), String((calls.parse.document && calls.parse.document.parser_version) || ''), (calls.parse.files || []).map(f => f.name + ':' + String(f.text || f.base64 || '').length).join(','), (calls.vision || []).map(v => v && v.result ? (v.result.rows || []).length + ':' + String(v.result.title || '') : '-').join(',')].join('|') + '|' + String(item.name || '')
     for: >-
       return (() => {
         const review = calls.parse.review || [];

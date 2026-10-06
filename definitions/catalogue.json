@@ -1,5 +1,5 @@
 {
-  "release": "0.1.97",
+  "release": "0.1.98",
   "items": [
     {
       "kind": "component",
@@ -622,7 +622,7 @@
     {
       "kind": "object",
       "name": "document",
-      "fingerprint": "8814f7406903e4f8",
+      "fingerprint": "90383726214612de",
       "bundle": "design-system",
       "title": "Document",
       "description": "Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.",
@@ -649,7 +649,7 @@
     {
       "kind": "object",
       "name": "need",
-      "fingerprint": "53bff1ac3e913899",
+      "fingerprint": "0a8a1755f4741509",
       "bundle": "design-system",
       "title": "Need",
       "description": "What one person wants, in their own words. The atom: every other object is placed on the map by the needs it serves. A page speaks to several; each distinct one is its own entry, never one entry that summarises the page, and every one is traceable to a statement in the content. Granular: one entry for each thing a person could come to this page to get done, each step they take, each question it answers and each condition it sets. A product page holds five to ten; one entry that stands for the page is wrong. Each is a need someone brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}: write it as the thing that person wants from that organisation, in their words.",
@@ -776,7 +776,7 @@
       "kind": "skill",
       "name": "memory",
       "installed": false,
-      "fingerprint": "624089aa32f5cb66",
+      "fingerprint": "7637339616f3640e",
       "title": "Memory",
       "description": "Guide for using what is remembered about a person: fitting every answer to them and resuming what they left unfinished.",
       "category": "ai",
@@ -1396,7 +1396,7 @@
       "kind": "node",
       "name": "TaskRunner",
       "pack": "flow",
-      "fingerprint": "264234224b3b59b4",
+      "fingerprint": "66fb1d8f0d721d24",
       "title": "Task Runner",
       "description": "Runs one task a step at a time, handing out what it still needs and taking back the answers",
       "category": "Flow",
@@ -1869,7 +1869,7 @@
       "kind": "node",
       "name": "SkillRead",
       "pack": "spatial",
-      "fingerprint": "cfed4c26891a8434",
+      "fingerprint": "dd0392adaa92e180",
       "title": "Skill Read",
       "description": "Read a skill's full instructions from the platform, or one file the skill references",
       "category": "Search",
@@ -1878,20 +1878,9 @@
     },
     {
       "kind": "node",
-      "name": "SpatialDetail",
-      "pack": "spatial",
-      "fingerprint": "926b904eb6dcce12",
-      "title": "Spatial Detail",
-      "description": "Open one row of the platform knowledge base in full by its id and pass it to the next node",
-      "category": "Search",
-      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
-      "whenToUse": "Read one product, need or document in full inside the data flow: hand it the universal id of a row an upstream search found, usually the top match, and it returns that row with its full copy, the same detail an Agent gets when it opens a result. Use it when a later step must be given the facts themselves rather than a search row's summary: a writer, a comparison, a card. It opens one row per pass; searching for rows is Spatial Query's job, and a step that needs a whole result set in full should not exist."
-    },
-    {
-      "kind": "node",
       "name": "SpatialLinked",
       "pack": "spatial",
-      "fingerprint": "19fd8711aada8d79",
+      "fingerprint": "dc502f69beb43b4d",
       "title": "Spatial Linked",
       "description": "Follow one named line from a row of the platform knowledge base and return the rows at its other end",
       "category": "Search",
@@ -1900,9 +1889,20 @@
     },
     {
       "kind": "node",
+      "name": "SpatialObject",
+      "pack": "spatial",
+      "fingerprint": "d6b24cd289c598f5",
+      "title": "Spatial Object",
+      "description": "Open one row of the platform knowledge base by its id, and call one of its own functions, passing both to the next node",
+      "category": "Search",
+      "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+      "whenToUse": "Load one row an upstream search found, usually the top match, inside the data flow: the row in full with its copy, and, when you name one, the answer of a function the row's object offers, such as the passages of its documents that bear on a question, the list of its documents, or its figures. Use it when a later step must be given the facts themselves rather than a search row's summary: a writer, a comparison, a card. It loads one row per pass; searching for rows is Spatial Query's job, and following a drawn line to other rows is Spatial Linked's."
+    },
+    {
+      "kind": "node",
       "name": "SpatialQuery",
       "pack": "spatial",
-      "fingerprint": "0158e7b811ea40f8",
+      "fingerprint": "b9fc2bc1a7c1b0f5",
       "title": "Spatial Query",
       "description": "Search the platform knowledge base as a workflow step and pass the matching rows to the next node",
       "category": "Search",
@@ -1913,7 +1913,7 @@
       "kind": "node",
       "name": "SpatialSearch",
       "pack": "spatial",
-      "fingerprint": "fc5bd03577021f21",
+      "fingerprint": "1369395a636693b2",
       "title": "Spatial Search",
       "description": "Search the platform knowledge base for the needs, skills, services and content most relevant to a query",
       "category": "Search",
@@ -1985,17 +1985,6 @@
       "category": "AI",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1789700088/gravity/icons/typesafe_ai_logo.jpg",
       "whenToUse": "Rate a piece of text or data on one quality with a graded answer: how severe a bug report is, how satisfied a customer sounds, how well a candidate fits, how urgent a request is. The levels are described in order from low to high and the answer is a position on that scale plus a probability for every level, so a threshold or a sort can act on it without parsing prose. Right when the options are ordered steps of one thing; unordered categories are a choice, and one quality with no steps is a statement to test."
-    },
-    {
-      "kind": "node",
-      "name": "ParseDocument",
-      "pack": "unstructured",
-      "fingerprint": "352c5e089004ac1b",
-      "title": "Parse Document",
-      "description": "Read any document into plain text and structured elements with Unstructured. PDF, Word, slides, spreadsheets, images.",
-      "category": "Documents",
-      "icon": "https://res.cloudinary.com/sonik/image/upload/v1785837705/gravity/icons/unstructured_logo.png",
-      "whenToUse": "Read an existing document into text an Agent can work with: a PDF, Word file, slides, spreadsheet, scanned page or a photo of one. It handles digital text and OCR alike, and returns the document broken into titles, paragraphs and tables as well as one plain string. It only READS a file that already exists, so it cannot author or revise one."
     },
     {
       "kind": "node",

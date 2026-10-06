@@ -7,7 +7,7 @@ configSchema:
     # started, read from the task table. Every task is built the same way, steps and props, so
     # either one names a whole task and nothing else has to be passed alongside it.
     #
-    # A CONFIG FIELD RATHER THAN A CONNECTOR, the same choice SpatialDetail makes with its
+    # A CONFIG FIELD RATHER THAN A CONNECTOR, the same choice SpatialObject makes with its
     # universal id: the engine resolves the template before the node runs, so the node fires
     # once already holding everything it needs. Left blank, the task is read from what
     # arrived: the request's `metadata.task`, or the `runId` an older caller sends.

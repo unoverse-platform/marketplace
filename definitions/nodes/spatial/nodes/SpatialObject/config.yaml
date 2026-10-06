@@ -1,0 +1,29 @@
+configSchema:
+  type: object
+  required: [universalId]
+  properties:
+    universalId:
+      type: string
+      title: Row
+      description: >-
+        The universal id of the row to load, usually the top result of a Spatial Query wired
+        in from upstream
+      default: ""
+      "ui:field": template
+    function:
+      type: string
+      title: Function
+      description: >-
+        One of the row's own public functions to call, by name, as its object's api/service.yaml
+        declares it (searchDetail, documents, figures, list). Leave empty to load the row alone
+      default: ""
+      "ui:field": template
+    inputs:
+      type: object
+      title: Inputs
+      description: >-
+        What the function takes, as an object, e.g. return { question: signal.inputtrigger1.output.message }.
+        Read only when a function is named
+      default: {}
+      "ui:field": template
+"ui:order": [universalId, function, inputs]

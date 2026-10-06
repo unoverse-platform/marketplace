@@ -1,0 +1,37 @@
+# THE OBJECT AS A STEP (docs/unoverse/data/objects/README.md 4b). A search row is the essence on
+# purpose: a handle and the editorial essentials, never the copy. This node opens the one row a
+# step needs in full, the same detail an Agent's getDetail hands over, and, named one of the
+# row's public functions (its object's api/service.yaml), calls it through the same door an
+# Agent's minted tool calls. So a step with no agent in it (a writer, a component) is handed the
+# row's real copy and what its functions answer: a fund's passages, its documents, its figures.
+
+type: SpatialObject
+
+kind: PromiseNode
+
+name: Spatial Object
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Open one row of the platform knowledge base by its id, and call one of its own functions,
+  passing both to the next node
+
+whenToUse: >-
+  Load one row an upstream search found, usually the top match, inside the data flow: the row in
+  full with its copy, and, when you name one, the answer of a function the row's object offers,
+  such as the passages of its documents that bear on a question, the list of its documents, or
+  its figures. Use it when a later step must be given the facts themselves rather than a search
+  row's summary: a writer, a comparison, a card. It loads one row per pass; searching for rows
+  is Spatial Query's job, and following a drawn line to other rows is Spatial Linked's.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md 9.13). Same answer as the rest of the package: it
+# reads the platform's OWN knowledge base, and what a guest may reach is decided at the
+# trigger's publicEntry toggle.
+auth:
+  required: false
+
+capabilities:
+  # Never cacheable: the row changes as content is re-ingested.
+  cacheable: false

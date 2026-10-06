@@ -1,13 +1,14 @@
-# One row per output connector, in interface.yaml's order.
+# One row per output connector, in interface.yaml's order. `read` always runs; `call` runs only
+# when a function is named, and a skipped call leaves no key.
 
 - emit: row
   # THE DETAIL PROJECTION (shared/helpers.yaml detailRow): everything the lean search row left
   # out, minus the crawl bookkeeping and the transport columns. bodyCopy stays: it is the point.
-  value: "return helpers.detailRow(response)"
+  value: "return helpers.detailRow(calls.read)"
 
 - emit: text
   value: >-
-    return String((response.metadata && response.metadata.bodyCopy) || response.text || response.description || '')
+    return ((r) => String((r.metadata && r.metadata.bodyCopy) || r.text || r.description || ''))(calls.read || {})
 
 - emit: image
   # THE PICTURE, by URL, for a screen. detailRow strips it from the model's row on purpose
@@ -16,4 +17,7 @@
     return ((m) => (typeof m.primaryImage === 'string' && m.primaryImage)
       || (Array.isArray(m.images) && m.images.length && typeof m.images[0] === 'string' ? m.images[0] : '')
       || (Array.isArray(m.images) && m.images.length && m.images[0] && typeof m.images[0].url === 'string' ? m.images[0].url : '')
-      || '')(response.metadata || {})
+      || '')((calls.read || {}).metadata || {})
+
+- emit: result
+  value: "return calls.call && typeof calls.call === 'object' ? calls.call : {}"

@@ -3,9 +3,47 @@
 # document reads its file, a table its rows, a product its bodyCopy; the rest answer with the row.
 #
 #   getDetail    the row in full: every field the lean search result left out
+#   list         every row of this row's object whose own field holds a value: a list, never a search
 
 getDetail:
   description: >-
     The row in full: every field the lean search result left out. A need's detail is its row,
     so nothing is fetched.
   returns: "{{ row }}"
+
+# EVERY ROW WHOSE FIELD HOLDS A VALUE. A question across rows ("which funds use this
+# administrator?", "which managers are regulated here?") is a filter on the object's own fields,
+# not a search: a search is ranked and cut off and answers with the rows it happened to rank.
+# Asked of any row, it reads every row of that row's object in the org; the row it was called on
+# says which object, and nothing more.
+list:
+  description: >-
+    Every row of this kind whose own field holds a value, with that field and its citations: which
+    funds use an administrator, which managers are regulated somewhere, which documents are of a
+    type. A complete list, never ranked: for any question that asks which, how many or all of
+    something with a property, call this on one row of that kind and answer from it, never from
+    search rows.
+  input:
+    type: object
+    required: [field, value]
+    properties:
+      field:
+        type: string
+        enum: props
+        description: The field to look in, by its own name
+      value:
+        type: string
+        description: >-
+          What the field holds. Matched anywhere in the field, a list's members included, and
+          regardless of case
+  calls:
+    - name: found
+      node: DatasetQuery
+      config:
+        object: "return String(row.object_type || '')"
+        org: "{{ row.org }}"
+        where: "return [{ column: String(params.field), contains: String(params.value) }]"
+        limit: 200
+  returns:
+    rows: "return (calls.found && calls.found.rows) || []"
+    count: "return ((calls.found && calls.found.rows) || []).length"

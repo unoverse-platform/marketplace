@@ -64,6 +64,9 @@ helpers:
             // ITS LINES, by name (the engine's dictionary_links): a need's `of` is what it was
             // read from, a part's `partOf` its whole. An Agent joins rows by them without a read.
             r.links && typeof r.links === 'object' && Object.keys(r.links).length ? { links: r.links } : {},
+            // WHERE IT WAS WRITTEN FROM (pipelines README, "A row found carries where it was written
+            // from"): the document, section and pages its `of` line names, so the section to open is known.
+            Array.isArray(r.provenance) && r.provenance.length ? { provenance: r.provenance } : {},
             typeof r.similarity === 'number' ? { similarity: Math.round(r.similarity * 1000) / 1000 } : {},
             typeof r.distance === 'number' ? { distance: Math.round(r.distance * 10) / 10 } : {},
             typeof r.forQuery === 'string' ? { forQuery: r.forQuery } : {},

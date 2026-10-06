@@ -1,0 +1,36 @@
+# TWO CALLS, both the engine's own doors, inside the trust boundary, so no token (package.yaml).
+#
+# `read` is the entry route (engine routes/dictionary/items.ts, GET /dictionary/entry/:universalId),
+# the same door the MCP getDetail tool, a card's hook and the canvas call. The object fetches its
+# own detail there (objects README 4b): a product answers with its row, a document with its text.
+#
+# `call` is the function route (POST /dictionary/function/:name/:universalId), the same door an
+# Agent's minted tool calls (objects-in-spatial.md, "Found objects' functions as tools"): the
+# engine runs that row's object's function with the inputs as `params`, and a function the object
+# does not declare is a 404. The run and this node ride as `executionId` and `caller`, so the
+# function records its own row on the trace, as it does for any caller.
+
+- name: read
+  method: GET
+  url: >-
+    return scope.engineUrl + '/dictionary/entry/' + encodeURIComponent(String(config.universalId || '').trim())
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !response || !!response.error || !response.universal_id"
+    message: "return 'dictionary/entry failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+
+- name: call
+  when: "return !!String(config.function || '').trim()"
+  method: POST
+  url: >-
+    return scope.engineUrl + '/dictionary/function/' + encodeURIComponent(String(config.function).trim())
+      + '/' + encodeURIComponent(String(config.universalId || '').trim())
+      + '?executionId=' + encodeURIComponent(String(scope.executionId || ''))
+      + '&caller=' + encodeURIComponent(String(scope.nodeId || ''))
+  body: "return config.inputs && typeof config.inputs === 'object' && !Array.isArray(config.inputs) ? config.inputs : {}"
+  transport: json
+  timeoutMs: 60000
+  error:
+    when: "return !response || !!response.error"
+    message: "return 'dictionary/function/' + String(config.function).trim() + ' failed: ' + JSON.stringify(response || {}).slice(0, 300)"
