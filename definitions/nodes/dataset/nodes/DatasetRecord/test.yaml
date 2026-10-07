@@ -3,7 +3,7 @@
 # writes two and removes two: the same source replaces itself rather than doubling.
 testData:
   config:
-    object: observation
+    object: metric
     org: example
     of: row-1
     document: doc-1

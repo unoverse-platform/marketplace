@@ -140,10 +140,14 @@ calls:
   # figure under short, scaled by a hundredth, and nothing about it looked wrong.
   #
   # Skipped entirely when no layout was handed to the read, which is every document by default.
+  #
+  # NOT OPTIONAL. A document handed layouts whose reader could not be reached has not stated "no
+  # figures": the read fails and is taken again. Measured 2026-10-07: the reader's call failed
+  # once, the read was saved as done with 0 figures where it had stated 308, and "read again"
+  # then saw an unchanged file and did nothing.
   - name: values
     node: ReadValues
     when: "return ((row.content.layouts || row.content.valueTemplates || []).length > 0)"
-    optional: true
     config:
       documents: >-
         return [{

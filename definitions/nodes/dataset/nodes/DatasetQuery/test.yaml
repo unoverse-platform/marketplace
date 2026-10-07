@@ -2,7 +2,7 @@
 # table exists for: which subject carries the most of something, summed within one unit.
 testData:
   config:
-    object: observation
+    object: metric
     org: example
     where: >-
       [{"column":"measure","is":"exposure"},

@@ -1,0 +1,89 @@
+# AN OBSERVATION'S OWN FIELDS. Everything else it carries is the need's (objects/need/props.yaml).
+# THE PROP IS THE BRIEF: each description is the whole instruction for its field.
+#
+# RE-BRIEFED from the need (README 5): the field and its limits are the need's, the brief is the
+# observation's, so it is written in the need's voice and placed on the map by the same six
+# fields.
+title:
+  description: >-
+    The claim, as one plain statement with no person in it: 'Onboarding takes three weeks',
+    'Move the launch to March', 'Send the data export by Friday'. Never 'I', 'we', 'you' or
+    'they said'; who said it is the speaker field. Every figure and date exactly as stated.
+description:
+  description: >-
+    The claim with what it is about, said plainly, with no person in it. Three sentences: what is
+    claimed, what it concerns (the product, process, system or customer it is about), and why it
+    matters or what follows from it, with every figure, date and condition the words state,
+    exactly as stated. Never a word about the call or the document itself: never 'the speaker',
+    'the call', 'the document states', 'was discussed'.
+key_need:
+  description: >-
+    The need this claim bears on, in one line, with no person in it: 'Shorter onboarding for new
+    customers', 'A launch date the team can hold'. It places the observation beside the needs and
+    tasks it concerns.
+related_needs:
+  description: >-
+    The smaller goals this claim touches, each a short verb phrase with no person in it, each
+    naming its subject so it reads on its own: 'Confirm the launch date with marketing'. Only
+    goals the claim itself bears on.
+questions:
+  description: >-
+    The questions this claim raises or answers, each self-contained: it names its subject, so it
+    reads without the passage around it. A question the claim answers is one a person would ask
+    to find it.
+audience:
+  description: >-
+    Who this claim concerns, in one or two words: customer, employee, partner, a named team or
+    business unit. Read it from the passage.
+callToAction:
+  description: >-
+    The next step this claim calls for, as one sentence: 'Confirm the March launch date with the
+    marketing team'. For a question, what would answer it; for a risk, what would reduce it.
+action:
+  description: The next step as a label, one to three words, drawn from the call to action.
+
+kind:
+  type: string
+  input: true
+  enum: [decision, action, question, risk, pain-point, requirement, measure, assumption, outcome]
+  description: >-
+    What kind of claim this is. decision: something agreed. action: something a person
+    committed to do. question: something open that needs an answer. risk: something that could
+    go wrong. pain-point: something that hurts today. requirement: something that must be true.
+    measure: a figure, with its unit and period. assumption: something taken as true without
+    proof. outcome: a result that happened.
+quote:
+  type: string
+  input: true
+  description: >-
+    The words in the text that make this claim, copied exactly as written, so it can be found
+    there again. Only the words that say it, never the paragraph around them.
+  maxLength: 600
+speaker:
+  type: string
+  input: true
+  description: >-
+    Who made the claim, as the text names them: a speaker's name in a transcript, the sender of an
+    email, the author of a document. Empty when the text does not say.
+  maxLength: 80
+owner:
+  type: string
+  input: true
+  description: >-
+    For an action or a question: who is to do it or answer it, as the text names them. Empty when
+    the text names nobody.
+  maxLength: 80
+due:
+  type: string
+  input: true
+  description: >-
+    For an action: when it is due, as YYYY-MM-DD when the text gives a date, else the words it
+    uses ('next week'). Empty when the text gives none.
+  maxLength: 40
+true_as_of:
+  type: string
+  input: true
+  description: >-
+    The date the claim speaks as of, as YYYY-MM-DD: the date the text states for it, else the
+    date of the call, email or document it was made in. Empty when nothing gives one.
+  maxLength: 10

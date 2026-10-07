@@ -15,8 +15,8 @@ configSchema:
       type: string
       title: Layouts
       description: >-
-        The layouts you know, as a JSON array. Each is { name, match, observations, checks }:
-        `match` is text appearing in every document of that layout and no other; `observations`
+        The layouts you know, as a JSON array. Each is { name, match, metrics, checks }:
+        `match` is text appearing in every document of that layout and no other; `metrics`
         says which sheets, which columns hold which measure and in what unit; `checks` names what
         must be true of the reading afterwards.
       default: "[]"

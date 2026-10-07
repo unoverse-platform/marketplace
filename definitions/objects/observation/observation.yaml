@@ -1,0 +1,39 @@
+unoverse: "1.0"
+# ONE CLAIM HEARD OR READ in something that came in: a call, an email, a document, a
+# conversation (docs/unoverse/data/objects/elements/observation.md, ruled 2026-10-07). Its own
+# element, the one the platform adds beside EDGY's. It extends need, so it is written in the
+# need's voice and lands beside the needs and tasks it bears on (owner, 2026-10-07: "it all
+# lives in the same 3D space perfectly"). A pipeline writes it `per: section`, each one `of`
+# the document it was read in, its section and pages on the line.
+type: object
+name: observation
+element: observation
+# THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
+icon: eye
+extends: need
+# THE SAME CLAIM IS ONE ROW: what kind it is and what it says.
+uniqueBy: [kind, title]
+# PLACED BY THE NEED'S SIX FIELDS, unchanged: the same voice is what puts it beside its tasks.
+embed: [title, description, key_need, related_needs, questions, callToAction]
+search: [universal_id, object_type, title, description, kind, quote, speaker, owner, due, true_as_of, app, source_url, source_id]
+meta: open
+
+# THE FACE, as a node's node.yaml carries it. The description is also the brief a section is
+# read with, so it says what one observation is and how many a passage holds.
+title: Observation
+description: >-
+  One claim heard or read in what came in to {{ identity.organisation.name }}: a call, an
+  email, a document, a conversation. Each separate claim is its own entry, never one entry
+  that summarises the passage: a paragraph of a call often holds five claims or more, so split
+  it. Every entry is a decision, an action someone committed to, a question still open, a risk,
+  a pain point, a requirement, a measure, an assumption or an outcome, and every one is
+  traceable to words in the text, kept as its quote. Every figure, percentage, date and year
+  the words state is kept exactly as stated. A passage that claims nothing, such as greetings or
+  small talk, holds no entry.
+whenToUse: >-
+  What was said about this? What did we decide? Who committed to what, and by when? What is
+  still open? What risks were raised?
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

@@ -19,7 +19,7 @@ testData:
            ["","Alpha","","","1","-1","","","",""]]}]}]
     templates: >-
       [{"name":"example-layout","match":"Percentage of Portfolio",
-        "observations":[{"sheets":["2. Exposure"],"labelColumns":[1,2,3],
+        "metrics":[{"sheets":["2. Exposure"],"labelColumns":[1,2,3],
           "measures":[{"measure":"exposure","unit":"percent_of_aum","sides":{"long":4,"short":5}}]}],
         "checks":["eachSlicingTotalsWhatTheSheetStates"]}]
   inputs:

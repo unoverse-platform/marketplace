@@ -1,5 +1,5 @@
 {
-  "release": "0.1.98",
+  "release": "0.1.99",
   "items": [
     {
       "kind": "component",
@@ -622,7 +622,7 @@
     {
       "kind": "object",
       "name": "document",
-      "fingerprint": "90383726214612de",
+      "fingerprint": "120915eef5f06fd2",
       "bundle": "design-system",
       "title": "Document",
       "description": "Long-form writing the business publishes: a guide, a policy, a report, terms and conditions.",
@@ -653,6 +653,15 @@
       "bundle": "design-system",
       "title": "Need",
       "description": "What one person wants, in their own words. The atom: every other object is placed on the map by the needs it serves. A page speaks to several; each distinct one is its own entry, never one entry that summarises the page, and every one is traceable to a statement in the content. Granular: one entry for each thing a person could come to this page to get done, each step they take, each question it answers and each condition it sets. A product page holds five to ten; one entry that stands for the page is wrong. Each is a need someone brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}: write it as the thing that person wants from that organisation, in their words.",
+      "category": "Objects"
+    },
+    {
+      "kind": "object",
+      "name": "observation",
+      "fingerprint": "05c2117a143d49ab",
+      "bundle": "design-system",
+      "title": "Observation",
+      "description": "One claim heard or read in what came in to {{ identity.organisation.name }}: a call, an email, a document, a conversation. Each separate claim is its own entry, never one entry that summarises the passage: a paragraph of a call often holds five claims or more, so split it. Every entry is a decision, an action someone committed to, a question still open, a risk, a pain point, a requirement, a measure, an assumption or an outcome, and every one is traceable to words in the text, kept as its quote. Every figure, percentage, date and year the words state is kept exactly as stated. A passage that claims nothing, such as greetings or small talk, holds no entry.",
       "category": "Objects"
     },
     {
@@ -1110,7 +1119,7 @@
       "kind": "node",
       "name": "DatasetQuery",
       "pack": "dataset",
-      "fingerprint": "072ba69def3520dd",
+      "fingerprint": "c4a6a75f9ae90340",
       "title": "Dataset Query",
       "description": "Read rows back from the table an object owns: filtered by any declared column, limited, and summed only ever within one unit",
       "category": "Storage & Data",
@@ -1121,7 +1130,7 @@
       "kind": "node",
       "name": "DatasetRecord",
       "pack": "dataset",
-      "fingerprint": "2ec5bbc13064079b",
+      "fingerprint": "06b4a2e82bcc2a5a",
       "title": "Dataset Record",
       "description": "Write a read's rows into the table an object owns, replacing what the same document wrote last time rather than landing a second set beside it",
       "category": "Storage & Data",
@@ -1176,7 +1185,7 @@
       "kind": "node",
       "name": "ReadValues",
       "pack": "documents",
-      "fingerprint": "39a0a163df5ac9ed",
+      "fingerprint": "7774fbb0cf266097",
       "title": "Read Values",
       "description": "The figures a parsed document stated, taken from the places you say its kind keeps them, with no model, and refused whole when they do not add up to what the document says about itself",
       "category": "Documents",

@@ -21,7 +21,7 @@ testData:
       valueTemplates:
         - name: onboarding
           match: Onboarding
-          observations:
+          metrics:
             - sheets: [Fees]
               measures: [{ measure: fee, unit: percent_of_aum }]
       title: onboarding.pdf
