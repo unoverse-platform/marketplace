@@ -1,0 +1,112 @@
+{
+  "kind": "node",
+  "name": "SearchImage",
+  "pack": "search",
+  "fingerprint": "326ce8dc53ce6777",
+  "title": "Search by Image",
+  "description": "Find the web pages a picture appears on, via SearchAPI.io (Google Lens)",
+  "category": "Search",
+  "icon": "https://cdn-icons-png.flaticon.com/512/3128/3128287.png",
+  "whenToUse": "Pick when you HAVE A PICTURE and want the pages it appears on: the same photo reused on a speaker page, an event listing, an article or a profile (Google Lens). It takes an image link, not words, and returns the pages that show it, exact copies first, then pages with pictures that look alike. Finding pages or images from a keyword query is a different job.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Upstream data; the image link usually templates from it",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "matches",
+        "type": "array",
+        "description": "The pages the picture appears on (title, url, source, thumbnail, exact). Exact copies of the picture come first with exact true, then pages with pictures that look alike."
+      },
+      {
+        "name": "note",
+        "type": "string",
+        "description": "Why there are no matches, in the vendor's words, when it said: the picture could not be loaded (try another), or no results. Empty when the search found pages."
+      }
+    ],
+    "credentials": [
+      {
+        "name": "searchapiCredential",
+        "required": true,
+        "displayName": "SearchAPI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "imageUrl"
+      ],
+      "properties": {
+        "imageUrl": {
+          "type": "string",
+          "title": "Image URL",
+          "description": "A public link to the picture to search with. The vendor fetches it, so it must load without signing in.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "numResults": {
+          "type": "number",
+          "title": "Number of Results",
+          "description": "Most pages to return, exact copies counted first",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "country": {
+          "type": "string",
+          "title": "Country",
+          "description": "Country code for localized results, e.g. 'us', 'uk', 'ae'",
+          "default": "us"
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "Language code for results, e.g. 'en', 'ar'",
+          "default": "en"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "search",
+      "packageFile": "# FULLY DECLARATIVE. Five nodes, one endpoint, one key.\n#\n# SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched\n# by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds\n# the call, each node names its engine and shapes its own reply, and the whole client is\n# gone: `auth: apiKeyQuery` was already an executor capability.\n#\n# The retired TypeScript is at `_legacy/nodes/search/`.\n\nname: search\ndisplayName: Search\ndescription: Web, news, video, places and by-image search via SearchAPI.io\nversion: 2.0.0\ncategory: search\nlogoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png\n\nfeatures:\n  - Google web and image results\n  - Google News, dated articles\n  - YouTube video search\n  - Google Maps places with ratings\n  - Google Lens, the pages a picture appears on\n\nallowedHosts:\n  - www.searchapi.io\n\nrequires:\n  credential: [apiKeyQuery]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
+      "credentials": {
+        "searchapiCredential.yaml": "# One key powers every engine in this package. Transcribed from src/credentials/index.ts.\n\nname: searchapiCredential\ndisplayName: SearchAPI\ndescription: SearchAPI.io credentials. One key powers every search engine in this package.\ndocumentationUrl: https://www.searchapi.io/docs\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your SearchAPI.io API key\n    placeholder: \"\"\n"
+      },
+      "shared": {
+        "searchapi.yaml": "# The ONE call every node in this package makes.\n#\n# Same url, same auth, switched by `engine`. A node $refs this and layers its own `query`\n# keys on top, which is what a $ref with siblings does: imported first, local wins.\n#\n# The key travels as a query parameter because that is what the vendor takes. `apiKeyQuery`\n# is an executor capability, so no node handles a secret itself.\n\ncall: &call\n  method: GET\n  url: https://www.searchapi.io/api/v1/search\n  credential:\n    scheme: apiKeyQuery\n    param: api_key\n    value: \"{{ credentials.searchapiCredential.apiKey }}\"\n  headers:\n    Accept: application/json\n  transport: json\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n\n# A 200 is not always a success here: the vendor reports a bad parameter or an exhausted\n# quota in the body. Without this a failed search emits empty results and reads as \"nothing\n# found\", which is the wrong answer rather than an error.\n#\n# Except \"nothing found\" itself: the vendor reports an empty search in the same field\n# (\"Google didn't return any results.\"). That IS the answer, so it emits empty lists, and a\n# search for a person with no news does not end the run.\nerror: &error\n  when: \"return !!response.error && !String(response.error).includes(\\\"didn't return any results\\\")\"\n  message: \"return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)\"\n"
+      }
+    },
+    "dir": "SearchImage",
+    "files": {
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n#\n# EXACT COPIES FIRST. A page showing the very same picture is far stronger evidence than one\n# showing a picture that looks like it, so the two lists are kept apart by `exact` rather than\n# merged into one undifferentiated ranking. A `data:` thumbnail is dropped, as in SearchWeb.\n# Reads `calls.lens`, because a skipped search leaves no key and the list is then empty.\n\n- emit: matches\n  from: response\n  value: >-\n    return [].concat(\n      ((calls.lens || {}).exact_matches || []).map(m => ({ m: m, exact: true })),\n      ((calls.lens || {}).visual_matches || []).map(m => ({ m: m, exact: false }))\n    ).slice(0, config.numResults || 20).map(x => ({\n      title: x.m.title || \"\",\n      url: x.m.link || \"\",\n      source: x.m.source || \"\",\n      thumbnail: (x.m.thumbnail || \"\").startsWith(\"data:\") ? \"\" : x.m.thumbnail || \"\",\n      exact: x.exact\n    }))\n\n- emit: note\n  from: response\n  # Why there are no matches when the vendor said why: \"could not load the image\" (try another\n  # picture) or \"didn't return any results\". Empty when the search ran and found pages.\n  value: \"return String((calls.lens || {}).error || '')\"\n",
+      "api/run.yaml": "# One call. `all` returns both lists, exact copies and look-alikes, in one reply.\n#\n# NO PICTURE, NO CALL: an empty link skips the search and the node answers no matches,\n# rather than failing the run it sits in (the vendor refuses a search with no url).\n#\n# A PICTURE LENS CANNOT LOAD IS AN ANSWER, not a failure: an expired or mistyped link, or a host\n# that refuses Google, comes back as a 400 \"could not load the image\". The caller tries another\n# picture, so the node answers no matches and says why in `note`, and the run goes on.\n\n- $ref: searchapi#call\n  name: lens\n  when: \"return String(config.imageUrl || '').trim().length > 0\"\n  okOn: [400]\n  error:\n    when: >-\n      return !!response.error && !String(response.error).includes(\"didn't return any results\")\n        && !String(response.error).includes(\"could not load the image\")\n    message: \"return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)\"\n  query:\n    engine: google_lens\n    url: \"{{ config.imageUrl }}\"\n    search_type: all\n    country: \"return String(config.country || 'us').toUpperCase()\"\n    hl: \"{{ config.language }}\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [imageUrl]\n  properties:\n    imageUrl:\n      type: string\n      title: Image URL\n      description: A public link to the picture to search with. The vendor fetches it, so it must load without signing in.\n      default: \"\"\n      \"ui:field\": template\n    numResults:\n      type: number\n      title: Number of Results\n      description: Most pages to return, exact copies counted first\n      default: 20\n      minimum: 1\n      maximum: 100\n    country:\n      type: string\n      title: Country\n      description: Country code for localized results, e.g. 'us', 'uk', 'ae'\n      default: us\n    language:\n      type: string\n      title: Language\n      description: Language code for results, e.g. 'en', 'ar'\n      default: en\n\"ui:order\": [imageUrl, numResults, country, language]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Upstream data; the image link usually templates from it\n    required: false\n\noutputs:\n  - name: matches\n    type: array\n    description: >-\n      The pages the picture appears on (title, url, source, thumbnail, exact). Exact copies of\n      the picture come first with exact true, then pages with pictures that look alike.\n  - name: note\n    type: string\n    description: >-\n      Why there are no matches, in the vendor's words, when it said: the picture could not be\n      loaded (try another), or no results. Empty when the search found pages.\n\ncredentials:\n  - name: searchapiCredential\n    required: true\n    displayName: SearchAPI\n",
+      "node.yaml": "type: SearchImage\nkind: PromiseNode\nname: Search by Image\ncategory: Search\ncolor: \"#4285F4\"\ndescription: Find the web pages a picture appears on, via SearchAPI.io (Google Lens)\nwhenToUse: >\n  Pick when you HAVE A PICTURE and want the pages it appears on: the same photo reused on a\n  speaker page, an event listing, an article or a profile (Google Lens). It takes an image\n  link, not words, and returns the pages that show it, exact copies first, then pages with\n  pictures that look alike. Finding pages or images from a keyword query is a different job.\n\nauth:\n  required: false\n\ncapabilities:\n  # Idempotent read: the same picture yields the same pages.\n  cacheable: true\n",
+      "test.yaml": "testData:\n  config:\n    imageUrl: https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg\n    numResults: 10\n    country: us\n    language: en\n  inputs:\n    signal: {}\n  expect:\n    matches: \"return output.matches.length > 0 && typeof output.matches[0].url === 'string'\"\n"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+configSchema:
+  type: object
+  required: [pipeline, inputs]
+  properties:
+    pipeline:
+      type: string
+      title: Pipeline
+      description: >-
+        The name of the org's pipeline that takes the records in, as its pipeline.yaml names it
+        (opportunities). It must open with an Input Trigger.
+      default: ""
+    inputs:
+      type: object
+      title: Records
+      description: >-
+        What the pipeline's Input Trigger takes, as an object, usually templated from upstream,
+        e.g. return { stories: signal.code40.output.stories }. Checked against the trigger's own
+        input schema before anything is written.
+      default: {}
+      "ui:field": template
+"ui:order": [pipeline, inputs]

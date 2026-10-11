@@ -65,7 +65,7 @@ helpers:
             // read from, a part's `partOf` its whole. An Agent joins rows by them without a read.
             r.links && typeof r.links === 'object' && Object.keys(r.links).length ? { links: r.links } : {},
             // WHERE IT WAS WRITTEN FROM (pipelines README, "A row found carries where it was written
-            // from"): the document, section and pages its `of` line names, so the section to open is known.
+            // from"): the document and pages its `of` line names, so the pages to read are known.
             Array.isArray(r.provenance) && r.provenance.length ? { provenance: r.provenance } : {},
             typeof r.similarity === 'number' ? { similarity: Math.round(r.similarity * 1000) / 1000 } : {},
             typeof r.distance === 'number' ? { distance: Math.round(r.distance * 10) / 10 } : {},
@@ -124,15 +124,14 @@ helpers:
   #   depth/loadedTime/extractedAt/extractedFrom/screenshotUrl/httpStatusCode/
   #   languageCode/llmObjectType — crawl provenance, seen leaking on the first live
   #                         call (2026-09-03); extractedFrom duplicates source_url
-  #   sectionNames/partNames — a document's named sections and parts, already sent as its
-  #                         `outline` and its `parts` (2026-09-14)
+  #   partNames           — a document's named parts, already sent as its `parts` (2026-09-14)
   DETAIL_META_STRIP:
     args: []
     body: >-
       return ['primaryImage', 'images', 'openGraph', 'jsonLd', 'questions',
               'sections', 'faqs', 'html', 'raw_text',
               'depth', 'loadedTime', 'extractedAt', 'extractedFrom', 'screenshotUrl',
-              'httpStatusCode', 'languageCode', 'llmObjectType', 'sectionNames', 'partNames']
+              'httpStatusCode', 'languageCode', 'llmObjectType', 'partNames']
 
   # Row-level: the same handle + display fields a search row keeps (`needs` stays behind —
   # the guard classes it as page content, and key_need already carries the essence), and
@@ -159,12 +158,12 @@ helpers:
             .reduce((acc, k) => Object.assign(acc, { [k]: r.metadata[k] }), {})
         ),
         // WHAT THE OBJECT'S OWN getDetail RETURNED (objects README 4b; ruled 2026-09-11): a
-        // document's text or one section of it and its outline, a table's rows, what the row
-        // holds as parts. A figure's picture is NOT here: it goes to the screen, never into the
+        // document's pages asked for and the tables on them (page-store.md), a table's rows, what
+        // the row holds as parts. A figure's picture is NOT here: it goes to the screen, never into the
         // model's context.
         // THE RUNG ABOVE (the ladder, 2026-09-14): what the row is part of and the wholes made
         // from it, so the Agent knows where it can climb.
-        ['text', 'outline', 'section', 'parts', 'up', 'header', 'rows', 'total', 'matched']
+        ['text', 'pages', 'tables', 'parts', 'up', 'header', 'rows', 'total', 'matched']
           .filter(k => r[k] != null)
           .reduce((acc, k) => Object.assign(acc, { [k]: r[k] }), {})
       )
@@ -212,3 +211,13 @@ helpers:
   objectsRequired:
     args: [resolved]
     body: "return (resolved && resolved.choiceRequired && Array.isArray(resolved.offered) && resolved.offered.length) ? ['objects'] : []"
+
+  # THE QUERY TOOL'S DESCRIPTION with THIS org's schema under it (shared/research.yaml carries
+  # how to ask). When the engine could not say, the tool keeps its words and a refused query
+  # names what exists.
+  researchSchema:
+    args: [shape]
+    body: >-
+      return 'Ask the data in one query, by the parts in your instructions. Answers are rows: lists, figures, counts, connections.'
+        + '\n\nTHIS ORG\'S SCHEMA (kinds, their fields with fixed words, what each connects to):\n'
+        + ((shape && shape.text) ? shape.text : '(not available: a refused query lists what exists)')

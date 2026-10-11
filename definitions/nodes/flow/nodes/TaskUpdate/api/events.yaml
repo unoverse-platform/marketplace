@@ -2,4 +2,4 @@
 # values are emitted as they are and pushed to the screen by api/publish.yaml.
 
 - emit: task
-  value: "return { ref: config.task, step: config.step || undefined, props: config.props }"
+  value: "return { ref: helpers.asTaskUri(config.task), step: config.step || undefined, props: config.props }"

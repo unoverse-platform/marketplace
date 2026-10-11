@@ -1,0 +1,34 @@
+# A PAGE'S FIELDS. Every one is written by the page store when its document is read, never by the
+# model (input: false). The page's words are not a field: they are kept once, in the page store.
+universal_id:
+  type: string
+  input: false
+  description: The row's permanent handle, minted from the document's id and the page number, so a re-read finds the same row.
+title:
+  type: string
+  input: false
+  description: The document's title and the page number, as "Offering Memorandum, page 41".
+description:
+  type: string
+  input: false
+  description: The page's own headings, as one contents line; empty when the page has none.
+org:
+  type: string
+  input: false
+  description: The organisation whose row this is. Assigned by the run.
+source_url:
+  type: string
+  input: false
+  description: The file the page is in, the same address as its document.
+source_id:
+  type: string
+  input: false
+  description: The file's source id, the same as its document's.
+partId:
+  type: string
+  input: false
+  description: The page's id within its document, its page number as text.
+page:
+  type: number
+  input: false
+  description: The page number, counted from 1, as the document's reading marks it.

@@ -1,0 +1,31 @@
+type: SpatialResearch
+
+kind: PromiseNode
+
+template: service
+
+name: Spatial Research
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Research the platform's data by its schema: ask for facts, figures, lists, counts and how
+  things connect, and read the exact pages they rest on
+
+# THE RESEARCH MCP (docs/unoverse/data/objects/query.md, "Two MCPs, each with its own job").
+# Spatial Search finds things by meaning and presents them (skills, components, tasks). This
+# finds FACTS: the agent reads the org's schema, asks one query, and reads the pages it cites.
+# No skills are loaded from results, no components rendered, no tasks offered, nothing recorded.
+whenToUse: >-
+  Give a research agent the data itself: the kinds of thing an org holds, their fields and how
+  they connect, asked in one query for lists, figures, counts, totals and connections, with the
+  pages each answer rests on. The wrong choice for an agent that finds and shows things to
+  people (cards, tasks, screens), which is Spatial Search. Attach by a service edge to the
+  agent; it is not a data-flow step.
+
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

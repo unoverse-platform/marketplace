@@ -24,6 +24,10 @@ call: &call
 # A 200 is not always a success here: the vendor reports a bad parameter or an exhausted
 # quota in the body. Without this a failed search emits empty results and reads as "nothing
 # found", which is the wrong answer rather than an error.
+#
+# Except "nothing found" itself: the vendor reports an empty search in the same field
+# ("Google didn't return any results."). That IS the answer, so it emits empty lists, and a
+# search for a person with no news does not end the run.
 error: &error
-  when: "return !!response.error"
+  when: "return !!response.error && !String(response.error).includes(\"didn't return any results\")"
   message: "return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)"

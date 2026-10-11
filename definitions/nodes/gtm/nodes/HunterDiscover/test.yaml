@@ -3,6 +3,8 @@ testData:
     query: B2B SaaS companies in London
     industry: ""
     country: ""
+    city: ""
+    hiring: false
     headcount: ""
     technology: ""
     keywords: ""

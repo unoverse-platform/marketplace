@@ -1,0 +1,12 @@
+# Everything that leaves this node, in interface.yaml's connector order. A settling
+# transport has ONE body and no event types, so these rows carry no `match`.
+#
+# The service returns answers as a LIST in question order. Keyed by name instead, a branch
+# reads answers.<name>.probability without searching the list. Every answer is kept whole.
+
+- emit: answers
+  value: >-
+    return Object.fromEntries(response.answers.map(answer => [answer.name, answer]))
+
+- emit: usage
+  value: "return response.usage"

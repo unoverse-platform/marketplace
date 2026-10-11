@@ -1,4 +1,0 @@
-# One row per output connector, in interface.yaml order. `response` is the engine's report.
-
-- emit: report
-  value: "return response || {}"

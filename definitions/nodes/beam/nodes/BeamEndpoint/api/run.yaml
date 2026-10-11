@@ -1,0 +1,25 @@
+- name: call
+  method: POST
+  url: "return String(config.url || '').trim()"
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.beamCredential.token }}"
+
+  body: "return config.input || {}"
+
+  # A sleeping deployment starts its container and loads its model before it answers: measured
+  # 37 s for a 194M-parameter model on its first call ever, about 1 s once warm.
+  timeoutMs: 300000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 502, 503, 504]
+
+  transport: json
+
+  # A deployment that answers 200 with an error in its body has failed.
+  error:
+    when: "return !!(response && response.error)"
+    message: "return String(response.error)"

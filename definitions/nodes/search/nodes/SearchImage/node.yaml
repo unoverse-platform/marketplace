@@ -1,0 +1,18 @@
+type: SearchImage
+kind: PromiseNode
+name: Search by Image
+category: Search
+color: "#4285F4"
+description: Find the web pages a picture appears on, via SearchAPI.io (Google Lens)
+whenToUse: >
+  Pick when you HAVE A PICTURE and want the pages it appears on: the same photo reused on a
+  speaker page, an event listing, an article or a profile (Google Lens). It takes an image
+  link, not words, and returns the pages that show it, exact copies first, then pages with
+  pictures that look alike. Finding pages or images from a keyword query is a different job.
+
+auth:
+  required: false
+
+capabilities:
+  # Idempotent read: the same picture yields the same pages.
+  cacheable: true

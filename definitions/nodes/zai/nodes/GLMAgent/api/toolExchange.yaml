@@ -35,10 +35,15 @@ transcript:
   # The assistant's own words this turn. With preambles on GLM explains itself before calling a tool,
   # and dropping that would cost the model its reasoning thread on the next turn.
   text: "return (((response.choices || [])[0] || {}).delta || {}).content"
+  # PRESERVED THINKING (docs.z.ai thinking mode): with `clear_thinking: false` the model keeps the
+  # reasoning of earlier turns only when its `reasoning_content` comes back, unmodified, on its own
+  # assistant message. Without it GLM rebuilds its whole plan every turn, which is the bloat.
+  thinking: "return (((response.choices || [])[0] || {}).delta || {}).reasoning_content"
   assistant: >-
-    return { role: 'assistant', content: text || null,
+    return Object.assign({ role: 'assistant', content: text || null,
              tool_calls: calls.map(c => ({ id: c.id, type: 'function',
-                                           function: { name: c.name, arguments: c.arguments } })) }
+                                           function: { name: c.name, arguments: c.arguments } })) },
+             thinking ? { reasoning_content: thinking } : {})
 
 # Always auto: which tool to reach for is carried by the tool DESCRIPTIONS, never by forcing a choice.
 choiceInto: tool_choice

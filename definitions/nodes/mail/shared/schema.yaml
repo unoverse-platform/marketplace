@@ -20,6 +20,7 @@ mailbox:
     - A sent message comes back with state "sent" and its id. State "failed" carries the reason;
       say so rather than claiming it went.
     - You work ONE inbox. You cannot read or send from any other.
+    - list_events reads the inbox's own calendar: what is booked between two times.
   methods:
     list_threads:
       description: >-
@@ -92,6 +93,20 @@ mailbox:
           html:
             type: string
             description: Optional. The same message as HTML.
+    list_events:
+      description: >-
+        The inbox's calendar: events starting between two times, earliest first, each with its
+        title, description, start, end and who made it. Read only.
+      input:
+        type: object
+        required: []
+        properties:
+          from:
+            type: string
+            description: The earliest start, as an ISO time. Leave out for now.
+          to:
+            type: string
+            description: The latest start, as an ISO time. Leave out for a day from now.
     save_draft:
       description: >-
         Keep a message without sending it, for a person to read and send. Comes back with state

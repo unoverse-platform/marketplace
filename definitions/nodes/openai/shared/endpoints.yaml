@@ -6,6 +6,8 @@
 
 responses: https://api.openai.com/v1/responses
 embeddings: https://api.openai.com/v1/embeddings
+# Named questions in, calibrated probabilities out. Used by OpenAIDecision.
+decisions: https://api.openai.com/v1/decisions
 
 # A CONVERSATION is OpenAI's own server-side memory: a durable id you mint once and then
 # name on every response. Items are prepended to the request and the turn's input and

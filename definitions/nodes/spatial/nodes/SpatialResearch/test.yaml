@@ -1,0 +1,20 @@
+# A SERVICE node has no connectors, so the fixture names a METHOD and asserts what it hands back.
+# `query` because it is the node's whole job: the engine door, the org, and the answer's shape.
+#
+# Runs against the LOCAL platform, so it needs the runtime up. No credential: the engine is
+# reached on loopback, inside the trust boundary. Any org's data answers: the assertion is the
+# SHAPE (rows under the kind asked for, or a refusal naming what exists), never content.
+
+testData:
+  config: {}
+  call:
+    method: query
+    params:
+      query:
+        need:
+          fields: [title, page, document]
+          limit: 3
+  expect:
+    result: >-
+      return !!output && typeof output === 'object'
+        && (Array.isArray(output.need) || Array.isArray(output.refused))

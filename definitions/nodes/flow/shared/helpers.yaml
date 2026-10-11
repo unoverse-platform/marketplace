@@ -158,11 +158,11 @@ helpers:
     body: >-
       return (() => {
         const given = String(text || '').trim();
-        if (given) return given;
+        if (given) return helpers.asTaskUri(given);
         const t = helpers.taskOf(arrived);
         const here = (t && typeof t === 'object') ? t : {};
         const started = String(((here.metadata || {}).task) || here.task || here.runId || '').trim();
-        if (started) return started;
+        if (started) return helpers.asTaskUri(started);
         // A LATER PASS IS WOKEN BY A HAND-BACK ALONE: the input that started this node is not
         // delivered again, so the task is named by the hand-back, which carries the `ref` this
         // node handed out with the step.
@@ -170,7 +170,25 @@ helpers:
         const l1 = flat(back);
         const l2 = l1.reduce((acc, v) => acc.concat(flat(v)), []);
         const named = l1.concat(l2).find(v => v && typeof v === 'object' && typeof v.ref === 'string' && v.ref);
-        return named ? String(named.ref).trim() : '';
+        return named ? helpers.asTaskUri(String(named.ref).trim()) : '';
+      })()
+
+  # A TASK'S ONE URI (docs/mcp/MCP_TASKS.md § 2a): an asset's own address, as a canvas config or a
+  # page names it (`unoverse://templates|components|apps/<org>/<name>`), is the task
+  # `unoverse://tasks/<org>/<name>`; one of no org is the marketplace's. The same rule as the
+  # platform's parser (packages/base/src/definitions/registry/taskUri.ts), which a sandboxed
+  # expression cannot import. The older Agent address and a row id pass through unchanged.
+  asTaskUri:
+    args: [ref]
+    body: >-
+      return (() => {
+        const r = String(ref || '').trim();
+        const m = r.match(/^unoverse:\/\/(templates|components|apps|tasks)\/([^#]+)$/);
+        if (!m) return r;
+        const parts = m[2].split('/');
+        if (parts.length === 2 && parts[0] && parts[1]) return 'unoverse://tasks/' + parts[0] + '/' + parts[1];
+        if (parts.length === 1 && parts[0]) return 'unoverse://tasks/marketplace/' + parts[0];
+        return r;
       })()
 
   # HOW TO LOAD IT, read off the string: a URI is served by the platform, anything else is a
@@ -180,18 +198,26 @@ helpers:
     body: >-
       return helpers.taskRef(text, arrived, back).indexOf('unoverse://') === 0 ? 'uri' : 'id'
 
-  # AN AGENT TASK, told apart by its address (unoverse://agents/<org>/<name>). It has no steps
-  # and nothing to ask: it is RUN, over MCP, exactly as an Agent that found it in Spatial would
-  # call it, and its result is what the run produced. Anything else is walked a step at a time.
+  # A TASK THAT IS RUN, NOT WALKED: a workflow or a pipeline. Told apart by what reading its one
+  # URI answered (`kind: workflow` or `pipeline`, docs/mcp/MCP_TASKS.md § 2a), or by the older Agent address
+  # (unoverse://agents/<org>/<name>). It has no steps and nothing to ask: it is RUN, over MCP,
+  # exactly as an Agent that found it would call it, by its tool name `<org>.<name>`, and its
+  # result is what the run produced. Anything else is walked a step at a time.
   agentTool:
-    args: [text, arrived, back]
+    args: [text, arrived, back, read]
     body: >-
       return (() => {
         const ref = String(helpers.taskRef(text, arrived, back) || '');
-        const head = 'unoverse://agents/';
-        if (ref.indexOf(head) !== 0) return '';
-        const parts = ref.slice(head.length).split('/');
-        return parts.length === 2 && parts[0] && parts[1] ? parts[0] + '.' + parts[1] : '';
+        const named = (head) => {
+          if (ref.indexOf(head) !== 0) return '';
+          const parts = ref.slice(head.length).split('/');
+          return parts.length === 2 && parts[0] && parts[1] ? parts[0] + '.' + parts[1] : '';
+        };
+        const agent = named('unoverse://agents/');
+        if (agent) return agent;
+        const text2 = ((((read || {}).result || {}).contents || [])[0] || {}).text;
+        const kind = (typeof text2 === 'string' && text2.charAt(0) === '{') ? String((JSON.parse(text2) || {}).kind || '') : '';
+        return (kind === 'workflow' || kind === 'pipeline') ? named('unoverse://tasks/') : '';
       })()
 
   # WHAT AN AGENT TASK IS RUN WITH: the answers the task before it finished with, as they
@@ -258,7 +284,10 @@ helpers:
       return (() => {
         if (loadBy !== 'uri') return helpers.taskOf(arrived);
         const text = ((((read || {}).result || {}).contents || [])[0] || {}).text;
-        return typeof text === 'string' && text.trim() ? JSON.parse(text) : {};
+        const parsed = typeof text === 'string' && text.trim() ? JSON.parse(text) : {};
+        // A TASK READ BY ITS ONE URI (docs/mcp/MCP_TASKS.md § 2a) answers { uri, kind,
+        // definition }: the task is its definition.
+        return (parsed && typeof parsed.uri === 'string' && parsed.uri.indexOf('unoverse://tasks/') === 0 && parsed.definition) ? parsed.definition : parsed;
       })()
 
   # WHAT THE TASK ALREADY HOLDS. A task loaded by URI starts from its own state, where its

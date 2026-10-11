@@ -1,0 +1,22 @@
+type: SignalGoals
+kind: PromiseNode
+name: Signal Goals
+category: Storage & Data
+color: "#334155"
+template: service
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+description: Open and keep the goals for the people Signal holds, without reading anyone.
+whenToUse: >
+  Pick to give an Agent the goals for the people it engages: what we want with a person next,
+  opened, kept up to date and finished, when the caller may add people but must not read their
+  records. Every change names who made it. To read people, Signal People.
+
+# WHO MAY RUN THIS (docs/architecture/signal/AGENTS.md § 7c). A goal on a person is `signal:write`,
+# like adding the person (Signal Save), apart from reading everyone (`signal:read-all`). Each call
+# names its caller, so a goal records who opened it and an Agent's change is audited.
+auth:
+  required: true
+  role: signal:write
+
+capabilities:
+  cacheable: false

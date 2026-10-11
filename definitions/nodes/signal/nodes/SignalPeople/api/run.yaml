@@ -1,0 +1,15 @@
+# The WORKFLOW channel: the people Signal holds for the run's own organisation, newest first, the
+# same read the attached Agent's list_people makes (service.yaml), so a page can be filled from
+# Signal with no Agent in between. The org is always the run's, never the config's.
+- name: list
+  method: GET
+  url: >-
+    return scope.engineUrl + '/people?org=' + encodeURIComponent(scope.org)
+      + (config.stage ? '&stage=' + encodeURIComponent(config.stage) : '')
+      + (config.limit ? '&limit=' + encodeURIComponent(config.limit) : '')
+  okOn: [400]
+  transport: json
+  timeoutMs: 15000
+  error:
+    when: "return !!response.error"
+    message: "return String(response.error)"

@@ -38,7 +38,9 @@
     message: "return 'no MCP session opened: ' + JSON.stringify(response || {}).slice(0, 200)"
 
 - name: definition
-  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) === 'uri' && !helpers.agentTool(config.task, signal.signal, signal.collected)"
+  # Read for every task loaded by URI but the older Agent address: a task's URI is read even when
+  # it is a workflow, because what the read answers (`kind`) is how it is told apart (agentTool).
+  when: "return helpers.loadMode(config.task, signal.signal, signal.collected) === 'uri' && String(helpers.taskRef(config.task, signal.signal, signal.collected)).indexOf('unoverse://agents/') !== 0"
   method: POST
   url: "return scope.platformUrl + '/mcp'"
   headers:
@@ -63,7 +65,7 @@
 # does for an Agent: it starts the run, shows its card and progress in the conversation, and
 # answers with the result. The call waits for that result, so it is given a run's length.
 - name: execute
-  when: "return !!helpers.agentTool(config.task, signal.signal, signal.collected)"
+  when: "return !!helpers.agentTool(config.task, signal.signal, signal.collected, calls.definition)"
   method: POST
   url: "return scope.platformUrl + '/mcp'"
   headers:
@@ -75,7 +77,7 @@
     id: 3
     method: tools/call
     params:
-      name: "return helpers.agentTool(config.task, signal.signal, signal.collected)"
+      name: "return helpers.agentTool(config.task, signal.signal, signal.collected, calls.definition)"
       arguments: >-
         return Object.assign({}, helpers.runInput(signal.signal), {
           userId: String(scope.userId || ''),
@@ -255,7 +257,7 @@
 # evidence is the task's ref and `.finished`, so Signal pairs it with the opened event above.
 - name: finished
   when: >-
-    return !!scope.userId && !!scope.workflowId && (!!helpers.agentTool(config.task, signal.signal, signal.collected)
+    return !!scope.userId && !!scope.workflowId && (!!helpers.agentTool(config.task, signal.signal, signal.collected, calls.definition)
       || helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
       helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null)
   method: POST

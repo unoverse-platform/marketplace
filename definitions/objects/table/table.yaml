@@ -1,12 +1,12 @@
 unoverse: "1.0"
 # A TABLE A DOCUMENT HOLDS (ruled 2026-09-11, docs/unoverse/data/README.md, two levels): rows
-# you can filter, sum and compare, found by walking from its document or through a need's
-# `of`, never by searching the map. No embed, so it is never positioned; it is a row only
-# because a pipeline makes it as a part (`partsOf: document`, docs/unoverse/data/pipelines/README.md
-# layer 1, parts). Its rows live in the store, in the document's structure under `_parsed/`;
-# the row holds what the table is and where it sits, and getDetail returns the rows.
+# you can filter, sum and compare, made as a part of its document (`partsOf: document`,
+# docs/unoverse/data/pipelines/README.md layer 1, parts). NOT IN SPATIAL (owner, 2026-10-08,
+# page-store.md): no `embed`. It is `on` its page, and its page is reached from its needs; the
+# read of that page sees the table whole and names it.
 type: object
 name: table
+search: [universal_id, object_type, title, description, source_url, source_id]
 element: content
 # THE GLYPH its rows are drawn with (README 4a): a lucide icon name.
 icon: table

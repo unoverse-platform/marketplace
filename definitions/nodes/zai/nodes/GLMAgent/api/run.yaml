@@ -36,11 +36,13 @@
         // GLM ignores reasoning_effort unless thinking is explicitly enabled, and the two disagree
         // across GLM versions if only one is sent — so both are always set, transcribed from the
         // code version's comment on exactly this.
-        thinking: { type: thinking ? 'enabled' : 'disabled' },
+        // Preserved thinking: earlier turns' reasoning is kept (the loop sends it back on each
+        // assistant message), so a turn continues the plan instead of rebuilding it.
+        thinking: thinking ? { type: 'enabled', clear_thinking: false } : { type: 'disabled' },
         reasoning_effort: config.reasoningEffort,
         messages: messages.concat(transcript)
       };
-    })();
+    })()
 
   timeoutMs: 600000
 

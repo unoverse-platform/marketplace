@@ -4,13 +4,14 @@
 name: x-search
 displayName: X Search
 description: Search recent X (Twitter) posts
-version: 2.0.0
+version: 2.1.0
 category: search
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg
 
 features:
   - Recent post search with X query operators
   - Per-post engagement metrics
+  - Each post's author, with name, handle, bio and location
 
 allowedHosts:
   - api.x.com

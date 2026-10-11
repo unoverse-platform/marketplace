@@ -1,0 +1,13 @@
+inputs: []
+outputs: []
+
+# ONE TOOL, and the schema with it: one door in (query); the chunks it returns are the words to quote. `getSchema` is the discovery every service node answers
+# (deliberately not a method here): it hands the agent the org's schema and how to ask, so the
+# agent has read it before its first query.
+serviceConnectors:
+  - name: research
+    serviceType: mcp
+    isService: true
+    description: Ask the org's data by its schema, with what its documents say in their own words
+    methods:
+      - query

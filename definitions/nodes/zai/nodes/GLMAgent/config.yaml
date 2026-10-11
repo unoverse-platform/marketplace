@@ -6,12 +6,13 @@ configSchema:
       type: string
       title: Model
       description: >-
-        Z.AI GLM model. GLM-5.2 gives the deepest agentic reasoning and honours all three Reasoning
-        Effort settings. GLM-5-Turbo is faster and cheaper with 200K context, but reasoning_effort is
-        GLM-5.2+ only, so High and Max behave identically on Turbo.
-      enum: [glm-5.2, glm-5-turbo]
-      enumNames: ["GLM-5.2 (deepest reasoning)", "GLM-5-Turbo (faster/cheaper)"]
-      default: glm-5.2
+        Z.AI GLM model. GLM-5.3 is the newest flagship (the GLM-5.2 base with better post-training,
+        1M context, 128K output); it always thinks, so Off does not apply to it. GLM-5.2 is the
+        previous flagship. GLM-5-Turbo is faster and cheaper with 200K context, but reasoning_effort
+        is GLM-5.2+ only, so every effort behaves the same on Turbo.
+      enum: [glm-5.3, glm-5.2, glm-5-turbo]
+      enumNames: ["GLM-5.3 (newest, deepest reasoning)", "GLM-5.2 (previous flagship)", "GLM-5-Turbo (faster/cheaper)"]
+      default: glm-5.3
     agentName:
       type: string
       title: Agent Name
@@ -28,16 +29,16 @@ configSchema:
       type: string
       title: Reasoning Effort
       description: >-
-        Depth of GLM-5.2's chain-of-thought. These are the only three settings that change behaviour:
-        High is enhanced reasoning (the default, strong tool-calling at far fewer reasoning tokens), Max
-        is the deepest, and Off disables thinking entirely. GLM collapses its other documented values
-        internally (xhigh to max, low/medium to high, minimal to off), so exposing them would let
-        someone pick Low and still get full High reasoning.
-      enum: [high, max, none]
+        Depth of the model's chain-of-thought. Low is the lightest (GLM-5.3 only: GLM-5.2 treats it as
+        High), High is enhanced reasoning (the default, strong tool-calling at far fewer reasoning
+        tokens), Max is the deepest. Off disables thinking and works on GLM-5.2 and Turbo only:
+        GLM-5.3 always thinks.
+      enum: [low, high, max, none]
       enumNames:
+        - Low (lightest reasoning, GLM-5.3)
         - High (enhanced reasoning, default)
         - Max (deepest reasoning, most tokens)
-        - Off (no thinking, fastest/cheapest)
+        - Off (no thinking, GLM-5.2 and Turbo only)
       default: high
     maxTokens:
       type: number

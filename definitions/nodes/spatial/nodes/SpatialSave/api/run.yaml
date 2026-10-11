@@ -1,0 +1,30 @@
+# ONE CALL, the engine's own door, inside the trust boundary, so no token (package.yaml). The
+# pipeline is the connector and the records are its trigger's inputs (engine routes/content.ts,
+# POST /content/ingest; door/jobs.ts checks them against the trigger's inputSchema). Records
+# that came in through a trigger are read at once and never synced (pipelines README, collect).
+- name: save
+  method: POST
+  url: "return scope.engineUrl + '/content/ingest'"
+  transport: json
+  body:
+    input:
+      connector: "{{ config.pipeline }}"
+      inputs: "return config.inputs"
+      workflowId: "{{ scope.workflowId }}"
+      org: "{{ scope.org }}"
+      # The run that asked: what the job's models cost is its owner's (engine door/jobs.ts).
+      executionId: "{{ scope.executionId }}"
+  timeoutMs: 60000
+  # A 400 names what was wrong with the records in the pipeline form's own words.
+  error:
+    when: "return !!response.error"
+    message: "return response.error"
+
+  # THE JOB, WAITED ON, as Spatial Ingest waits on it: the receipt is not the save.
+  poll:
+    url: "return scope.engineUrl + '/content/ingestion/' + response.jobId"
+    until: "return ['COMPLETED', 'FAILED', 'CANCELLED', 'INTERRUPTED'].includes(response.status)"
+    failed: "return ['FAILED', 'CANCELLED', 'INTERRUPTED'].includes(response.status)"
+    message: "return response.error || ('save ' + response.status)"
+    intervalMs: 2000
+    maxAttempts: 300

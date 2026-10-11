@@ -1,0 +1,53 @@
+# THE RESEARCH TOOLS (docs/unoverse/data/objects/query.md, "The tools"). Their wording IS the
+# routing: rephrasing them is a behaviour change, never a tidy-up.
+#
+# Engine on :4101 (`scope.engineUrl`), loopback, inside the trust boundary, no token: the same
+# posture as Spatial Search (shared/search.yaml).
+
+# ONE QUERY: the kind wanted back, filters, fields, connected kinds by name, counts and totals.
+# A refusal comes back as `{ refused: [...] }`, an answer the agent reads and fixes in the same
+# turn, never an error.
+query:
+  description: >-
+    Ask the data. One query names the kind of thing wanted back, filters it, lists the fields
+    to return, and nests the connected kinds to bring along; count and sum give totals. Answers
+    are rows: lists, figures, counts, connections. With "chunks", what the documents among the
+    rows say, in their own words with document and pages: quote those.
+  calls:
+    - name: query
+      method: POST
+      url: "return scope.engineUrl + '/spatial/query'"
+      transport: json
+      timeoutMs: 30000
+      body:
+        workflowId: "return scope.workflowId"
+        org: "return scope.org"
+        # THE QUERY, wrapped or not: a model sends `{ "query": { "fund": ... } }` or the query itself
+        # (`{ "fund": ... }`), and both mean the same. Measured 2026-10-07: four of an Agent's ten
+        # turns went on the unwrapped form being refused.
+        query: >-
+          return (params.query && typeof params.query === 'object') ? params.query
+            : Object.keys(params).filter(k => k !== '_mcpMetadata').reduce((acc, k) => Object.assign(acc, { [k]: params[k] }), {})
+      error:
+        when: "return !response || typeof response !== 'object'"
+        message: "return 'spatial/query failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+  returns: "return calls.query"
+
+# DISCOVERY, called once per session by the agent's connector: how to ask, and THIS org's schema
+# (its kinds, fields, fixed words and connections), read from the objects every time, so the
+# agent has the schema before its first query. Never an error: the engine answers empty text
+# when it cannot say, and the agent keeps its tools.
+getSchema:
+  description: Tool discovery for Spatial Research, with this org's schema
+  calls:
+    - name: shape
+      method: GET
+      url: "return scope.engineUrl + '/spatial/query/schema?' + (scope.org ? 'org=' + encodeURIComponent(scope.org) : 'workflowId=' + encodeURIComponent(scope.workflowId || ''))"
+      transport: json
+  # The how-to is the constant (shared/research.yaml); only the query tool's description is
+  # computed, so this org's schema rides with the tool it is for.
+  returns:
+    $ref: research#research
+    methods:
+      query:
+        description: "return helpers.researchSchema(calls.shape)"

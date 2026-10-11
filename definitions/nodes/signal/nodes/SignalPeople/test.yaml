@@ -1,0 +1,9 @@
+# list_people only reads, so it is the fixture: it answers this org's people, possibly none.
+testData:
+  config: {}
+  call:
+    method: list_people
+    params:
+      limit: 5
+  expect:
+    output: "return output.ok === true && Array.isArray(output.people)"

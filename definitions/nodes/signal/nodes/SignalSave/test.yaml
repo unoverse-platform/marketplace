@@ -1,0 +1,10 @@
+# A save with no way to recognise the person is refused by Signal before anything is written, so
+# the fixture writes nothing: the answer is ok false, with the reason, and never a record.
+testData:
+  config: {}
+  call:
+    method: save_person
+    params:
+      name: Nobody In Particular
+  expect:
+    output: "return output.ok === false && typeof output.error === 'string' && output.person === undefined"

@@ -1,0 +1,22 @@
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the image link usually templates from it
+    required: false
+
+outputs:
+  - name: matches
+    type: array
+    description: >-
+      The pages the picture appears on (title, url, source, thumbnail, exact). Exact copies of
+      the picture come first with exact true, then pages with pictures that look alike.
+  - name: note
+    type: string
+    description: >-
+      Why there are no matches, in the vendor's words, when it said: the picture could not be
+      loaded (try another), or no results. Empty when the search found pages.
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

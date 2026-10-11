@@ -1,0 +1,23 @@
+# SIGNAL — who a person is and what happens next (docs/architecture/signal/README.md). Signal
+# holds everyone the organisation engages, prospects and customers, one record per person per org
+# (SIGNAL.md § 4a, ruled 2026-10-09). The record is the memory service's; these nodes reach it
+# through the engine at loopback, as the dataset package does, so no node knows its address.
+name: signal
+displayName: Signal
+description: Save and read the people the organisation engages, prospects and customers
+version: 0.1.0
+category: storage
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+features:
+  - Save one person, found again by their LinkedIn, their email or their app account, never made twice
+  - Find one person, and list the organisation's prospects and customers, as an Agent's tools
+  - Keep what research found about them in Signal's layers (observed, understood, inferred)
+  - Open and keep an Agent's own goals for a person, never another's, without reading anyone
+
+allowedHosts:
+  - 127.0.0.1
+
+requires:
+  executorVersion: ">=1.6.0"
+  transport: [json]

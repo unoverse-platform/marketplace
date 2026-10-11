@@ -1,0 +1,6 @@
+# Nothing to set: what an agent may ask is the org's schema, read from its objects, and every
+# query is checked against it. The org is the run's own.
+configSchema:
+  type: object
+  required: []
+  properties: {}

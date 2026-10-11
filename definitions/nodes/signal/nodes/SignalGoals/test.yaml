@@ -1,0 +1,12 @@
+# A goal on a person Signal does not hold is refused before anything is written, so the fixture
+# writes nothing: the answer is ok false, with the reason, and never a record.
+testData:
+  config: {}
+  call:
+    method: open_task
+    params:
+      person_id: nobody-in-particular
+      task: unoverse://tasks/marketplace/nothing
+      state: {}
+  expect:
+    output: "return output.ok === false && typeof output.error === 'string'"

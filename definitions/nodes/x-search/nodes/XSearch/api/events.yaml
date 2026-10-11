@@ -5,7 +5,12 @@
 
 - emit: tweets
   from: response
-  value: "return response.data || []"
+  # Each post carries its author (name, handle, bio, location), found in `includes.users`.
+  value: >-
+    return (response.data || []).map(post => ({
+      ...post,
+      author: ((response.includes || {}).users || []).find(u => u.id === post.author_id) || null
+    }))
 
 - emit: resultCount
   from: response

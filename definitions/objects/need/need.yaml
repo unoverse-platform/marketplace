@@ -14,7 +14,7 @@ meta: open                       # anything else a writer puts in metadata rides
 # THE FACE, as a node's node.yaml carries it: what this is and when an Agent reaches for it.
 title: Need
 description: >-
-  What one person wants, in their own words. The atom: every other object is placed on the
+  What one person wants, or what one page of a document says, in its own words and figures. The atom: every other object is placed on the
   map by the needs it serves. A page speaks to several; each distinct one is its own entry,
   never one entry that summarises the page, and every one is traceable to a statement in the
   content. Granular: one entry for each thing a person could come to this page to get done,
@@ -23,7 +23,7 @@ description: >-
   brings to {{ identity.organisation.name }}, whose purpose is {{ identity.purpose.statement }}:
   write it as the thing that person wants from that organisation, in their words.
 whenToUse: >-
-  I want to get something done. I have a question. What can I do here? What do I need to know?
+  What a page says about a question, figures kept, and what a person wants to get done. I want to get something done. I have a question. What can I do here? What do I need to know?
 category: Objects
 version: 1.0.0
 

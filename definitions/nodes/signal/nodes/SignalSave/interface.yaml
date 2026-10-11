@@ -1,0 +1,27 @@
+inputs:
+  - name: input
+    type: object
+    description: >-
+      The person to save, in save_person's shape: at least one of linkedin, email or user_id, and
+      whatever else was found. The organisation is the run's own.
+    required: false
+
+outputs:
+  - name: saved
+    type: object
+    description: "Whether it was saved and nothing more: ok, created, person_id, or the reason it was not"
+
+credentials: []
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [save_person]
+    description: >-
+      MCP tool for an agent: save_person (find by LinkedIn, email or app account, then update or
+      make). Answers only whether it was saved, never the record.
+    instructions: >-
+      save_person needs at least one of linkedin, email or user_id. Only what you pass is written;
+      each layer passed replaces that layer whole. Never pass a value you were not given or did
+      not find. Whether a person is a prospect or a customer is Signal's to decide.

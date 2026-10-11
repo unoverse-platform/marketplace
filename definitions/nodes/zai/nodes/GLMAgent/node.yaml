@@ -8,10 +8,10 @@ category: AI
 color: "#014f56"
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1782027963/gravity/icons/z.svg
 
-description: Multi-turn GLM-5.2 (Z.AI) agent with MCP tool calling, reasoning, and streaming
+description: Multi-turn GLM-5.3 (Z.AI) agent with MCP tool calling, reasoning, and streaming
 
 whenToUse: >-
-  Run a multi-turn agent on Z.AI's GLM-5.2 that calls tools, reasons, and streams its answer. Pick it
+  Run a multi-turn agent on Z.AI's GLM-5.3 that calls tools, reasons, and streams its answer. Pick it
   specifically when you want the GLM model family — large context, strong coding and agentic
   reasoning. It consumes tools from MCP provider nodes attached via service edges.
 

@@ -6,7 +6,8 @@ configSchema:
       type: string
       title: Task
       description: >-
-        The task on screen, by its URI, such as unoverse://templates/acme/company-profile.
+        The task on screen, by its URI, such as unoverse://tasks/acme/company-profile (a
+        template's own address, unoverse://templates/acme/company-profile, names the same task).
       default: ""
       "ui:field": template
     step:

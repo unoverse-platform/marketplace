@@ -1,0 +1,66 @@
+# SPATIAL RESEARCH, as an agent reads it (docs/unoverse/data/objects/query.md). The instructions
+# are the skill: how to ask, read once at discovery, with this org's schema appended by
+# helpers.researchInstructions. Examples are a neutral world, never an org's words.
+research:
+  instructions: |-
+    You have Spatial Research: the org's data, asked by its schema. Answers are rows: lists,
+    figures, counts, totals and how things connect, each with the pages it rests on.
+
+    WHAT THE DOCUMENTS SAY IS IN THEIR CHUNKS: passages of each document, in its own words, each
+    with its "document", "title" and "pages". Pick the documents that answer by their links and
+    fields, and put "chunks" beside the kind, with the words of ONE part of the question:
+      {"chunks": "<one part of the question>", "<a kind>": {"where": {...}, "fields": ["title"],
+       "<document kind>": {"fields": ["title"], "where": {"<its type field>": "<the type>"}}}}
+    The answer is the rows and beside them "chunks": the nearest passages, by meaning and by
+    words, from inside the documents the query brought back or along, never any other. A
+    document kind's "limit" says how many documents are searched: set it to cover them all. Ask
+    one query for EACH part of the question, all in one turn. Answer from the chunks, across
+    every document they come from, and quote their words with their document and pages: they are
+    the document's own words. There is nothing else to open.
+
+    HOW TO ASK. One query names the kind of thing you want back. Under it:
+    - "fields": the fields to return, exactly these ("page" and "document" too, to cite).
+    - "where": filters. A plain value means equal; otherwise _eq, _neq, _gt, _gte, _lt, _lte,
+      _in, _nin, _ilike (% for any), _is_null, combined with _and, _or, _not. A field with a
+      fixed list takes only one of its words. To start from rows you already have, filter by
+      their id: {"id": "..."} or {"id": {"_in": [...]}}. To match inside a list field, compare
+      the whole field: {"cuisines": {"_ilike": "%Thai%"}}.
+    - a connected kind, by its name, with the same parts: the things connected to each row.
+      The platform finds how they connect. A "where" on a connected kind narrows the rows
+      above it.
+    - "order": {"field": "asc" | "desc" | "newest" | "oldest"}. "limit": 1 to 200, default 20.
+    - "count": ["kind", ...]: how many connected things of each kind, per row.
+    - "sum": ["field"] with "group": ["field"]: totals instead of rows.
+    - "search": "words", beside the kind (not under it): find that kind by meaning first.
+      Only kinds on the map can be searched.
+    - "chunks": "words", beside the kind: what the documents among the rows say about them.
+
+    Examples, in a restaurant world:
+    - What the reviews of York restaurants say about slow service, in their own words:
+      {"chunks": "slow service", "restaurant": {"where": {"city": "York"}, "fields": ["name"],
+       "review": {"fields": ["title"], "limit": 200}}}
+    - Restaurants in York, each with its owner and how many reviews:
+      {"restaurant": {"where": {"city": "York"}, "fields": ["name"],
+       "company": {"fields": ["name"]}, "count": ["review"]}}
+    - Prices of curry, highest first: {"price": {"where": {"dish": "curry"},
+       "order": {"amount": "desc"}, "fields": ["amount", "unit", "page"]}}
+    - Total spend per dish: {"price": {"group": ["dish"], "sum": ["amount"]}}
+
+    A refused query lists what was wrong and what exists: fix it and ask again.
+
+  methods:
+    query:
+      description: >-
+        Ask the data in one query, by the schema in your instructions. Answers are rows: lists,
+        figures, counts, connections.
+      input:
+        type: object
+        required: [query]
+        properties:
+          query:
+            type: object
+            description: >-
+              The whole query: {"search"?: "words", "chunks"?: "words", "<kind>": {"fields": [...], "where": {...},
+              "order": {...}, "limit": n, "count": [...], "sum": [...], "group": [...],
+              "<connected kind>": {...}}}. One kind at the top. Connected kinds by their kind
+              name, never a link name.

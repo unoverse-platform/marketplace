@@ -1,0 +1,97 @@
+{
+  "kind": "node",
+  "name": "BeamEndpoint",
+  "pack": "beam",
+  "fingerprint": "d04b0b35ae052aa8",
+  "title": "Beam Endpoint",
+  "description": "Calls a model the org has deployed on Beam and returns what it answers",
+  "category": "AI",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1791554598/gravity/icons/beam.png",
+  "whenToUse": "Pick when a step needs a model the org hosts itself rather than a vendor's: an open model from Hugging Face for entity extraction, classification, embeddings or anything else, deployed in the org's own Beam workspace. The step sends the model its input as JSON and passes on the model's answer exactly as it came back. The first call after a quiet spell waits while the model wakes; later calls are quick.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Upstream data; the input field reads from it"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "result",
+        "type": "object",
+        "description": "The model's answer, exactly as the deployment returned it"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "beamCredential",
+        "required": true,
+        "displayName": "Beam"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "url",
+        "input"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "Endpoint",
+          "description": "The deployment's address as Beam printed it on deploy, such as https://gliner2-2d45be7-v2.app.beam.cloud.",
+          "default": ""
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "The model the deployment runs, as its page names it (\"NuExtract3\", \"Splink\"). Shown beside the node wherever the step is drawn; the call does not send it.",
+          "default": ""
+        },
+        "input": {
+          "type": "object",
+          "title": "Input",
+          "description": "What the model is sent, as a return expression: the fields its deployment reads, such as { text, labels } for entity extraction.",
+          "default": {},
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "beam",
+      "packageFile": "# BEAM (beam.cloud): a model the org deploys in its own Beam workspace, called as a node. The\n# model runs in Beam's container, which sleeps when idle and is billed by the second; the platform\n# holds only the endpoint's address and the workspace token (owner, 2026-10-09: \"create a node to\n# interact with a beam deployment\", \"I don't want any beam in my project\").\n\nname: beam\ndisplayName: Beam\ndescription: Call a model deployed on Beam (beam.cloud) as a workflow step\nversion: 0.1.0\ncategory: ai\npublisher: unoverse\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1791554598/gravity/icons/beam.png\n\nfeatures:\n  - Any model the org deploys on Beam, called by its endpoint address\n  - Scales to zero between calls; the first call after a sleep waits for the container to start\n\n# Every Beam endpoint is its own subdomain: gliner2-2d45be7-v2.app.beam.cloud.\nallowedHosts:\n  - \"**.app.beam.cloud\"\n\nrequires:\n  credential: [bearer]\n  transport: [json]\n  executorVersion: \">=1.4.0\"\n",
+      "credentials": {
+        "beamCredential.yaml": "# The SHAPE of the credential, never its value: a Beam workspace token, sent as a bearer token to\n# the workspace's endpoints. The value is added on the platform, as every node key is.\n\nname: beamCredential\ndisplayName: Beam\ndescription: The token of the Beam workspace whose endpoints this calls\ndocumentationUrl: https://docs.beam.cloud\n\nproperties:\n  - name: token\n    displayName: Token\n    type: string\n    required: true\n    secret: true\n    description: Your Beam workspace token, from the Beam dashboard\n"
+      },
+      "shared": {}
+    },
+    "dir": "BeamEndpoint",
+    "files": {
+      "api/events.yaml": "# One row per output, in interface.yaml's order. The answer is passed on whole.\n- emit: result\n  value: \"return response\"\n",
+      "api/run.yaml": "- name: call\n  method: POST\n  url: \"return String(config.url || '').trim()\"\n\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.beamCredential.token }}\"\n\n  body: \"return config.input || {}\"\n\n  # A sleeping deployment starts its container and loads its model before it answers: measured\n  # 37 s for a 194M-parameter model on its first call ever, about 1 s once warm.\n  timeoutMs: 300000\n\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 502, 503, 504]\n\n  transport: json\n\n  # A deployment that answers 200 with an error in its body has failed.\n  error:\n    when: \"return !!(response && response.error)\"\n    message: \"return String(response.error)\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [url, input]\n\n  properties:\n    url:\n      type: string\n      title: Endpoint\n      description: >-\n        The deployment's address as Beam printed it on deploy, such as\n        https://gliner2-2d45be7-v2.app.beam.cloud.\n      default: \"\"\n\n    model:\n      type: string\n      title: Model\n      description: >-\n        The model the deployment runs, as its page names it (\"NuExtract3\", \"Splink\"). Shown beside\n        the node wherever the step is drawn; the call does not send it.\n      default: \"\"\n\n    input:\n      type: object\n      title: Input\n      description: >-\n        What the model is sent, as a return expression: the fields its deployment reads, such as\n        { text, labels } for entity extraction.\n      default: {}\n      ui:field: template\nui:order: [url, model, input]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Upstream data; the input field reads from it\n\noutputs:\n  - name: result\n    type: object\n    description: The model's answer, exactly as the deployment returned it\n\ncredentials:\n  - name: beamCredential\n    required: true\n    displayName: Beam\n",
+      "node.yaml": "type: BeamEndpoint\nkind: PromiseNode\n\nname: Beam Endpoint\ncategory: AI\ncolor: \"#5B5BD6\"\n\ndescription: Calls a model the org has deployed on Beam and returns what it answers\n\nwhenToUse: >-\n  Pick when a step needs a model the org hosts itself rather than a vendor's: an open model from\n  Hugging Face for entity extraction, classification, embeddings or anything else, deployed in\n  the org's own Beam workspace. The step sends the model its input as JSON and passes on the\n  model's answer exactly as it came back. The first call after a quiet spell waits while the\n  model wakes; later calls are quick.\n\nauth:\n  required: false\n\ncapabilities:\n  # A model call: its answer may differ run to run, and the deployment may change under it.\n  cacheable: false\n",
+      "test.yaml": "testData:\n  config:\n    url: https://gliner2-2d45be7-v2.app.beam.cloud\n    input:\n      text: \"Class B Shares, Management Fee Rate = Until 31 December 2026, 1.25%.\"\n      labels: [share class, management fee rate]\n\n  inputs:\n    signal: {}\n\n  expect:\n    # Proves the deployment answered with entities under the labels asked, not their exact words.\n    result: \"return !!output.result.entities && Array.isArray(output.result.entities['share class'])\"\n"
+    }
+  }
+}

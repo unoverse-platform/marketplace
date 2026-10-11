@@ -7,9 +7,10 @@ meta: open
 
 # A PICTURE A DOCUMENT HOLDS (owner, 2026-09-14: "when we extract images inside a document, we
 # should call it something else"): a chart, a diagram, a photograph or a screenshot taken from a
-# document, made as a part of it (`partsOf`), off the map like a table. Walked to from its
-# document and never searched: it declares no `embed`. A picture the business publishes is an
-# `image`, on the map.
+# document, made as a part of it (`partsOf`). NOT IN SPATIAL (owner, 2026-10-08, page-store.md):
+# no `embed`. It is `on` its page, and the read of that page names it. A picture the business
+# publishes is an `image`.
+search: [universal_id, object_type, title, description, source_url, source_id]
 
 title: Figure
 description: >-

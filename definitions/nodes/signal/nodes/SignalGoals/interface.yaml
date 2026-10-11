@@ -1,0 +1,17 @@
+# A PURE SERVICE NODE, as Spatial Search: no inputs, no outputs. An Agent calls its tools.
+inputs: []
+outputs: []
+
+credentials: []
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [find_tasks, open_task, save_task, finish_task]
+    description: >-
+      MCP tools for an agent: a person's goals, find_tasks, open_task, save_task and finish_task.
+      Never a person's record.
+    instructions: >-
+      A goal is what we want with one person next. save_task replaces what the goal held, so send
+      all of it; finish_task closes it for good.

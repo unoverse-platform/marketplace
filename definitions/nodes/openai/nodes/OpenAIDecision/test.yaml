@@ -1,0 +1,35 @@
+testData:
+  config:
+    model: gpt-6-luna
+    content: I was charged twice for my order last week and need one of the payments refunded.
+    questions:
+      - type: predicate
+        name: wants_refund
+        instructions: The customer is asking for money back.
+      - type: choice
+        name: department
+        instructions: Which team should handle this message?
+        choices:
+          - value: billing
+            description: Payments, charges and refunds
+          - value: technical
+            description: Faults in the product
+      - type: score
+        name: urgency
+        instructions: How urgent is the customer's problem?
+        levels:
+          - label: Low
+            description: Can wait days
+          - label: High
+            description: Needs action today
+
+  inputs:
+    signal: {}
+
+  expect:
+    # Proves every question came back under its own name with its own shape.
+    answers: >-
+      return output.answers.wants_refund.probability > 0.5
+        && output.answers.department.choice === 'billing'
+        && typeof output.answers.urgency.score === 'number'
+    usage: "return output.usage.total_tokens > 0"

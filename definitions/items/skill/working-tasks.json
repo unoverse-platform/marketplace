@@ -1,0 +1,26 @@
+{
+  "kind": "skill",
+  "name": "working-tasks",
+  "installed": false,
+  "fingerprint": "05fd5f57baa730b5",
+  "title": "Working Tasks",
+  "description": "How an Agent researches with tasks as its tools, anchoring on the subject, then judging and following leads.",
+  "category": "ai",
+  "whenToUse": "Find out about something by calling several tasks, such as searches and readers, judging what they return and searching again. For research that needs many small calls and a few rounds, not a single lookup.",
+  "definition": {
+    "name": "working-tasks",
+    "title": "Working Tasks",
+    "description": "How an Agent researches with tasks as its tools, anchoring on the subject, then judging and following leads.",
+    "whenToUse": "Find out about something by calling several tasks, such as searches and readers, judging what they return and searching again. For research that needs many small calls and a few rounds, not a single lookup.",
+    "version": "1.1.0",
+    "category": "ai",
+    "triggers": [
+      "research",
+      "find out about",
+      "look into",
+      "investigate"
+    ],
+    "instructions": "# Working Tasks\n\nYour tools are tasks. Each does one job: a search, a read, a check. None of them decides\nwhat to do next. You do. Work like a researcher, not like a script: never run a plan fixed\nup front.\n\n## The loop\n\n1. **Anchor.** First pin down exactly what you are researching: the one source that proves\n   it is the right subject, not a namesake (an official profile, the company's own site).\n   Until it is pinned, keep searches few and aimed at finding that source.\n2. **Wide.** Once anchored, go broad with what the anchor told you, side by side: every\n   source that could hold the answer (web, news, images, video), with the confirmed facts in\n   each query. A search made before the anchor is run again with what you now know.\n3. **Look.** Read what came back before calling anything else. Note what is new, what is\n   noise, and what is a lead: a name, a handle, a link, a picture, a domain, a date, a place.\n4. **Tight.** Follow each lead with calls aimed at it. Everything that does not depend on\n   another call goes in the same reply.\n5. **Again.** A thin result is rewritten and tried once more: other words, another source,\n   a narrower or wider query. A result full of the wrong things is narrowed. A new lead\n   opens new calls. Repeat look, tight, again.\n6. **Stop** when every part of the question is answered, or you can name what you looked\n   for and did not find.\n\n## Side by side\n\nEvery call that does not need another call's answer goes in **one reply, all together**.\nFive searches are five calls in one reply, never five replies. They run at the same time,\nso the step takes as long as the slowest call.\n\n## Judge before you use\n\n- A task hands back what it found, raw. It is your job to decide what is relevant.\n- When a result could be about someone or something else with the same name, check it\n  before you rely on it, with the check task when there is one.\n- Prefer what was found two ways (two searches, a search and a picture) over what was\n  found once.\n- A task that says \"found nothing\" has told you something. Change the input and try once\n  more, or move on and say so.\n\n## Do and don't\n\n- Do say what you are doing, one short line per round.\n- Do keep exact words, figures and dates exactly as a task gave them.\n- Don't call the same task with the same input twice.\n- Don't stop at the first answer when the question has several parts.\n- Don't invent what no task returned.",
+    "contentHash": "25ce6e960a8f53b60b7513d54e405702fd4c28f12f61a346e9ac1af78a601fda"
+  }
+}

@@ -1,0 +1,20 @@
+# ONE INPUT, `signal`: the records are templated from it into config, so this node fires once
+# with everything it needs.
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the records are templated from it
+    required: false
+
+outputs:
+  - name: success
+    type: boolean
+    description: Whether the save completed
+  - name: count
+    type: number
+    description: How many records were taken all the way through to the map
+  - name: jobId
+    type: string
+    description: The save's job, to follow its run
+
+credentials: []

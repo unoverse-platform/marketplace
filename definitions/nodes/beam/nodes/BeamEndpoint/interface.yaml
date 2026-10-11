@@ -1,0 +1,14 @@
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the input field reads from it
+
+outputs:
+  - name: result
+    type: object
+    description: The model's answer, exactly as the deployment returned it
+
+credentials:
+  - name: beamCredential
+    required: true
+    displayName: Beam

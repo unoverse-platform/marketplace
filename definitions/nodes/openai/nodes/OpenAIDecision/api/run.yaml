@@ -1,0 +1,36 @@
+- name: decide
+  method: POST
+  url: { $ref: endpoints#decisions }
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  # An EXPRESSION body, because `input` changes SHAPE with the content, as in
+  # OpenAIStructuredOutput: text goes straight through, a picture becomes a user message
+  # with an input_image part, anything else is stringified. The questions are passed as
+  # they were written, so every question type the service adds works without an edit here.
+  body: >-
+    return {
+      model: config.model,
+      input: typeof config.content === 'string'
+        ? config.content
+        : (config.content && config.content.type === 'image' && config.content.imageUrl
+            ? [{ role: 'user', content: [{ type: 'input_image', image_url: config.content.imageUrl }] }]
+            : JSON.stringify(config.content)),
+      questions: config.questions
+    }
+
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504, 520, 522, 524]
+
+  transport: json
+
+  # A 200 carrying an error body must not read as success.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message"

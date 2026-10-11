@@ -1,0 +1,22 @@
+type: BeamEndpoint
+kind: PromiseNode
+
+name: Beam Endpoint
+category: AI
+color: "#5B5BD6"
+
+description: Calls a model the org has deployed on Beam and returns what it answers
+
+whenToUse: >-
+  Pick when a step needs a model the org hosts itself rather than a vendor's: an open model from
+  Hugging Face for entity extraction, classification, embeddings or anything else, deployed in
+  the org's own Beam workspace. The step sends the model its input as JSON and passes on the
+  model's answer exactly as it came back. The first call after a quiet spell waits while the
+  model wakes; later calls are quick.
+
+auth:
+  required: false
+
+capabilities:
+  # A model call: its answer may differ run to run, and the deployment may change under it.
+  cacheable: false

@@ -1,0 +1,15 @@
+# The WORKFLOW channel: save the person on the input, as the attached Agent's save_person does
+# (service.yaml), so a workflow can record what a search found with no Agent in between. Skipped
+# when the input names no way to recognise the person; the events row says so.
+- name: save
+  when: >-
+    return !!((signal.input || {}).linkedin || (signal.input || {}).email || (signal.input || {}).user_id)
+  method: POST
+  url: "return scope.engineUrl + '/people/add'"
+  okOn: [400, 409]
+  body: "return Object.assign({}, signal.input || {}, { org: scope.org })"
+  transport: json
+  timeoutMs: 30000
+  error:
+    when: "return !!response.error"
+    message: "return String(response.error)"

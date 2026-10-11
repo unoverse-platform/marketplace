@@ -12,10 +12,16 @@
       return typeof signal.query === 'string' && signal.query.trim()
         ? signal.query.trim()
         : config.query
-    # Clamped to the vendor's 1..100 rather than trusted: a saved workflow can hold
+    # Clamped to the vendor's 10..100 rather than trusted: a saved workflow can hold
     # anything, and X rejects the request rather than clamping it for you.
-    max_results: "return String(Math.min(Math.max(config.maxResults || 10, 1), 100))"
-    tweet.fields: "return config.tweetFields || 'created_at,public_metrics,author_id'"
+    max_results: "return String(Math.min(Math.max(config.maxResults || 10, 10), 100))"
+    # `post.fields`, the vendor's name since it renamed tweets to posts (docs.x.com,
+    # search-recent-posts, checked 2026-10-10).
+    post.fields: "return config.postFields || 'created_at,public_metrics,author_id,lang'"
+    # WHO WROTE IT. Without the expansion a post names its author only by id; with it the
+    # authors come back once each in `includes.users`, and events.yaml puts each on its posts.
+    expansions: author_id
+    user.fields: name,username,description,location,url,verified,public_metrics
   transport: json
   retry:
     attempts: 3

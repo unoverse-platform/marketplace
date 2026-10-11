@@ -18,9 +18,12 @@
   name: images
   when: "return config.searchImages === true && config.numImages > 0"
   error: { $ref: searchapi#error }
+  # Same country and language as the web call, and NO size filter: `size: large` dropped every
+  # headshot, profile and press picture, which is most of what a search for a person is for.
   query:
     engine: google_images
     q: "{{ config.query }}"
     num: "{{ config.numImages }}"
+    gl: "{{ config.country }}"
+    hl: "{{ config.language }}"
     safe: "return config.safeSearch === 'off' ? 'off' : 'active'"
-    size: large

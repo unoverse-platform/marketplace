@@ -15,9 +15,10 @@ configSchema:
       type: string
       title: The task
       description: >-
-        The task's ID or URI. A URI, as in unoverse://templates/unoverse/introduction, loads
-        that task and starts it from its first step. Anything else is the id of a task already
-        started, read from the task table. Leave blank to use the task the request carries.
+        The task's ID or URI. A URI, as in unoverse://tasks/unoverse/introduction (a template's
+        own address names the same task), loads that task: a screen task starts from its first
+        step, a workflow task is run. Anything else is the id of a task already started, read
+        from the task table. Leave blank to use the task the request carries.
       default: ""
       ui:field: template
 

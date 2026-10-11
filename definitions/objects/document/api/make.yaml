@@ -4,7 +4,7 @@
 # document service (docs/unoverse/data/documents/README.md), read what needs a second look with a
 # vision model, and SAVE the reading beside the file, in its own folder under `_parsed/`. The
 # parse says what to save by name; this says where. The one model call that names the document
-# reads its first two pages and its outline, never its whole text.
+# reads its first two pages and the names of its parts, never its whole text.
 
 description: Get the file, parse it, read its pictures, save the reading beside it.
 calls:
@@ -174,27 +174,15 @@ returns:
   title: >-
     return String(row.content.title || String(row.content.key || '').split('/').at(-1))
       .split('.').filter((p, i, a) => i === 0 || a.slice(i).some(q => !['pdf', 'docx', 'pptx', 'xlsx', 'xlsm', 'md', 'txt', 'doc', 'ppt', 'xls', 'csv'].includes(q.toLowerCase()))).join('.')
-  # THE TEXT THE MODEL READS (owner, 2026-09-14: "take the first two pages"): the first two
-  # pages, then every heading with its first words, then the parts by id. The one model call
-  # names the document, its sections (sectionNames) and its parts (partNames) from it.
+  # THE TEXT THE MODEL READS (owner, 2026-09-14: "take the first two pages"): the first two pages,
+  # to say what the document is. It names no parts (page-store.md, 2026-10-08): each table and
+  # picture is named by the read of its own page. Every page is read afterwards, one by one.
+  # ONE PAGE WAS TRIED (2026-10-09, UNO-194) AND WAS WORSE: a quarterly review's first page is its
+  # cover, and both were read as IR presentations. Two pages stay.
   text: >-
     return '# ' + String(row.content.title || String(row.content.key || '').split('/').at(-1)) + '\n\n'
       + String(calls.parse.firstPages || '')
-      + (String(calls.parse.firstPages || '').length < String(calls.parse.text || '').length ? '\n\n(The first two pages. The rest of the document is in its sections, headed below.)' : '')
-      + (() => {
-        const o = calls.parse.outline || [];
-        return o.length > 1 ? '\n\n# Headings of this document\n\n' + o.map(x => '- ' + x.id + ' (page ' + (x.page || '') + '): ' + x.title + (x.firstWords ? ' | ' + x.firstWords : '')).join('\n') : '';
-      })()
-      + (() => {
-        const p = calls.parse.parts || {};
-        const tables = (p.tables || []).map(t => {
-          const cols = (t.columns || []).filter(c => c).slice(0, 10).join(' | ');
-          return '- ' + t.partId + ' (table, page ' + (t.page == null ? '' : t.page) + ')' + (t.caption ? ': ' + t.caption : '') + (cols ? '. Columns: ' + cols : '') + (t.firstRows ? '. First rows: ' + t.firstRows : '');
-        });
-        const figures = (p.figures || []).map(f => '- ' + f.partId + ' (' + f.kind + ', page ' + (f.page == null ? '' : f.page) + ')' + (f.caption ? ': ' + f.caption : ''));
-        const all = tables.concat(figures).slice(0, 30);
-        return all.length ? '\n\n# Parts of this document\n\n' + all.join('\n') : '';
-      })()
+      + (String(calls.parse.firstPages || '').length < String(calls.parse.text || '').length ? '\n\n(The first two pages. Every page is read afterwards.)' : '')
   # WHAT THE DOCUMENT STATED ABOUT ITSELF, where it was read from a known place before this ran
   # (docs/unoverse/data/documents/arriving.md). Carried on the item by whoever collected it, and
   # passed through untouched: no model has seen these, and none should. Empty where nothing read
@@ -223,6 +211,14 @@ returns:
     return (((((calls.values || {}).documents || [])[0] || {}).coverage || {}).elsewhere || [])
       .reduce((n, u) => n + Number(u.saying || 0), 0)
   pages: "{{ calls.parse.document.pages }}"
+  # ITS CHUNKS (page-store.md, "Chunks find, the schema narrows"): the parser's own, handed on as
+  # they are, for the engine to save in the page store at the save. Never a field of the row.
+  chunks: >-
+    return (() => {
+      const f = (calls.parse.files || []).find(x => x && x.name === 'chunks.json');
+      const t = String((f && f.text) || '').trim();
+      return t.indexOf('[') === 0 ? JSON.parse(t) : [];
+    })()
   bucket: "{{ row.content.bucket }}"
   key: "{{ row.content.key }}"
   parsedKey: "return String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1), 'text.md']).join('/')"

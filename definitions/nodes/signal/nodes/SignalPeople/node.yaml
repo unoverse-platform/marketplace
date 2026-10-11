@@ -1,0 +1,21 @@
+type: SignalPeople
+kind: PromiseNode
+name: Signal People
+category: Storage & Data
+color: "#334155"
+template: service
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+description: Save and find the people the organisation engages, prospects and customers, in Signal.
+whenToUse: >
+  Pick to keep a record of a person the organisation is engaging: save what was found about them,
+  find a person already held, or list the organisation's prospects and customers. Signal finds a
+  person again by their LinkedIn, email or app account, so saving twice updates rather than
+  duplicates. Attach it via a service edge to an agent node, or wire it in sequence to list
+  everyone Signal holds with no agent, such as to fill a page.
+
+auth:
+  required: true
+  role: signal:read-all
+
+capabilities:
+  cacheable: false

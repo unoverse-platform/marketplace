@@ -1,0 +1,24 @@
+# One call. `all` returns both lists, exact copies and look-alikes, in one reply.
+#
+# NO PICTURE, NO CALL: an empty link skips the search and the node answers no matches,
+# rather than failing the run it sits in (the vendor refuses a search with no url).
+#
+# A PICTURE LENS CANNOT LOAD IS AN ANSWER, not a failure: an expired or mistyped link, or a host
+# that refuses Google, comes back as a 400 "could not load the image". The caller tries another
+# picture, so the node answers no matches and says why in `note`, and the run goes on.
+
+- $ref: searchapi#call
+  name: lens
+  when: "return String(config.imageUrl || '').trim().length > 0"
+  okOn: [400]
+  error:
+    when: >-
+      return !!response.error && !String(response.error).includes("didn't return any results")
+        && !String(response.error).includes("could not load the image")
+    message: "return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)"
+  query:
+    engine: google_lens
+    url: "{{ config.imageUrl }}"
+    search_type: all
+    country: "return String(config.country || 'us').toUpperCase()"
+    hl: "{{ config.language }}"

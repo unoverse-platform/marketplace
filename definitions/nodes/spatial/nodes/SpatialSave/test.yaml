@@ -1,0 +1,15 @@
+# THIS FIXTURE NEEDS THE PLATFORM RUNNING, and it WRITES: the records become rows of the named
+# pipeline's object in the org the bench runs as. Run it only against a database you mean to fill.
+testData:
+  config:
+    pipeline: opportunities
+    inputs:
+      stories:
+        - url: https://www.example.com/opportunity-fixture
+          title: Fixture opportunity for the Spatial Save bench
+          kind: other
+  inputs:
+    signal: {}
+  expect:
+    success: "return output.success === true"
+    count: "return output.count > 0"

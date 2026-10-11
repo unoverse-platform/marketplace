@@ -109,3 +109,22 @@ save_draft:
         when: "return !!response.error"
         message: "return response.error"
   returns: "return { ok: true, id: response.id, threadId: response.threadId, state: response.state }"
+
+# THE MAILBOX'S CALENDAR (docs/architecture/signal/AGENTS.md § 5): the same grant reads its events
+# (calendar.events on Gmail, Calendars.ReadWrite on Outlook). Read only; nothing is booked here.
+list_events:
+  description: >-
+    The calendar's events starting between two times, earliest first, each with its title,
+    description, start, end and who made it.
+  calls:
+    - name: events
+      method: GET
+      url: "return scope.engineUrl + '/mail/inboxes/' + encodeURIComponent(String(credentials.mailboxCredential.address || '').trim().toLowerCase()) + '/events'"
+      transport: json
+      query:
+        from: "{{ params.from }}"
+        to: "{{ params.to }}"
+      error:
+        when: "return !!response.error"
+        message: "return response.error"
+  returns: "return { ok: true, events: response.events || [] }"

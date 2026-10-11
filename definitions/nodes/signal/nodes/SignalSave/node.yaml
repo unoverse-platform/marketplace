@@ -1,0 +1,24 @@
+type: SignalSave
+kind: PromiseNode
+name: Signal Save
+category: Storage & Data
+color: "#334155"
+template: service
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+description: Save the people the organisation engages to Signal, without reading anyone back.
+whenToUse: >
+  Pick to record a person the organisation is engaging, prospects and customers, when the caller
+  may add people but must not read Signal: an Agent that finds leads, a workflow that saves what a
+  search found. Signal finds a person again by their LinkedIn, email or app account, so saving
+  twice updates rather than duplicates. The answer is only whether it was saved, never the record.
+  To find or list people, Signal People.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13; docs/architecture/signal/AGENTS.md § 7a). Adding
+# a person is `signal:write`, apart from reading everyone (`signal:read-all`, Signal People), so a
+# caller that finds leads never needs to read every contact and user to save one.
+auth:
+  required: true
+  role: signal:write
+
+capabilities:
+  cacheable: false

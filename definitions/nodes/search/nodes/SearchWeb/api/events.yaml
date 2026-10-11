@@ -10,20 +10,30 @@
       title: r.title || "",
       url: r.link || "",
       source: r.source || "",
-      snippet: r.snippet || ""
+      snippet: r.snippet || "",
+      thumbnail: (r.thumbnail || "").startsWith("data:") ? "" : r.thumbnail || ""
     }))
 
 - emit: imageResults
   from: response
+  # Google's own image pack from the web call comes FIRST (`inline_images`, the pictures shown at the
+  # top of a web search, same item shape as the image engine's), then the image pass, one row per
+  # picture. The pack costs no extra call, so it is returned even when the image pass is off.
+  #
   # A `data:` thumbnail is dropped, matching SearchNews. Measured clean on this engine today (0 of
   # 100 results base64), so this guards a REGRESSION rather than fixing a live fault: it means an
   # engine swap cannot put inline base64 onto the wire the way `google_news` did. Dropped rather than
   # truncated — a cut-off data URI is a corrupt image a renderer still tries to display.
   value: >-
-    return (((calls.images || {}).images) || []).slice(0, config.numImages).map(i => ({
-      url: (i.original || {}).link || i.link || "",
-      title: i.title || "",
-      thumbnail: (i.thumbnail || "").startsWith("data:") ? "" : i.thumbnail || "",
-      source_url: (i.source || {}).link || "",
-      source_name: (i.source || {}).name || ""
-    }))
+    return (() => {
+      const pack = (((calls.web || {}).inline_images || {}).images) || [];
+      const pass = (((calls.images || {}).images) || []).slice(0, config.numImages);
+      const rows = pack.concat(pass).map(i => ({
+        url: (i.original || {}).link || i.link || "",
+        title: i.title || "",
+        thumbnail: (i.thumbnail || "").startsWith("data:") ? "" : i.thumbnail || "",
+        source_url: (i.source || {}).link || "",
+        source_name: (i.source || {}).name || ""
+      }));
+      return rows.filter((r, n) => !!r.url && rows.findIndex(x => x.url === r.url) === n);
+    })()

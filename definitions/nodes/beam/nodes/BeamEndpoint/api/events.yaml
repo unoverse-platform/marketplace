@@ -1,0 +1,3 @@
+# One row per output, in interface.yaml's order. The answer is passed on whole.
+- emit: result
+  value: "return response"

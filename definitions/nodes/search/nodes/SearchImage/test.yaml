@@ -1,0 +1,10 @@
+testData:
+  config:
+    imageUrl: https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg
+    numResults: 10
+    country: us
+    language: en
+  inputs:
+    signal: {}
+  expect:
+    matches: "return output.matches.length > 0 && typeof output.matches[0].url === 'string'"

@@ -22,6 +22,14 @@ configSchema:
       description: Comma-separated two-letter country codes, e.g. 'GB, US'
       default: ""
       "ui:field": template
+    city:
+      type: string
+      title: City
+      description: >-
+        One headquarters city, e.g. 'Dubai'. Hunter needs its country, so it is matched with the
+        first country above.
+      default: ""
+      "ui:field": template
     headcount:
       type: string
       title: Headcount
@@ -46,6 +54,11 @@ configSchema:
       description: Comma-separated types, e.g. 'privately held, public company'
       default: ""
       "ui:field": template
+    hiring:
+      type: boolean
+      title: Hiring Now
+      description: Only companies with open job postings now
+      default: false
     similarTo:
       type: string
       title: Similar To
@@ -64,4 +77,4 @@ configSchema:
       default: 0
       minimum: 0
 "ui:order":
-  [query, industry, country, headcount, technology, keywords, companyType, similarTo, limit, offset]
+  [query, industry, country, city, headcount, technology, keywords, companyType, hiring, similarTo, limit, offset]

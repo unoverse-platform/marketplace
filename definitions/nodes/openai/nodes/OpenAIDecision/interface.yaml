@@ -1,0 +1,23 @@
+# ONE INPUT (docs/nodes/signal-routing.md, "Two inputs never arrive together"). The content
+# and the questions are config fields resolved from the same upstream data.
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the content and questions fields read from it
+
+outputs:
+  - name: answers
+    type: object
+    description: >-
+      One answer per question, keyed by the question's name, exactly as the service gave it:
+      probability for a predicate; choice, probabilities and confidence for a choice; score,
+      probabilities and confidence for a score; type refusal when the model declined
+
+  - name: usage
+    type: object
+    description: Token usage information
+
+credentials:
+  - name: openAICredential
+    required: true
+    displayName: OpenAI API

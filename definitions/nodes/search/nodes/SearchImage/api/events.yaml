@@ -1,0 +1,26 @@
+# One row per output connector, in interface.yaml order.
+#
+# EXACT COPIES FIRST. A page showing the very same picture is far stronger evidence than one
+# showing a picture that looks like it, so the two lists are kept apart by `exact` rather than
+# merged into one undifferentiated ranking. A `data:` thumbnail is dropped, as in SearchWeb.
+# Reads `calls.lens`, because a skipped search leaves no key and the list is then empty.
+
+- emit: matches
+  from: response
+  value: >-
+    return [].concat(
+      ((calls.lens || {}).exact_matches || []).map(m => ({ m: m, exact: true })),
+      ((calls.lens || {}).visual_matches || []).map(m => ({ m: m, exact: false }))
+    ).slice(0, config.numResults || 20).map(x => ({
+      title: x.m.title || "",
+      url: x.m.link || "",
+      source: x.m.source || "",
+      thumbnail: (x.m.thumbnail || "").startsWith("data:") ? "" : x.m.thumbnail || "",
+      exact: x.exact
+    }))
+
+- emit: note
+  from: response
+  # Why there are no matches when the vendor said why: "could not load the image" (try another
+  # picture) or "didn't return any results". Empty when the search ran and found pages.
+  value: "return String((calls.lens || {}).error || '')"

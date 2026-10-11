@@ -2,7 +2,7 @@
   "kind": "node",
   "name": "HunterEmailVerifier",
   "pack": "gtm",
-  "fingerprint": "7701c8ac7a695d91",
+  "fingerprint": "cefe61f88303b468",
   "title": "Hunter Email Verifier",
   "description": "Check whether one email address is real and deliverable",
   "category": "Go To Market",
@@ -90,7 +90,7 @@
   "definition": {
     "package": {
       "name": "gtm",
-      "packageFile": "# Two vendors, one package: Apollo.io for company and people data, Hunter.io for email.\n# One credential each, one base URL each, no SDKs.\n#\n# The retired TypeScript is at `_legacy/nodes/gtm/`.\n\nname: gtm\ndisplayName: Go To Market\ndescription: Company and people discovery, enrichment and email verification\nversion: 2.0.0\ncategory: productivity\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg\n\nfeatures:\n  - Apollo company and people search, with filters\n  - Apollo company and people enrichment\n  - Hunter email discovery, finding and verification\n\nallowedHosts:\n  - api.apollo.io\n  - api.hunter.io\n\nrequires:\n  credential: [apiKeyHeader, apiKeyQuery]\n  transport: [json]\n  paginate: [page]\n  executorVersion: \">=1.4.0\"\n",
+      "packageFile": "# Two vendors, one package: Apollo.io for company and people data, Hunter.io for email.\n# One credential each, one base URL each, no SDKs.\n#\n# The retired TypeScript is at `_legacy/nodes/gtm/`.\n\nname: gtm\ndisplayName: Go To Market\ndescription: Company and people discovery, enrichment and email verification\nversion: 2.1.0\ncategory: productivity\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1775374180/gravity/icons/apollo.jpg\n\nfeatures:\n  - Apollo company and people search, with filters\n  - Apollo company and people enrichment\n  - Hunter email discovery, finding and verification\n\nallowedHosts:\n  - api.apollo.io\n  - api.hunter.io\n\nrequires:\n  credential: [apiKeyHeader, apiKeyQuery]\n  transport: [json]\n  paginate: [page]\n  executorVersion: \">=1.4.0\"\n",
       "credentials": {
         "apolloCredential.yaml": "name: apolloCredential\ndisplayName: Apollo.io\ndescription: Apollo.io master API key for people and organisation search\ndocumentationUrl: https://docs.apollo.io/docs/create-api-key\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your Apollo.io master API key, required for the search endpoints\n    placeholder: \"\"\n",
         "hunterCredential.yaml": "name: hunterCredential\ndisplayName: Hunter.io\ndescription: Hunter.io API key for email discovery, verification and enrichment\ndocumentationUrl: https://hunter.io/api-documentation/v2\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your Hunter.io API key, found under API in your Hunter dashboard\n    placeholder: \"\"\n"

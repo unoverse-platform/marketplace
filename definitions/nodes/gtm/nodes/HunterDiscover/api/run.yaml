@@ -31,10 +31,15 @@
             String(config.headcount || '').split(',').map(s => s.trim()).filter(Boolean).length
               ? [['headcount', String(config.headcount).split(',').map(s => s.trim()).filter(Boolean)]]
               : [],
-            String(config.country || '').split(',').map(s => s.trim()).filter(Boolean).length
-              ? [['headquarters_location', { include: String(config.country).split(',')
-                  .map(s => s.trim()).filter(Boolean).map(c => ({ country: c.toUpperCase() })) }]]
-              : [],
+            // A city is matched with the first country: Hunter takes a city only beside its country.
+            String(config.city || '').trim() && String(config.country || '').trim()
+              ? [['headquarters_location', { include: [{ city: String(config.city).trim(),
+                  country: String(config.country).split(',')[0].trim().toUpperCase() }] }]]
+              : String(config.country || '').split(',').map(s => s.trim()).filter(Boolean).length
+                ? [['headquarters_location', { include: String(config.country).split(',')
+                    .map(s => s.trim()).filter(Boolean).map(c => ({ country: c.toUpperCase() })) }]]
+                : [],
+            config.hiring === true ? [['job_openings', { hiring: true }]] : [],
             String(config.similarTo || '').trim()
               ? [['similar_to', String(config.similarTo).trim()]]
               : []

@@ -35,11 +35,11 @@
 # it: an Agent task's result as the run gave it, or every answer a walked task finished with.
 - emit: result
   when: >-
-    return !!helpers.agentTool(config.task, signal.signal, signal.collected)
+    return !!helpers.agentTool(config.task, signal.signal, signal.collected, calls.definition)
       || helpers.nextStep(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),
       helpers.submittedOver(helpers.submitOf(signal.signal), helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal), helpers.merged(helpers.baseState(helpers.heldState(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, calls.saved), helpers.clearing(signal.collected, config.startAgain)), helpers.answersOf(signal.collected)))) === null
   value: >-
-    return helpers.agentTool(config.task, signal.signal, signal.collected)
+    return helpers.agentTool(config.task, signal.signal, signal.collected, calls.definition)
       ? (((calls.execute || {}).result || {}).structuredContent
           || { text: ((((calls.execute || {}).result || {}).content || [])[0] || {}).text || '' })
       : helpers.finishedWith(helpers.givenTask(helpers.loadMode(config.task, signal.signal, signal.collected), calls.definition, signal.signal),

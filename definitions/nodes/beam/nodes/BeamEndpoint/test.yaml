@@ -1,0 +1,13 @@
+testData:
+  config:
+    url: https://gliner2-2d45be7-v2.app.beam.cloud
+    input:
+      text: "Class B Shares, Management Fee Rate = Until 31 December 2026, 1.25%."
+      labels: [share class, management fee rate]
+
+  inputs:
+    signal: {}
+
+  expect:
+    # Proves the deployment answered with entities under the labels asked, not their exact words.
+    result: "return !!output.result.entities && Array.isArray(output.result.entities['share class'])"

@@ -71,6 +71,8 @@
       workflowId: "{{ scope.workflowId }}"
       # The org the rows belong to (docs/unoverse/UNOVERSE_SPATIAL_ORG.md).
       org: "{{ scope.org }}"
+      # The run that asked: what the job's models cost is its owner's (engine door/jobs.ts).
+      executionId: "{{ scope.executionId }}"
     maxItems: "return config.maxItems || undefined"
 
   timeoutMs: 60000

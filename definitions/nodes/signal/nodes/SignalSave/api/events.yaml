@@ -1,0 +1,7 @@
+# One row per output connector, in interface.yaml order. Only whether it was saved: the record the
+# save returns never leaves this node.
+- emit: saved
+  value: >-
+    return response && response.ok && response.person_id
+      ? { ok: true, created: !!response.created, person_id: response.person_id }
+      : { ok: false, error: (response && response.error) || 'NOTHING_TO_SAVE: the input names no linkedin, email or user_id' }

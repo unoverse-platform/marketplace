@@ -1,0 +1,26 @@
+unoverse: "1.0"
+type: object
+name: page
+element: content
+icon: file-text
+meta: open
+
+# ONE PAGE OF A DOCUMENT (docs/unoverse/data/objects/page-store.md). NOT IN SPATIAL (owner,
+# 2026-10-08): no `embed`. A page is reached from the needs read from it (`readFrom`), and every
+# page with content gives at least one need. Its words are kept ONCE, in the page store, with a
+# word index; this row holds where it is (its document, by `partOf`, and its page number), never a
+# copy. Written by the page store when a document is read, never by a model. The words are read
+# with the document's getDetail and `pages`.
+search: [universal_id, object_type, title, description, source_url, source_id]
+
+title: Page
+description: >-
+  One page of a document: where it is, and what it is about by its own headings. Its words are
+  read from the document, by page.
+whenToUse: >-
+  Find the page of a document that holds the words a question needs, when no need was read
+  from that page. Read it with its document's getDetail and its page number.
+category: Objects
+version: 1.0.0
+
+props: { $include: props }

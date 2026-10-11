@@ -70,7 +70,11 @@ request:
       {{#if (eq event.kind "turnStart")}}
       For topical context only (do NOT quote or reference it), the message from the customer was: """{{event.userMessage}}""". Write the status line the assistant shows while preparing its reply.
       {{else}}
+      {{#if (eq event.kind "taskStatus")}}
+      Longer work the assistant started with an internal capability named "{{event.toolName}}"{{#if event.args}} (input {{toJSON event.args}}){{/if}} is still running, and has just moved on to: """{{event.status}}""". Write one short line saying how that work is going, in plain words (never name the capability or a step's internal name).
+      {{else}}
       The assistant is now looking something up for the customer using an internal capability named "{{event.toolName}}"{{#if event.args}} with input {{toJSON event.args}}{{/if}}. Write the thinking line describing what is being checked or done (never name the capability).
+      {{/if}}
       {{/if}}
     text:
       format:

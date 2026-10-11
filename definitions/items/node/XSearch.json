@@ -2,7 +2,7 @@
   "kind": "node",
   "name": "XSearch",
   "pack": "x-search",
-  "fingerprint": "f60e0f47bf5ec755",
+  "fingerprint": "2e51e8e8f9b7d0ce",
   "title": "X Search",
   "description": "Search recent X (Twitter) posts and return structured tweet data",
   "category": "Search",
@@ -21,7 +21,7 @@
       {
         "name": "tweets",
         "type": "array",
-        "description": "The posts, as the X API returned them"
+        "description": "The posts, as the X API returned them, each with its author (name, handle, bio, location)"
       },
       {
         "name": "resultCount",
@@ -59,14 +59,14 @@
           "title": "Max Results",
           "description": "Number of posts to return",
           "default": 10,
-          "minimum": 1,
+          "minimum": 10,
           "maximum": 100
         },
-        "tweetFields": {
+        "postFields": {
           "type": "string",
-          "title": "Tweet Fields",
-          "description": "Comma-separated X API tweet fields to include",
-          "default": "created_at,public_metrics,author_id"
+          "title": "Post Fields",
+          "description": "Comma-separated X API post fields to include",
+          "default": "created_at,public_metrics,author_id,lang"
         },
         "authRequired": {
           "type": "boolean",
@@ -90,7 +90,7 @@
   "definition": {
     "package": {
       "name": "x-search",
-      "packageFile": "# FULLY DECLARATIVE. One node, one endpoint, one bearer token, nothing new required.\n# The retired TypeScript is at `_legacy/nodes/x-search/`.\n\nname: x-search\ndisplayName: X Search\ndescription: Search recent X (Twitter) posts\nversion: 2.0.0\ncategory: search\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg\n\nfeatures:\n  - Recent post search with X query operators\n  - Per-post engagement metrics\n\nallowedHosts:\n  - api.x.com\n\nrequires:\n  credential: [bearer]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
+      "packageFile": "# FULLY DECLARATIVE. One node, one endpoint, one bearer token, nothing new required.\n# The retired TypeScript is at `_legacy/nodes/x-search/`.\n\nname: x-search\ndisplayName: X Search\ndescription: Search recent X (Twitter) posts\nversion: 2.1.0\ncategory: search\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg\n\nfeatures:\n  - Recent post search with X query operators\n  - Per-post engagement metrics\n  - Each post's author, with name, handle, bio and location\n\nallowedHosts:\n  - api.x.com\n\nrequires:\n  credential: [bearer]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
       "credentials": {
         "xCredential.yaml": "name: xCredential\ndisplayName: X (Twitter)\ndescription: Credentials for X API v2\ndocumentationUrl: https://developer.x.com/en/docs/authentication/oauth-2-0/application-only\n\nproperties:\n  - name: bearerToken\n    displayName: Bearer Token\n    type: string\n    required: true\n    secret: true\n    description: X API v2 Bearer Token, app-only auth\n    placeholder: \"\"\n"
       },
@@ -98,12 +98,12 @@
     },
     "dir": "XSearch",
     "files": {
-      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n#\n# A query that matched nothing returns no `data` key at all, which is a valid empty result\n# rather than an error, so every row tolerates its absence.\n\n- emit: tweets\n  from: response\n  value: \"return response.data || []\"\n\n- emit: resultCount\n  from: response\n  value: \"return (response.data || []).length\"\n\n- emit: raw\n  from: response\n  value: \"return JSON.stringify(response)\"\n",
-      "api/run.yaml": "# One call. The upstream `query` input wins over the configured one, which is what the\n# retired executor did and what the input's description promises.\n\n- name: search\n  method: GET\n  url: https://api.x.com/2/tweets/search/recent\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.xCredential.bearerToken }}\"\n  query:\n    query: >-\n      return typeof signal.query === 'string' && signal.query.trim()\n        ? signal.query.trim()\n        : config.query\n    # Clamped to the vendor's 1..100 rather than trusted: a saved workflow can hold\n    # anything, and X rejects the request rather than clamping it for you.\n    max_results: \"return String(Math.min(Math.max(config.maxResults || 10, 1), 100))\"\n    tweet.fields: \"return config.tweetFields || 'created_at,public_metrics,author_id'\"\n  transport: json\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n  # X reports a bad operator or an exhausted quota in the body with a 200 in some cases.\n  error:\n    when: \"return !!response.errors && !response.data\"\n    message: \"return response.errors.map(e => e.detail || e.title || e.message).join('; ')\"\n",
-      "config.yaml": "configSchema:\n  type: object\n  required: [query]\n  properties:\n    query:\n      type: string\n      title: Search Query\n      description: >-\n        X search query. Supports from:user, #hashtag, -exclude, lang:en and OR without\n        parentheses. Wrap phrases in quotes, e.g. \"Miro board\" lang:en -is:retweet\n      default: \"\"\n      \"ui:field\": template\n    maxResults:\n      type: number\n      title: Max Results\n      description: Number of posts to return\n      default: 10\n      minimum: 1\n      maximum: 100\n    tweetFields:\n      type: string\n      title: Tweet Fields\n      description: Comma-separated X API tweet fields to include\n      default: created_at,public_metrics,author_id\n\"ui:order\": [query, maxResults, tweetFields]\n",
-      "interface.yaml": "inputs:\n  - name: query\n    type: string\n    description: Search query. Overrides the configured one when present.\n    required: false\n\noutputs:\n  - name: tweets\n    type: array\n    description: The posts, as the X API returned them\n  - name: resultCount\n    type: number\n    description: How many posts came back\n  - name: raw\n    type: string\n    description: The whole X API response as JSON, for anything the shaped outputs drop\n\ncredentials:\n  - name: xCredential\n    required: true\n    displayName: X API Credentials\n",
+      "api/events.yaml": "# One row per output connector, in interface.yaml order.\n#\n# A query that matched nothing returns no `data` key at all, which is a valid empty result\n# rather than an error, so every row tolerates its absence.\n\n- emit: tweets\n  from: response\n  # Each post carries its author (name, handle, bio, location), found in `includes.users`.\n  value: >-\n    return (response.data || []).map(post => ({\n      ...post,\n      author: ((response.includes || {}).users || []).find(u => u.id === post.author_id) || null\n    }))\n\n- emit: resultCount\n  from: response\n  value: \"return (response.data || []).length\"\n\n- emit: raw\n  from: response\n  value: \"return JSON.stringify(response)\"\n",
+      "api/run.yaml": "# One call. The upstream `query` input wins over the configured one, which is what the\n# retired executor did and what the input's description promises.\n\n- name: search\n  method: GET\n  url: https://api.x.com/2/tweets/search/recent\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.xCredential.bearerToken }}\"\n  query:\n    query: >-\n      return typeof signal.query === 'string' && signal.query.trim()\n        ? signal.query.trim()\n        : config.query\n    # Clamped to the vendor's 10..100 rather than trusted: a saved workflow can hold\n    # anything, and X rejects the request rather than clamping it for you.\n    max_results: \"return String(Math.min(Math.max(config.maxResults || 10, 10), 100))\"\n    # `post.fields`, the vendor's name since it renamed tweets to posts (docs.x.com,\n    # search-recent-posts, checked 2026-10-10).\n    post.fields: \"return config.postFields || 'created_at,public_metrics,author_id,lang'\"\n    # WHO WROTE IT. Without the expansion a post names its author only by id; with it the\n    # authors come back once each in `includes.users`, and events.yaml puts each on its posts.\n    expansions: author_id\n    user.fields: name,username,description,location,url,verified,public_metrics\n  transport: json\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n  # X reports a bad operator or an exhausted quota in the body with a 200 in some cases.\n  error:\n    when: \"return !!response.errors && !response.data\"\n    message: \"return response.errors.map(e => e.detail || e.title || e.message).join('; ')\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [query]\n  properties:\n    query:\n      type: string\n      title: Search Query\n      description: >-\n        X search query. Supports from:user, #hashtag, -exclude, lang:en and OR without\n        parentheses. Wrap phrases in quotes, e.g. \"Miro board\" lang:en -is:retweet\n      default: \"\"\n      \"ui:field\": template\n    maxResults:\n      type: number\n      title: Max Results\n      description: Number of posts to return\n      default: 10\n      minimum: 10\n      maximum: 100\n    postFields:\n      type: string\n      title: Post Fields\n      description: Comma-separated X API post fields to include\n      default: created_at,public_metrics,author_id,lang\n\"ui:order\": [query, maxResults, postFields]\n",
+      "interface.yaml": "inputs:\n  - name: query\n    type: string\n    description: Search query. Overrides the configured one when present.\n    required: false\n\noutputs:\n  - name: tweets\n    type: array\n    description: The posts, as the X API returned them, each with its author (name, handle, bio, location)\n  - name: resultCount\n    type: number\n    description: How many posts came back\n  - name: raw\n    type: string\n    description: The whole X API response as JSON, for anything the shaped outputs drop\n\ncredentials:\n  - name: xCredential\n    required: true\n    displayName: X API Credentials\n",
       "node.yaml": "type: XSearch\nkind: PromiseNode\nname: X Search\ncategory: Search\ncolor: \"#000000\"\ndescription: Search recent X (Twitter) posts and return structured tweet data\nwhenToUse: >\n  Search recent X (Twitter) posts by keyword, hashtag, user or language and get structured\n  tweet data with engagement metrics; supports X query operators (from:, #hashtag, lang:,\n  -is:retweet). It returns native posts with per-post engagement metrics, not crawled web\n  pages and not scraped arbitrary sites.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node\n# nobody thought about cannot look the same as one deliberately left open.\n#\n# `required: false` adds no requirement of its own: the node runs for whoever the trigger\n# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements\n# only ever narrow.\nauth:\n  required: false\n\ncapabilities:\n  # Recent-search results move as people post, but the same query within a run is the same\n  # answer and the call has no side effect.\n  cacheable: true\n",
-      "test.yaml": "testData:\n  config:\n    query: AI agents lang:en -is:retweet\n    maxResults: 10\n    tweetFields: created_at,public_metrics,author_id\n  inputs:\n    query: AI agents lang:en -is:retweet\n  expect:\n    tweets: \"return output.tweets.length > 0 && typeof output.tweets[0].text === 'string'\"\n    resultCount: \"return output.resultCount === output.tweets.length\"\n    raw: \"return JSON.parse(output.raw).data.length === output.resultCount\"\n"
+      "test.yaml": "testData:\n  config:\n    query: AI agents lang:en -is:retweet\n    maxResults: 10\n    postFields: created_at,public_metrics,author_id,lang\n  inputs:\n    query: AI agents lang:en -is:retweet\n  expect:\n    tweets: \"return output.tweets.length > 0 && typeof output.tweets[0].text === 'string' && typeof output.tweets[0].author.username === 'string'\"\n    resultCount: \"return output.resultCount === output.tweets.length\"\n    raw: \"return JSON.parse(output.raw).data.length === output.resultCount\"\n"
     }
   }
 }

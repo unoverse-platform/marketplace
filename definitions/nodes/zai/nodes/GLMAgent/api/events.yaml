@@ -18,7 +18,14 @@
   accumulate: true
 
 - emit: chunk
-  value: "return (((response.choices || [])[0] || {}).delta || {}).content"
+  # A turn that ends in tool calls closes with a paragraph break, so the Agent's line for one turn
+  # does not run into the next turn's ("...first.The top hit..."). The vendor marks that last chunk
+  # with finish_reason "tool_calls".
+  value: >-
+    return (() => {
+      const c = (response.choices || [])[0] || {};
+      return (c.delta || {}).content || (c.finish_reason === 'tool_calls' ? '\n\n' : undefined);
+    })()
   accumulate: true
   throttleChars: 24
 

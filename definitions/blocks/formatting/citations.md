@@ -19,11 +19,8 @@ The minimum subscription is **USD 1,000,000** [1](cite:<document id>?part=<part 
 - **The label** is a number, counting up from 1 in the order the citations appear. The same
   source cited again keeps its first number.
 - **`<document id>`** is the id of the document the words are in, exactly as the tool gave it.
-  For a section (`<document>#<section>`) it is the part before `#`; for a table it is the
-  document the table is part of.
-- **`part`** is what you opened inside it: for a section, the part of its id after `#` (for
-  `<document>#s112`, write `s112`); for a table, the table's id. Leave it out when you read the
-  document itself.
+  For a table it is the document the table is part of.
+- **`part`** is the table's id, when the words are in a table. Leave it out otherwise.
 - **`page`** is the page the words are on, when the tool gave one. Leave it out when it did not.
 - **`doc`** is the document's name as the tool gave it, with spaces written as `%20`.
 - **The quote** is the words from the source that state the fact, copied exactly: at most about
@@ -40,6 +37,11 @@ The minimum subscription is **USD 1,000,000** [1](cite:<document id>?part=<part 
   own fact.
 - **Your own reasoning is not cited.** A comparison or a sum you worked out cites the facts it is
   built from, never itself.
+- **A change needs both sides.** Call something tighter, earlier, higher, lower or new only when
+  a source gives the old value and the new one, and cite both. When only the new one is stated,
+  give it and say the old one is not stated.
+- **Name the source in the sentence.** When the answer is about a document, the text names it
+  and gives its date, not only the citation.
 - **When no source states it, say so** rather than answer without a citation.
 - **Never gather the citations into a list at the end.** They sit in the sentence, where the fact
   is.

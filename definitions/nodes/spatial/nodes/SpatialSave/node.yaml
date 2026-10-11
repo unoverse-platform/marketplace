@@ -1,0 +1,40 @@
+# SAVE OBJECTS TO THE MAP (docs/unoverse/data/pipelines/README.md, collect: "a pipeline may open
+# with an Input Trigger ... the pipeline's door for a person, a component or an Agent"). The
+# canvas's way to that door: it hands records to one of the org's pipelines, which makes each one
+# the object it yields, through the one door every write goes through. A record already held is
+# matched and filled in, never added twice (README, "A run", 4); a new one is made.
+#
+# It never writes a row itself. How an object is built is the object's (objects README), and what
+# a record becomes is the pipeline's; this node only hands over and waits.
+
+type: SpatialSave
+
+kind: PromiseNode
+
+name: Spatial Save
+category: Search
+color: "#8b5cf6"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  Save records to the platform knowledge base as the org's own objects, through one of its
+  pipelines: each is made, or filled in when already held
+
+whenToUse: >-
+  Keep what a workflow found as objects on the map: the opportunities an Agent found, the stories
+  a search returned, any list of records an org's pipeline takes in. Name the pipeline and hand it
+  the records; each becomes one of that pipeline's objects, and one already held is filled in
+  rather than added again. It writes; searching the map is Spatial Query's job and opening one
+  row is Spatial Object's.
+
+# WHO MAY RUN THIS: the same answer as the rest of the package. It writes to the org's own map
+# through the platform's own door, inside the trust boundary; what a guest may reach is decided at
+# the trigger's publicEntry toggle.
+auth:
+  required: false
+
+capabilities:
+  # It changes what is stored. A second identical call fills in the same rows rather than adding
+  # more, but it is still a write, never a pure read.
+  emitsExternally: true
+  cacheable: false

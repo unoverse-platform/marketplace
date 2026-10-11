@@ -30,7 +30,8 @@ serviceConnectors:
     # PROVIDES. The node offers these tools to a consuming Agent.
     isService: true
     description: >-
-      One inbox as tools for an Agent: list_threads, read_thread, reply, send, save_draft.
+      One inbox as tools for an Agent: list_threads, read_thread, reply, send, save_draft, and
+      list_events for its calendar.
     instructions: >-
       List the threads before answering anything, and read a thread in full before replying to
       it: a reply is judged against the whole conversation, not its last line. Always reply IN
@@ -45,3 +46,4 @@ serviceConnectors:
       - reply
       - send
       - save_draft
+      - list_events

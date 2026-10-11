@@ -24,7 +24,7 @@ logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons
 
 features:
   - Read an inbox's threads, newest first, with each thread's last message
-  - "Give an Agent the mailbox as tools: list, read, reply, send, draft"
+  - "Give an Agent the mailbox as tools: list, read, reply, send, draft, and read its calendar"
   - A reply carries In-Reply-To and References, so it lands in the same conversation everywhere
 
 allowedHosts:

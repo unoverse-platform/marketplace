@@ -1,0 +1,7 @@
+# `response` is the FINAL job status, not the receipt: that is what `poll` settles on.
+- emit: success
+  value: "return response.status === 'COMPLETED'"
+- emit: count
+  value: "return ((response.progress || {}).processedRows) || 0"
+- emit: jobId
+  value: "return String(response.jobId || response.id || '')"

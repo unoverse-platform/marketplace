@@ -1,0 +1,30 @@
+configSchema:
+  type: object
+  required: [url, input]
+
+  properties:
+    url:
+      type: string
+      title: Endpoint
+      description: >-
+        The deployment's address as Beam printed it on deploy, such as
+        https://gliner2-2d45be7-v2.app.beam.cloud.
+      default: ""
+
+    model:
+      type: string
+      title: Model
+      description: >-
+        The model the deployment runs, as its page names it ("NuExtract3", "Splink"). Shown beside
+        the node wherever the step is drawn; the call does not send it.
+      default: ""
+
+    input:
+      type: object
+      title: Input
+      description: >-
+        What the model is sent, as a return expression: the fields its deployment reads, such as
+        { text, labels } for entity extraction.
+      default: {}
+      ui:field: template
+ui:order: [url, model, input]

@@ -1,0 +1,35 @@
+configSchema:
+  type: object
+  required: [model, content, questions]
+
+  properties:
+    content:
+      type: string
+      title: Content
+      description: >-
+        The text to decide about, usually an upstream node's output. A picture is given as an
+        object with type image and its imageUrl instead, as an inline base64 data URL: the
+        service does not fetch web links.
+      default: ""
+      ui:field: template
+
+    questions:
+      type: array
+      title: Questions
+      description: >-
+        The questions to answer, as a return expression. Each has a type (predicate, choice or
+        score), a name its answer is keyed by, and instructions. A choice lists its choices as
+        value and description; a score lists its levels as label and description.
+      default: []
+      ui:field: template
+
+    # The Decisions API takes ONE model, and it is not in the GPT tiers (shared/models.yaml),
+    # so the list lives here rather than there.
+    model:
+      type: string
+      title: Model
+      description: The model that answers the questions
+      enum: [gpt-6-luna]
+      enumNames: [Luna (Decisions)]
+      default: gpt-6-luna
+ui:order: [model, content, questions]

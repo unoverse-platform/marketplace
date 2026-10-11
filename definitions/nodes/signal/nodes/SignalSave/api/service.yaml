@@ -1,0 +1,28 @@
+# ADD ONLY (AGENTS.md § 7a): the engine at loopback, then the memory service's `people` table, by
+# `/people/add`, which never overwrites or removes what is held: an empty field is filled, a list
+# gains what it lacks. A caller that cannot read a person can add to them and never wipe them. The
+# answer is only whether it was saved, never the record.
+
+getSchema:
+  description: Tool discovery for Signal Save
+  calls: []
+  returns: { $ref: schema#save }
+
+save_person:
+  description: >-
+    Save one person to Signal: find them by their LinkedIn, email or app account and update them,
+    or make them. Returns only whether it was saved, their id and whether they are new.
+  calls:
+    - name: save
+      method: POST
+      url: "return scope.engineUrl + '/people/add'"
+      okOn: [400, 409]
+      # `by`, the run's caller from its scope, after the model's params so it cannot be set by them:
+      # the engine keeps it off the record and puts an Agent's change on the audit trail (§ 7c).
+      body: "return Object.assign({}, params, { org: scope.org, by: scope.userId })"
+      transport: json
+      timeoutMs: 30000
+  returns: >-
+    return calls.save && calls.save.ok && calls.save.person_id
+      ? { ok: true, created: !!calls.save.created, person_id: calls.save.person_id }
+      : { ok: false, error: (calls.save || {}).error || 'NOT_SAVED' }

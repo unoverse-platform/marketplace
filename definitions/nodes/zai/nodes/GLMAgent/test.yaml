@@ -8,7 +8,7 @@
 
 testData:
   config:
-    model: glm-5.2
+    model: glm-5.3
     agentName: ResearchAssistant
     maxTurns: 15
     reasoningEffort: high

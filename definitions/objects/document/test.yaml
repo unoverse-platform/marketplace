@@ -57,7 +57,7 @@ testData:
       documents: [{ file_name: onboarding.pdf, template: onboarding, ok: true, readings: 1 }]
       total: 1
   expect:
-    text: "return output.text.startsWith('# onboarding.pdf') && output.text.includes('three steps') && output.text.includes('# Parts of this document') && output.text.includes('- t1 (table, page 2). Columns: Step | Owner') && output.text.includes('- f2 (chart, page 3): Accounts opened by month') && !output.text.includes('- f1 ')"
+    text: "return output.text.startsWith('# onboarding.pdf') && output.text.includes('three steps') && !output.text.includes('# Parts of this document')"
     title: "return output.title === 'onboarding'"
     pages: "return output.pages === 4"
     saved: "return output.parsedKey === 'guides/_parsed/onboarding.pdf/text.md' && output.bucket === 'example-docs' && output.key === 'guides/onboarding.pdf'"

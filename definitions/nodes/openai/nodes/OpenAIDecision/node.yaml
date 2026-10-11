@@ -1,0 +1,22 @@
+type: OpenAIDecision
+kind: PromiseNode
+
+name: Decision
+category: AI
+color: "#2F6F66"
+
+description: Answers named questions about text or a picture with calibrated probabilities
+
+whenToUse: >-
+  Pick when a step must decide something about a message, document or picture and act on
+  it: yes or no, which one of several options, or where it sits on a scale. Several named
+  questions are answered in one call, each with a probability rather than prose, so a
+  branch downstream reads a number and never parses a sentence. Nothing is written, only
+  the questions asked are answered.
+
+auth:
+  required: false
+
+capabilities:
+  # A model call, so it is non-deterministic. Re-running is correct.
+  cacheable: false

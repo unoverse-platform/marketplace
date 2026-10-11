@@ -15,11 +15,11 @@ configSchema:
       title: Max Results
       description: Number of posts to return
       default: 10
-      minimum: 1
+      minimum: 10
       maximum: 100
-    tweetFields:
+    postFields:
       type: string
-      title: Tweet Fields
-      description: Comma-separated X API tweet fields to include
-      default: created_at,public_metrics,author_id
-"ui:order": [query, maxResults, tweetFields]
+      title: Post Fields
+      description: Comma-separated X API post fields to include
+      default: created_at,public_metrics,author_id,lang
+"ui:order": [query, maxResults, postFields]

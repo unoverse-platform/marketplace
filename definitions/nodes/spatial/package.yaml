@@ -35,6 +35,8 @@ allowedHosts:
 requires:
   executorVersion: ">=1.7.0"
   transport: [json]
+  # Spatial Save waits on its save job, as Spatial Ingest waits on its ingest job.
+  poll: true
   # The card lane: a result row carrying a component renders it on the caller's live screen
   # the moment it surfaces. Declared because the executor implements it; a package naming it
   # on an older runtime would silently render nothing.

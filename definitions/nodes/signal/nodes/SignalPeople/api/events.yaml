@@ -1,0 +1,6 @@
+# One row per output connector, in interface.yaml order.
+- emit: people
+  value: "return response.people || []"
+
+- emit: count
+  value: "return (response.people || []).length"

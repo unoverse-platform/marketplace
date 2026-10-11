@@ -1,0 +1,28 @@
+configSchema:
+  type: object
+  required: [imageUrl]
+  properties:
+    imageUrl:
+      type: string
+      title: Image URL
+      description: A public link to the picture to search with. The vendor fetches it, so it must load without signing in.
+      default: ""
+      "ui:field": template
+    numResults:
+      type: number
+      title: Number of Results
+      description: Most pages to return, exact copies counted first
+      default: 20
+      minimum: 1
+      maximum: 100
+    country:
+      type: string
+      title: Country
+      description: Country code for localized results, e.g. 'us', 'uk', 'ae'
+      default: us
+    language:
+      type: string
+      title: Language
+      description: Language code for results, e.g. 'en', 'ar'
+      default: en
+"ui:order": [imageUrl, numResults, country, language]

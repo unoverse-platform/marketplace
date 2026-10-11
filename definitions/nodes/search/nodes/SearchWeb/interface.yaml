@@ -7,10 +7,10 @@ inputs:
 outputs:
   - name: webResults
     type: array
-    description: Web search results (title, url, source, snippet)
+    description: Web search results (title, url, source, snippet, thumbnail)
   - name: imageResults
     type: array
-    description: Image results (url, title, thumbnail, source). Empty when image search is off.
+    description: Image results (url, title, thumbnail, source), Google's own image pack from the web search first, then the image search when it is on.
 
 credentials:
   - name: searchapiCredential

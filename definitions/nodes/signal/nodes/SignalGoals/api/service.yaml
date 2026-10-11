@@ -1,0 +1,79 @@
+# A PERSON'S GOALS (docs/architecture/signal/AGENTS.md § 7c). Every change carries `by`, the run's
+# caller from its scope, never the model's, and `own: true`: the engine refuses one that names no
+# caller, records who opened a goal, and puts an Agent's change on the audit trail.
+
+getSchema:
+  description: Tool discovery for Signal Goals
+  calls: []
+  returns: { $ref: schema#goals }
+
+find_tasks:
+  description: Every goal Signal holds for one person, newest first.
+  calls:
+    - name: tasks
+      method: GET
+      url: >-
+        return scope.engineUrl + '/runs/tasks?' + Object.entries({ userId: params.person_id, taskRef: params.task })
+          .filter(e => e[1]).map(e => e[0] + '=' + encodeURIComponent(e[1])).join('&')
+      okOn: [400, 500]
+      transport: json
+      timeoutMs: 15000
+  returns: >-
+    return (calls.tasks || {}).error
+      ? { ok: false, error: calls.tasks.error }
+      : { ok: true, tasks: (calls.tasks || {}).tasks || [] }
+
+open_task:
+  description: Open a goal for one person Signal holds. Answers the goal's id.
+  calls:
+    # The person must be held: only whether they are found leaves this node, never their record.
+    - name: person
+      method: GET
+      url: "return scope.engineUrl + '/people/one?org=' + encodeURIComponent(scope.org) + '&id=' + encodeURIComponent(params.person_id || '')"
+      okOn: [400]
+      transport: json
+      timeoutMs: 15000
+    - name: open
+      when: "return !!(calls.person && calls.person.found)"
+      method: POST
+      url: "return scope.engineUrl + '/runs/task/open'"
+      okOn: [400, 500]
+      body: "return { userId: params.person_id, taskRef: params.task, state: params.state || {}, wakeAt: params.wake_at || null, by: scope.userId, own: true }"
+      transport: json
+      timeoutMs: 15000
+  returns: >-
+    return !(calls.person && calls.person.found)
+      ? { ok: false, error: 'Signal holds no person with that id' }
+      : (calls.open && calls.open.taskId)
+        ? { ok: true, task_id: calls.open.taskId, already_open: !calls.open.opened }
+        : { ok: false, error: (calls.open || {}).error || 'NOT_OPENED' }
+
+save_task:
+  description: Save an open goal for one person.
+  calls:
+    - name: save
+      method: POST
+      url: "return scope.engineUrl + '/runs/task/save'"
+      okOn: [400, 500]
+      body: "return { taskId: params.task_id, userId: params.person_id, state: params.state, wakeAt: params.wake_at, by: scope.userId, own: true }"
+      transport: json
+      timeoutMs: 15000
+  returns: >-
+    return (calls.save || {}).saved
+      ? { ok: true, task_id: calls.save.taskId }
+      : { ok: false, error: (calls.save || {}).error || 'NOT_SAVED: no open goal with that id for this person' }
+
+finish_task:
+  description: Finish an open goal for one person.
+  calls:
+    - name: finish
+      method: POST
+      url: "return scope.engineUrl + '/runs/task/finish'"
+      okOn: [400, 500]
+      body: "return { taskId: params.task_id, userId: params.person_id, result: params.result || {}, by: scope.userId, own: true }"
+      transport: json
+      timeoutMs: 15000
+  returns: >-
+    return (calls.finish || {}).finished
+      ? { ok: true, task_id: calls.finish.taskId }
+      : { ok: false, error: (calls.finish || {}).error || 'NOT_FINISHED: no open goal with that id for this person' }

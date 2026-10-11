@@ -1,0 +1,25 @@
+# BEAM (beam.cloud): a model the org deploys in its own Beam workspace, called as a node. The
+# model runs in Beam's container, which sleeps when idle and is billed by the second; the platform
+# holds only the endpoint's address and the workspace token (owner, 2026-10-09: "create a node to
+# interact with a beam deployment", "I don't want any beam in my project").
+
+name: beam
+displayName: Beam
+description: Call a model deployed on Beam (beam.cloud) as a workflow step
+version: 0.1.0
+category: ai
+publisher: unoverse
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1791554598/gravity/icons/beam.png
+
+features:
+  - Any model the org deploys on Beam, called by its endpoint address
+  - Scales to zero between calls; the first call after a sleep waits for the container to start
+
+# Every Beam endpoint is its own subdomain: gliner2-2d45be7-v2.app.beam.cloud.
+allowedHosts:
+  - "**.app.beam.cloud"
+
+requires:
+  credential: [bearer]
+  transport: [json]
+  executorVersion: ">=1.4.0"

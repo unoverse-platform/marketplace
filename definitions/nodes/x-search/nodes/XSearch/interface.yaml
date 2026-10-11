@@ -7,7 +7,7 @@ inputs:
 outputs:
   - name: tweets
     type: array
-    description: The posts, as the X API returned them
+    description: The posts, as the X API returned them, each with its author (name, handle, bio, location)
   - name: resultCount
     type: number
     description: How many posts came back
