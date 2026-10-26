@@ -1,0 +1,5 @@
+# One row, one connector: the accounts, in the same shape list_ad_accounts answers with.
+
+- emit: output
+  from: response
+  value: { $ref: shape#accounts }

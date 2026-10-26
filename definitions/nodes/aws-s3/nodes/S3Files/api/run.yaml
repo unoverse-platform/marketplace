@@ -7,7 +7,16 @@
   query:
     list-type: "2"
     prefix: "{{ config.prefix }}"
-    max-keys: "return String(config.maxKeys || 1000)"
+    max-keys: "return String(Math.min(config.maxKeys || 1000, 1000))"
+  # EVERY PAGE, NOT THE FIRST (2026-10-18). S3 returns at most 1000 keys a page and a
+  # NextContinuationToken while there are more. One page under a prefix holding 50 documents and
+  # about 1600 `_parsed/` keys listed 40 of the documents; the 10 whose names sort after
+  # `_parsed` were never listed, so never read. The walk follows the token to the end.
+  paginate:
+    strategy: cursor
+    cursor: "return (response.ListBucketResult || {}).NextContinuationToken"
+    into: continuation-token
+    items: "return [].concat((response.ListBucketResult || {}).Contents || [])"
 
 # NO REQUEST. `presign` computes strings from the credentials and the clock, and it sits
 # here rather than in a section of its own because listing a bucket and minting a link per

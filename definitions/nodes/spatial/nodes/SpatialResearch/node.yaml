@@ -22,7 +22,7 @@ whenToUse: >-
   they connect, asked in one query for lists, figures, counts, totals and connections, with the
   pages each answer rests on. The wrong choice for an agent that finds and shows things to
   people (cards, tasks, screens), which is Spatial Search. Attach by a service edge to the
-  agent; it is not a data-flow step.
+  agent, or wire it in the data flow to ask one fixed query as a step.
 
 auth:
   required: false

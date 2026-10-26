@@ -9,7 +9,7 @@
 # RE-BRIEFED from the need (README 5): the field is the need's, the brief is the product's.
 title:
   description: >-
-    The offering's own name, exactly as the page names it: "AQSAT Credit Card", "SAB Umlaty
+    The offering's own name, exactly as the page names it: "Example Credit Card", "Example Travel
     Card". A name, never an outcome phrase; the outcome is the key need.
 tagline:
   type: string

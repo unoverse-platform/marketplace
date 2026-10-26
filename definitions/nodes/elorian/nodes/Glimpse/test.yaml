@@ -1,0 +1,19 @@
+# Running it live needs ELORIAN_API_KEY (credential `elorianCredential`), on an account with credits.
+# The clip is the one on elorian.ai/models: a seven-second pencil sketch, no audio, no caption.
+
+testData:
+  config:
+    model: elorian-1-agent
+    reasoningEffort: medium
+    maxTokens: 4000
+    videoFps: 5
+    videoUrl: https://elorian.ai/assets/models/glimpse-dance.mp4
+    imageUrls: []
+    systemPrompt: Answer in Markdown. Cite moments in the clip by their time range.
+    prompt: What kind of dance are the characters doing, and how does it change over the clip?
+  inputs:
+    signal:
+      topic: dance identification
+  expect:
+    text: "return typeof output.text === 'string' && output.text.length > 0"
+    usage: "return output.usage.completion_tokens > 0"

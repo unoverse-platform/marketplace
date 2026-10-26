@@ -9,15 +9,15 @@ testData:
     sourceId: 9b8c7d6e5f4a
     suggested: product
     content:
-      title: AQSAT Credit Card
+      title: Example Credit Card
       handler: make
   fake:
     page:
-      html: "<html><body><main><h1>AQSAT Credit Card</h1><p>Shop now and pay in instalments.</p></main></body></html>"
-      markdown: "# AQSAT Credit Card\n\nShop now and pay in instalments."
-      metadata: { title: AQSAT Credit Card }
+      html: "<html><body><main><h1>Example Credit Card</h1><p>Shop now and pay in instalments.</p></main></body></html>"
+      markdown: "# Example Credit Card\n\nShop now and pay in instalments."
+      metadata: { title: Example Credit Card }
   expect:
-    html: "return output.html.includes('<h1>AQSAT Credit Card</h1>')"
-    markdown: "return output.markdown.startsWith('# AQSAT Credit Card')"
-    title: "return output.title === 'AQSAT Credit Card'"
+    html: "return output.html.includes('<h1>Example Credit Card</h1>')"
+    markdown: "return output.markdown.startsWith('# Example Credit Card')"
+    title: "return output.title === 'Example Credit Card'"
     read: "return output.read === 'make'"

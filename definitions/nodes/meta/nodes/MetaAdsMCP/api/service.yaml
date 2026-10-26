@@ -1,0 +1,269 @@
+# The MCP methods an agent can call, over Meta's Marketing API: what an agent running Instagram
+# ads does, and nothing that creates accounts, manages their users, deletes, or spends more.
+#
+# A CAMPAIGN HOLDS THE BUDGET AND THE SWITCH. Its daily budget is the campaign's own (Meta's
+# campaign budget), and it is created paused; its one ad set and its ads are created on, so
+# nothing serves until the campaign is, and switching on is one change in one place.
+#
+# BUDGETS ARE IN THE CURRENCY'S SMALLEST UNIT on the wire (cents for USD, fils for AED), so
+# a budget in the account's currency is multiplied by 100 going out and divided coming back.
+# Meta gives a few currencies (JPY, KRW and others) an offset of 1; none is ours.
+
+getSchema:
+  description: Tool discovery for Instagram ads
+  calls: []
+  returns: { $ref: schema#meta }
+
+list_accounts:
+  description: >-
+    List the ad accounts you can manage, with id and currency, and the Facebook Pages with the
+    Instagram account each posts as.
+  calls:
+    - name: adaccounts
+      method: GET
+      url: "https://graph.facebook.com/v26.0/me/adaccounts?fields=account_id,name,currency,account_status"
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+    - name: pages
+      method: GET
+      url: "https://graph.facebook.com/v26.0/me/accounts?fields=id,name,instagram_business_account"
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  returns: { $ref: shape#accounts }
+
+find_targeting:
+  description: >-
+    Find the targeting ids for one kind: countries, job_titles, industries or interests, by
+    search text, or with no text every industry.
+  calls:
+    - name: search
+      method: GET
+      url: >-
+        return 'https://graph.facebook.com/v26.0/search?limit=50&'
+          + (params.kind === 'countries' ? 'type=adgeolocation&location_types=' + encodeURIComponent('["country"]') + '&q=' + encodeURIComponent(params.query || '')
+            : params.kind === 'job_titles' ? 'type=adworkposition&q=' + encodeURIComponent(params.query || '')
+            : params.kind === 'industries' ? 'type=adTargetingCategory&class=industries'
+            : 'type=adinterest&q=' + encodeURIComponent(params.query || ''))
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  # A country is targeted by its two-letter code, everything else by its id.
+  returns: >-
+    return {
+      ok: true,
+      kind: params.kind,
+      values: (response.data || [])
+        .filter(v => params.kind !== 'industries' || !params.query || String(v.name).toLowerCase().indexOf(String(params.query).toLowerCase()) !== -1)
+        .slice(0, 50)
+        .map(v => ({ id: params.kind === 'countries' ? v.key : String(v.id), name: v.name }))
+    }
+
+list_campaigns:
+  description: >-
+    List an ad account's campaigns that are on or paused, with status, daily budget and
+    objective.
+  calls:
+    - name: campaigns
+      method: GET
+      url: >-
+        return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id)
+          + '/campaigns?fields=id,name,status,effective_status,objective,daily_budget&limit=50'
+          + '&effective_status=' + encodeURIComponent('["ACTIVE","PAUSED","IN_PROCESS","WITH_ISSUES"]')
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  returns: >-
+    return {
+      ok: true,
+      campaigns: (response.data || []).map(c => ({
+        id: String(c.id),
+        name: c.name,
+        status: c.status,
+        serving: c.effective_status,
+        objective: c.objective,
+        daily_budget: c.daily_budget ? Number(c.daily_budget) / 100 : null
+      })),
+      has_more: !!((response.paging || {}).next)
+    }
+
+create_campaign:
+  description: >-
+    Create an Instagram campaign, PAUSED so it spends nothing until a person switches it on.
+    Give it a name, a daily budget in the account's currency, an objective and its targeting.
+  calls:
+    - name: campaign
+      method: POST
+      url: "return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id) + '/campaigns'"
+      credential: { $ref: api#credential }
+      encoding: multipart
+      body: >-
+        return {
+          name: String(params.name),
+          objective: params.objective === 'AWARENESS' ? 'OUTCOME_AWARENESS' : 'OUTCOME_TRAFFIC',
+          status: 'PAUSED',
+          special_ad_categories: [],
+          daily_budget: Math.round(Number(params.daily_budget) * 100),
+          bid_strategy: 'LOWEST_COST_WITHOUT_CAP'
+        }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+    # Instagram's feed, stories and reels only. Explore is refused by v26. Advantage+ audience
+    # is off, so the targeting given is the targeting used; job titles, industries and
+    # interests are one OR group, as Meta's flexible_spec reads them.
+    - name: adset
+      method: POST
+      url: "return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id) + '/adsets'"
+      credential: { $ref: api#credential }
+      encoding: multipart
+      body: >-
+        return {
+          name: String(params.name),
+          campaign_id: String(calls.campaign.id),
+          billing_event: 'IMPRESSIONS',
+          optimization_goal: params.objective === 'AWARENESS' ? 'REACH' : 'LINK_CLICKS',
+          status: 'ACTIVE',
+          targeting: Object.fromEntries(Object.entries({
+            geo_locations: { countries: params.countries },
+            publisher_platforms: ['instagram'],
+            instagram_positions: ['stream', 'story', 'reels'],
+            targeting_automation: { advantage_audience: 0 },
+            flexible_spec: [Object.fromEntries(Object.entries({
+              work_positions: (params.job_titles || []).map(id => ({ id: String(id) })),
+              industries: (params.industries || []).map(id => ({ id: String(id) })),
+              interests: (params.interests || []).map(id => ({ id: String(id) }))
+            }).filter(e => e[1].length > 0))].filter(f => Object.keys(f).length > 0)
+          }).filter(e => !Array.isArray(e[1]) || e[1].length > 0))
+        }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  returns: >-
+    return { ok: true, campaign_id: String(calls.campaign.id), ad_set_id: String(calls.adset.id), status: 'PAUSED' }
+
+create_ad:
+  description: >-
+    Create an image ad in a campaign's ad set, posted as our Instagram account: the words, an
+    image by its https url, a headline, and the page it links to.
+  calls:
+    # Meta fetches the image from its url itself (link_data.picture), so nothing is uploaded.
+    - name: creative
+      method: POST
+      url: "return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id) + '/adcreatives'"
+      credential: { $ref: api#credential }
+      encoding: multipart
+      body: >-
+        return {
+          name: String(params.headline),
+          object_story_spec: {
+            page_id: String(params.page_id),
+            instagram_user_id: String(params.instagram_account_id),
+            link_data: {
+              message: String(params.text),
+              name: String(params.headline),
+              link: String(params.landing_page),
+              picture: String(params.image_url),
+              call_to_action: { type: params.call_to_action || 'LEARN_MORE', value: { link: String(params.landing_page) } }
+            }
+          }
+        }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+    # On, inside a paused campaign: it goes to Meta's review now and serves only once the
+    # campaign is switched on.
+    - name: ad
+      method: POST
+      url: "return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id) + '/ads'"
+      credential: { $ref: api#credential }
+      encoding: multipart
+      body: >-
+        return {
+          name: String(params.headline),
+          adset_id: String(params.ad_set_id),
+          creative: { creative_id: String(calls.creative.id) },
+          status: 'ACTIVE'
+        }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  returns: >-
+    return { ok: true, ad_id: String(calls.ad.id), creative_id: String(calls.creative.id) }
+
+change_campaign:
+  description: >-
+    Pause or archive a campaign, or lower its daily budget. It never switches a campaign on or
+    raises a budget: those spend more, and are a person's yes.
+  calls:
+    # What it is now, so a budget can be checked as lower.
+    - name: current
+      method: GET
+      url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(params.campaign_id) + '?fields=status,daily_budget'"
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+    - name: change
+      when: >-
+        return (!params.status || ['PAUSED', 'ARCHIVED'].indexOf(params.status) !== -1)
+          && (!params.daily_budget || Math.round(Number(params.daily_budget) * 100) <= Number((calls.current || {}).daily_budget || 0))
+          && !!(params.status || params.daily_budget)
+      method: POST
+      url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(params.campaign_id)"
+      credential: { $ref: api#credential }
+      encoding: multipart
+      body: >-
+        return Object.fromEntries(Object.entries({
+          status: params.status,
+          daily_budget: params.daily_budget ? Math.round(Number(params.daily_budget) * 100) : undefined
+        }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  # Refused rather than thrown, so an agent reads why and does not retry the same thing.
+  returns: >-
+    return calls.change
+      ? { ok: true, campaign_id: String(params.campaign_id), status: params.status || (calls.current || {}).status, daily_budget: params.daily_budget || Number((calls.current || {}).daily_budget || 0) / 100 }
+      : { ok: false, error: 'change_campaign only pauses, archives or lowers a budget; switching on or raising a budget needs a person\'s yes' }
+
+report:
+  description: >-
+    Spend and results per campaign in an ad account, from a start date (YYYY-MM-DD, default 30
+    days ago) to today or an end date. Optionally only some campaigns.
+  calls:
+    - name: insights
+      method: GET
+      url: >-
+        return 'https://graph.facebook.com/v26.0/act_' + encodeURIComponent(params.account_id)
+          + '/insights?level=campaign&limit=100'
+          + '&fields=campaign_id,campaign_name,spend,impressions,reach,clicks,inline_link_clicks'
+          + '&time_range=' + encodeURIComponent(JSON.stringify({
+              since: params.since || Date.iso(Date.now() - 30 * 86400000).split('T')[0],
+              until: params.until || Date.iso(Date.now()).split('T')[0]
+            }))
+          + ((params.campaign_ids || []).length
+              ? '&filtering=' + encodeURIComponent(JSON.stringify([{ field: 'campaign.id', operator: 'IN', value: params.campaign_ids }]))
+              : '')
+      credential: { $ref: api#credential }
+      transport: json
+      okOn: [400, 403]
+      error: { $ref: api#error }
+  returns: >-
+    return {
+      ok: true,
+      campaigns: (response.data || []).map(r => ({
+        campaign_id: String(r.campaign_id),
+        name: r.campaign_name,
+        spend: Number(r.spend || 0),
+        impressions: Number(r.impressions || 0),
+        reach: Number(r.reach || 0),
+        clicks: Number(r.clicks || 0),
+        link_clicks: Number(r.inline_link_clicks || 0)
+      }))
+    }

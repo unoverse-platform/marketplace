@@ -1,0 +1,47 @@
+# Elorian's chat-completions endpoint. NO SDK.
+#
+# The user message is a list of content parts: the question, then each image, then the video. Video
+# is a part shaped like image_url, one per request. video_fps is an Elorian field, sent beside the
+# OpenAI ones. Built with `concat`, never `push`: the sandbox has no mutating array methods.
+
+- name: generate
+  method: POST
+  url: https://api.elorian.ai/v1/chat/completions
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.elorianCredential.apiKey }}"
+
+  body: |
+    return (() => {
+      const images = (Array.isArray(config.imageUrls) ? config.imageUrls : [])
+        .filter(url => typeof url === 'string' && url.trim())
+        .map(url => ({ type: 'image_url', image_url: { url: url.trim() } }));
+      const video = config.videoUrl && config.videoUrl.trim()
+        ? [{ type: 'video_url', video_url: { url: config.videoUrl.trim() } }]
+        : [];
+      const head = config.systemPrompt ? [{ role: 'system', content: config.systemPrompt }] : [];
+      const content = [{ type: 'text', text: config.prompt }].concat(images, video);
+      return Object.assign({
+        model: config.model,
+        max_completion_tokens: config.maxTokens || 8000,
+        reasoning_effort: config.reasoningEffort || 'xhigh',
+        messages: head.concat([{ role: 'user', content: content }])
+      }, video.length ? { video_fps: config.videoFps || 2 } : {});
+    })()
+
+  # Agent runs can take minutes, and nothing comes back until the run ends.
+  timeoutMs: 900000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504, 520, 522, 524]
+
+  # Unstreamed, the connection is kept open with blank lines until the run ends, which JSON ignores.
+  transport: json
+
+  # An answer that fails after those blank lines is a 200 carrying {"error": {...}}.
+  error:
+    when: "return !!response.error"
+    message: "return response.error.message || 'Glimpse request failed'"

@@ -73,6 +73,15 @@ asOf:
     The date the document speaks as of, as YYYY-MM-DD: the date its figures are stated at, or
     when it has none, the date it was issued. Only a date the document gives; empty when it
     gives none.
+# HOW `asOf` WAS SET (1-understand documentDate.ts, owner 2026-10-18): the read's pick is checked against the
+# dates the document prints and replaced by the rule's when it is not one of them.
+asOfHow:
+  type: string
+  input: false
+  description: >-
+    How the date above was decided: "labelled" (the document says "as of" or "as at" it), "read" (the
+    read's pick, a date the document prints), "newest printed" (the newest date it prints), or "none
+    printed" (it prints no date, and has none).
 # WHERE THE BODY IS (owner ruling 2026-09-10: "the document row should be like other objects;
 # it extends need, which captures the essence"). The row holds the essence and a summary; the
 # parsed text lives in the store, beside the source under the reserved `_parsed/` folder,

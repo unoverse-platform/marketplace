@@ -13,7 +13,11 @@
     include_figures: "return config.includeFigures !== false"
     ocr: "return config.ocr !== false"
 
-  timeoutMs: 60000
+  # FIVE MINUTES A REQUEST (2026-10-12): the poll that finds a job done carries the whole reply, and
+  # a long file's is large (a 416-page holdings schedule: 16 MB compressed) across the internet
+  # from a hosted document engine, measured as slow as 0.25 MB/s. At 60 s it never arrived.
+  # FIFTEEN MINUTES (2026-10-19): a request that wakes the engine waits its cold start, five to six minutes.
+  timeoutMs: 900000
 
   # The service answers a refusal as { detail } (FastAPI's convention) or { error } (the engine's
   # forward when it cannot reach the service). Neither is a job.
@@ -27,5 +31,8 @@
     until: "return response.status === 'COMPLETED'"
     failed: "return response.status === 'FAILED'"
     message: "return response.error || ('parse ' + response.status)"
-    intervalMs: 3000
-    maxAttempts: 400
+    # EVERY 10 SECONDS (2026-10-12): the platform stops any poll after 300 checks
+    # (loops/poll.ts HARD_POLL_CAP), so the interval is what sets the patience. A 416-page holdings
+    # schedule parsed from scratch takes over 20 minutes; 300 × 10 s is 50 minutes.
+    intervalMs: 10000
+    maxAttempts: 300

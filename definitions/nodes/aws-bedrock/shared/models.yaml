@@ -10,19 +10,19 @@
 claude:
   # Listed large first so the strongest reads first. The picker's options.
   enum:
-    - anthropic.claude-opus-5
-    - anthropic.claude-sonnet-5
-    - anthropic.claude-haiku-4-5
+    - anthropic.claude-opus-5-5
+    - anthropic.claude-sonnet-5-5
+    - anthropic.claude-haiku-5-5
 
   # Version numbers in the labels by request. When a generation ships, the label is
   # edited alongside the id, or the two lie together.
   enumNames:
-    - Claude Opus 5 (Frontier, complex work)
-    - Claude Sonnet 5 (Balanced intelligence/cost)
-    - Claude Haiku 4.5 (Cost-optimized, high-volume)
+    - Claude Opus 5.5 (Frontier, complex work)
+    - Claude Sonnet 5.5 (Balanced intelligence/cost)
+    - Claude Haiku 5.5 (Cost-optimized, high-volume)
 
   # Balanced middle tier, the sensible default for most work.
-  default: anthropic.claude-sonnet-5
+  default: anthropic.claude-sonnet-5-5
 
 gpt:
   enum:

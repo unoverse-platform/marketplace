@@ -1,12 +1,18 @@
-# The WORKFLOW channel: the people Signal holds for the run's own organisation, newest first, the
-# same read the attached Agent's list_people makes (service.yaml), so a page can be filled from
-# Signal with no Agent in between. The org is always the run's, never the config's.
-- name: list
+# The WORKFLOW channel. With a person named in config (`id` or `email`), ONE person, the same read
+# the attached Agent's find_person makes (service.yaml): a workflow that knows who it is working
+# for never reads everyone. With neither, the people Signal holds for the run's own organisation,
+# newest first, the same read list_people makes, so a page can be filled from Signal with no
+# Agent in between. The org is always the run's, never the config's.
+- name: people
   method: GET
   url: >-
-    return scope.engineUrl + '/people?org=' + encodeURIComponent(scope.org)
-      + (config.stage ? '&stage=' + encodeURIComponent(config.stage) : '')
-      + (config.limit ? '&limit=' + encodeURIComponent(config.limit) : '')
+    return String(config.id || '').trim() || String(config.email || '').trim()
+      ? scope.engineUrl + '/people/one?org=' + encodeURIComponent(scope.org)
+          + (String(config.id || '').trim() ? '&id=' + encodeURIComponent(String(config.id).trim()) : '')
+          + (String(config.email || '').trim() ? '&email=' + encodeURIComponent(String(config.email).trim().toLowerCase()) : '')
+      : scope.engineUrl + '/people?org=' + encodeURIComponent(scope.org)
+          + (config.stage ? '&stage=' + encodeURIComponent(config.stage) : '')
+          + (config.limit ? '&limit=' + encodeURIComponent(config.limit) : '')
   okOn: [400]
   transport: json
   timeoutMs: 15000

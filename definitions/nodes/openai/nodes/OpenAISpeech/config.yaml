@@ -1,0 +1,40 @@
+# The models and voices are OpenAI's speech list as of 2026-10-19
+# (developers.openai.com/api/docs/guides/text-to-speech). gpt-4o-mini-tts is the newest; its default
+# snapshot is gpt-4o-mini-tts-2025-12-15. The tts-1 pair takes only the first nine voices and ignores
+# `instructions`.
+
+configSchema:
+  type: object
+  required: [text]
+  properties:
+    text:
+      type: string
+      title: Text
+      description: The words to speak.
+      default: "{{{input}}}"
+      "ui:field": template
+    model:
+      type: string
+      title: Model
+      description: gpt-4o-mini-tts takes directions on how to speak. tts-1 is faster, tts-1-hd clearer.
+      enum: [gpt-4o-mini-tts, tts-1, tts-1-hd]
+      default: gpt-4o-mini-tts
+    voice:
+      type: string
+      title: Voice
+      description: OpenAI recommends marin or cedar for the best quality.
+      enum: [marin, cedar, alloy, ash, ballad, coral, echo, fable, nova, onyx, sage, shimmer, verse]
+      default: marin
+    instructions:
+      type: string
+      title: How to speak
+      description: Tone, pace and accent in plain words, such as "Calm and warm, unhurried." gpt-4o-mini-tts only.
+      default: ""
+      "ui:field": template
+    responseFormat:
+      type: string
+      title: Output Format
+      description: wav and pcm come back fastest. pcm is raw 24kHz 16-bit with no header.
+      enum: [wav, mp3, opus, aac, flac, pcm]
+      default: wav
+"ui:order": [text, voice, instructions, model, responseFormat]

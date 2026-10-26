@@ -15,3 +15,9 @@
 - emit: root
   from: response
   value: { $ref: files#root }
+
+# WHETHER IT GOT EVERYTHING (2026-10-18): the walk's own word (run.yaml, paginate), so a caller can
+# refuse a part listing. A pipeline fails a run whose listing says false.
+- emit: complete
+  from: response
+  value: "return !((calls.list || {}).truncated)"

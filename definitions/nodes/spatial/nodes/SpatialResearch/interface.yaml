@@ -1,7 +1,29 @@
-inputs: []
-outputs: []
+# A STEP AS WELL AS A TOOL (owner, 2026-10-18: "deterministic steps to explore problems"): wired in
+# the data flow, it asks the one query its `query` setting makes from upstream, with no model
+# choosing what to ask. Attached by its service edge, it is the Agent's tools below, unchanged.
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; the query is templated from it
+    required: false
 
-# ONE TOOL, and the schema with it: one door in (query); the chunks it returns are the words to quote. `getSchema` is the discovery every service node answers
+outputs:
+  - name: answer
+    type: object
+    description: >-
+      The whole answer, exactly as the query tool hands it to an Agent: the rows under the kind
+      asked for, "chunks" when the query asked for them, "_query" as it was run
+  - name: chunks
+    type: array
+    description: >-
+      What the documents the query picked say, in their own words: each chunk with its document,
+      title, heading, pages and the tables and figures on them. Empty when none were asked for
+  - name: refused
+    type: array
+    description: Why the query was refused, each naming what exists. Empty when it ran
+
+# ONE DOOR IN (query), and the schema with it; the chunks it returns are the words to quote, and
+# `open` reads a table or figure a chunk lists (page-store.md, point 2). `getSchema` is the discovery every service node answers
 # (deliberately not a method here): it hands the agent the org's schema and how to ask, so the
 # agent has read it before its first query.
 serviceConnectors:
@@ -11,3 +33,4 @@ serviceConnectors:
     description: Ask the org's data by its schema, with what its documents say in their own words
     methods:
       - query
+      - open

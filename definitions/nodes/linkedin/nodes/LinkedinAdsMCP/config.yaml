@@ -1,0 +1,4 @@
+configSchema:
+  type: object
+  required: []
+  properties: {}

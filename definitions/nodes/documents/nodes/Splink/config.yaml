@@ -1,0 +1,13 @@
+configSchema:
+  type: object
+  required: [input]
+  properties:
+    input:
+      type: string
+      title: Name and candidates
+      description: >-
+        As JSON: { "name": "...", "candidates": [{ "id": "r1", "names": ["...", "..."] }] }. Usually
+        set by the caller (an object's matching), e.g. return { name, candidates }
+      default: ""
+      "ui:field": template
+"ui:order": [input]

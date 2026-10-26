@@ -1,0 +1,16 @@
+inputs:
+  - name: input
+    type: object
+    description: >-
+      { image_url, caption, instagram_account_id? }. A public https JPEG, the words under it,
+      and the Instagram account to post as (the first Page's when left out).
+
+outputs:
+  - name: output
+    type: object
+    description: The post's id and link, or why it was not posted
+
+credentials:
+  - name: metaAccessToken
+    required: true
+    displayName: Meta

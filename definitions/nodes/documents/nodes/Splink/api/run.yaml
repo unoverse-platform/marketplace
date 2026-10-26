@@ -1,0 +1,19 @@
+# THE SCORES, from the engine at loopback (package.yaml says why), which forwards to the documents
+# service's /splink. Not a job: one name against a few candidates answers at once.
+
+- name: score
+  method: POST
+  url: "return scope.engineUrl + '/documents/splink'"
+  transport: json
+
+  body:
+    name: >-
+      return (() => { const raw = config.input; const v = raw && typeof raw === 'object' ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : {}); return String(v.name || ''); })()
+    candidates: >-
+      return (() => { const raw = config.input; const v = raw && typeof raw === 'object' ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : {}); return Array.isArray(v.candidates) ? v.candidates : []; })()
+
+  timeoutMs: 30000
+
+  error:
+    when: "return !!response.detail || !!response.error"
+    message: "return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))"

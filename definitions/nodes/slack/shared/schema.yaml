@@ -1,0 +1,85 @@
+# TOOL DISCOVERY, as DATA: what an attached Agent reads before it reaches Slack. Transcribed from
+# the retired `_legacy/nodes/slack/src/SlackMCP/service/mcpSchema.ts`. The wording IS the routing:
+# a model reads these descriptions when choosing a tool, so rephrasing is a behaviour change, never
+# a tidy-up. The argument shapes are what the model fills in.
+
+slack:
+  name: Slack
+  version: "2.0.0"
+  description: >-
+    Reach a Slack workspace: send messages, list channels, look up users, and read a channel's
+    history.
+  instructions: |-
+    SLACK PROTOCOL:
+    - Every channel argument is a channel ID (e.g. C01ABC123), never a name. Find it with list_channels.
+    - You can post in, and read, only the channels you are a member of (is_member in list_channels).
+    - To reply in a thread, pass the parent message's ts as thread_ts.
+    - A tool that answers ok: false carries Slack's reason. Say so rather than claiming it worked.
+  methods:
+    send_message:
+      description: >-
+        Send a message to a Slack channel or thread. Use the channel ID, not the name. To reply in
+        a thread, pass thread_ts.
+      input:
+        type: object
+        properties:
+          channel:
+            type: string
+            description: Channel ID (e.g. C01ABC123).
+          text:
+            type: string
+            description: Message text (supports Slack mrkdwn formatting).
+          thread_ts:
+            type: string
+            description: Timestamp of the message to reply to in a thread (optional).
+        required: [channel, text]
+
+    list_channels:
+      description: >-
+        List public channels in the workspace, with id, name, topic, member count, and whether you
+        are a member. Pass the cursor from a previous response to page.
+      input:
+        type: object
+        properties:
+          limit:
+            type: number
+            description: Most channels to return (default 100, max 200).
+          cursor:
+            type: string
+            description: Pagination cursor from a previous response (optional).
+
+
+    get_user:
+      description: >-
+        Look up a Slack user by their user ID or email address. Returns their profile: display
+        name, email and status.
+      input:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: User ID (e.g. U01ABC123). Give this or email.
+          email:
+            type: string
+            description: The user's email address. Give this or user_id.
+
+    read_history:
+      description: >-
+        Read recent messages from a channel, newest first. Bound the window with oldest and latest
+        timestamps.
+      input:
+        type: object
+        properties:
+          channel:
+            type: string
+            description: Channel ID.
+          limit:
+            type: number
+            description: Number of messages (default 25, max 100).
+          oldest:
+            type: string
+            description: Only messages after this timestamp (optional).
+          latest:
+            type: string
+            description: Only messages before this timestamp (optional).
+        required: [channel]

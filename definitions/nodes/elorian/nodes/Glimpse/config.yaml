@@ -1,0 +1,63 @@
+configSchema:
+  type: object
+  required: [model, prompt]
+  properties:
+    model:
+      type: string
+      title: Model
+      description: The model that answers. Glimpse is the agent model that runs code and searches on its own.
+      enum: [elorian-1-agent]
+      enumNames: ["Glimpse (elorian-1-agent)"]
+      default: elorian-1-agent
+    reasoningEffort:
+      type: string
+      title: Reasoning Effort
+      description: How long the model thinks before answering. Extra High is the most thorough and the slowest.
+      enum: [low, medium, xhigh]
+      enumNames: [Low, Medium, Extra High]
+      default: xhigh
+    maxTokens:
+      type: number
+      title: Max Output Tokens
+      description: >-
+        Caps the answer, and the model's hidden thinking spends from it too: too low and the answer
+        comes back empty. Elorian recommends 8,000; your tier may cap it lower.
+      default: 8000
+      minimum: 1
+    videoFps:
+      type: number
+      title: Video Frames per Second
+      description: How many frames a second the model sees. Lower it for a long clip that will not fit.
+      default: 2
+      minimum: 0.1
+      maximum: 15
+    videoUrl:
+      type: string
+      title: Video
+      description: >-
+        One clip, as an https link (MP4, MOV or WebM) or file://<id> for a file uploaded to Elorian.
+        Optional.
+      default: ""
+      "ui:field": template
+    imageUrls:
+      type: array
+      title: Images
+      description: Up to 20 images, each an https link or a data URL (PNG, JPEG, WebP or GIF). Optional.
+      items:
+        type: string
+      default: []
+      "ui:field": template
+    systemPrompt:
+      type: string
+      title: Instructions
+      description: Standing instructions for every run. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.
+      default: ""
+      "ui:field": template
+    prompt:
+      type: string
+      title: Question
+      description: What to ask about the video or images. Usually wired in from an upstream node.
+      default: ""
+      "ui:field": template
+"ui:order":
+  [model, reasoningEffort, maxTokens, videoFps, videoUrl, imageUrls, systemPrompt, prompt]

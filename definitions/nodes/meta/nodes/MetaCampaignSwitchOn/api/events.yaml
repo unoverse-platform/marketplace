@@ -1,0 +1,9 @@
+# One row, one connector. No `calls.after` means the input named no campaign.
+
+- emit: output
+  from: response
+  value: >-
+    return calls.after
+      ? { ok: calls.after.status === 'ACTIVE', campaign_id: String(signal.input.campaign_id),
+          status: calls.after.status, daily_budget: Number(calls.after.daily_budget || 0) / 100 }
+      : { ok: false, error: 'campaign_id is required' }

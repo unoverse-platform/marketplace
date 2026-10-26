@@ -6,6 +6,8 @@
 
 responses: https://api.openai.com/v1/responses
 embeddings: https://api.openai.com/v1/embeddings
+# Text in, audio bytes out. Used by OpenAISpeech.
+speech: https://api.openai.com/v1/audio/speech
 # Named questions in, calibrated probabilities out. Used by OpenAIDecision.
 decisions: https://api.openai.com/v1/decisions
 

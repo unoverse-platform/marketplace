@@ -1,0 +1,106 @@
+{
+  "kind": "node",
+  "name": "SearchPlaceDetails",
+  "pack": "search",
+  "fingerprint": "8d2f0679a16b60d9",
+  "title": "Search Place Details",
+  "description": "One place's full Google Maps listing by its place id via SearchAPI.io",
+  "category": "Search",
+  "icon": "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  "whenToUse": "Pick to fill in ONE KNOWN PLACE from its Google Maps listing: its photos, description, amenities, price level, hotel stars, rating, address and coordinates. It starts from a place id a search already found and returns that one listing in full; it does not search for places, and opening hours are not part of a listing.\n",
+  "detail": {
+    "inputs": [
+      {
+        "name": "placeId",
+        "type": "string",
+        "description": "Google Maps place id, as a places search returns it",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "place",
+        "type": "object",
+        "description": "The listing: title, description, address, phone, website, rating, reviews, price, hotelStars, type, types, amenities, openState, hours, gpsCoordinates, placeId"
+      },
+      {
+        "name": "images",
+        "type": "array",
+        "description": "The listing's photos, each { title, url }, largest first"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "searchapiCredential",
+        "required": true,
+        "displayName": "SearchAPI"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "placeId"
+      ],
+      "properties": {
+        "placeId": {
+          "type": "string",
+          "title": "Place ID",
+          "description": "The Google Maps place id to look up, e.g. 'ChIJhRwB-yFawokR5Phil-QQ3zM'. Usually wired in from a places search.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "maxImages": {
+          "type": "number",
+          "title": "Number of Photos",
+          "description": "How many of the listing's photos to return",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 50
+        },
+        "language": {
+          "type": "string",
+          "title": "Language",
+          "description": "Language code for the listing text, e.g. 'en', 'ar'",
+          "default": "en"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "search",
+      "packageFile": "# FULLY DECLARATIVE. Six nodes, one endpoint, one key.\n#\n# SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched\n# by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds\n# the call, each node names its engine and shapes its own reply, and the whole client is\n# gone: `auth: apiKeyQuery` was already an executor capability.\n#\n# The retired TypeScript is at `_legacy/nodes/search/`.\n\nname: search\ndisplayName: Search\ndescription: Web, news, video, places, one place's listing and by-image search via SearchAPI.io\nversion: 2.0.0\ncategory: search\nlogoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png\n\nfeatures:\n  - Google web and image results\n  - Google News, dated articles\n  - YouTube video search\n  - Google Maps places with ratings\n  - One Google Maps listing in full, photos and facts, by place id\n  - Google Lens, the pages a picture appears on\n\nallowedHosts:\n  - www.searchapi.io\n\nrequires:\n  credential: [apiKeyQuery]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
+      "credentials": {
+        "searchapiCredential.yaml": "# One key powers every engine in this package. Transcribed from src/credentials/index.ts.\n\nname: searchapiCredential\ndisplayName: SearchAPI\ndescription: SearchAPI.io credentials. One key powers every search engine in this package.\ndocumentationUrl: https://www.searchapi.io/docs\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your SearchAPI.io API key\n    placeholder: \"\"\n"
+      },
+      "shared": {
+        "searchapi.yaml": "# The ONE call every node in this package makes.\n#\n# Same url, same auth, switched by `engine`. A node $refs this and layers its own `query`\n# keys on top, which is what a $ref with siblings does: imported first, local wins.\n#\n# The key travels as a query parameter because that is what the vendor takes. `apiKeyQuery`\n# is an executor capability, so no node handles a secret itself.\n\ncall: &call\n  method: GET\n  url: https://www.searchapi.io/api/v1/search\n  credential:\n    scheme: apiKeyQuery\n    param: api_key\n    value: \"{{ credentials.searchapiCredential.apiKey }}\"\n  headers:\n    Accept: application/json\n  transport: json\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504]\n\n# A 200 is not always a success here: the vendor reports a bad parameter or an exhausted\n# quota in the body. Without this a failed search emits empty results and reads as \"nothing\n# found\", which is the wrong answer rather than an error.\n#\n# Except \"nothing found\" itself: the vendor reports an empty search in the same field\n# (\"Google didn't return any results.\"). That IS the answer, so it emits empty lists, and a\n# search for a person with no news does not end the run.\nerror: &error\n  when: \"return !!response.error && !String(response.error).includes(\\\"didn't return any results\\\")\"\n  message: \"return typeof response.error === 'string' ? response.error : JSON.stringify(response.error)\"\n"
+      }
+    },
+    "dir": "SearchPlaceDetails",
+    "files": {
+      "api/events.yaml": "# `response` is the whole reply; the listing is its `place_result`. With no place id the call was\n# skipped and both rows read an empty listing: an empty object and an empty list, never a failure.\n#\n# `type` is a single string on some listings and a `types` array on others, as in the places\n# search. Hotel listings carry `price` (a nightly rate) and `hotel_stars` (\"4 stars\"); others\n# carry `price` as a level (\"$$$$\") or nothing. The reply has NO opening hours for the place\n# itself (2026-10-23, vendor docs): hours ride on the places SEARCH results, not on the listing.\n- emit: place\n  from: response\n  value: >-\n    return ((p) => ({\n      placeId: p.place_id || \"\",\n      title: p.title || \"\",\n      description: p.description || \"\",\n      address: p.address || \"\",\n      phone: p.phone || \"\",\n      website: p.website || \"\",\n      rating: typeof p.rating === \"number\" ? p.rating : null,\n      reviews: typeof p.reviews === \"number\" ? p.reviews : null,\n      price: p.price || \"\",\n      hotelStars: p.hotel_stars || \"\",\n      type: p.type || (Array.isArray(p.types) ? p.types[0] : \"\") || \"\",\n      types: Array.isArray(p.types) ? p.types : (p.type ? [p.type] : []),\n      amenities: Array.isArray(p.amenities) ? p.amenities : [],\n      features: Array.isArray(p.features) ? p.features : [],\n      extensions: Array.isArray(p.extensions) ? p.extensions : [],\n      thumbnail: p.thumbnail || \"\",\n      gpsCoordinates: p.gps_coordinates\n        ? { latitude: p.gps_coordinates.latitude, longitude: p.gps_coordinates.longitude }\n        : null\n    }))((response || {}).place_result || {})\n\n# Google hands back small thumbnails; the size in the URL is raised so a card can draw a hero\n# from it. The listing's own cover picture leads when the gallery does not already open with it.\n- emit: images\n  from: response\n  value: >-\n    return ((p) => {\n      const big = (u) => String(u || \"\").replace(/=w\\d+-h\\d+[^&]*/, \"=w1200-h800\");\n      const list = (Array.isArray(p.images) ? p.images : [])\n        .filter(i => i && i.thumbnail)\n        .map(i => ({ title: i.title || \"\", url: big(i.thumbnail) }));\n      const cover = p.thumbnail && !list.some(i => i.url === big(p.thumbnail))\n        ? [{ title: p.title || \"\", url: big(p.thumbnail) }] : [];\n      return cover.concat(list).slice(0, config.maxImages);\n    })((response || {}).place_result || {})\n",
+      "api/run.yaml": "# NO ID, NO CALL: an empty place id skips the lookup and the node answers an empty place,\n# rather than failing the run it sits in (the vendor refuses a details request without one).\n\n- $ref: searchapi#call\n  name: details\n  when: \"return String(config.placeId || '').trim().length > 0\"\n  error: { $ref: searchapi#error }\n  query:\n    engine: google_maps_place\n    place_id: \"{{ config.placeId }}\"\n    hl: \"{{ config.language }}\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [placeId]\n  properties:\n    placeId:\n      type: string\n      title: Place ID\n      description: The Google Maps place id to look up, e.g. 'ChIJhRwB-yFawokR5Phil-QQ3zM'. Usually wired in from a places search.\n      default: \"\"\n      \"ui:field\": template\n    maxImages:\n      type: number\n      title: Number of Photos\n      description: How many of the listing's photos to return\n      default: 10\n      minimum: 0\n      maximum: 50\n    language:\n      type: string\n      title: Language\n      description: Language code for the listing text, e.g. 'en', 'ar'\n      default: en\n\"ui:order\": [placeId, maxImages, language]\n",
+      "interface.yaml": "inputs:\n  - name: placeId\n    type: string\n    description: Google Maps place id, as a places search returns it\n    required: false\n\noutputs:\n  - name: place\n    type: object\n    description: >-\n      The listing: title, description, address, phone, website, rating, reviews, price,\n      hotelStars, type, types, amenities, openState, hours, gpsCoordinates, placeId\n  - name: images\n    type: array\n    description: The listing's photos, each { title, url }, largest first\n\ncredentials:\n  - name: searchapiCredential\n    required: true\n    displayName: SearchAPI\n",
+      "node.yaml": "type: SearchPlaceDetails\nkind: PromiseNode\nname: Search Place Details\ncategory: Search\ncolor: \"#34A853\"\nlogoUrl: https://cdn-icons-png.flaticon.com/512/684/684908.png\ndescription: One place's full Google Maps listing by its place id via SearchAPI.io\nwhenToUse: >\n  Pick to fill in ONE KNOWN PLACE from its Google Maps listing: its photos, description,\n  amenities, price level, hotel stars, rating, address and coordinates. It starts from a\n  place id a search already found and returns that one listing in full; it does not search\n  for places, and opening hours are not part of a listing.\n\n# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node\n# nobody thought about cannot look the same as one deliberately left open.\n#\n# `required: false` adds no requirement of its own: the node runs for whoever the trigger\n# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements\n# only ever narrow.\nauth:\n  required: false\n\ncapabilities:\n  # Idempotent read by id: the same listing yields the same photos and facts, so a prior\n  # output may be reused instead of asking again (EXECUTION_EFFICIENCY.md §3.2).\n  cacheable: true\n",
+      "test.yaml": "# The vendor's own documentation example: Madison Square Garden.\ntestData:\n  config:\n    placeId: ChIJhRwB-yFawokR5Phil-QQ3zM\n    maxImages: 10\n    language: en\n  inputs:\n    placeId: ChIJhRwB-yFawokR5Phil-QQ3zM\n  expect:\n    place: \"return typeof output.place.title === 'string' && output.place.title.length > 0 && output.place.gpsCoordinates !== null\"\n    images: \"return Array.isArray(output.images) && output.images.length > 0 && typeof output.images[0].url === 'string'\"\n"
+    }
+  }
+}

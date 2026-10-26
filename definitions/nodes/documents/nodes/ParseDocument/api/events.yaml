@@ -26,12 +26,20 @@
 
 # WHAT A READ OF THE DOCUMENT IS GIVEN (docs/unoverse/data/documents/README.md, what the model
 # reads): the first two pages, cut at the third page's mark, else about two pages of a file with none.
+# TWO LONG PAGES KEEP BOTH ENDS (2026-10-18): a spreadsheet's sheet is one page of every row, and a
+# returns history runs oldest to newest, so its date is at the bottom; past 20,000 characters the
+# read is given the first 12,000 and the last 6,000, marked where the middle was left out.
 - emit: firstPages
   value: >-
     return (() => {
+      // A SPREADSHEET'S COVER (page-store.md, owner 2026-10-18): its sheets are tables, never page text, so
+      // the read is shown each sheet's header with its first and last rows instead.
+      const cover = String((response.result || {}).cover || '');
+      if (cover) return cover.length > 20000 ? cover.slice(0, 20000) : cover;
       const all = String((response.result || {}).text || '');
       const third = all.indexOf('<!-- page 3 -->');
-      return third > 0 ? all.slice(0, third) : all.slice(0, 8000);
+      const two = third > 0 ? all.slice(0, third) : all.slice(0, 8000);
+      return two.length > 20000 ? two.slice(0, 12000) + '\n\n(… ' + (two.length - 18000) + ' characters of these pages left out here …)\n\n' + two.slice(-6000) : two;
     })()
 
 # EVERY HEADING, with its section's first words, so a section is named by what it says.

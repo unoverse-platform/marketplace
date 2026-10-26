@@ -9,8 +9,10 @@
   body: "return config.input || {}"
 
   # A sleeping deployment starts its container and loads its model before it answers: measured
-  # 37 s for a 194M-parameter model on its first call ever, about 1 s once warm.
-  timeoutMs: 300000
+  # 37 s for a 194M-parameter model on its first call ever, about 1 s once warm. FIFTEEN MINUTES (2026-10-19): the
+  # document engine's cold start (vLLM and NuExtract3) took five to six minutes, and a call cut at five was tried
+  # again while the first still waited, piling up until the read was given up.
+  timeoutMs: 900000
 
   retry:
     attempts: 3

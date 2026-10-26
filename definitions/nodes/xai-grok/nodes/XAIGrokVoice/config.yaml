@@ -62,7 +62,7 @@ configSchema:
       title: Pronunciation
       description: >-
         Fixes how Grok SAYS a phrase without changing what it writes: a map from the written form
-        to how it should sound, like {"Yas Island": "Yahs Island"}.
+        to how it should sound, like {"Example Isle": "Eg-zample Isle"}.
       "ui:field": template
     voice:
       type: string

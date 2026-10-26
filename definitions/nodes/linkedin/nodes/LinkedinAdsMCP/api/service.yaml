@@ -1,0 +1,318 @@
+# The MCP methods an agent can call, over LinkedIn's versioned Marketing API (shared/api.yaml
+# holds the version). Seven, from the bundle's 42 operations: what an agent running ads does,
+# and nothing that creates accounts, manages their users or deletes.
+#
+# REST.LI QUERIES are built in the url, never in `query:`. Their parentheses, colons and commas
+# are syntax and must reach LinkedIn as written, while a URN inside them is a value and is
+# encoded. A query map would encode both.
+#
+# IDS COME BACK IN A HEADER. A create answers 201 with an empty body and the new id in
+# `x-restli-id`, so every create is read with `transport: headers`.
+
+getSchema:
+  description: Tool discovery for LinkedIn Ads
+  calls: []
+  returns: { $ref: schema#linkedin }
+
+list_ad_accounts:
+  description: >-
+    List the active ad accounts you can manage, with id, currency and the company page its ads
+    are posted as.
+  calls:
+    - name: accounts
+      method: GET
+      url: "https://api.linkedin.com/rest/adAccounts?q=search&search=(status:(values:List(ACTIVE)))"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+  returns: { $ref: shape#accounts }
+
+find_targeting:
+  description: >-
+    Find the targeting values for one facet, by search text or, with no text, all of them.
+    Facets: locations, seniorities, industries, jobFunctions, titles, employers,
+    staffCountRanges.
+  calls:
+    - name: search
+      when: "return !!params.query"
+      method: GET
+      url: >-
+        return 'https://api.linkedin.com/rest/adTargetingEntities?q=typeahead&queryVersion=QUERY_USES_URNS'
+          + '&facet=' + encodeURIComponent('urn:li:adTargetingFacet:' + params.facet)
+          + '&query=' + encodeURIComponent(params.query)
+          + '&locale=(language:en,country:US)'
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+    - name: all
+      when: "return !params.query"
+      method: GET
+      url: >-
+        return 'https://api.linkedin.com/rest/adTargetingEntities?q=adTargetingFacet&queryVersion=QUERY_USES_URNS'
+          + '&facet=' + encodeURIComponent('urn:li:adTargetingFacet:' + params.facet)
+          + '&locale=(language:en,country:US)'
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      facet: params.facet,
+      values: ((calls.search || calls.all || {}).elements || []).slice(0, 50).map(e => ({ urn: e.urn, name: e.name })),
+      has_more: ((calls.search || calls.all || {}).elements || []).length > 50
+    }
+
+list_campaigns:
+  description: >-
+    List an ad account's campaigns that are on, paused or drafts, with status, daily budget and
+    objective.
+  calls:
+    - name: campaigns
+      method: GET
+      url: >-
+        return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id)
+          + '/adCampaigns?q=search&search=(status:(values:List(ACTIVE,PAUSED,DRAFT)))&sortOrder=DESCENDING'
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      campaigns: (response.elements || []).map(c => ({
+        id: String(c.id),
+        name: c.name,
+        status: c.status,
+        objective: c.objectiveType || null,
+        daily_budget: c.dailyBudget || null,
+        campaign_group: c.campaignGroup,
+        serving: c.servingStatuses || []
+      })),
+      has_more: !!((response.metadata || {}).nextPageToken)
+    }
+
+create_campaign:
+  description: >-
+    Create a campaign, as a DRAFT that spends nothing until a person switches it on. Give
+    it a name, a daily budget in the account's currency, an objective and its targeting.
+  calls:
+    # Its own campaign group, so a campaign's budget and status are never shared with another's
+    # by accident. The group is on; the campaign inside it is a draft, and a draft never serves.
+    - name: group
+      method: POST
+      url: "return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id) + '/adCampaignGroups'"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      body: >-
+        return {
+          account: 'urn:li:sponsoredAccount:' + params.account_id,
+          name: String(params.name),
+          runSchedule: { start: Date.now() },
+          status: 'ACTIVE'
+        }
+      transport: headers
+    - name: campaign
+      method: POST
+      url: "return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id) + '/adCampaigns'"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      # Targeting is AND across facets and OR within one, which is LinkedIn's own reading of
+      # targetingCriteria. The interface locale is required on every campaign's targeting.
+      body: >-
+        return {
+          account: 'urn:li:sponsoredAccount:' + params.account_id,
+          campaignGroup: 'urn:li:sponsoredCampaignGroup:' + String(calls.group['x-restli-id']).split(':').at(-1),
+          associatedEntity: String(params.organization).startsWith('urn:') ? params.organization : 'urn:li:organization:' + params.organization,
+          name: String(params.name),
+          type: 'SPONSORED_UPDATES',
+          format: 'STANDARD_UPDATE',
+          objectiveType: params.objective || 'WEBSITE_VISIT',
+          costType: params.objective === 'BRAND_AWARENESS' ? 'CPM' : 'CPC',
+          optimizationTargetType: params.objective === 'BRAND_AWARENESS' ? 'MAX_IMPRESSION' : 'MAX_CLICK',
+          creativeSelection: 'OPTIMIZED',
+          dailyBudget: { amount: String(params.daily_budget), currencyCode: params.currency },
+          locale: { country: 'US', language: 'en' },
+          audienceExpansionEnabled: false,
+          offsiteDeliveryEnabled: false,
+          politicalIntent: 'NOT_POLITICAL',
+          runSchedule: { start: Date.now() },
+          targetingCriteria: {
+            include: {
+              and: Object.entries(params.targeting || {})
+                .filter(e => Array.isArray(e[1]) && e[1].length > 0)
+                .map(e => ({ or: Object.fromEntries([['urn:li:adTargetingFacet:' + e[0], e[1]]]) }))
+                .concat([{ or: { 'urn:li:adTargetingFacet:interfaceLocales': ['urn:li:locale:en_US'] } }])
+            }
+          },
+          status: 'DRAFT'
+        }
+      transport: headers
+  returns: >-
+    return {
+      ok: true,
+      campaign_id: String(calls.campaign['x-restli-id']).split(':').at(-1),
+      campaign_group_id: String(calls.group['x-restli-id']).split(':').at(-1),
+      status: 'DRAFT'
+    }
+
+create_ad:
+  description: >-
+    Create an image ad in a campaign, posted as the account's company page: the words, an image
+    by its https url, a headline, and the page it links to.
+  calls:
+    # The image, fetched with no credential (allowedHosts `*`), handed on as bytes.
+    - name: source
+      method: GET
+      url: "{{ params.image_url }}"
+      transport: binary
+      timeoutMs: 60000
+    - name: init
+      method: POST
+      url: "https://api.linkedin.com/rest/images?action=initializeUpload"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      body: >-
+        return {
+          initializeUploadRequest: {
+            owner: String(params.organization).startsWith('urn:') ? params.organization : 'urn:li:organization:' + params.organization
+          }
+        }
+      transport: json
+    - name: put
+      method: PUT
+      url: "return calls.init.value.uploadUrl"
+      credential: { $ref: api#credential }
+      headers:
+        Content-Type: "return (calls.source || {}).contentType || 'image/png'"
+      encoding: binary
+      body: "return calls.source"
+      transport: headers
+    # LinkedIn processes an upload before an ad may use it.
+    - name: ready
+      method: GET
+      url: "return 'https://api.linkedin.com/rest/images/' + encodeURIComponent(calls.init.value.image)"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+      poll:
+        url: "return 'https://api.linkedin.com/rest/images/' + encodeURIComponent(calls.init.value.image)"
+        until: "return response.status === 'AVAILABLE'"
+        failed: "return response.status === 'PROCESSING_FAILED'"
+        message: "return 'LinkedIn could not process the image: ' + response.status"
+        intervalMs: 2000
+        maxAttempts: 15
+    # The post and the ad in one call. `intendedStatus: ACTIVE` sends it for review; it serves
+    # only once its campaign is on.
+    - name: creative
+      method: POST
+      url: "return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id) + '/creatives?action=createInline'"
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      body: >-
+        return {
+          creative: {
+            campaign: 'urn:li:sponsoredCampaign:' + params.campaign_id,
+            intendedStatus: 'ACTIVE',
+            inlineContent: {
+              post: Object.fromEntries(Object.entries({
+                adContext: { dscAdAccount: 'urn:li:sponsoredAccount:' + params.account_id, dscStatus: 'ACTIVE' },
+                author: String(params.organization).startsWith('urn:') ? params.organization : 'urn:li:organization:' + params.organization,
+                commentary: String(params.text),
+                visibility: 'PUBLIC',
+                lifecycleState: 'PUBLISHED',
+                isReshareDisabledByAuthor: false,
+                contentLandingPage: params.landing_page,
+                contentCallToActionLabel: params.call_to_action,
+                content: { media: { title: params.headline, id: calls.init.value.image } }
+              }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+            }
+          }
+        }
+      transport: headers
+  returns: >-
+    return {
+      ok: true,
+      creative_id: String(calls.creative['x-restli-id'] || ''),
+      image: calls.init.value.image
+    }
+
+change_campaign:
+  description: >-
+    Pause or archive a campaign, or lower its daily budget. It never switches a campaign on or
+    raises a budget: those spend more, and are a person's yes.
+  calls:
+    # What it is now, so a budget can be checked as lower and its currency kept.
+    - name: current
+      method: GET
+      url: >-
+        return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id)
+          + '/adCampaigns/' + encodeURIComponent(params.campaign_id)
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+    - name: patch
+      when: >-
+        return (!params.status || ['PAUSED', 'ARCHIVED'].indexOf(params.status) !== -1)
+          && (!params.daily_budget || Number(params.daily_budget) <= Number(((calls.current || {}).dailyBudget || {}).amount || 0))
+          && !!(params.status || params.daily_budget)
+      method: POST
+      url: >-
+        return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(params.account_id)
+          + '/adCampaigns/' + encodeURIComponent(params.campaign_id)
+      credential: { $ref: api#credential }
+      headers: { $ref: api#patch }
+      body: >-
+        return {
+          patch: {
+            $set: Object.fromEntries(Object.entries({
+              status: params.status,
+              dailyBudget: params.daily_budget
+                ? { amount: String(params.daily_budget), currencyCode: ((calls.current || {}).dailyBudget || {}).currencyCode }
+                : undefined
+            }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== ''))
+          }
+        }
+      transport: headers
+  # Refused rather than thrown, so an agent reads why and does not retry the same thing.
+  returns: >-
+    return calls.patch
+      ? { ok: true, campaign_id: String(params.campaign_id), status: params.status || (calls.current || {}).status, daily_budget: params.daily_budget || ((calls.current || {}).dailyBudget || {}).amount }
+      : { ok: false, error: 'change_campaign only pauses, archives or lowers a budget; switching on or raising a budget needs a person\'s yes' }
+
+report:
+  description: >-
+    Spend and results per campaign in an ad account, from a start date (YYYY-MM-DD, default 30
+    days ago) to today or an end date. Optionally only some campaigns.
+  calls:
+    - name: analytics
+      method: GET
+      url: >-
+        return 'https://api.linkedin.com/rest/adAnalytics?q=analytics&pivot=CAMPAIGN&timeGranularity=ALL'
+          + '&dateRange=(start:(year:' + Number(String(params.since || Date.iso(Date.now() - 30 * 86400000).split('T')[0]).split('-')[0])
+          + ',month:' + Number(String(params.since || Date.iso(Date.now() - 30 * 86400000).split('T')[0]).split('-')[1])
+          + ',day:' + Number(String(params.since || Date.iso(Date.now() - 30 * 86400000).split('T')[0]).split('-')[2]) + ')'
+          + (params.until
+              ? ',end:(year:' + Number(String(params.until).split('-')[0]) + ',month:' + Number(String(params.until).split('-')[1]) + ',day:' + Number(String(params.until).split('-')[2]) + ')'
+              : '')
+          + ')'
+          + '&accounts=List(' + encodeURIComponent('urn:li:sponsoredAccount:' + params.account_id) + ')'
+          + ((params.campaign_ids || []).length
+              ? '&campaigns=List(' + params.campaign_ids.map(id => encodeURIComponent('urn:li:sponsoredCampaign:' + id)).join(',') + ')'
+              : '')
+          + '&fields=impressions,clicks,landingPageClicks,costInLocalCurrency,externalWebsiteConversions,oneClickLeads,approximateMemberReach,pivotValues,dateRange'
+      credential: { $ref: api#credential }
+      headers: { $ref: api#headers }
+      transport: json
+  returns: >-
+    return {
+      ok: true,
+      campaigns: (response.elements || []).map(r => ({
+        campaign_id: String((r.pivotValues || [''])[0]).split(':').at(-1),
+        spend: Number(r.costInLocalCurrency || 0),
+        impressions: r.impressions || 0,
+        reach: r.approximateMemberReach || 0,
+        clicks: r.clicks || 0,
+        landing_page_clicks: r.landingPageClicks || 0,
+        conversions: r.externalWebsiteConversions || 0,
+        leads: r.oneClickLeads || 0
+      }))
+    }

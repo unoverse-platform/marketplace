@@ -1,0 +1,28 @@
+type: Splink
+kind: PromiseNode
+
+name: Splink
+category: Documents
+color: "#0F766E"
+logoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png
+
+description: >-
+  How likely a name is each of a few held records, scored by Splink with fixed weights: the
+  same names always give the same scores, with no model call
+
+whenToUse: >-
+  Dedupe a name read from a document against the records already held: the name and each
+  candidate's names in, a probability per candidate out, from Splink's own matching model
+  (Fellegi-Sunter, comparing the name's core by spelling and its place, role and legal form
+  apart). Use it in front of a judge: a score near one links, near zero rules out, and only what
+  falls between goes to a model. It runs on the platform's document service, wherever that is
+  hosted, and reads and writes nothing: the caller holds the records and decides.
+
+auth:
+  required: false
+
+capabilities:
+  # A pure function of its inputs: the same name and candidates always score the same. Remembered
+  # under the documents service's own version, so a change to how names are compared forgets them.
+  cacheable:
+    answeredBy: documents

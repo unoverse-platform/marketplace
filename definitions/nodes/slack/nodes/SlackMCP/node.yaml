@@ -5,10 +5,10 @@ category: Communication
 color: "#4A154B"
 # Attached to an agent over a service edge rather than wired in sequence.
 template: service
-description: Send messages, search, and read a Slack workspace
+description: Send messages to and read a Slack workspace
 whenToUse: >
-  Pick to reach a Slack workspace: post a message or thread reply, search messages, read a
-  channel's history, list channels, look up a user, or react to a post. Attach it to an
+  Pick to reach a Slack workspace: post a message or thread reply, read a channel's history,
+  list channels, or look up a user. Attach it to an
   agent so it can talk to a team, or trigger it directly to post to a default channel.
 
 # WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
@@ -23,3 +23,9 @@ auth:
 capabilities:
   # Sending a message is a side effect, so reuse must never stand in for it.
   cacheable: false
+
+# A MESSAGE SLACK SENDS US (a mention of an Agent's Slack app) is checked by the platform's Slack
+# verifier with the app's signing secret (docs/auth-security/INBOUND.md in the platform repo).
+inbound:
+  verify: slack
+  secret: signingSecret

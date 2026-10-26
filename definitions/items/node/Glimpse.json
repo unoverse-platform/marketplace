@@ -1,0 +1,158 @@
+{
+  "kind": "node",
+  "name": "Glimpse",
+  "pack": "elorian",
+  "fingerprint": "8513848d88461b00",
+  "title": "Glimpse",
+  "description": "Asks Elorian's Glimpse a question about a video or images",
+  "category": "AI",
+  "icon": null,
+  "whenToUse": "Watch a video or look at images and answer a question about them: what happens and when, what people are doing, whether a picture matches its caption. Reasons over the frames themselves, reading motion, posture, timing and layout, and hears the clip's speech too, so the answer cites moments by timestamp. One video and up to 20 images per question, each given as a link.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "signal",
+        "type": "object",
+        "description": "Data from previous nodes that can be referenced in templates",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "text",
+        "type": "string",
+        "description": "The answer"
+      },
+      {
+        "name": "usage",
+        "type": "object",
+        "description": "Tokens spent, cached tokens, and what the model saw (usage.elorian frames, fps, video seconds, images)"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "elorianCredential",
+        "required": true,
+        "displayName": "Elorian API"
+      }
+    ],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "description": "The model that answers. Glimpse is the agent model that runs code and searches on its own.",
+          "enum": [
+            "elorian-1-agent"
+          ],
+          "enumNames": [
+            "Glimpse (elorian-1-agent)"
+          ],
+          "default": "elorian-1-agent"
+        },
+        "reasoningEffort": {
+          "type": "string",
+          "title": "Reasoning Effort",
+          "description": "How long the model thinks before answering. Extra High is the most thorough and the slowest.",
+          "enum": [
+            "low",
+            "medium",
+            "xhigh"
+          ],
+          "enumNames": [
+            "Low",
+            "Medium",
+            "Extra High"
+          ],
+          "default": "xhigh"
+        },
+        "maxTokens": {
+          "type": "number",
+          "title": "Max Output Tokens",
+          "description": "Caps the answer, and the model's hidden thinking spends from it too: too low and the answer comes back empty. Elorian recommends 8,000; your tier may cap it lower.",
+          "default": 8000,
+          "minimum": 1
+        },
+        "videoFps": {
+          "type": "number",
+          "title": "Video Frames per Second",
+          "description": "How many frames a second the model sees. Lower it for a long clip that will not fit.",
+          "default": 2,
+          "minimum": 0.1,
+          "maximum": 15
+        },
+        "videoUrl": {
+          "type": "string",
+          "title": "Video",
+          "description": "One clip, as an https link (MP4, MOV or WebM) or file://<id> for a file uploaded to Elorian. Optional.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "imageUrls": {
+          "type": "array",
+          "title": "Images",
+          "description": "Up to 20 images, each an https link or a data URL (PNG, JPEG, WebP or GIF). Optional.",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "ui:field": "template"
+        },
+        "systemPrompt": {
+          "type": "string",
+          "title": "Instructions",
+          "description": "Standing instructions for every run. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "Question",
+          "description": "What to ask about the video or images. Usually wired in from an upstream node.",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "elorian",
+      "packageFile": "# Elorian, fully declarative.\n#\n# Glimpse is OpenAI-COMPATIBLE chat completions (platform.elorian.ai docs: \"a developer who has used\n# OpenAI's API changes two lines\"), so this package is the zai one without its tool loop: the agent\n# model runs its own hosted tools and refuses function tools (undefined_tool_called).\n\nname: elorian\ndisplayName: Elorian\ndescription: Glimpse, Elorian's visual reasoning model, over images and video\nversion: 1.0.0\ncategory: ai\n\nfeatures:\n  - Answers questions about one video and up to 20 images, citing moments by timestamp\n\nallowedHosts:\n  - api.elorian.ai\n\nrequires:\n  credential: [bearer]\n  transport: [json]\n",
+      "credentials": {
+        "elorianCredential.yaml": "name: elorianCredential\ndisplayName: Elorian API\ndescription: API key for Elorian (Glimpse). Requests are paid from credits from the first token.\ndocumentationUrl: https://platform.elorian.ai/settings/docs\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Created in the Elorian console under API keys\n    placeholder: elor_sk_...\n"
+      },
+      "shared": {}
+    },
+    "dir": "Glimpse",
+    "files": {
+      "api/events.yaml": "# ONE ROW PER OUTPUT CONNECTOR, in interface.yaml order.\n\n- emit: text\n  value: \"return (((response.choices || [])[0] || {}).message || {}).content || ''\"\n\n- emit: usage\n  value: \"return response.usage\"\n",
+      "api/run.yaml": "# Elorian's chat-completions endpoint. NO SDK.\n#\n# The user message is a list of content parts: the question, then each image, then the video. Video\n# is a part shaped like image_url, one per request. video_fps is an Elorian field, sent beside the\n# OpenAI ones. Built with `concat`, never `push`: the sandbox has no mutating array methods.\n\n- name: generate\n  method: POST\n  url: https://api.elorian.ai/v1/chat/completions\n\n  credential:\n    scheme: bearer\n    token: \"{{ credentials.elorianCredential.apiKey }}\"\n\n  body: |\n    return (() => {\n      const images = (Array.isArray(config.imageUrls) ? config.imageUrls : [])\n        .filter(url => typeof url === 'string' && url.trim())\n        .map(url => ({ type: 'image_url', image_url: { url: url.trim() } }));\n      const video = config.videoUrl && config.videoUrl.trim()\n        ? [{ type: 'video_url', video_url: { url: config.videoUrl.trim() } }]\n        : [];\n      const head = config.systemPrompt ? [{ role: 'system', content: config.systemPrompt }] : [];\n      const content = [{ type: 'text', text: config.prompt }].concat(images, video);\n      return Object.assign({\n        model: config.model,\n        max_completion_tokens: config.maxTokens || 8000,\n        reasoning_effort: config.reasoningEffort || 'xhigh',\n        messages: head.concat([{ role: 'user', content: content }])\n      }, video.length ? { video_fps: config.videoFps || 2 } : {});\n    })()\n\n  # Agent runs can take minutes, and nothing comes back until the run ends.\n  timeoutMs: 900000\n\n  retry:\n    attempts: 3\n    backoff: exponential\n    on: [429, 500, 502, 503, 504, 520, 522, 524]\n\n  # Unstreamed, the connection is kept open with blank lines until the run ends, which JSON ignores.\n  transport: json\n\n  # An answer that fails after those blank lines is a 200 carrying {\"error\": {...}}.\n  error:\n    when: \"return !!response.error\"\n    message: \"return response.error.message || 'Glimpse request failed'\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [model, prompt]\n  properties:\n    model:\n      type: string\n      title: Model\n      description: The model that answers. Glimpse is the agent model that runs code and searches on its own.\n      enum: [elorian-1-agent]\n      enumNames: [\"Glimpse (elorian-1-agent)\"]\n      default: elorian-1-agent\n    reasoningEffort:\n      type: string\n      title: Reasoning Effort\n      description: How long the model thinks before answering. Extra High is the most thorough and the slowest.\n      enum: [low, medium, xhigh]\n      enumNames: [Low, Medium, Extra High]\n      default: xhigh\n    maxTokens:\n      type: number\n      title: Max Output Tokens\n      description: >-\n        Caps the answer, and the model's hidden thinking spends from it too: too low and the answer\n        comes back empty. Elorian recommends 8,000; your tier may cap it lower.\n      default: 8000\n      minimum: 1\n    videoFps:\n      type: number\n      title: Video Frames per Second\n      description: How many frames a second the model sees. Lower it for a long clip that will not fit.\n      default: 2\n      minimum: 0.1\n      maximum: 15\n    videoUrl:\n      type: string\n      title: Video\n      description: >-\n        One clip, as an https link (MP4, MOV or WebM) or file://<id> for a file uploaded to Elorian.\n        Optional.\n      default: \"\"\n      \"ui:field\": template\n    imageUrls:\n      type: array\n      title: Images\n      description: Up to 20 images, each an https link or a data URL (PNG, JPEG, WebP or GIF). Optional.\n      items:\n        type: string\n      default: []\n      \"ui:field\": template\n    systemPrompt:\n      type: string\n      title: Instructions\n      description: Standing instructions for every run. Shared blocks work here, e.g. {{prompt.markdownGuidelines}}.\n      default: \"\"\n      \"ui:field\": template\n    prompt:\n      type: string\n      title: Question\n      description: What to ask about the video or images. Usually wired in from an upstream node.\n      default: \"\"\n      \"ui:field\": template\n\"ui:order\":\n  [model, reasoningEffort, maxTokens, videoFps, videoUrl, imageUrls, systemPrompt, prompt]\n",
+      "interface.yaml": "inputs:\n  - name: signal\n    type: object\n    description: Data from previous nodes that can be referenced in templates\n    required: false\n\noutputs:\n  - name: text\n    type: string\n    description: The answer\n  - name: usage\n    type: object\n    description: Tokens spent, cached tokens, and what the model saw (usage.elorian frames, fps, video seconds, images)\n\ncredentials:\n  - name: elorianCredential\n    required: true\n    displayName: Elorian API\n",
+      "node.yaml": "type: Glimpse\n# A PromiseNode: one request, one answer. Not streamed, because a Chat Completions chunk carries no event\n# `type` and lint accepts an untyped stream only on a node with a tool loop, which Glimpse has none of.\n# Unstreamed, Elorian holds the connection open until the run ends and answers with one JSON body.\nkind: PromiseNode\n\nname: Glimpse\ncategory: AI\ncolor: \"#1f2a44\"\n\ndescription: Asks Elorian's Glimpse a question about a video or images\n\nwhenToUse: >-\n  Watch a video or look at images and answer a question about them: what happens and when, what\n  people are doing, whether a picture matches its caption. Reasons over the frames themselves,\n  reading motion, posture, timing and layout, and hears the clip's speech too, so the answer cites\n  moments by timestamp. One video and up to 20 images per question, each given as a link.\n\nauth:\n  required: false\n\ncapabilities:\n  # The agent searches the web and runs code on its own, so the same question can take a different\n  # path on every run.\n  cacheable: false\n",
+      "test.yaml": "# Running it live needs ELORIAN_API_KEY (credential `elorianCredential`), on an account with credits.\n# The clip is the one on elorian.ai/models: a seven-second pencil sketch, no audio, no caption.\n\ntestData:\n  config:\n    model: elorian-1-agent\n    reasoningEffort: medium\n    maxTokens: 4000\n    videoFps: 5\n    videoUrl: https://elorian.ai/assets/models/glimpse-dance.mp4\n    imageUrls: []\n    systemPrompt: Answer in Markdown. Cite moments in the clip by their time range.\n    prompt: What kind of dance are the characters doing, and how does it change over the clip?\n  inputs:\n    signal:\n      topic: dance identification\n  expect:\n    text: \"return typeof output.text === 'string' && output.text.length > 0\"\n    usage: \"return output.usage.completion_tokens > 0\"\n"
+    }
+  }
+}

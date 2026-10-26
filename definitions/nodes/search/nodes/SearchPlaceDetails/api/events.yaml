@@ -1,0 +1,46 @@
+# `response` is the whole reply; the listing is its `place_result`. With no place id the call was
+# skipped and both rows read an empty listing: an empty object and an empty list, never a failure.
+#
+# `type` is a single string on some listings and a `types` array on others, as in the places
+# search. Hotel listings carry `price` (a nightly rate) and `hotel_stars` ("4 stars"); others
+# carry `price` as a level ("$$$$") or nothing. The reply has NO opening hours for the place
+# itself (2026-10-23, vendor docs): hours ride on the places SEARCH results, not on the listing.
+- emit: place
+  from: response
+  value: >-
+    return ((p) => ({
+      placeId: p.place_id || "",
+      title: p.title || "",
+      description: p.description || "",
+      address: p.address || "",
+      phone: p.phone || "",
+      website: p.website || "",
+      rating: typeof p.rating === "number" ? p.rating : null,
+      reviews: typeof p.reviews === "number" ? p.reviews : null,
+      price: p.price || "",
+      hotelStars: p.hotel_stars || "",
+      type: p.type || (Array.isArray(p.types) ? p.types[0] : "") || "",
+      types: Array.isArray(p.types) ? p.types : (p.type ? [p.type] : []),
+      amenities: Array.isArray(p.amenities) ? p.amenities : [],
+      features: Array.isArray(p.features) ? p.features : [],
+      extensions: Array.isArray(p.extensions) ? p.extensions : [],
+      thumbnail: p.thumbnail || "",
+      gpsCoordinates: p.gps_coordinates
+        ? { latitude: p.gps_coordinates.latitude, longitude: p.gps_coordinates.longitude }
+        : null
+    }))((response || {}).place_result || {})
+
+# Google hands back small thumbnails; the size in the URL is raised so a card can draw a hero
+# from it. The listing's own cover picture leads when the gallery does not already open with it.
+- emit: images
+  from: response
+  value: >-
+    return ((p) => {
+      const big = (u) => String(u || "").replace(/=w\d+-h\d+[^&]*/, "=w1200-h800");
+      const list = (Array.isArray(p.images) ? p.images : [])
+        .filter(i => i && i.thumbnail)
+        .map(i => ({ title: i.title || "", url: big(i.thumbnail) }));
+      const cover = p.thumbnail && !list.some(i => i.url === big(p.thumbnail))
+        ? [{ title: p.title || "", url: big(p.thumbnail) }] : [];
+      return cover.concat(list).slice(0, config.maxImages);
+    })((response || {}).place_result || {})

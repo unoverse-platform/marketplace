@@ -11,9 +11,12 @@
 # the reserved folder for parsed output at any depth (owner ruling 2026-09-09) and is never
 # listed: the rule sits in ALL FOUR expressions, since `files` is what a caller reads (found
 # 2026-09-10: it sat in `objects` alone, and the copies were listed).
+#
+# `calls.list` is every page of the listing, `{ items, pages, truncated }` (run.yaml, paginate):
+# `items` is each page's Contents, in order.
 
 objects: &objects >-
-  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+  return ((calls.list || {}).items || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
     .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
@@ -23,7 +26,7 @@ objects: &objects >-
 
 # Just the keys, for `presign.for`. Same filters, same order.
 keys: &keys >-
-  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+  return ((calls.list || {}).items || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
     .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
@@ -41,7 +44,7 @@ keys: &keys >-
 # the formula rather than inventing one keeps ids stable across the migration, which matters
 # because other tables join on them.
 files: &files >-
-  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+  return ((calls.list || {}).items || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
     .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))
@@ -62,7 +65,7 @@ files: &files >-
 # HOW MANY `files` HOLDS. The same filters, so the count is the list's and never the bucket's
 # (2026-09-15: the count kept `_parsed/` and said 60 for a pack of 20 documents).
 count: &count >-
-  return ((((calls.list || {}).ListBucketResult || {}).Contents) || [])
+  return ((calls.list || {}).items || [])
     .filter(o => o.Key && !String(o.Key).endsWith('/'))
     .filter(o => ('/' + String(o.Key)).indexOf('/_parsed/') < 0)
     .filter(o => !(Number(o.Size) === 0 && String(o.Key).includes('/')))

@@ -1,4 +1,4 @@
-# FULLY DECLARATIVE. Five nodes, one endpoint, one key.
+# FULLY DECLARATIVE. Six nodes, one endpoint, one key.
 #
 # SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched
 # by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds
@@ -9,7 +9,7 @@
 
 name: search
 displayName: Search
-description: Web, news, video, places and by-image search via SearchAPI.io
+description: Web, news, video, places, one place's listing and by-image search via SearchAPI.io
 version: 2.0.0
 category: search
 logoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png
@@ -19,6 +19,7 @@ features:
   - Google News, dated articles
   - YouTube video search
   - Google Maps places with ratings
+  - One Google Maps listing in full, photos and facts, by place id
   - Google Lens, the pages a picture appears on
 
 allowedHosts:

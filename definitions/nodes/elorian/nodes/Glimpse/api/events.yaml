@@ -1,0 +1,7 @@
+# ONE ROW PER OUTPUT CONNECTOR, in interface.yaml order.
+
+- emit: text
+  value: "return (((response.choices || [])[0] || {}).message || {}).content || ''"
+
+- emit: usage
+  value: "return response.usage"

@@ -1,0 +1,21 @@
+title: Map
+description: One place on a map, as a bold picture with its name on a pill
+whenToUse: Show where one place is on a map, a picture of the streets around it with its name on it. One place per map, drawn from its latitude and longitude. Not an interactive map, not directions, not a list of places.
+category: Media
+version: 1.0.0
+
+# THE PICTURE IS FETCHED BY THE COMPONENT ITSELF when the instance starts: one REST call to
+# Google's Maps Static API, run server-side with the universe's credential, so the key is never
+# in this folder and never on the client (docs.unoverse.ai/design/lifecycle-hooks).
+lifecycle:
+  - phase: onStart
+    handler: fetchMap
+
+# Deny by default. The only host fetchmap.yaml may reach.
+allowedHosts:
+  - maps.googleapis.com
+
+# Resolved by name from encrypted storage, server-side. The same Google API credential the
+# platform's Google nodes use; the key needs the Maps Static API enabled.
+credentials:
+  - googleApiCredential

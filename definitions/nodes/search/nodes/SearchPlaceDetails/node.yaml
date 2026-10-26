@@ -1,0 +1,26 @@
+type: SearchPlaceDetails
+kind: PromiseNode
+name: Search Place Details
+category: Search
+color: "#34A853"
+logoUrl: https://cdn-icons-png.flaticon.com/512/684/684908.png
+description: One place's full Google Maps listing by its place id via SearchAPI.io
+whenToUse: >
+  Pick to fill in ONE KNOWN PLACE from its Google Maps listing: its photos, description,
+  amenities, price level, hotel stars, rating, address and coordinates. It starts from a
+  place id a search already found and returns that one listing in full; it does not search
+  for places, and opening hours are not part of a listing.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Idempotent read by id: the same listing yields the same photos and facts, so a prior
+  # output may be reused instead of asking again (EXECUTION_EFFICIENCY.md §3.2).
+  cacheable: true

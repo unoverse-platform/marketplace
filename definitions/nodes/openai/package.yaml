@@ -27,6 +27,7 @@ features:
   - Vision (image inputs)
   - Realtime voice calls with transcripts of both sides
   - Decisions, named questions answered with calibrated probabilities
+  - Text to speech in a chosen voice, with the delivery directed in plain words
 
 # The ONLY hosts this package's nodes may call. The executor refuses anything else.
 #
@@ -43,7 +44,8 @@ allowedHosts:
 # SOCKET, and the duplex runtime that holds one open landed in executor 1.5.0.
 requires:
   credential: [bearer]
-  transport: [sse, json, ws]
+  # `binary` came with OpenAISpeech (2026-10-19): the speech endpoint answers with raw audio bytes.
+  transport: [sse, json, ws, binary]
   # OpenAIAgent keeps its OpenAI conversation id between runs. A universe whose executor
   # cannot do this would otherwise read a permanently cold cache and start a new
   # conversation every turn: memory that silently never remembers.

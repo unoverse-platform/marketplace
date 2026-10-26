@@ -22,7 +22,7 @@
 # reason. A run that calls a tool speaks twice: once before the call ("I'm checking your
 # account activity for food spending last month.") and once after it with the answer. Both
 # accumulate into one value, and with nothing between them they ran together mid-sentence
-# — "last month.You spent SAR 726.78" (SAB Account Agent, 2026-09-08). `output_text.done`
+# — "last month.You spent 726.78" (a bank's account agent, 2026-09-08). `output_text.done`
 # closes each spoken block, so the next one starts a paragraph.
 - emit: stream
   from: response

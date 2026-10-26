@@ -1,0 +1,21 @@
+# Elorian, fully declarative.
+#
+# Glimpse is OpenAI-COMPATIBLE chat completions (platform.elorian.ai docs: "a developer who has used
+# OpenAI's API changes two lines"), so this package is the zai one without its tool loop: the agent
+# model runs its own hosted tools and refuses function tools (undefined_tool_called).
+
+name: elorian
+displayName: Elorian
+description: Glimpse, Elorian's visual reasoning model, over images and video
+version: 1.0.0
+category: ai
+
+features:
+  - Answers questions about one video and up to 20 images, citing moments by timestamp
+
+allowedHosts:
+  - api.elorian.ai
+
+requires:
+  credential: [bearer]
+  transport: [json]

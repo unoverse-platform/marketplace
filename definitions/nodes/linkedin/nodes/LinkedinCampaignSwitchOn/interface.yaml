@@ -1,0 +1,16 @@
+inputs:
+  - name: input
+    type: object
+    description: >-
+      { account_id, campaign_id, daily_budget? }. The campaign to switch on, and a new daily
+      budget in the account's currency if it should change.
+
+outputs:
+  - name: output
+    type: object
+    description: The campaign switched on, or why it was not
+
+credentials:
+  - name: linkedinOAuth
+    required: true
+    displayName: LinkedIn

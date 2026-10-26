@@ -1,0 +1,23 @@
+inputs:
+  - name: input
+    type: object
+    description: Trigger. When the graph runs this node it lists the ad accounts the credential can reach.
+
+outputs:
+  - name: output
+    type: object
+    description: The ad accounts, or LinkedIn's reason it could not list them
+
+credentials:
+  - name: linkedinOAuth
+    required: true
+    displayName: LinkedIn
+
+serviceConnectors:
+  - name: mcpService
+    serviceType: mcp
+    isService: true
+    methods: [list_ad_accounts, find_targeting, list_campaigns, create_campaign, create_ad, change_campaign, report]
+    description: >-
+      MCP tools for an agent: find ad accounts and targeting, create campaigns and image ads,
+      pause them or lower their budget, read their results.

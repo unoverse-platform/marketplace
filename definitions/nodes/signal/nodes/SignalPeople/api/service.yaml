@@ -53,6 +53,7 @@ list_people:
       url: >-
         return scope.engineUrl + '/people?org=' + encodeURIComponent(scope.org)
           + (params.stage ? '&stage=' + encodeURIComponent(params.stage) : '')
+          + (params.category ? '&category=' + encodeURIComponent(params.category) : '')
           + (params.limit ? '&limit=' + encodeURIComponent(params.limit) : '')
       okOn: [400]
       transport: json

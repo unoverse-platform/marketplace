@@ -1,4 +1,4 @@
-# FULLY DECLARATIVE. One node, six MCP methods, one bearer token, nothing new required.
+# FULLY DECLARATIVE. One node, four MCP methods, one bearer token, nothing new required.
 # The retired TypeScript is at `_legacy/nodes/slack/`.
 #
 # The credential carries an optional `host`, so the url is templated per workspace. AllowedHosts
@@ -13,9 +13,8 @@ logoUrl: https://res.cloudinary.com/sonik/image/upload/v1779530623/gravity/icons
 
 features:
   - Send messages, including thread replies
-  - Search messages and read channel history
+  - Read channel history
   - List channels and look up users
-  - Add reactions
 
 allowedHosts:
   - slack.com

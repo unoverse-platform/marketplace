@@ -1,0 +1,36 @@
+# FULLY DECLARATIVE. package.yaml, nodes/, credentials/ and shared/, nothing else.
+#
+# LinkedIn's Marketing API: ad accounts, targeting, campaigns, image ads and their results. The
+# operations were chosen from IBM's LinkedIn bundle (`LinkedIn_1.0.32.ssi`) by
+# docs/SSI_MIGRATION_GUIDE.md; every endpoint is from LinkedIn's own versioned docs, never the
+# bundle, which calls the retired `/v2/adCampaignsV2`.
+#
+# LinkedIn never issues a token to an app alone. A person approves the app once and what that
+# leaves behind is a refresh token, so this package is the first on `oauth2RefreshToken`.
+
+name: linkedin
+displayName: LinkedIn
+description: LinkedIn ads for Unoverse
+version: 1.0.0
+category: communication
+
+features:
+  - Find ad accounts and targeting (locations, seniorities, industries, companies)
+  - Create campaigns, created as drafts, and image ads
+  - Pause a campaign or lower its budget; switching on is a separate node, for a task that asks a person first
+  - Read spend and results per campaign
+
+# The API, and the host that both mints tokens and takes uploads. `*` is for the image a caller
+# hands over by url: that call carries no credential, so it has nothing to leak, and the
+# executor stops matching `*` the moment one is added (as aws-s3's upload).
+allowedHosts:
+  - api.linkedin.com
+  - www.linkedin.com
+  - "*"
+
+requires:
+  credential: [oauth2RefreshToken]
+  transport: [json, headers, binary]
+  # An upload is processed before an ad may use it, so create_ad waits on it.
+  poll: true
+  executorVersion: ">=1.2.0"

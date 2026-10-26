@@ -1,0 +1,17 @@
+inputs:
+  - name: input
+    type: string
+    required: true
+    description: The text to speak
+
+outputs:
+  - name: audio
+    type: object
+    description: "Generated audio: { data (base64), mimeType, fileName }"
+  - name: metadata
+    type: object
+    description: model, voice, format, characters
+
+credentials:
+  - name: openAICredential
+    required: true

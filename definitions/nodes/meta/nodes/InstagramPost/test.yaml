@@ -1,0 +1,8 @@
+# Posting is public, so this fixture deliberately has no image: the run exercises composition,
+# credentials and the skip path without posting anything.
+testData:
+  config: {}
+  inputs:
+    input: {}
+  expect:
+    output: "return output.output.ok === false && /required/.test(output.output.error)"

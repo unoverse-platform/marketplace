@@ -1,0 +1,28 @@
+type: MetaAdsMCP
+kind: PromiseNode
+name: Instagram Ads
+category: Go To Market
+color: "#0866FF"
+# Attached to an agent over a service edge rather than wired in sequence.
+template: service
+description: Run Instagram ad campaigns. Find targeting, create campaigns and image ads paused, pause them, read their results.
+whenToUse: >
+  Pick to advertise on Instagram: find an ad account, the Instagram account to post as and the
+  targeting to use (countries, job titles, industries, interests), create a campaign and its
+  image ads, pause it or lower its budget, and read spend and results per campaign. Campaigns
+  are created paused and this node never switches one on, so nothing it does spends more.
+  Attach it via a service edge to an agent, or trigger it directly to list the accounts.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Not cacheable: campaigns and their results change underneath us, and the write methods
+  # spend money when a campaign is on, which reuse would silently skip.
+  cacheable: false

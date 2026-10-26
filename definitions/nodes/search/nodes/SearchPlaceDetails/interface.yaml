@@ -1,0 +1,20 @@
+inputs:
+  - name: placeId
+    type: string
+    description: Google Maps place id, as a places search returns it
+    required: false
+
+outputs:
+  - name: place
+    type: object
+    description: >-
+      The listing: title, description, address, phone, website, rating, reviews, price,
+      hotelStars, type, types, amenities, openState, hours, gpsCoordinates, placeId
+  - name: images
+    type: array
+    description: The listing's photos, each { title, url }, largest first
+
+credentials:
+  - name: searchapiCredential
+    required: true
+    displayName: SearchAPI

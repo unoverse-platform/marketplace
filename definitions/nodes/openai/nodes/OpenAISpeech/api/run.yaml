@@ -1,0 +1,31 @@
+# ONE POST to the speech endpoint, receiving raw audio bytes → transport: binary.
+#
+# BUILT, not mutated: `instructions` is left out when empty, because the tts-1 pair does not take it.
+
+- name: speak
+  method: POST
+  url: { $ref: endpoints#speech }
+
+  credential:
+    scheme: bearer
+    token: "{{ credentials.openAICredential.apiKey }}"
+
+  body: |
+    return Object.assign(
+      {
+        model: config.model,
+        voice: config.voice,
+        input: config.text,
+        response_format: config.responseFormat
+      },
+      config.instructions ? { instructions: config.instructions } : {}
+    );
+
+  timeoutMs: 120000
+
+  retry:
+    attempts: 3
+    backoff: exponential
+    on: [429, 500, 502, 503, 504, 520, 522, 524]
+
+  transport: binary

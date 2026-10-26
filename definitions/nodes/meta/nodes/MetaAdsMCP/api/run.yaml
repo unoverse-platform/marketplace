@@ -1,0 +1,18 @@
+# Triggered by the graph, this node lists the ad accounts and the Instagram accounts the token
+# can reach: the read that proves the token works, and the ids every tool needs.
+
+- name: adaccounts
+  method: GET
+  url: "https://graph.facebook.com/v26.0/me/adaccounts?fields=account_id,name,currency,account_status"
+  credential: { $ref: api#credential }
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }
+
+- name: pages
+  method: GET
+  url: "https://graph.facebook.com/v26.0/me/accounts?fields=id,name,instagram_business_account"
+  credential: { $ref: api#credential }
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }

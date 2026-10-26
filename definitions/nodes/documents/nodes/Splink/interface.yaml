@@ -1,0 +1,12 @@
+inputs:
+  - name: input
+    type: object
+    description: "{ name, candidates: [{ id, names: [..] }] }: the name read, and each held record's names"
+    required: false
+
+outputs:
+  - name: scores
+    type: array
+    description: "One per candidate, best first: { id, probability, best }, where best is the candidate's name that scored highest"
+
+credentials: []

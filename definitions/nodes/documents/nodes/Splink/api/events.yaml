@@ -1,0 +1,2 @@
+- emit: scores
+  value: "return response.scores || []"

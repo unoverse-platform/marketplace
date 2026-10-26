@@ -1,0 +1,18 @@
+# The ad accounts, bounded to what a caller decides with: its id for every other tool, its
+# currency for a budget, and `organization`, the company page its ads are posted as.
+#
+# Here once, because the graph run (events.yaml) and the list_ad_accounts tool answer with the
+# same shape.
+accounts: &accounts >-
+  return {
+    ok: true,
+    accounts: (response.elements || []).map(a => ({
+      id: String(a.id),
+      name: a.name,
+      currency: a.currency,
+      organization: a.reference || null,
+      status: a.status,
+      serving: a.servingStatuses || [],
+      test: !!a.test
+    }))
+  }

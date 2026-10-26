@@ -1,0 +1,11 @@
+# The vendor's own documentation example: Madison Square Garden.
+testData:
+  config:
+    placeId: ChIJhRwB-yFawokR5Phil-QQ3zM
+    maxImages: 10
+    language: en
+  inputs:
+    placeId: ChIJhRwB-yFawokR5Phil-QQ3zM
+  expect:
+    place: "return typeof output.place.title === 'string' && output.place.title.length > 0 && output.place.gpsCoordinates !== null"
+    images: "return Array.isArray(output.images) && output.images.length > 0 && typeof output.images[0].url === 'string'"

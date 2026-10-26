@@ -16,7 +16,14 @@ research:
     document kind's "limit" says how many documents are searched: set it to cover them all. Ask
     one query for EACH part of the question, all in one turn. Answer from the chunks, across
     every document they come from, and quote their words with their document and pages: they are
-    the document's own words. There is nothing else to open.
+    the document's own words.
+
+    TABLES AND FIGURES. A chunk lists in "parts" the tables and figures on its pages (id, kind,
+    title, page). When the answer is a figure in one of them (a fee, a code, a row of a
+    schedule), call open with its id and in "where" a word or phrase its row holds (a class
+    name, a currency): you get the header and the rows holding it, or the whole table when it
+    is small (50 rows or fewer), so read every row for what else bears on the question. Quote
+    them with the table's page and its document.
 
     HOW TO ASK. One query names the kind of thing you want back. Under it:
     - "fields": the fields to return, exactly these ("page" and "document" too, to cite).
@@ -64,3 +71,20 @@ research:
               "order": {...}, "limit": n, "count": [...], "sum": [...], "group": [...],
               "<connected kind>": {...}}}. One kind at the top. Connected kinds by their kind
               name, never a link name.
+    open:
+      description: >-
+        Open a table or figure a chunk lists in its "parts", by its id: its header and the rows
+        holding the words in "where".
+      input:
+        type: object
+        required: [id]
+        properties:
+          id:
+            type: string
+            description: The table's or figure's id, from a chunk's "parts".
+          where:
+            type: string
+            description: A word or phrase a row must hold (a class name, a currency, an ISIN). A table of 50 rows or fewer comes whole.
+          limit:
+            type: number
+            description: How many rows at most. 200 when not said.

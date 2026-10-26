@@ -1,0 +1,33 @@
+# FULLY DECLARATIVE. package.yaml, nodes/, credentials/ and shared/, nothing else.
+#
+# Meta's Graph API, for Instagram: ad accounts, targeting, campaigns, image ads and their
+# results (the Marketing API), and posts on our own Instagram account (Content Publishing).
+# Every endpoint is from Meta's own docs at developers.facebook.com, Graph API v26.0.
+#
+# Every write is a multipart form, because that is how Meta's docs send every Marketing API
+# call; a nested parameter (targeting, a creative's story) is JSON in its own field, which is
+# how the form encoding already carries an object.
+
+name: meta
+displayName: Meta
+description: Instagram ads and posts for Unoverse
+version: 1.0.0
+category: communication
+
+features:
+  - Find ad accounts, the Instagram account to post as, and targeting (countries, job titles, industries, interests)
+  - Create Instagram campaigns, created paused, and image ads
+  - Pause a campaign or lower its budget; switching on is a separate node, for a task that asks a person first
+  - Read spend and results per campaign
+  - Publish an image post on our Instagram account, as a separate node, for a task that asks a person first
+
+# Meta fetches every image itself, from the url it is given, so no call here fetches one.
+allowedHosts:
+  - graph.facebook.com
+
+requires:
+  credential: [bearer]
+  transport: [json]
+  # A post's image is processed before it may be published, so the post node waits on it.
+  poll: true
+  executorVersion: ">=1.2.0"

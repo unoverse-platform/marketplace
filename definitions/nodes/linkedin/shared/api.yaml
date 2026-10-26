@@ -1,0 +1,24 @@
+# What every LinkedIn call shares: how it authenticates, and the two headers every versioned
+# call needs.
+#
+# The refresh-token exchange. The executor mints the token, form-encodes the request, caches it
+# per refresh token until it expires, and refreshes once on a 401.
+credential: &credential
+  scheme: oauth2RefreshToken
+  tokenUrl: https://www.linkedin.com/oauth/v2/accessToken
+  clientId: "{{ credentials.linkedinOAuth.clientId }}"
+  clientSecret: "{{ credentials.linkedinOAuth.clientSecret }}"
+  refreshToken: "{{ credentials.linkedinOAuth.refreshToken }}"
+
+# LinkedIn retires a version a year after it ships, and an unknown or retired one is refused,
+# so this is bumped here, once, for every call.
+headers: &headers
+  Linkedin-Version: "202609"
+  X-Restli-Protocol-Version: "2.0.0"
+
+# A partial update is a POST that says so in a header; nothing else tells LinkedIn it is not a
+# create.
+patch: &patch
+  Linkedin-Version: "202609"
+  X-Restli-Protocol-Version: "2.0.0"
+  X-RestLi-Method: PARTIAL_UPDATE

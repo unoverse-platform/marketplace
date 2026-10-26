@@ -1,0 +1,177 @@
+{
+  "kind": "component",
+  "name": "map",
+  "fingerprint": "d918b9c4251739d4",
+  "bundle": "design-system",
+  "title": "Map",
+  "description": "One place on a map, as a bold picture with its name on a pill",
+  "category": "Media",
+  "definition": {
+    "unoverse": "1.0",
+    "name": "map",
+    "category": "Media",
+    "nodeSize": {
+      "width": 600,
+      "height": 400
+    },
+    "props": {
+      "latitude": {
+        "type": "number",
+        "input": true,
+        "description": "Where the place is, north to south. Exactly as its listing states it, never estimated.",
+        "default": 24.4672
+      },
+      "longitude": {
+        "type": "number",
+        "input": true,
+        "description": "Where the place is, east to west. Exactly as its listing states it, never estimated.",
+        "default": 54.6031
+      },
+      "title": {
+        "type": "string",
+        "input": true,
+        "description": "The place's name, printed on the map's label.",
+        "default": "Yas Marina"
+      },
+      "places": {
+        "type": "array",
+        "input": true,
+        "description": "Several places on one map, each with its own latitude, longitude and title, exactly as their listings state them. Leave it empty to draw the one place above.",
+        "default": [],
+        "items": {
+          "title": {
+            "type": "string",
+            "description": "The place's name."
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Where the place is, north to south. Exactly as its listing states it."
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Where the place is, east to west. Exactly as its listing states it."
+          }
+        }
+      },
+      "zoom": {
+        "type": "number",
+        "input": false,
+        "description": "How close the map is drawn: 15 shows the streets around a place, 12 the district, 10 the city.",
+        "default": 15
+      },
+      "mapImage": {
+        "type": "string",
+        "input": false,
+        "description": "The picture of the map, fetched by the component itself when it starts. Empty until it arrives.",
+        "default": ""
+      },
+      "pinned": {
+        "type": "boolean",
+        "input": false,
+        "description": "Whether the component draws its own pin and name at the centre. True for one place, the default; the map fetch sets it false for several places, whose pins are in the picture.",
+        "default": true
+      }
+    },
+    "root": {
+      "type": "Box",
+      "style": {
+        "position": "relative",
+        "width": "full",
+        "minHeight": "75",
+        "radius": "2xl",
+        "border": "thick strong",
+        "shadow": "xl",
+        "overflow": "hidden",
+        "background": "surface.sunken"
+      },
+      "children": [
+        {
+          "type": "Image",
+          "visibleWhen": "mapImage",
+          "bind": {
+            "src": "mapImage",
+            "alt": "title"
+          },
+          "style": {
+            "width": "full",
+            "fit": "cover"
+          }
+        },
+        {
+          "type": "Skeleton",
+          "visibleWhen": {
+            "field": "mapImage",
+            "eq": ""
+          },
+          "style": {
+            "width": "full",
+            "height": "75"
+          }
+        },
+        {
+          "type": "Box",
+          "visibleWhen": {
+            "field": "pinned",
+            "ne": false
+          },
+          "style": {
+            "position": "absolute",
+            "inset": "0 0 50% 0",
+            "direction": "column",
+            "align": "center",
+            "justify": "end",
+            "gap": "1"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "visibleWhen": "title",
+              "style": {
+                "direction": "row",
+                "align": "center",
+                "gap": "2",
+                "padding": [
+                  "2",
+                  "4"
+                ],
+                "background": "action.primary",
+                "radius": "full",
+                "shadow": "md"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "title"
+                  },
+                  "style": {
+                    "font": "button",
+                    "color": "action.primary-text"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Icon",
+              "icon": "location",
+              "style": {
+                "width": "8",
+                "height": "8",
+                "color": "action.primary"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "kind": "component",
+    "description": "One place on a map, as a bold picture with its name on a pill",
+    "whenToUse": "Show where one place is on a map, a picture of the streets around it with its name on it. One place per map, drawn from its latitude and longitude. Not an interactive map, not directions, not a list of places.",
+    "title": "Map",
+    "version": "1.0.0",
+    "credentials": [
+      "googleApiCredential"
+    ],
+    "spatial": true
+  }
+}

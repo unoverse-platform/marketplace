@@ -11,17 +11,23 @@
 
   # BUILT, not mutated: each optional field is left out when empty, because Tavus reads an empty
   # face id or greeting as a value rather than as "use the PAL's own".
+  #
+  # ECHO is Tavus's own stream persona `pipecat0` with a replica, the exact pair Pipecat's Tavus
+  # transport sends (pipecat-ai/pipecat, transports/tavus/transport.py, TavusApi.create_conversation).
+  # The face then speaks only `conversation.echo` audio. A PAL id is a different thing and is not sent.
   body: |
     return Object.assign(
+      config.echo
+        ? { persona_id: 'pipecat0', replica_id: config.faceId }
+        : { pal_id: config.palId },
       {
-        pal_id: config.palId,
         properties: {
           max_call_duration: config.maxCallDuration,
           participant_left_timeout: config.participantLeftTimeout,
           participant_absent_timeout: config.participantAbsentTimeout
         }
       },
-      config.faceId ? { face_id: config.faceId } : {},
+      !config.echo && config.faceId ? { face_id: config.faceId } : {},
       config.conversationalContext ? { conversational_context: config.conversationalContext } : {},
       config.customGreeting ? { custom_greeting: config.customGreeting } : {},
       config.testMode ? { test_mode: true } : {}

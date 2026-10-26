@@ -1,0 +1,25 @@
+type: Glimpse
+# A PromiseNode: one request, one answer. Not streamed, because a Chat Completions chunk carries no event
+# `type` and lint accepts an untyped stream only on a node with a tool loop, which Glimpse has none of.
+# Unstreamed, Elorian holds the connection open until the run ends and answers with one JSON body.
+kind: PromiseNode
+
+name: Glimpse
+category: AI
+color: "#1f2a44"
+
+description: Asks Elorian's Glimpse a question about a video or images
+
+whenToUse: >-
+  Watch a video or look at images and answer a question about them: what happens and when, what
+  people are doing, whether a picture matches its caption. Reasons over the frames themselves,
+  reading motion, posture, timing and layout, and hears the clip's speech too, so the answer cites
+  moments by timestamp. One video and up to 20 images per question, each given as a link.
+
+auth:
+  required: false
+
+capabilities:
+  # The agent searches the web and runs code on its own, so the same question can take a different
+  # path on every run.
+  cacheable: false

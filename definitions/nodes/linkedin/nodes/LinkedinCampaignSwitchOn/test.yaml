@@ -1,0 +1,8 @@
+# Switching on spends money, so this fixture deliberately names no campaign: the run exercises
+# composition, credentials and the skip path without touching an ad account.
+testData:
+  config: {}
+  inputs:
+    input: {}
+  expect:
+    output: "return output.output.ok === false && /required/.test(output.output.error)"

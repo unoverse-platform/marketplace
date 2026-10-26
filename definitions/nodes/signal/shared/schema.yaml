@@ -47,6 +47,13 @@ people:
           crm_id:
             type: string
             description: Their record's id in that CRM.
+          category:
+            type: string
+            enum: [customer, partner, procurement, not-now]
+            description: >-
+              What they are to us: customer (would buy for their own business), partner (would
+              build and deliver it for their clients), procurement (approves suppliers) or not-now
+              (not someone we write to yet). Only a customer is written to.
           observed:
             type: object
             description: >-
@@ -181,7 +188,7 @@ people:
     list_people:
       description: >-
         The people Signal holds for this organisation, most recently updated first, optionally
-        only prospects or only customers.
+        only one stage or one segment.
       input:
         type: object
         properties:
@@ -189,6 +196,10 @@ people:
             type: string
             enum: [prospect, customer]
             description: Only people at this stage.
+          category:
+            type: string
+            enum: [customer, partner, procurement, not-now]
+            description: Only people in this segment.
           limit:
             type: number
             description: How many, at most 200. Default 50.
@@ -231,6 +242,11 @@ goals:
     - A goal is what we want with one person next. open_task needs the person's Signal id, the
       goal's task URI and what it holds to start with; save_person answers the id.
     - save_task replaces what the goal held: write everything it now holds, history included.
+    - A goal rests on what you found about them: research first, and give each fact with its link
+      in rests_on. A goal with nothing under it is refused, and so is one for a person whose
+      Signal record does not yet say what you found about them: save that to them first.
+    - Each step names one of your own tasks, the one you will run for it. A step naming any other is
+      refused.
     - finish_task closes a goal for good, with whether it was met and why.
     - A tool that answers ok: false carries the reason. Say so rather than claiming it was done.
   methods:
@@ -264,10 +280,58 @@ goals:
             description: The goal's task URI, unoverse://tasks/<org>/<name>.
           state:
             type: object
-            description: What the goal holds, by its own fields.
+            description: What the goal holds, in these parts.
+            properties:
+              outcome:
+                type: string
+                description: The conversation we want with them, in one line.
+              why_now:
+                type: string
+                description: The real, current reason to reach them, from what you found.
+              why_now_link:
+                type: string
+                description: The link that reason comes from.
+              rests_on:
+                type: array
+                description: What the goal rests on, from your research. At least one, each a fact you found with its link.
+                items:
+                  type: object
+                  required: [fact, link]
+                  properties:
+                    fact: { type: string, description: One thing you found, as found. }
+                    link: { type: string, description: Where you found it. }
+              ideas:
+                type: array
+                description: What we would bring them, each a short sentence.
+                items: { type: string }
+              learn:
+                type: array
+                description: What we want to learn from them for this goal, each with why it helps them. Asked in the conversation, never as a form.
+                items:
+                  type: object
+                  required: [what]
+                  properties:
+                    what: { type: string, description: The thing to learn, such as the children's heights. }
+                    why: { type: string, description: Why it helps them, said the way we would say it to them. }
+              steps:
+                type: array
+                description: The steps to get there, each one of your own tasks on a day of the goal, never a date, so the goal runs whenever it starts.
+                items:
+                  type: object
+                  required: [day, task, what]
+                  properties:
+                    day: { type: integer, description: "Its day in the goal: 0 for the first step, then 5, 12. Each step is due that many days after the step before it was done, its day less theirs." }
+                    task: { type: string, description: The URI of one of your own tasks, the one you will run for this step. }
+                    what: { type: string, description: What the step brings them. }
+                    phase: { type: string, description: "Where the step falls in the journey, in a few words, such as Before arrival, In the hotel, night 2, or After the stay. Optional." }
+                    result: { type: string, description: What came of it; empty until it happens. }
+                    run: { type: string, description: "The id of the task run that did this step, as the task's reply gives it (its run), so the step opens what it made. Empty until it happens." }
+                    app: { type: string, description: "The app its run opens in, by name, when it should open in one (any app opens any task, MCP_TASKS.md § 5c). Empty opens the task alone." }
+                    done: { type: string, description: The date it was done (ISO 8601); empty until it happens. }
+            required: [outcome, rests_on, steps]
           wake_at:
             type: string
-            description: When its next step is due, a date and time (ISO 8601).
+            description: When its next step is due (ISO 8601), from the date the step before it was done. Empty until the first step is done.
     save_task:
       description: >-
         Save an open goal for one person: everything it now holds, and when its next step is due.
@@ -283,10 +347,58 @@ goals:
             description: The goal's id, as open_task or find_tasks gave it.
           state:
             type: object
-            description: Everything the goal now holds, by its own fields. Replaces what it held.
+            description: Everything the goal now holds, in these parts. Replaces what it held.
+            properties:
+              outcome:
+                type: string
+                description: The conversation we want with them, in one line.
+              why_now:
+                type: string
+                description: The real, current reason to reach them, from what you found.
+              why_now_link:
+                type: string
+                description: The link that reason comes from.
+              rests_on:
+                type: array
+                description: What the goal rests on, from your research. At least one, each a fact you found with its link.
+                items:
+                  type: object
+                  required: [fact, link]
+                  properties:
+                    fact: { type: string, description: One thing you found, as found. }
+                    link: { type: string, description: Where you found it. }
+              ideas:
+                type: array
+                description: What we would bring them, each a short sentence.
+                items: { type: string }
+              learn:
+                type: array
+                description: What we want to learn from them for this goal, each with why it helps them. Asked in the conversation, never as a form.
+                items:
+                  type: object
+                  required: [what]
+                  properties:
+                    what: { type: string, description: The thing to learn, such as the children's heights. }
+                    why: { type: string, description: Why it helps them, said the way we would say it to them. }
+              steps:
+                type: array
+                description: The steps to get there, each one of your own tasks on a day of the goal, never a date, so the goal runs whenever it starts.
+                items:
+                  type: object
+                  required: [day, task, what]
+                  properties:
+                    day: { type: integer, description: "Its day in the goal: 0 for the first step, then 5, 12. Each step is due that many days after the step before it was done, its day less theirs." }
+                    task: { type: string, description: The URI of one of your own tasks, the one you will run for this step. }
+                    what: { type: string, description: What the step brings them. }
+                    phase: { type: string, description: "Where the step falls in the journey, in a few words, such as Before arrival, In the hotel, night 2, or After the stay. Optional." }
+                    result: { type: string, description: What came of it; empty until it happens. }
+                    run: { type: string, description: "The id of the task run that did this step, as the task's reply gives it (its run), so the step opens what it made. Empty until it happens." }
+                    app: { type: string, description: "The app its run opens in, by name, when it should open in one (any app opens any task, MCP_TASKS.md § 5c). Empty opens the task alone." }
+                    done: { type: string, description: The date it was done (ISO 8601); empty until it happens. }
+            required: [outcome, rests_on, steps]
           wake_at:
             type: string
-            description: When its next step is due (ISO 8601). Empty when nothing is due.
+            description: When its next step is due (ISO 8601), from the date the step before it was done. Empty until the first step is done, and when nothing is due.
     finish_task:
       description: >-
         Finish an open goal for one person, with what it finished with: met or not, and why. Kept,
@@ -304,3 +416,25 @@ goals:
           result:
             type: object
             description: What it finished with, such as { met, reason } and the final values.
+
+# WHAT A GOAL MUST HOLD, checked before it is opened or saved (goals, above): it rests on facts
+# found, each with its link, and each step names one of the calling Agent's own tasks. On opening,
+# Signal must already know them: their record's `understood` holds something (their company now,
+# where they spoke). A goal written from nothing, for someone we do not know, or naming a task the
+# Agent does not have, is refused with the reason.
+helpers:
+  goalProblem:
+    args: [state, agents, caller, person]
+    body: >-
+      return (() => {
+        const s = state || {};
+        const known = Object.values((person && person.understood) || {}).some(v => Array.isArray(v) ? v.length > 0 : !!v);
+        if (person && !known) return 'NOT_KNOWN: Signal knows nothing about ' + (person.name || 'them') + ' yet. Research them and save what you found to their record first.';
+        const facts = Array.isArray(s.rests_on) ? s.rests_on.filter(f => f && f.fact && f.link) : [];
+        if (!facts.length) return 'NO_RESEARCH: a goal rests on what you found about them. Research first, then give rests_on: each fact with its link.';
+        const me = (agents || []).find(a => 'agent:' + a.ref === caller);
+        if (!me) return '';
+        const mine = me.tasks || [];
+        const bad = (Array.isArray(s.steps) ? s.steps : []).map(x => (x && x.task) || '(none)').filter(t => !mine.includes(t));
+        return bad.length ? 'NOT_YOUR_TASK: ' + bad.join(', ') + '. Each step names one of your own tasks: ' + mine.join(', ') : '';
+      })()

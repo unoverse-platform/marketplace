@@ -33,8 +33,16 @@ open_task:
       okOn: [400]
       transport: json
       timeoutMs: 15000
+    # THE CALLER'S OWN TASKS, when the caller is an Agent: a step may name only those.
+    - name: agents
+      when: "return String((user || {}).id || '').startsWith('agent:')"
+      method: GET
+      url: "return scope.engineUrl + '/agents/' + encodeURIComponent(scope.org)"
+      okOn: [400, 404, 500]
+      transport: json
+      timeoutMs: 15000
     - name: open
-      when: "return !!(calls.person && calls.person.found)"
+      when: "return !!(calls.person && calls.person.found) && !helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id, calls.person.person)"
       method: POST
       url: "return scope.engineUrl + '/runs/task/open'"
       okOn: [400, 500]
@@ -44,6 +52,8 @@ open_task:
   returns: >-
     return !(calls.person && calls.person.found)
       ? { ok: false, error: 'Signal holds no person with that id' }
+      : helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id, calls.person.person)
+        ? { ok: false, error: helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id, calls.person.person) }
       : (calls.open && calls.open.taskId)
         ? { ok: true, task_id: calls.open.taskId, already_open: !calls.open.opened }
         : { ok: false, error: (calls.open || {}).error || 'NOT_OPENED' }
@@ -51,7 +61,16 @@ open_task:
 save_task:
   description: Save an open goal for one person.
   calls:
+    # THE CALLER'S OWN TASKS, when the caller is an Agent: a step may name only those.
+    - name: agents
+      when: "return String((user || {}).id || '').startsWith('agent:')"
+      method: GET
+      url: "return scope.engineUrl + '/agents/' + encodeURIComponent(scope.org)"
+      okOn: [400, 404, 500]
+      transport: json
+      timeoutMs: 15000
     - name: save
+      when: "return !helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id)"
       method: POST
       url: "return scope.engineUrl + '/runs/task/save'"
       okOn: [400, 500]
@@ -59,7 +78,9 @@ save_task:
       transport: json
       timeoutMs: 15000
   returns: >-
-    return (calls.save || {}).saved
+    return helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id)
+      ? { ok: false, error: helpers.goalProblem(params.state, (calls.agents || {}).agents, (user || {}).id) }
+      : (calls.save || {}).saved
       ? { ok: true, task_id: calls.save.taskId }
       : { ok: false, error: (calls.save || {}).error || 'NOT_SAVED: no open goal with that id for this person' }
 

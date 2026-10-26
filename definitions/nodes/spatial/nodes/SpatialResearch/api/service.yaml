@@ -33,6 +33,31 @@ query:
         message: "return 'spatial/query failed: ' + JSON.stringify(response || {}).slice(0, 300)"
   returns: "return calls.query"
 
+# CHUNK → TABLE OR FIGURE (page-store.md, "Chunks find, the schema narrows", point 2): a chunk lists
+# the tables and figures on its pages, and this opens one by its id through the function route
+# (POST /dictionary/function/getDetail/:universalId), the same door SpatialObject's `call` uses:
+# the row's own getDetail reads its rows from the table's file and keeps those holding `where`.
+# The run and this node ride as `executionId` and `caller`, so the call records its own trace row.
+open:
+  description: >-
+    Open a table or figure a chunk lists in its "parts", by its id: its header and the rows
+    holding the words in "where".
+  calls:
+    - name: open
+      method: POST
+      url: >-
+        return scope.engineUrl + '/dictionary/function/getDetail/' + encodeURIComponent(String(params.id || '').trim())
+          + '?executionId=' + encodeURIComponent(String(scope.executionId || ''))
+          + '&caller=' + encodeURIComponent(String(scope.nodeId || ''))
+      transport: json
+      timeoutMs: 30000
+      body: >-
+        return Object.assign({}, params.where ? { where: String(params.where) } : {}, params.limit ? { limit: Number(params.limit) } : {})
+      error:
+        when: "return !response || typeof response !== 'object' || !!response.error"
+        message: "return 'open failed: ' + JSON.stringify(response || {}).slice(0, 300)"
+  returns: "return calls.open"
+
 # DISCOVERY, called once per session by the agent's connector: how to ask, and THIS org's schema
 # (its kinds, fields, fixed words and connections), read from the objects every time, so the
 # agent has the schema before its first query. Never an error: the engine answers empty text

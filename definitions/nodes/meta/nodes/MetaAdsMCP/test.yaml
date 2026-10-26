@@ -1,0 +1,12 @@
+# The READ path, because it is the one that proves the token works. The write methods are
+# deliberately not the fixture: they would leave real campaigns behind.
+testData:
+  config: {}
+
+  inputs:
+    input: {}
+
+  expect:
+    # Any account answers this. Asserting a count would tie the fixture to one company's ads.
+    output: >-
+      return output.output.ok === true && Array.isArray(output.output.ad_accounts)

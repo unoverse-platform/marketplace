@@ -1,0 +1,64 @@
+# A post is made in three steps, Meta's own: a container from the image and caption, a wait
+# while Meta fetches and processes the image, then publishing it. Skipped when the input has no
+# image or caption, so a misconfigured step says so rather than posting nothing.
+
+# The Instagram account to post as, when the input names none: the first Page's.
+- name: pages
+  when: "return !!((signal.input || {}).image_url && (signal.input || {}).caption) && !signal.input.instagram_account_id"
+  method: GET
+  url: "https://graph.facebook.com/v26.0/me/accounts?fields=id,name,instagram_business_account"
+  credential: { $ref: api#credential }
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }
+
+- name: media
+  when: "return !!((signal.input || {}).image_url && (signal.input || {}).caption)"
+  method: POST
+  url: >-
+    return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(signal.input.instagram_account_id
+      || ((((calls.pages || {}).data || []).find(p => p.instagram_business_account) || {}).instagram_business_account || {}).id || '') + '/media'
+  credential: { $ref: api#credential }
+  encoding: multipart
+  body: "return { image_url: String(signal.input.image_url), caption: String(signal.input.caption) }"
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }
+
+# Meta fetches the image (a public https JPEG) and processes it before it may be published.
+- name: ready
+  when: "return !!calls.media"
+  method: GET
+  url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(calls.media.id) + '?fields=status_code'"
+  credential: { $ref: api#credential }
+  transport: json
+  poll:
+    url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(calls.media.id) + '?fields=status_code'"
+    until: "return response.status_code === 'FINISHED'"
+    failed: "return response.status_code === 'ERROR' || response.status_code === 'EXPIRED'"
+    message: "return 'Instagram could not process the image: ' + response.status_code"
+    intervalMs: 5000
+    maxAttempts: 60
+
+- name: publish
+  when: "return !!calls.ready"
+  method: POST
+  url: >-
+    return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(signal.input.instagram_account_id
+      || ((((calls.pages || {}).data || []).find(p => p.instagram_business_account) || {}).instagram_business_account || {}).id || '') + '/media_publish'
+  credential: { $ref: api#credential }
+  encoding: multipart
+  body: "return { creation_id: String(calls.media.id) }"
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }
+
+# Its link, so the output says where the post is.
+- name: post
+  when: "return !!calls.publish"
+  method: GET
+  url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(calls.publish.id) + '?fields=id,permalink,timestamp'"
+  credential: { $ref: api#credential }
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }

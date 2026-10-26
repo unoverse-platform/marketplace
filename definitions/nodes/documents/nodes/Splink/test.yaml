@@ -1,0 +1,11 @@
+# THE NODE UNDER GUARD, against the real service. Made-up names: the same firm spelled two ways,
+# and another firm. Asserted on order and range, never on an exact probability.
+testData:
+  config:
+    input: '{"name":"Example Capital Management Ltd","candidates":[{"id":"r1","names":["Example Capital Management Limited"]},{"id":"r2","names":["Market Holdings Inc."]}]}'
+  inputs: {}
+  expect:
+    # The same firm scores near one and first; another firm scores low.
+    scores: >-
+      return output.scores.length === 2 && output.scores[0].id === 'r1'
+        && output.scores[0].probability > 0.9 && output.scores[1].probability < 0.1

@@ -3,4 +3,13 @@
 configSchema:
   type: object
   required: []
-  properties: {}
+  properties:
+    query:
+      type: object
+      title: Query
+      description: >-
+        The query to ask when this node is a step in the data flow, in the query tool's own form
+        ({"fund": {"where": ..., "fields": [...]}, "chunks": "words"}), usually built from upstream
+        with return { ... }. Not read when the node is an Agent's tool
+      default: {}
+      ui:field: template

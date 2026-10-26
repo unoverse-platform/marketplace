@@ -1,0 +1,11 @@
+# NO ID, NO CALL: an empty place id skips the lookup and the node answers an empty place,
+# rather than failing the run it sits in (the vendor refuses a details request without one).
+
+- $ref: searchapi#call
+  name: details
+  when: "return String(config.placeId || '').trim().length > 0"
+  error: { $ref: searchapi#error }
+  query:
+    engine: google_maps_place
+    place_id: "{{ config.placeId }}"
+    hl: "{{ config.language }}"

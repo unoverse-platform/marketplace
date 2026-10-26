@@ -1,0 +1,25 @@
+type: OpenAISpeech
+kind: PromiseNode
+
+name: OpenAI TTS
+category: Media & Design
+color: "#10A37F"
+
+description: Speak text aloud in an OpenAI voice. Outputs base64 audio.
+
+whenToUse: >-
+  Read TEXT ALOUD in one voice: a spoken reply, a narration, an announcement. It performs words that
+  are already written, and the delivery can be directed in plain words (calm, warm, unhurried). A live
+  conversation where the model listens and answers is a different job, because this never hears anyone.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  cacheable: false

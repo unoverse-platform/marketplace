@@ -1,0 +1,9 @@
+# One row per output connector, in interface.yaml order.
+- emit: answer
+  value: "return response || {}"
+
+- emit: chunks
+  value: "return Array.isArray((response || {}).chunks) ? response.chunks : []"
+
+- emit: refused
+  value: "return Array.isArray((response || {}).refused) ? response.refused : []"

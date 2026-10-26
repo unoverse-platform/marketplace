@@ -1,0 +1,15 @@
+# Needs OPENAI_API_KEY. Short text, because this bills per call.
+
+testData:
+  config:
+    text: The glass box hums, and the city wakes.
+    voice: marin
+    responseFormat: wav
+  inputs:
+    input: The glass box hums, and the city wakes.
+  expect:
+    audio: >-
+      return typeof output.audio.data === 'string'
+        && output.audio.data.length > 1000
+        && output.audio.mimeType.startsWith('audio/')
+    metadata: "return output.metadata.voice === 'marin' && output.metadata.characters === 39"

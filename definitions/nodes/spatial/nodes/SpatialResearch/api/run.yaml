@@ -1,0 +1,14 @@
+# THE DATA-FLOW STEP: the same engine door as the `query` tool (service.yaml), asked with the query
+# its setting makes. A refusal is an answer (`refused`), never an error, as it is for an Agent.
+- name: query
+  method: POST
+  url: "return scope.engineUrl + '/spatial/query'"
+  transport: json
+  timeoutMs: 30000
+  body:
+    workflowId: "return scope.workflowId"
+    org: "return scope.org"
+    query: "return config.query && typeof config.query === 'object' && !Array.isArray(config.query) ? config.query : {}"
+  error:
+    when: "return !response || typeof response !== 'object'"
+    message: "return 'spatial/query failed: ' + JSON.stringify(response || {}).slice(0, 300)"

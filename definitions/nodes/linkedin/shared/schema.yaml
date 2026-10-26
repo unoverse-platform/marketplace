@@ -1,0 +1,178 @@
+# TOOL DISCOVERY, as DATA: what an attached Agent reads before it reaches LinkedIn. The wording
+# IS the routing: a model reads these descriptions when choosing a tool, so rephrasing is a
+# behaviour change, never a tidy-up. The argument shapes are what the model fills in.
+
+linkedin:
+  name: LinkedIn Ads
+  version: "1.0.0"
+  description: >-
+    Run LinkedIn ad campaigns: find ad accounts and targeting, create campaigns and image ads as
+    drafts, pause them or lower their budget, and read spend and results.
+  instructions: |-
+    LINKEDIN ADS PROTOCOL:
+    - Start with list_ad_accounts. Every other tool takes its account id, and create_campaign and create_ad take its organization and currency.
+    - Targeting values are URNs. Find them with find_targeting before create_campaign; never guess one.
+    - create_campaign makes a DRAFT, which spends nothing. Switching a campaign on, or raising its budget, is a person's yes and is never done here.
+    - Facets combine as AND, values within a facet as OR.
+    - LinkedIn tools may not be used to discriminate based on personal characteristics such as gender, age, race, or ethnicity.
+    - A tool that fails carries LinkedIn's reason. Say so rather than claiming it worked.
+  methods:
+    list_ad_accounts:
+      description: >-
+        List the active ad accounts you can manage, with id, currency and the company page its
+        ads are posted as.
+      input:
+        type: object
+        properties: {}
+
+    find_targeting:
+      description: >-
+        Find the targeting values for one facet, by search text or, with no text, all of them.
+        Facets: locations, seniorities, industries, jobFunctions, titles, employers,
+        staffCountRanges.
+      input:
+        type: object
+        properties:
+          facet:
+            type: string
+            enum: [locations, seniorities, industries, jobFunctions, titles, employers, staffCountRanges]
+            description: The kind of targeting.
+          query:
+            type: string
+            description: >-
+              Search text, e.g. "United Arab Emirates", "retail", "Emirates NBD". Needed for
+              locations, titles and employers; leave out to list every seniority, job function
+              or company size.
+        required: [facet]
+
+    list_campaigns:
+      description: >-
+        List an ad account's campaigns that are on, paused or drafts, with status, daily budget
+        and objective.
+      input:
+        type: object
+        properties:
+          account_id:
+            type: string
+            description: The ad account's id, from list_ad_accounts.
+        required: [account_id]
+
+    create_campaign:
+      description: >-
+        Create a campaign, as a DRAFT that spends nothing until a person switches it on.
+        Give it a name, a daily budget in the account's currency, an objective and its
+        targeting.
+      input:
+        type: object
+        properties:
+          account_id:
+            type: string
+            description: The ad account's id.
+          organization:
+            type: string
+            description: The account's organization, from list_ad_accounts.
+          name:
+            type: string
+            description: What the campaign is for, e.g. "Gulf retail VPs, October".
+          currency:
+            type: string
+            description: The account's currency, from list_ad_accounts.
+          daily_budget:
+            type: number
+            description: Most to spend per day, in the account's currency.
+          objective:
+            type: string
+            enum: [WEBSITE_VISIT, BRAND_AWARENESS]
+            description: WEBSITE_VISIT (clicks to a page, the default) or BRAND_AWARENESS (to be seen).
+          targeting:
+            type: object
+            description: >-
+              Facet name to a list of URNs from find_targeting, e.g. { "locations":
+              ["urn:li:geo:104305776"], "seniorities": ["urn:li:seniority:7"] }.
+            properties:
+              locations: { type: array, items: { type: string } }
+              seniorities: { type: array, items: { type: string } }
+              industries: { type: array, items: { type: string } }
+              jobFunctions: { type: array, items: { type: string } }
+              titles: { type: array, items: { type: string } }
+              employers: { type: array, items: { type: string } }
+              staffCountRanges: { type: array, items: { type: string } }
+        required: [account_id, organization, name, currency, daily_budget, targeting]
+
+    create_ad:
+      description: >-
+        Create an image ad in a campaign, posted as the account's company page: the words, an
+        image by its https url, a headline, and the page it links to.
+      input:
+        type: object
+        properties:
+          account_id:
+            type: string
+            description: The ad account's id.
+          campaign_id:
+            type: string
+            description: The campaign's id, from create_campaign or list_campaigns.
+          organization:
+            type: string
+            description: The account's organization, from list_ad_accounts.
+          text:
+            type: string
+            description: The words above the image. Keep it under 150 characters for the feed.
+          image_url:
+            type: string
+            description: An https url of a JPG, PNG or GIF.
+          headline:
+            type: string
+            description: The headline under the image, up to 70 characters.
+          landing_page:
+            type: string
+            description: The https page the ad links to.
+          call_to_action:
+            type: string
+            enum: [LEARN_MORE, SIGN_UP, REGISTER, DOWNLOAD, REQUEST_DEMO, SUBSCRIBE, APPLY, JOIN, ATTEND]
+            description: The button's label (optional).
+        required: [account_id, campaign_id, organization, text, image_url, headline, landing_page]
+
+    change_campaign:
+      description: >-
+        Pause or archive a campaign, or lower its daily budget. It never switches a campaign on
+        or raises a budget: those spend more, and are a person's yes.
+      input:
+        type: object
+        properties:
+          account_id:
+            type: string
+            description: The ad account's id.
+          campaign_id:
+            type: string
+            description: The campaign's id.
+          status:
+            type: string
+            enum: [PAUSED, ARCHIVED]
+            description: Pause it, or archive it (optional).
+          daily_budget:
+            type: number
+            description: A lower daily budget (optional), in the account's currency.
+        required: [account_id, campaign_id]
+
+    report:
+      description: >-
+        Spend and results per campaign in an ad account, from a start date (YYYY-MM-DD, default
+        30 days ago) to today or an end date. Optionally only some campaigns.
+      input:
+        type: object
+        properties:
+          account_id:
+            type: string
+            description: The ad account's id.
+          since:
+            type: string
+            description: Start date, YYYY-MM-DD (optional, default 30 days ago).
+          until:
+            type: string
+            description: End date, YYYY-MM-DD (optional, default today).
+          campaign_ids:
+            type: array
+            items: { type: string }
+            description: Only these campaigns (optional).
+        required: [account_id]

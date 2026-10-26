@@ -11,6 +11,9 @@ outputs:
   - name: count
     type: number
     description: How many people came back
+  - name: person
+    type: object
+    description: "The one person asked for by id or email, as Signal holds them, or null when none was named or found"
 
 credentials: []
 

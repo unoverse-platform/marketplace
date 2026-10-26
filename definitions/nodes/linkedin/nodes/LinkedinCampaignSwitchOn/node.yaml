@@ -1,0 +1,23 @@
+type: LinkedinCampaignSwitchOn
+kind: PromiseNode
+name: LinkedIn Switch On
+category: Go To Market
+color: "#0A66C2"
+description: Switch a LinkedIn campaign on, and optionally set its daily budget. This starts spending.
+whenToUse: >
+  Pick as the last step of a task that has already asked a person to approve a campaign: it
+  switches the campaign on and, if given one, sets its daily budget. It offers no tools to an
+  agent on purpose, so the only way to start spending is a task whose step before it asked
+  someone and got a yes.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The approval is the task's step before this one, not a role here.
+auth:
+  required: false
+
+capabilities:
+  # Switching on spends money; reuse must never stand in for it.
+  cacheable: false

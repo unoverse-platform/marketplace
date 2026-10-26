@@ -1,0 +1,23 @@
+configSchema:
+  type: object
+  required: [placeId]
+  properties:
+    placeId:
+      type: string
+      title: Place ID
+      description: The Google Maps place id to look up, e.g. 'ChIJhRwB-yFawokR5Phil-QQ3zM'. Usually wired in from a places search.
+      default: ""
+      "ui:field": template
+    maxImages:
+      type: number
+      title: Number of Photos
+      description: How many of the listing's photos to return
+      default: 10
+      minimum: 0
+      maximum: 50
+    language:
+      type: string
+      title: Language
+      description: Language code for the listing text, e.g. 'en', 'ar'
+      default: en
+"ui:order": [placeId, maxImages, language]

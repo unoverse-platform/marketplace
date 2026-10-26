@@ -8,6 +8,11 @@
 # missing scope, so every call declares the shared `error` block. Without it each method would
 # look like it succeeded and hand back nothing.
 
+getSchema:
+  description: Tool discovery for Slack
+  calls: []
+  returns: { $ref: schema#slack }
+
 send_message:
   description: >-
     Send a message to a Slack channel or thread. Use the channel ID, not the name. To reply in
@@ -51,27 +56,13 @@ list_channels:
         name: ch.name,
         topic: (ch.topic || {}).value || '',
         purpose: (ch.purpose || {}).value || '',
-        num_members: ch.num_members
+        num_members: ch.num_members,
+        is_member: !!ch.is_member
       })),
       has_more: !!((response.response_metadata || {}).next_cursor),
       next_cursor: (response.response_metadata || {}).next_cursor || null
     }
 
-search_messages:
-  description: >-
-    Search messages matching a query. Supports Slack search syntax such as in:#channel and
-    from:@user. Returns messages with channel context and timestamps.
-  calls:
-    - name: search
-      method: GET
-      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/search.messages'"
-      credential: { $ref: api#credential }
-      query:
-        query: "{{ params.query }}"
-        count: "return String(Math.min(params.count || 20, 100))"
-      transport: json
-      error: { $ref: api#error }
-  returns: "return response"
 
 get_user:
   description: >-
@@ -119,20 +110,3 @@ read_history:
       transport: json
       error: { $ref: api#error }
   returns: "return response"
-
-add_reaction:
-  description: Add an emoji reaction to a message, identified by its channel and timestamp.
-  calls:
-    - name: react
-      method: POST
-      url: "return 'https://' + String(credentials.slackBotToken.host || 'slack.com').replace('https://', '').replace('http://', '').split('/')[0] + '/api/reactions.add'"
-      credential: { $ref: api#credential }
-      body: >-
-        return {
-          channel: params.channel,
-          timestamp: params.timestamp,
-          name: String(params.name).split(':').join('')
-        }
-      transport: json
-      error: { $ref: api#error }
-  returns: "return { ok: true }"

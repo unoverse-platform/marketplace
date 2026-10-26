@@ -4,7 +4,13 @@
 # filtered here, so an Agent asking
 # for the commodities rows gets those and not four hundred others.
 #
-#   params.where   a phrase: only the rows with a cell containing it, any case
+#   params.where   a phrase: only the rows with a cell containing it, any case; when no row holds
+#                  it and a column's header does (a class per column, 2026-10-12), every row with
+#                  its label and that column only (always first: a class per column must never
+#                  come back as every class, measured 2026-10-12, the Agent read another class's
+#                  fee). Otherwise A SMALL TABLE (50 rows or fewer) COMES WHOLE,
+#                  `where` or not (owner, 2026-10-12: a fund sheet opened for its ISIN hid the
+#                  ongoing charge two rows up): the platform fixes the size, never the model
 #   params.limit   how many rows at most; 200 when not said
 #
 # A TABLE THAT IS A PICTURE (2026-09-11, a ROKOS manager review: two tables pasted as images,
@@ -17,7 +23,7 @@ getDetail:
     properties:
       where:
         type: string
-        description: A word or phrase; only the rows with a cell containing it come back (Commodities, Crude, Financials).
+        description: A word or phrase; in a table of more than 50 rows, only the rows with a cell containing it come back (Commodities, Crude, Financials). A smaller table comes whole.
       limit:
         type: number
         description: How many rows at most. 200 when not said.
@@ -60,10 +66,16 @@ getDetail:
       const t = calls.rows && calls.rows.file && calls.rows.file.content ? JSON.parse(calls.rows.file.content) : {};
       const all = t.rows || [];
       const where = params && params.where ? String(params.where).toLowerCase() : '';
-      const hit = where ? all.filter(r => r.join(' ').toLowerCase().includes(where)) : all;
+      const byRow = where ? all.filter(r => r.join(' ').toLowerCase().includes(where)) : all;
+      const lines = (t.header || []).map(h => Array.isArray(h) ? h : [h]);
+      const cols = where ? (lines[0] || []).map((c, i) => i).filter(i => i > 0 && lines.some(h => String(h[i] == null ? '' : h[i]).toLowerCase().includes(where))) : [];
+      const pick = r => [r[0]].concat(cols.map(i => r[i]));
+      const byColumn = !byRow.length && cols.length > 0;
+      const whole = all.length <= 50;
+      const hit = byColumn ? all.map(pick) : whole ? all : byRow;
       const limit = params && params.limit ? Number(params.limit) : 200;
       return Object.assign(
-        { header: t.header || [], rows: hit.slice(0, limit), total: all.length, matched: hit.length },
+        { header: byColumn ? lines.map(pick) : (t.header || []), rows: hit.slice(0, limit), total: all.length, matched: byColumn ? all.length : byRow.length },
         calls.stored && calls.stored.file ? { image: { url: calls.stored.file.downloadUrl, mimeType: 'image/png' }, asPicture: !all.length } : calls.picture ? { image: calls.picture.image, asPicture: true } : {}
       );
     })()

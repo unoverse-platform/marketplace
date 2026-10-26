@@ -1,0 +1,45 @@
+# What the campaign is now, for its currency, then the switch. Skipped when the input names no
+# campaign, so a misconfigured step says so rather than calling LinkedIn with nothing.
+
+- name: current
+  when: "return !!((signal.input || {}).account_id && (signal.input || {}).campaign_id)"
+  method: GET
+  url: >-
+    return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(signal.input.account_id)
+      + '/adCampaigns/' + encodeURIComponent(signal.input.campaign_id)
+  credential: { $ref: api#credential }
+  headers: { $ref: api#headers }
+  transport: json
+
+- name: patch
+  when: "return !!calls.current"
+  method: POST
+  url: >-
+    return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(signal.input.account_id)
+      + '/adCampaigns/' + encodeURIComponent(signal.input.campaign_id)
+  credential: { $ref: api#credential }
+  headers: { $ref: api#patch }
+  body: >-
+    return {
+      patch: {
+        $set: Object.fromEntries(Object.entries({
+          status: 'ACTIVE',
+          dailyBudget: signal.input.daily_budget
+            ? { amount: String(signal.input.daily_budget), currencyCode: (calls.current.dailyBudget || {}).currencyCode }
+            : undefined
+        }).filter(e => e[1] !== undefined))
+      }
+    }
+  transport: headers
+
+# Read back, so the output says what LinkedIn now holds rather than what was asked. Also the
+# graph run's last call, which must have a body to settle on (the switch answers with none).
+- name: after
+  when: "return !!calls.current"
+  method: GET
+  url: >-
+    return 'https://api.linkedin.com/rest/adAccounts/' + encodeURIComponent(signal.input.account_id)
+      + '/adCampaigns/' + encodeURIComponent(signal.input.campaign_id)
+  credential: { $ref: api#credential }
+  headers: { $ref: api#headers }
+  transport: json

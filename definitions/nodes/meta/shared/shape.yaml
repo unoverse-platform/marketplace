@@ -1,0 +1,21 @@
+# The ad accounts and the Instagram accounts to post as, bounded to what a caller decides with:
+# an account's id for every other tool, its currency for a budget, and each Page's Instagram
+# account, which every ad and post is posted as.
+#
+# Here once, because the graph run (events.yaml) and the list_accounts tool answer with the
+# same shape.
+accounts: &accounts >-
+  return {
+    ok: true,
+    ad_accounts: ((calls.adaccounts || {}).data || []).map(a => ({
+      id: String(a.account_id),
+      name: a.name,
+      currency: a.currency,
+      active: a.account_status === 1
+    })),
+    pages: ((calls.pages || {}).data || []).map(p => ({
+      page_id: String(p.id),
+      name: p.name,
+      instagram_account_id: p.instagram_business_account ? String(p.instagram_business_account.id) : null
+    }))
+  }

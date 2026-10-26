@@ -1,6 +1,6 @@
 testData:
   config:
-    model: anthropic.claude-sonnet-5
+    model: anthropic.claude-sonnet-5-5
     prompt: Reply with exactly the word READY and nothing else.
     systemPrompt: You follow instructions precisely.
     maxTokens: 64

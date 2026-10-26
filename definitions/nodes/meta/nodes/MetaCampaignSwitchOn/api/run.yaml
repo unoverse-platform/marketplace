@@ -1,0 +1,27 @@
+# The switch, then a read back. Skipped when the input names no campaign, so a misconfigured
+# step says so rather than calling Meta with nothing.
+
+- name: change
+  when: "return !!(signal.input || {}).campaign_id"
+  method: POST
+  url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(signal.input.campaign_id)"
+  credential: { $ref: api#credential }
+  encoding: multipart
+  body: >-
+    return Object.fromEntries(Object.entries({
+      status: 'ACTIVE',
+      daily_budget: signal.input.daily_budget ? Math.round(Number(signal.input.daily_budget) * 100) : undefined
+    }).filter(e => e[1] !== undefined))
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }
+
+# Read back, so the output says what Meta now holds rather than what was asked.
+- name: after
+  when: "return !!calls.change"
+  method: GET
+  url: "return 'https://graph.facebook.com/v26.0/' + encodeURIComponent(signal.input.campaign_id) + '?fields=status,daily_budget'"
+  credential: { $ref: api#credential }
+  transport: json
+  okOn: [400, 403]
+  error: { $ref: api#error }

@@ -5,7 +5,7 @@
 # component task's saved state IS: four fields answered and five empty, and an empty key is a
 # question still outstanding.
 #
-# `national_idSource` is in that slice on purpose. Every proposed field on a SAB application
+# `national_idSource` is in that slice on purpose. Every proposed field on an application form
 # carries a Source twin saying where the value came from, and asking someone for their
 # "national id source" is nonsense, so this fails if a twin is ever offered as a question.
 #

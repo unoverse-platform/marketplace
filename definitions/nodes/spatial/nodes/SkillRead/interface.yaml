@@ -1,4 +1,8 @@
-inputs: []
+inputs:
+  - name: signal
+    type: object
+    description: Upstream data; it starts the read, as a step in a lane, and the skill's name and file path may be templated from it
+    required: false
 
 outputs:
   - name: skill

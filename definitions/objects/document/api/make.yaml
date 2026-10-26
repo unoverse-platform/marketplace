@@ -95,22 +95,26 @@ calls:
     # "we ingest once, we save to S3, and everything goes into our database"). Each file is
     # uploaded once for what it holds: an upload identical to one already made (the same file, the
     # same reader, the same files and the same picture reads, this file's name) is served from
-    # memory and nothing is written. Keyed by what would be written, never by a record kept
+    # memory and nothing is written. Keyed by what would be written (the file's own size too: 2026-10-17, a table's
+    # file changed from its vision read to its text read under the same name and the same reads, and was skipped as
+    # already written), never by a record kept
     # elsewhere: the read's row is the inbox's, and the document's row is written after this step.
     cacheable:
       ignore: [textData, base64Data]
       key: [savedAs]
     inputs:
       savedAs: >-
-        return [String((calls.get.file && calls.get.file.etag) || row.content.etag || ''), String((calls.parse.document && calls.parse.document.parser_version) || ''), (calls.parse.files || []).map(f => f.name + ':' + String(f.text || f.base64 || '').length).join(','), (calls.vision || []).map(v => v && v.result ? (v.result.rows || []).length + ':' + String(v.result.title || '') : '-').join(',')].join('|') + '|' + String(item.name || '')
+        return [String((calls.get.file && calls.get.file.etag) || row.content.etag || ''), String((calls.parse.document && calls.parse.document.parser_version) || ''), (calls.parse.files || []).map(f => f.name + ':' + String(f.text || f.base64 || '').length).join(','), (calls.vision || []).map(v => v && v.result ? (v.result.rows || []).length + ':' + String(v.result.title || '') : '-').join(',')].join('|') + '|' + String(item.name || '') + '|' + String(item.text || item.base64 || '').length
     for: >-
       return (() => {
         const review = calls.parse.review || [];
         const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length && (() => { const cells = v.rows.flatMap(r => Array.isArray(r) ? r.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; })() ? v : null; };
-        const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v);
-        const replaced = seen.map(x => 'tables/' + x.r.id + '.json');
+        const norm = (x) => String(x == null ? '' : x).toLowerCase().split(' ').join(''); const same = (id, v) => { const f = (calls.parse.files || []).find(f => f.name === 'tables/' + id + '.json'); const own = f && String(f.text || '').trim().indexOf('{') === 0 ? (JSON.parse(f.text).rows || []) : []; const mine = own.map(r => norm(Array.isArray(r) ? r[0] : '')).filter(l => l); if (!mine.length) return true; const theirs = v.rows.map(r => norm(Array.isArray(r) ? r[0] : '')); return mine.filter(l => theirs.indexOf(l) >= 0).length * 2 >= mine.length; };
+        const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v).map(x => ({ r: x.r, v: x.v, same: same(x.r.id, x.v) }));
+        const replaced = seen.filter(x => x.same).map(x => 'tables/' + x.r.id + '.json');
         return (calls.parse.files || []).filter(f => !replaced.includes(f.name))
-          .concat(seen.map(x => ({ name: 'tables/' + x.r.id + '.json', contentType: 'application/json', text: JSON.stringify({ id: x.r.id, caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows, readBy: 'vision' }) })));
+          .concat(seen.map(x => ({ name: 'tables/' + x.r.id + (x.same ? '' : 'v') + '.json', contentType: 'application/json', text: JSON.stringify({ id: x.r.id + (x.same ? '' : 'v'), caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows, readBy: 'vision' }) })))
+          .filter((f) => !!f.base64);
       })()
     config:
       bucket: "{{ row.content.bucket }}"
@@ -158,13 +162,14 @@ calls:
           tables: (() => {
             const review = calls.parse.review || [];
             const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length ? v : null; };
-            const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v);
-            const replaced = seen.map(x => 'tables/' + x.r.id + '.json');
+            const norm = (x) => String(x == null ? '' : x).toLowerCase().split(' ').join(''); const same = (id, v) => { const f = (calls.parse.files || []).find(f => f.name === 'tables/' + id + '.json'); const own = f && String(f.text || '').trim().indexOf('{') === 0 ? (JSON.parse(f.text).rows || []) : []; const mine = own.map(r => norm(Array.isArray(r) ? r[0] : '')).filter(l => l); if (!mine.length) return true; const theirs = v.rows.map(r => norm(Array.isArray(r) ? r[0] : '')); return mine.filter(l => theirs.indexOf(l) >= 0).length * 2 >= mine.length; };
+            const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v).map(x => ({ r: x.r, v: x.v, same: same(x.r.id, x.v) }));
+            const replaced = seen.filter(x => x.same).map(x => 'tables/' + x.r.id + '.json');
             const parsed = (calls.parse.files || [])
               .filter(f => String(f.name || '').indexOf('tables/') === 0 && !replaced.includes(f.name) && String(f.text || '').trim().indexOf('{') === 0)
               .map(f => JSON.parse(f.text))
               .filter(t => t && Array.isArray(t.rows));
-            return parsed.concat(seen.map(x => ({ id: x.r.id, caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows })));
+            return parsed.concat(seen.map(x => ({ id: x.r.id + (x.same ? '' : 'v'), caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows })));
           })()
         }]
       templates: "return row.content.layouts || row.content.valueTemplates || []"
@@ -219,6 +224,21 @@ returns:
       const t = String((f && f.text) || '').trim();
       return t.indexOf('[') === 0 ? JSON.parse(t) : [];
     })()
+  # THE READING, HANDED STRAIGHT TO THE DATABASE (UNO-121, 2026-10-18): the whole parsed text, for the page store,
+  # and every table's rows as the read settled them (a vision read in place of the parse's where it holds), for the
+  # table cells. Neither is written to the store any more and read back; only pictures still are.
+  fullText: "return String(calls.parse.text || '')"
+  tableRows: >-
+    return (() => {
+      const review = calls.parse.review || [];
+      const read = (id) => { const k = review.findIndex(r => r.id === id); const v = k >= 0 && calls.vision && calls.vision[k] ? calls.vision[k].result : null; return v && Array.isArray(v.rows) && v.rows.length && (() => { const cells = v.rows.flatMap(r => Array.isArray(r) ? r.slice(1) : []); return cells.length > 0 && cells.filter(x => String(x == null ? '' : x).trim()).length * 2 >= cells.length; })() ? v : null; };
+      const norm = (x) => String(x == null ? '' : x).toLowerCase().split(' ').join(''); const same = (id, v) => { const f = (calls.parse.files || []).find(f => f.name === 'tables/' + id + '.json'); const own = f && String(f.text || '').trim().indexOf('{') === 0 ? (JSON.parse(f.text).rows || []) : []; const mine = own.map(r => norm(Array.isArray(r) ? r[0] : '')).filter(l => l); if (!mine.length) return true; const theirs = v.rows.map(r => norm(Array.isArray(r) ? r[0] : '')); return mine.filter(l => theirs.indexOf(l) >= 0).length * 2 >= mine.length; };
+      const seen = review.map(r => ({ r: r, v: read(r.id) })).filter(x => x.v).map(x => ({ r: x.r, v: x.v, same: same(x.r.id, x.v) }));
+      const replaced = seen.filter(x => x.same).map(x => 'tables/' + x.r.id + '.json');
+      return (calls.parse.files || []).filter(f => !replaced.includes(f.name))
+        .concat(seen.map(x => ({ name: 'tables/' + x.r.id + (x.same ? '' : 'v') + '.json', contentType: 'application/json', text: JSON.stringify({ id: x.r.id + (x.same ? '' : 'v'), caption: x.v.title || null, header: [x.v.header || []], rows: x.v.rows, readBy: 'vision' }) })))
+        .filter((f) => !f.base64 && String(f.name || '').indexOf('tables/') === 0);
+    })()
   bucket: "{{ row.content.bucket }}"
   key: "{{ row.content.key }}"
   parsedKey: "return String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1), 'text.md']).join('/')"
@@ -234,8 +254,14 @@ returns:
       const base = String(row.content.key).split('/').slice(0, -1).concat(['_parsed', String(row.content.key).split('/').at(-1)]).join('/') + '/';
       const VISION = { read_by: 'vision', cells_in_text: null, totals_checked: 0, totals_agree: 0, review: ['read from a picture by a vision model'] };
       const p = calls.parse.parts || {};
+      const norm = (x) => String(x == null ? '' : x).toLowerCase().split(' ').join(''); const same = (id, v) => { const f = (calls.parse.files || []).find(f => f.name === 'tables/' + id + '.json'); const own = f && String(f.text || '').trim().indexOf('{') === 0 ? (JSON.parse(f.text).rows || []) : []; const mine = own.map(r => norm(Array.isArray(r) ? r[0] : '')).filter(l => l); if (!mine.length) return true; const theirs = v.rows.map(r => norm(Array.isArray(r) ? r[0] : '')); return mine.filter(l => theirs.indexOf(l) >= 0).length * 2 >= mine.length; };
+      // A SECOND READ NEVER WIPES THE FIRST (2026-10-17): a pitchbook's terms table, read from its text,
+      // was flagged (a picture of the class-fee grid sat inside it) and the vision read of that picture
+      // replaced its rows, losing Carried Interest. A vision read replaces the parse's rows only when it
+      // holds most of their row names; otherwise it is a table of its own beside them, `<id>v`.
       const tables = (p.tables || []).map(t => {
-        const v = read(t.partId);
+        const read1 = read(t.partId);
+        const v = read1 && same(t.partId, read1) ? read1 : null;
         const columns = v ? (v.header || []).map(x => String(x || '')) : (t.columns || []);
         const named = columns.filter(c => c);
         const rows = v ? v.rows.length : t.rowCount;
@@ -266,7 +292,19 @@ returns:
             pictureKey: f.pictureFile ? base + f.pictureFile : null
           };
         });
-      return tables.concat(charts);
+      const extra = (p.tables || []).map(t => ({ t: t, v: read(t.partId) })).filter(x => x.v && !same(x.t.partId, x.v)).map(x => {
+        const t = x.t;
+        const vc = (x.v.header || []).map(c => String(c || ''));
+        const vn = vc.filter(c => c);
+        return {
+          partId: t.partId + 'v', title: x.v.title || t.caption || t.title,
+          description: x.v.rows.length + ' rows' + (vn.length ? '; columns: ' + vn.slice(0, 10).join(', ') : '') + '; read from a picture by a vision model',
+          page: t.page, box: t.box, columns: vc, rowCount: x.v.rows.length, checks: VISION,
+          bucket: row.content.bucket, structureKey: base + 'structure.json', rowsKey: base + 'tables/' + t.partId + 'v.json',
+          pictureKey: t.pictureFile ? base + t.pictureFile : null
+        };
+      });
+      return tables.concat(extra).concat(charts);
     })()
   # What stays a picture: a meaningful figure the vision read found no rows in.
   figures: >-

@@ -16,6 +16,9 @@ outputs:
   - name: root
     type: string
     description: "The folder that was listed, as an address: s3://<bucket>/<prefix>"
+  - name: complete
+    type: boolean
+    description: Whether every key under the prefix was listed. False when the listing stopped with more still there.
 
 credentials:
   - name: awsCredential

@@ -2,7 +2,7 @@
   "kind": "node",
   "name": "SearchNews",
   "pack": "search",
-  "fingerprint": "dc90edd6f4c52dc0",
+  "fingerprint": "bfe3a94f2e46c81c",
   "title": "Search News",
   "description": "Find recent news articles on a topic via SearchAPI.io (Google News)",
   "category": "Search",
@@ -86,7 +86,7 @@
   "definition": {
     "package": {
       "name": "search",
-      "packageFile": "# FULLY DECLARATIVE. Five nodes, one endpoint, one key.\n#\n# SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched\n# by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds\n# the call, each node names its engine and shapes its own reply, and the whole client is\n# gone: `auth: apiKeyQuery` was already an executor capability.\n#\n# The retired TypeScript is at `_legacy/nodes/search/`.\n\nname: search\ndisplayName: Search\ndescription: Web, news, video, places and by-image search via SearchAPI.io\nversion: 2.0.0\ncategory: search\nlogoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png\n\nfeatures:\n  - Google web and image results\n  - Google News, dated articles\n  - YouTube video search\n  - Google Maps places with ratings\n  - Google Lens, the pages a picture appears on\n\nallowedHosts:\n  - www.searchapi.io\n\nrequires:\n  credential: [apiKeyQuery]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
+      "packageFile": "# FULLY DECLARATIVE. Six nodes, one endpoint, one key.\n#\n# SearchAPI.io is the cleanest case for this format: every engine is the SAME url switched\n# by `engine=`, authenticated by one `api_key` in the query. `shared/searchapi.yaml` holds\n# the call, each node names its engine and shapes its own reply, and the whole client is\n# gone: `auth: apiKeyQuery` was already an executor capability.\n#\n# The retired TypeScript is at `_legacy/nodes/search/`.\n\nname: search\ndisplayName: Search\ndescription: Web, news, video, places, one place's listing and by-image search via SearchAPI.io\nversion: 2.0.0\ncategory: search\nlogoUrl: https://cdn-icons-png.flaticon.com/512/3128/3128287.png\n\nfeatures:\n  - Google web and image results\n  - Google News, dated articles\n  - YouTube video search\n  - Google Maps places with ratings\n  - One Google Maps listing in full, photos and facts, by place id\n  - Google Lens, the pages a picture appears on\n\nallowedHosts:\n  - www.searchapi.io\n\nrequires:\n  credential: [apiKeyQuery]\n  transport: [json]\n  executorVersion: \">=1.0.0\"\n",
       "credentials": {
         "searchapiCredential.yaml": "# One key powers every engine in this package. Transcribed from src/credentials/index.ts.\n\nname: searchapiCredential\ndisplayName: SearchAPI\ndescription: SearchAPI.io credentials. One key powers every search engine in this package.\ndocumentationUrl: https://www.searchapi.io/docs\n\nproperties:\n  - name: apiKey\n    displayName: API Key\n    type: string\n    required: true\n    secret: true\n    description: Your SearchAPI.io API key\n    placeholder: \"\"\n"
       },

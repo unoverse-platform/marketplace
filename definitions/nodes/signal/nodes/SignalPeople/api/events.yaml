@@ -1,6 +1,11 @@
-# One row per output connector, in interface.yaml order.
+# One row per output connector, in interface.yaml order. A one-person read answers
+# { found, person }; a list answers { people }. Both fill `people`, so a step wired to it reads
+# either the same way; `person` is the one person, or null when none was named or found.
 - emit: people
-  value: "return response.people || []"
+  value: "return response.person ? [response.person] : (response.people || [])"
 
 - emit: count
-  value: "return (response.people || []).length"
+  value: "return response.person ? 1 : (response.people || []).length"
+
+- emit: person
+  value: "return response.person || null"

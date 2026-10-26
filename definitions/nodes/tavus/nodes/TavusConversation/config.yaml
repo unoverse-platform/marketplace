@@ -1,11 +1,17 @@
 configSchema:
   type: object
-  required: [palId]
   properties:
+    echo:
+      type: boolean
+      title: Echo
+      description: The face only speaks the audio it is sent, and Tavus does no listening or thinking. Needs a Face ID; the PAL ID is not used.
+      default: false
+      ui:widget: toggle
     palId:
       type: string
       title: PAL ID
-      description: The PAL who takes the call, from your Tavus dashboard. It sets the voice, behaviour and tools.
+      description: The PAL who takes the call, from your Tavus dashboard. It sets the voice, behaviour and tools. Not used with Echo.
+      default: ""
     faceId:
       type: string
       title: Face ID
@@ -52,4 +58,4 @@ configSchema:
       ui:widget: toggle
 
 ui:order:
-  [palId, faceId, conversationalContext, customGreeting, maxCallDuration, participantLeftTimeout, participantAbsentTimeout, testMode]
+  [echo, palId, faceId, conversationalContext, customGreeting, maxCallDuration, participantLeftTimeout, participantAbsentTimeout, testMode]

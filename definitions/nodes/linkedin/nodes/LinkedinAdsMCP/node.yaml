@@ -1,0 +1,28 @@
+type: LinkedinAdsMCP
+kind: PromiseNode
+name: LinkedIn Ads
+category: Go To Market
+color: "#0A66C2"
+# Attached to an agent over a service edge rather than wired in sequence.
+template: service
+description: Run LinkedIn ad campaigns. Find targeting, create campaigns and image ads as drafts, pause them, read their results.
+whenToUse: >
+  Pick to advertise on LinkedIn: find an ad account and the targeting to use (locations,
+  seniorities, industries, job functions, companies), create a campaign and its image ads,
+  pause it or lower its budget, and read spend and results per campaign. Campaigns are created
+  as drafts and this node never switches one on, so nothing it does spends more. Attach it via a
+  service edge to an agent, or trigger it directly to list the ad accounts.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The trigger instance's publicEntry toggle still owns the door, and requirements
+# only ever narrow.
+auth:
+  required: false
+
+capabilities:
+  # Not cacheable: campaigns and their results change underneath us, and the write methods
+  # spend money when a campaign is on, which reuse would silently skip.
+  cacheable: false

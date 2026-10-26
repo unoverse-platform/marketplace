@@ -1,0 +1,47 @@
+# THE MAP PICTURE, over REST (docs.unoverse.ai/design/lifecycle-hooks, "Your own calls"): one GET
+# to the Maps Static API, which answers with the picture itself. The same call format a node's
+# api/run.yaml uses, run by the same executor: the host allowlist, the credential, retries and
+# timeouts all come from that, not from anything written here.
+#
+# THE LOOK is in the url: Google's style rules (developers.google.com/maps/documentation/maps-static/styling),
+# repeated once per rule, which is why they sit in the url and not in `query` (a query key is sent
+# once). Few labels, bold roads, flat water and land, one big marker: a poster of the streets, not
+# a street atlas. No vendor marker: the component draws its own pin and name at the centre, which is the point.
+#
+# NO POSITION, NO CALL: a place with no coordinates, or a list with none, skips the request and the map stays empty.
+
+calls:
+  - name: picture
+    when: "return (Array.isArray(props.places) && props.places.some((p) => Number.isFinite(Number(p && p.latitude)) && Number.isFinite(Number(p && p.longitude)))) || (typeof props.latitude === 'number' && typeof props.longitude === 'number')"
+    method: GET
+    url: >-
+      return 'https://maps.googleapis.com/maps/api/staticmap?style=feature:all%7Celement:labels.text.fill%7Ccolor:0x29241f&style=feature:all%7Celement:labels.text.stroke%7Ccolor:0xffffff%7Cweight:3&style=feature:all%7Celement:labels.icon%7Cvisibility:off&style=feature:poi%7Cvisibility:off&style=feature:transit%7Cvisibility:off&style=feature:administrative%7Celement:geometry%7Cvisibility:off&style=feature:landscape%7Celement:geometry%7Ccolor:0xf1efeb&style=feature:water%7Celement:geometry%7Ccolor:0x5bb8f5&style=feature:water%7Celement:labels%7Cvisibility:off&style=feature:road%7Celement:geometry.fill%7Ccolor:0xffffff&style=feature:road%7Celement:geometry.stroke%7Ccolor:0xc0bab1%7Cweight:2&style=feature:road.highway%7Celement:geometry.fill%7Ccolor:0xffc845&style=feature:road.highway%7Celement:geometry.stroke%7Ccolor:0x29241f%7Cweight:2&style=feature:road.local%7Celement:labels%7Cvisibility:off'
+        + (Array.isArray(props.places) ? props.places : [])
+            .filter((p) => Number.isFinite(Number(p && p.latitude)) && Number.isFinite(Number(p && p.longitude)))
+            .map((p, n) => '&markers=color:0x0E7DD8%7Clabel:' + '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(n) + '%7C' + Number(p.latitude) + ',' + Number(p.longitude))
+            .join('')
+    query:
+      # ONE PLACE is centred and zoomed; SEVERAL are framed by their markers, so no centre or zoom
+      # is sent (a key that resolves to nothing is omitted).
+      center: "return Array.isArray(props.places) && props.places.length ? undefined : props.latitude + ',' + props.longitude"
+      zoom: "return Array.isArray(props.places) && props.places.length ? undefined : (typeof props.zoom === 'number' ? props.zoom : 15)"
+      size: 640x400
+      scale: 2
+      format: png
+    credential:
+      scheme: apiKeyQuery
+      param: key
+      value: "{{ credentials.googleApiCredential.apiKey }}"
+    transport: binary
+    timeoutMs: 15000
+    retry:
+      attempts: 3
+      backoff: exponential
+      on: [429, 500, 502, 503, 504]
+
+# The picture travels as base64 with its type (that is how bytes leave a call), so the one field
+# the layout draws is a data URL the browser shows as any image.
+returns: >-
+  return ((r) => r && r.base64
+    ? { mapImage: 'data:' + (r.contentType || 'image/png') + ';base64,' + r.base64, pinned: !(Array.isArray(props.places) && props.places.length) }
+    : {})(calls.picture)

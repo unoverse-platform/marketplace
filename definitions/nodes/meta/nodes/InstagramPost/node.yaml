@@ -1,0 +1,23 @@
+type: InstagramPost
+kind: PromiseNode
+name: Instagram Post
+category: Go To Market
+color: "#0866FF"
+description: Publish an image post on our Instagram account. Everyone who follows us sees it.
+whenToUse: >
+  Pick as the last step of a task that has already asked a person to approve a post: it
+  publishes one image with its caption on our Instagram account and answers with the post's
+  link. It offers no tools to an agent on purpose, so the only way to post is a task whose step
+  before it asked someone and got a yes.
+
+# WHO MAY RUN THIS (DECLARATIVE_NODES.md §9.13). Compulsory on every node, so that a node
+# nobody thought about cannot look the same as one deliberately left open.
+#
+# `required: false` adds no requirement of its own: the node runs for whoever the trigger
+# admitted. The approval is the task's step before this one, not a role here.
+auth:
+  required: false
+
+capabilities:
+  # Posting is public; reuse must never stand in for it, nor post twice.
+  cacheable: false

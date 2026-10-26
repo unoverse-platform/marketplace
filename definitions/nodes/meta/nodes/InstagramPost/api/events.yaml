@@ -1,0 +1,8 @@
+# One row, one connector. No `calls.post` means the input had no image or caption.
+
+- emit: output
+  from: response
+  value: >-
+    return calls.post
+      ? { ok: true, post_id: String(calls.post.id), url: calls.post.permalink, posted_at: calls.post.timestamp }
+      : { ok: false, error: 'image_url and caption are required' }

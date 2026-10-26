@@ -1,0 +1,77 @@
+{
+  "kind": "node",
+  "name": "Splink",
+  "pack": "documents",
+  "fingerprint": "1f4facdf8232a232",
+  "title": "Splink",
+  "description": "How likely a name is each of a few held records, scored by Splink with fixed weights: the same names always give the same scores, with no model call",
+  "category": "Documents",
+  "icon": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+  "whenToUse": "Dedupe a name read from a document against the records already held: the name and each candidate's names in, a probability per candidate out, from Splink's own matching model (Fellegi-Sunter, comparing the name's core by spelling and its place, role and legal form apart). Use it in front of a judge: a score near one links, near zero rules out, and only what falls between goes to a model. It runs on the platform's document service, wherever that is hosted, and reads and writes nothing: the caller holds the records and decides.",
+  "detail": {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "object",
+        "description": "{ name, candidates: [{ id, names: [..] }] }: the name read, and each held record's names",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "scores",
+        "type": "array",
+        "description": "One per candidate, best first: { id, probability, best }, where best is the candidate's name that scored highest"
+      }
+    ],
+    "credentials": [],
+    "configSchema": {
+      "type": "object",
+      "required": [
+        "input"
+      ],
+      "properties": {
+        "input": {
+          "type": "string",
+          "title": "Name and candidates",
+          "description": "As JSON: { \"name\": \"...\", \"candidates\": [{ \"id\": \"r1\", \"names\": [\"...\", \"...\"] }] }. Usually set by the caller (an object's matching), e.g. return { name, candidates }",
+          "default": "",
+          "ui:field": "template"
+        },
+        "authRequired": {
+          "type": "boolean",
+          "title": "Require sign-in",
+          "description": "Only a signed-in caller may run this step. Leave off and it runs for whoever the workflow's trigger admitted, which is the usual answer.",
+          "default": false,
+          "ui:widget": "toggle"
+        },
+        "authRole": {
+          "type": "string",
+          "title": "Require role",
+          "description": "A claim the caller's account must carry, as noun:verb (finance:approve, payments:refund). Leave blank to require only that they are signed in.",
+          "default": "",
+          "ui:dependencies": {
+            "authRequired": true
+          }
+        }
+      }
+    }
+  },
+  "definition": {
+    "package": {
+      "name": "documents",
+      "packageFile": "# DOCUMENTS — the platform's own document service (services/documents, a Python service beside\n# umap): a file in, its structure out. Text in reading order, every table as rows, every figure\n# as an image with its caption, every ordered list, the dates a document carries, and where on\n# which page each sits. docs/unoverse/data/documents/README.md.\n#\n# ONE DOOR, ONE NODE: ParseDocument, RenderDocument, InventoryFolder, ReadCover, ReadValues, Splink. Each but Splink (one name against a few, answered at once) is a JOB on\n# the service (start, poll, collect), which is the LlamaParse shape, so the poll capability does\n# the waiting. A door does one job, so one can be improved or replaced without touching what\n# calls it: a census before reading, a cover before filing, a parse when the whole is wanted.\n#\n# THE HOST IS THE ENGINE, at loopback (`scope.engineUrl`, :4101), which forwards to the service\n# (routes/documents.ts) the way it reaches umap. A node's call must be https or loopback\n# (allowedHosts.ts refuses a plaintext request to any other host), and a compose service on the\n# Docker network is neither; the engine holds the service's address so no node and no file does.\n\nname: documents\ndisplayName: Documents\ndescription: >-\n  Read a file into its structure with the platform's document service. Text, tables as rows,\n  figures, lists, dates, provenance\nversion: 0.1.0\ncategory: ingest\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\nfeatures:\n  - Parse PDF, Word, slides, spreadsheets, HTML and images into one typed structure\n  - Tables as rows with units parsed, figures as images, ordered lists as steps\n  - Render any page or region as an image\n  - \"Inventory a folder: kinds, pages, dates, duplicates\"\n  - \"Read a cover: what each file is about and the date it states, from named cells, no model\"\n  - \"Read values: the figures a parsed document stated, refused whole when they do not add up to what it says about itself\"\n  - \"Splink: how likely a name is each of a few held records, scored the same way every time, no model call\"\n\nallowedHosts:\n  # LOOPBACK ONLY, numeric form (the pattern rejects a bare \"localhost\"): every call goes to the\n  # engine's own listener, which forwards to the service. No third-party host, ever.\n  - 127.0.0.1\n\nrequires:\n  executorVersion: \">=1.6.0\"\n  transport: [json]\n  # Every door is a job: without `poll` an executor would settle on the receipt and emit the job\n  # id as the answer.\n  poll: true\n",
+      "credentials": {},
+      "shared": {}
+    },
+    "dir": "Splink",
+    "files": {
+      "api/events.yaml": "- emit: scores\n  value: \"return response.scores || []\"\n",
+      "api/run.yaml": "# THE SCORES, from the engine at loopback (package.yaml says why), which forwards to the documents\n# service's /splink. Not a job: one name against a few candidates answers at once.\n\n- name: score\n  method: POST\n  url: \"return scope.engineUrl + '/documents/splink'\"\n  transport: json\n\n  body:\n    name: >-\n      return (() => { const raw = config.input; const v = raw && typeof raw === 'object' ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : {}); return String(v.name || ''); })()\n    candidates: >-\n      return (() => { const raw = config.input; const v = raw && typeof raw === 'object' ? raw : (String(raw || '').trim() ? JSON.parse(String(raw)) : {}); return Array.isArray(v.candidates) ? v.candidates : []; })()\n\n  timeoutMs: 30000\n\n  error:\n    when: \"return !!response.detail || !!response.error\"\n    message: \"return response.error || (typeof response.detail === 'string' ? response.detail : JSON.stringify(response.detail))\"\n",
+      "config.yaml": "configSchema:\n  type: object\n  required: [input]\n  properties:\n    input:\n      type: string\n      title: Name and candidates\n      description: >-\n        As JSON: { \"name\": \"...\", \"candidates\": [{ \"id\": \"r1\", \"names\": [\"...\", \"...\"] }] }. Usually\n        set by the caller (an object's matching), e.g. return { name, candidates }\n      default: \"\"\n      \"ui:field\": template\n\"ui:order\": [input]\n",
+      "interface.yaml": "inputs:\n  - name: input\n    type: object\n    description: \"{ name, candidates: [{ id, names: [..] }] }: the name read, and each held record's names\"\n    required: false\n\noutputs:\n  - name: scores\n    type: array\n    description: \"One per candidate, best first: { id, probability, best }, where best is the candidate's name that scored highest\"\n\ncredentials: []\n",
+      "node.yaml": "type: Splink\nkind: PromiseNode\n\nname: Splink\ncategory: Documents\ncolor: \"#0F766E\"\nlogoUrl: https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png\n\ndescription: >-\n  How likely a name is each of a few held records, scored by Splink with fixed weights: the\n  same names always give the same scores, with no model call\n\nwhenToUse: >-\n  Dedupe a name read from a document against the records already held: the name and each\n  candidate's names in, a probability per candidate out, from Splink's own matching model\n  (Fellegi-Sunter, comparing the name's core by spelling and its place, role and legal form\n  apart). Use it in front of a judge: a score near one links, near zero rules out, and only what\n  falls between goes to a model. It runs on the platform's document service, wherever that is\n  hosted, and reads and writes nothing: the caller holds the records and decides.\n\nauth:\n  required: false\n\ncapabilities:\n  # A pure function of its inputs: the same name and candidates always score the same. Remembered\n  # under the documents service's own version, so a change to how names are compared forgets them.\n  cacheable:\n    answeredBy: documents\n",
+      "test.yaml": "# THE NODE UNDER GUARD, against the real service. Made-up names: the same firm spelled two ways,\n# and another firm. Asserted on order and range, never on an exact probability.\ntestData:\n  config:\n    input: '{\"name\":\"Example Capital Management Ltd\",\"candidates\":[{\"id\":\"r1\",\"names\":[\"Example Capital Management Limited\"]},{\"id\":\"r2\",\"names\":[\"Market Holdings Inc.\"]}]}'\n  inputs: {}\n  expect:\n    # The same firm scores near one and first; another firm scores low.\n    scores: >-\n      return output.scores.length === 2 && output.scores[0].id === 'r1'\n        && output.scores[0].probability > 0.9 && output.scores[1].probability < 0.1\n"
+    }
+  }
+}

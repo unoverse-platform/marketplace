@@ -10,6 +10,6 @@ outputs:
     description: The rows, or when summing, one row per group with its total and how many rows made it
   - name: total
     type: number
-    description: How many rows came back
+    description: How many rows matched; more than the rows that came back when the list was cut at its limit
 
 credentials: []

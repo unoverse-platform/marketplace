@@ -346,7 +346,7 @@ helpers:
   # and the ones outstanding are empty. That makes the list of questions a property of the
   # record itself, and nothing has to be told twice.
   #
-  # THE `Source` TWINS ARE NOT QUESTIONS. Every proposed field on a SAB application carries a
+  # THE `Source` TWINS ARE NOT QUESTIONS. Every proposed field on an application form carries a
   # `<field>Source` beside it, the chip saying where the value came from. Asking someone for
   # their "national id source" is nonsense, so a key whose name ends in Source is skipped, and
   # it is written back beside the answer rather than collected.
@@ -546,7 +546,7 @@ helpers:
           // WHAT WE HOLD, WITH THE VALUES, not just the names. A name alone tells whoever is
           // asking that a field is answered but not what it says, so a call knew it had the
           // product's title and could not name the product: "your application" instead of
-          // "your AQSAT Credit Card application". The values are the person's own and the
+          // "your Example Credit Card application". The values are the person's own and the
           // caller is already speaking to them, so there is nothing here they may not hear.
           held: s.fields.filter(f => helpers.isHeld(state, helpers.fieldName(f)))
                         .reduce((acc, f) => Object.assign(acc, {

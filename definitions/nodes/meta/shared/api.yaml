@@ -1,0 +1,13 @@
+# What every Meta call shares. The API version is in each url (graph.facebook.com/v26.0);
+# Meta keeps a version for two years after the next ships, so bump them together.
+
+credential: &credential
+  scheme: bearer
+  token: "{{ credentials.metaAccessToken.token }}"
+
+# Meta answers a failure with a 400 and an `error`, carrying the reason a person can read in
+# `error_user_msg` when there is one. Each call takes the 400 as an answer (`okOn`) so that
+# reason reaches the caller here, rather than the transport's raw status line.
+error: &error
+  when: "return !!(response && response.error)"
+  message: "return response.error.error_user_msg || response.error.message || 'Meta rejected the request'"

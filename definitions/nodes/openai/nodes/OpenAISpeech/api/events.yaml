@@ -1,0 +1,16 @@
+- emit: audio
+  # `response` is the binary reply as { base64, contentType }. The type comes from the format asked
+  # for when the reply does not name one, so a wav is never labelled mpeg.
+  value: >-
+    return { data: response.base64,
+             mimeType: response.contentType || ({ mp3: 'audio/mpeg', wav: 'audio/wav', opus: 'audio/ogg',
+               aac: 'audio/aac', flac: 'audio/flac', pcm: 'audio/pcm' })[config.responseFormat],
+             fileName: 'speech.' + config.responseFormat }
+
+- emit: metadata
+  # `characters` is the length of the text spoken.
+  value: >-
+    return { model: config.model,
+             voice: config.voice,
+             format: config.responseFormat,
+             characters: String(config.text || '').length }

@@ -1,0 +1,132 @@
+# THE MAP: one place on a map, or several, as a picture. A component fetches its own data through a
+# lifecycle hook (docs.unoverse.ai/design/lifecycle-hooks): on start, fetchmap.yaml asks
+# Google's Maps Static API for the picture over REST, with the universe's Google API credential
+# attached server-side, and hands it back as `mapImage`. The layout draws that picture and
+# nothing else: no tiles, no script, no key on the client.
+#
+# A row fills it BY NAME (docs.unoverse.ai/design/interface-data): `latitude`, `longitude` and
+# `title` are the names a restaurant, a hotel or an activity already carries.
+#
+# SEVERAL PLACES (2026-10-24): pass `places`, a list of the same three fields, and the map draws
+# one picture with a numbered pin for each, framed around all of them. Without it, one place as before.
+unoverse: "1.0"
+type: component
+name: map
+category: Media
+nodeSize:
+  width: 600
+  height: 400
+props:
+  latitude:
+    type: number
+    input: true
+    description: "Where the place is, north to south. Exactly as its listing states it, never estimated."
+    default: 24.4672
+  longitude:
+    type: number
+    input: true
+    description: "Where the place is, east to west. Exactly as its listing states it, never estimated."
+    default: 54.6031
+  title:
+    type: string
+    input: true
+    description: "The place's name, printed on the map's label."
+    default: Yas Marina
+  places:
+    type: array
+    input: true
+    description: "Several places on one map, each with its own latitude, longitude and title, exactly as their listings state them. Leave it empty to draw the one place above."
+    default: []
+    items:
+      title:
+        type: string
+        description: "The place's name."
+      latitude:
+        type: number
+        description: "Where the place is, north to south. Exactly as its listing states it."
+      longitude:
+        type: number
+        description: "Where the place is, east to west. Exactly as its listing states it."
+  zoom:
+    type: number
+    input: false
+    description: "How close the map is drawn: 15 shows the streets around a place, 12 the district, 10 the city."
+    default: 15
+  mapImage:
+    type: string
+    input: false
+    description: "The picture of the map, fetched by the component itself when it starts. Empty until it arrives."
+    default: ""
+  pinned:
+    type: boolean
+    input: false
+    description: "Whether the component draws its own pin and name at the centre. True for one place, the default; the map fetch sets it false for several places, whose pins are in the picture."
+    default: true
+root:
+  # CHUNKY: a thick rule in the theme's strong border colour, the largest corner radius, a deep
+  # shadow, and the name on a pill over the pin, at the point.
+  type: Box
+  style:
+    position: relative
+    width: full
+    # A map's height before its picture arrives, so the frame is a map-shaped block, never a line.
+    minHeight: "75"
+    radius: 2xl
+    border: thick strong
+    shadow: xl
+    overflow: hidden
+    background: surface.sunken
+  children:
+    - type: Image
+      visibleWhen: mapImage
+      bind:
+        src: mapImage
+        alt: title
+      style:
+        width: full
+        fit: cover
+    - type: Skeleton
+      visibleWhen: { field: mapImage, eq: "" }
+      style:
+        width: full
+        height: "75"
+    # THE PIN AND ITS NAME, at the point. The Static API draws the position at the exact centre of
+    # the picture and the picture is drawn centre-cropped, so the centre of this box IS the place:
+    # an overlay over the top half, its content pushed to its bottom edge, puts the pin's tip on
+    # the point and the name right above it. The pin is the component's own, so it is always
+    # the brand's colour and never a vendor marker.
+    # ONE PLACE: shown unless the fetch said several (a host that inlines this map with its own
+    # fetch never sets `pinned`, and one place is what it draws).
+    - type: Box
+      visibleWhen: { field: pinned, ne: false }
+      style:
+        position: absolute
+        inset: 0 0 50% 0
+        direction: column
+        align: center
+        justify: end
+        gap: "1"
+      children:
+        - type: Box
+          visibleWhen: title
+          style:
+            direction: row
+            align: center
+            gap: "2"
+            padding: [ "2", "4" ]
+            background: action.primary
+            radius: full
+            shadow: md
+          children:
+            - type: Text
+              bind:
+                value: title
+              style:
+                font: button
+                color: action.primary-text
+        - type: Icon
+          icon: location
+          style:
+            width: "8"
+            height: "8"
+            color: action.primary
