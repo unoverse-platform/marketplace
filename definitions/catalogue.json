@@ -1,5 +1,5 @@
 {
-  "release": "0.1.103",
+  "release": "0.1.104",
   "items": [
     {
       "kind": "component",
@@ -40,7 +40,7 @@
     {
       "kind": "component",
       "name": "card",
-      "fingerprint": "7a822084aa32183f",
+      "fingerprint": "0b8d72ee83e59970",
       "bundle": "design-system",
       "title": "card",
       "description": "Upright, stacked single-item card: image on top, then heading, supporting text and a primary action. Two standard faces: grid (compact) and page (full detail).",
@@ -58,7 +58,7 @@
     {
       "kind": "component",
       "name": "card2",
-      "fingerprint": "8730d896b89cb551",
+      "fingerprint": "e11f04bd3e1926d1",
       "bundle": "design-system",
       "title": "card2",
       "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
@@ -76,7 +76,7 @@
     {
       "kind": "component",
       "name": "image-block",
-      "fingerprint": "4735586b130e9e08",
+      "fingerprint": "ddddf5b4034bbed0",
       "bundle": "design-system",
       "title": "image-block",
       "description": "A single image from a URL with an optional caption beneath it.",
@@ -85,7 +85,7 @@
     {
       "kind": "component",
       "name": "ken-burns-image",
-      "fingerprint": "ce0588f1d6bd16f4",
+      "fingerprint": "35f8fb5dafab57c6",
       "bundle": "design-system",
       "title": "ken-burns-image",
       "description": "Full-bleed image with a slow Ken Burns zoom and a darkening vignette overlay.",
@@ -187,6 +187,15 @@
       "title": "table",
       "description": "A simple three-column data table: a quiet header row, then one row per item with a primary cell, a secondary cell, and a right-aligned detail cell. Composed from Box + Each; rows and headers are data.",
       "category": "Charts"
+    },
+    {
+      "kind": "component",
+      "name": "talking-head",
+      "fingerprint": "27285a415ef5b8dd",
+      "bundle": "design-system",
+      "title": "talking-head",
+      "description": "A lifelike face of the assistant that moves its lips to its voice, live, in the browser.",
+      "category": "Feedback"
     },
     {
       "kind": "component",
@@ -604,7 +613,7 @@
     {
       "kind": "template",
       "name": "email-digest",
-      "fingerprint": "ccbe7707ddb1becf",
+      "fingerprint": "e2a9004fd93104ce",
       "bundle": "design-system",
       "title": "Email Digest",
       "description": "A composed email — a branded frame, a written subject and message, the items worth the reader's attention, a sign-off.",
@@ -613,7 +622,7 @@
     {
       "kind": "template",
       "name": "grid-page",
-      "fingerprint": "721b8534c1764c90",
+      "fingerprint": "aaa243c178f7fa1d",
       "bundle": "design-system",
       "title": "Browse Grid",
       "description": "Browse a set of peer items in a responsive grid; any one opens into its own full detail page.",
@@ -960,7 +969,7 @@
       "kind": "node",
       "name": "ApifyLinkedInProfile",
       "pack": "apify",
-      "fingerprint": "7d7806b96f76598c",
+      "fingerprint": "830c72d13f1fa1cf",
       "title": "Apify LinkedIn Profile",
       "description": "Read public LinkedIn profiles through an Apify actor, photo included",
       "category": "Web Scraping",
@@ -1465,8 +1474,8 @@
     {
       "kind": "node",
       "name": "GeminiImageGen",
-      "pack": "gce-toolkit",
-      "fingerprint": "9986276e0f0fd6b9",
+      "pack": "google-gemini",
+      "fingerprint": "d4bb7f1365e27952",
       "title": "Gemini Image Gen",
       "description": "Generate images using Google's Gemini models",
       "category": "Media & Design",
@@ -1476,10 +1485,10 @@
     {
       "kind": "node",
       "name": "VeoVideo",
-      "pack": "gce-toolkit",
-      "fingerprint": "911c8a6a7fd51ba3",
-      "title": "Veo Video",
-      "description": "Generate short videos with Google Veo, from a prompt, a first frame and a last frame",
+      "pack": "google-gemini",
+      "fingerprint": "1e5e3909824628b3",
+      "title": "Gemini Video",
+      "description": "Generate short videos with Google Gemini Omni, from a prompt, a first frame and a last frame",
       "category": "Media & Design",
       "icon": "https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png",
       "whenToUse": "Turn still images and a description into a short video with sound, four to eight seconds. Give it the frame to open on and, optionally, the frame to end on, and it animates the transition between them; up to three reference images keep a character or product looking the same. A still image, and a live spoken conversation, are different jobs."
@@ -1587,7 +1596,7 @@
       "kind": "node",
       "name": "HubspotContacts",
       "pack": "hubspot",
-      "fingerprint": "1efd03929737ff7e",
+      "fingerprint": "1eaef7043da5496c",
       "title": "HubSpot Contacts",
       "description": "Create and update HubSpot contacts by email, link them to their company, and note what was learned.",
       "category": "Go To Market",
@@ -1598,7 +1607,7 @@
       "kind": "node",
       "name": "HubspotMCP",
       "pack": "hubspot",
-      "fingerprint": "e9e460c5f7347119",
+      "fingerprint": "51001293dae7c9db",
       "title": "HubSpot",
       "description": "Resolve the signed-in user to their HubSpot contact and output that profile; an attached agent can also read it and push insight notes back.",
       "category": "Go To Market",
@@ -1983,7 +1992,7 @@
       "kind": "node",
       "name": "SignalGoals",
       "pack": "signal",
-      "fingerprint": "1521333f07054efe",
+      "fingerprint": "2f2312044a17015d",
       "title": "Signal Goals",
       "description": "Open and keep the goals for the people Signal holds, without reading anyone.",
       "category": "Storage & Data",
@@ -1994,7 +2003,7 @@
       "kind": "node",
       "name": "SignalPeople",
       "pack": "signal",
-      "fingerprint": "b30531f2997b8373",
+      "fingerprint": "9bae438cb0e88b19",
       "title": "Signal People",
       "description": "Save and find the people the organisation engages, prospects and customers, in Signal.",
       "category": "Storage & Data",
@@ -2005,7 +2014,7 @@
       "kind": "node",
       "name": "SignalSave",
       "pack": "signal",
-      "fingerprint": "b0c69e8db5655170",
+      "fingerprint": "314e6f57da1afe92",
       "title": "Signal Save",
       "description": "Save the people the organisation engages to Signal, without reading anyone back.",
       "category": "Storage & Data",

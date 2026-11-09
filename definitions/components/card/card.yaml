@@ -14,22 +14,22 @@ props:
     type: string
     description: "The item's name, one line, under the image."
     input: true
-    default: Lightsaber Combat Training
+    default: Evening Cooking Class
   description:
     type: string
     description: "One or two sentences saying what the item is. Plain text, never markdown."
     input: true
-    default: Master the seven forms of lightsaber combat with guidance from Jedi Masters.
+    default: Learn five dishes from scratch, with a chef beside you at every step.
   image:
     type: string
     description: "The picture across the top of the card. A URL the platform can fetch."
     input: true
-    default: https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/darth-vader-main_4560aff7.jpg
+    default: https://picsum.photos/seed/cooking/800/400
   callToAction:
     type: string
     description: "The words on the button, two to four of them, naming the action."
     input: true
-    default: Begin Training
+    default: Book a Place
 # THE STANDARD FACE VOCABULARY (ruled 2026-08-28, doc §5d): `grid` is the compact
 # collection face, `page` the full detail face — universal names, so any card
 # name-matches any holder's states with no mapping. The tile opens its own page (it

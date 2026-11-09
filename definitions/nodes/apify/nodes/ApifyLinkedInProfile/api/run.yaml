@@ -24,9 +24,15 @@
 
   # AN ACTOR REFUSES IN ITS DATA, not its status: a refused run still answers 201 with items
   # that carry only `error` (a free plan run through the API, for one). Every item an error
-  # means nothing was read, so the node fails with the actor's own words.
+  # means nothing was read, so the node fails with the actor's own words. A profile that does
+  # not exist or is private comes back the same way, as an item whose error says "not found":
+  # that is an answer, not a failure, and the node says found false (owner, 2026-10-29) so the
+  # workflow can branch on it.
   error:
-    when: "return Array.isArray(response) && response.length > 0 && response.every(i => i && i.error)"
+    when: >-
+      return Array.isArray(response) && response.length > 0
+        && response.every(i => i && i.error)
+        && !response.every(i => String(i.error).toLowerCase().indexOf('not found') >= 0)
     message: "return response.map(i => i.error).join('; ')"
 
   # A bare handle becomes the profile URL; a URL is passed as it is.

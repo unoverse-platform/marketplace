@@ -12,9 +12,9 @@
 #
 # The retired TypeScript is at `_legacy/nodes/gce-toolkit/`.
 
-name: gce-toolkit
+name: google-gemini
 displayName: Google Gemini
-description: Generate images with Google Gemini and videos with Google Veo
+description: Generate images and videos with Google Gemini
 version: 2.1.0
 category: media
 logoUrl: https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png
@@ -23,7 +23,7 @@ features:
   - Text to image, several images per request
   - An optional reference photo, used for facial likeness only
   - The model's own text response alongside the images
-  - Short videos with sound from Veo, from a first frame, a last frame and reference images
+  - Short videos with sound from Gemini Omni, from a first frame, a last frame and reference images
 
 allowedHosts:
   - generativelanguage.googleapis.com
@@ -36,6 +36,3 @@ requires:
   credential: [apiKeyHeader]
   transport: [json, binary]
   executorVersion: ">=1.6.0"
-  # The video node waits on a render. Without `poll` it would settle on the operation RECEIPT
-  # and emit that as the answer, with nothing anywhere reporting a problem.
-  poll: true

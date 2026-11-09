@@ -1,0 +1,24 @@
+# One row per output connector, in interface.yaml order.
+
+- emit: video
+  from: response
+  value: >-
+    return ((part) => ({
+      dataUri: 'data:' + (part.mime_type || 'video/mp4') + ';base64,' + (part.data || ''),
+      mimeType: part.mime_type || 'video/mp4',
+      fileName: 'gemini_video.mp4',
+      bytes: Math.floor(String(part.data || '').length * 3 / 4)
+    }))(((calls.generate || {}).steps || []).filter(s => s.type === 'model_output')
+      .reduce((all, s) => all.concat(s.content || []), [])
+      .filter(c => c.type === 'video' && c.data)[0] || {})
+
+# `generatedAt` is epoch milliseconds: the sandbox exposes Date.now() and refuses `new`.
+# `durationSeconds` is the length asked for: Omni takes length in the prompt and reports none.
+- emit: metadata
+  from: response
+  value: >-
+    return {
+      model: (calls.generate || {}).model || config.model,
+      durationSeconds: Number(config.durationSeconds || 8),
+      generatedAt: Date.now()
+    }

@@ -2,10 +2,16 @@
 # { found, person }; a list answers { people }. Both fill `people`, so a step wired to it reads
 # either the same way; `person` is the one person, or null when none was named or found.
 - emit: people
-  value: "return response.person ? [response.person] : (response.people || [])"
+  value: "return calls.save ? [] : (response.person ? [response.person] : (response.people || []))"
 
 - emit: count
-  value: "return response.person ? 1 : (response.people || []).length"
+  value: "return calls.save ? 0 : (response.person ? 1 : (response.people || []).length)"
 
 - emit: person
-  value: "return response.person || null"
+  value: "return calls.save ? ((calls.save || {}).person || null) : (response.person || null)"
+
+- emit: saved
+  value: >-
+    return calls.save
+      ? (calls.save.ok && calls.save.person ? { ok: true, created: !!calls.save.created, person_id: calls.save.person.person_id } : { ok: false, error: String(calls.save.error || 'NOT_SAVED') })
+      : null

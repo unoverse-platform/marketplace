@@ -1,7 +1,7 @@
 {
   "kind": "component",
   "name": "card2",
-  "fingerprint": "8730d896b89cb551",
+  "fingerprint": "e11f04bd3e1926d1",
   "bundle": "design-system",
   "title": "card2",
   "description": "Horizontal feature card: heading, description and a call-to-action beside a large image with a brand accent bar.",
@@ -20,17 +20,17 @@
       "title": {
         "type": "string",
         "description": "The offer's name, one line, beside the image.",
-        "default": "Force Sensitivity Assessment"
+        "default": "Skills Assessment"
       },
       "description": {
         "type": "string",
         "description": "One or two sentences saying what is on offer. Plain text, never markdown.",
-        "default": "Discover your connection to the Force with advanced midi-chlorian analysis. Receive personalized training recommendations and track your progress on the path to becoming a Jedi."
+        "default": "Find out where your strengths are with a short guided assessment. Receive personalized recommendations and track your progress as you improve."
       },
       "image": {
         "type": "string",
         "description": "The large picture filling one side of the banner. A URL the platform can fetch.",
-        "default": "https://res.cloudinary.com/sonik/image/upload/v1761403583/gravity/YodaPark/force.avif"
+        "default": "https://picsum.photos/seed/assessment/800/800"
       },
       "callToAction": {
         "type": "string",

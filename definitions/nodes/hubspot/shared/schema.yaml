@@ -57,6 +57,40 @@ contacts:
           lifecycleStage:
             type: string
             description: Their stage, such as lead. Only for a person being added for the first time.
+    update_contact:
+      description: >-
+        Change fields on the HubSpot contact with this id, the email itself included: the one
+        way to correct an email, since upsert_contact finds a contact BY email and would make a
+        second one. Only the fields you pass are written. Returns NO_CONTACT when no contact has
+        that id.
+      input:
+        type: object
+        required: [id]
+        properties:
+          id:
+            type: string
+            description: The contact's HubSpot id, such as 906534398168.
+          email:
+            type: string
+            description: Their corrected email address.
+          firstName:
+            type: string
+            description: Their first name.
+          lastName:
+            type: string
+            description: Their last name.
+          phone:
+            type: string
+            description: Their phone number, with its country code.
+          company:
+            type: string
+            description: The company they work for.
+          jobTitle:
+            type: string
+            description: Their job title.
+          linkedinUrl:
+            type: string
+            description: The URL of their LinkedIn profile.
     add_note:
       description: >-
         Add a note to the HubSpot contact with this email, such as research about them or

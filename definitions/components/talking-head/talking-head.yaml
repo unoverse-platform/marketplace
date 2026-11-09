@@ -1,0 +1,58 @@
+unoverse: "1.0"
+type: component
+name: talking-head
+category: Feedback
+description: A lifelike face of the assistant that moves its lips to its voice, live, in the browser.
+whenToUse: The assistant's face on a live voice surface, when people should see it speak, not just hear it. Its lips follow the voice as it plays, it looks attentive while you talk and thoughtful while it looks something up. Reads the platform's own callState, so a voice app gets every moment with nothing to wire. Needs a browser; a native phone app shows nothing in its place. For a photo with an animated ring use avatar-orb; for an activity animation with no face use thinking-orb.
+props:
+  # LOCKED STATE, declared here only so Studio can drive the preview. `callState` is
+  # projected into scope by the voice service (an app's `service: "voice"`), exactly as
+  # avatar-orb reads it; inside a voice app the projected value is what the face follows
+  # and this default never applies. Never simulate it elsewhere.
+  callState:
+    type: string
+    description: "Where the call is: idle, active, listening, speaking, thinking. Decides how the face behaves."
+    default: idle
+    enum: [idle, active, listening, speaking, thinking]
+  size:
+    type: string
+    description: "The face's width in pixels."
+    default: "200"
+  avatar:
+    type: string
+    description: "Which head to draw: Jane or John."
+    default: Jane.zip
+    enum: [Jane.zip, John.zip]
+  lipsync:
+    type: string
+    description: "fast: the voice plays at once, and the mouth follows its sounds. realistic: the lips match the voice closely and the voice plays about 0.4 seconds late; it needs the large lip-sync model on the server, and without it the face uses fast."
+    default: fast
+    enum: [realistic, fast]
+  backdrop:
+    type: string
+    description: "The colour behind the face: dark (a deep night blue) or light (a soft pale grey). The same in a light or dark theme."
+    default: dark
+    enum: [dark, light]
+root:
+  type: Box
+  style:
+    display: inline-flex
+    align: center
+    justify: center
+    radius: full
+    overflow: hidden
+    background: gray.900
+    when:
+      - field: backdrop
+        eq: light
+        apply:
+          background: gray.100
+  children:
+    # THE FACE. Its code and files load from the unoverse server the first time this is
+    # drawn, never before; a page with no talking-head downloads none of it.
+    - type: TalkingHead
+      bind:
+        state: callState
+        size: size
+        avatar: avatar
+        lipsync: lipsync

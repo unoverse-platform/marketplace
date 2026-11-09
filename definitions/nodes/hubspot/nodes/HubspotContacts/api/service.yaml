@@ -54,6 +54,38 @@ upsert_contact:
           ? { ok: true, id: r.id, created: r.new === true }
           : { ok: false, error: 'NOT_WRITTEN', errors: calls.upsert.errors || [] })[0]
 
+update_contact:
+  description: >-
+    Change fields on the HubSpot contact with this id, the email itself included. Pass the id
+    and any of email, firstName, lastName, phone, company, jobTitle and linkedinUrl. Only the
+    fields you pass are written. Returns NO_CONTACT when no contact has that id.
+  calls:
+    - name: update
+      when: "return !!params.id"
+      method: PATCH
+      url: "return 'https://api.hubapi.com/crm/v3/objects/contacts/' + encodeURIComponent(String(params.id).trim())"
+      credential:
+        scheme: bearer
+        token: "{{ credentials.hubspotPrivateApp.accessToken }}"
+      okOn: [404]
+      body: >-
+        return { properties: Object.fromEntries(Object.entries({
+          email: params.email ? String(params.email).trim().toLowerCase() : undefined,
+          firstname: params.firstName,
+          lastname: params.lastName,
+          phone: params.phone,
+          company: params.company,
+          jobtitle: params.jobTitle,
+          hs_linkedin_url: params.linkedinUrl
+        }).filter(e => e[1] !== undefined && e[1] !== null && e[1] !== '')) }
+      transport: json
+  returns: >-
+    return !calls.update
+      ? { ok: false, error: 'MISSING', hint: 'Pass the contact id.' }
+      : calls.update.id
+        ? { ok: true, id: calls.update.id, email: ((calls.update.properties || {}).email) || null }
+        : { ok: false, error: 'NO_CONTACT', hint: 'No contact has that id.', detail: calls.update.message || null }
+
 add_note:
   description: >-
     Add a note to the HubSpot contact with this email, such as research about them or their

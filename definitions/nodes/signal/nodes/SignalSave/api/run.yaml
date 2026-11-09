@@ -1,13 +1,18 @@
 # The WORKFLOW channel: save the person on the input, as the attached Agent's save_person does
 # (service.yaml), so a workflow can record what a search found with no Agent in between. Skipped
 # when the input names no way to recognise the person; the events row says so.
+#
+# The input arrives under the node that sent it (input.<node>.<handle>), or as the person itself
+# when the engine hands it flat: the person is found either way (fixed 2026-10-29: it read only
+# the flat shape, so a wired save always answered NOTHING_TO_SAVE).
 - name: save
   when: >-
-    return !!((signal.input || {}).linkedin || (signal.input || {}).email || (signal.input || {}).user_id)
+    return (() => { const p = (() => { const i = signal.input || {}; if (i.linkedin || i.email || i.user_id) return i; const found = Object.keys(i).map(k => i[k]).map(v => (v && typeof v === 'object' && v.output && typeof v.output === 'object') ? v.output : v).filter(v => v && typeof v === 'object' && (v.linkedin || v.email || v.user_id)); return found[0] || {}; })(); return !!(p.linkedin || p.email || p.user_id); })()
   method: POST
   url: "return scope.engineUrl + '/people/add'"
   okOn: [400, 409]
-  body: "return Object.assign({}, signal.input || {}, { org: scope.org })"
+  body: >-
+    return Object.assign({}, (() => { const i = signal.input || {}; if (i.linkedin || i.email || i.user_id) return i; const found = Object.keys(i).map(k => i[k]).map(v => (v && typeof v === 'object' && v.output && typeof v.output === 'object') ? v.output : v).filter(v => v && typeof v === 'object' && (v.linkedin || v.email || v.user_id)); return found[0] || {}; })(), { org: scope.org })
   transport: json
   timeoutMs: 30000
   error:

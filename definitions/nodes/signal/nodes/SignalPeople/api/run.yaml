@@ -3,7 +3,29 @@
 # for never reads everyone. With neither, the people Signal holds for the run's own organisation,
 # newest first, the same read list_people makes, so a page can be filled from Signal with no
 # Agent in between. The org is always the run's, never the config's.
+# THE WORKFLOW CHANNEL, SAVING (owner 2026-10-29): an input that carries a person saves them, as the
+# attached Agent's save_person does (keep and update: evidence kept, the brief's own lines written
+# fresh, an identity key held never overwritten), so a lane records what it found as a fixed step
+# and never leaves it to an Agent's choice. The input arrives under the node that sent it
+# (input.<node>.<handle>) or flat; the person is found either way. With no person on the input the
+# node lists or finds, as before.
+- name: save
+  when: >-
+    return (() => { const p = (() => { const i = signal.input || {}; if (i.linkedin || i.email || i.user_id) return i; const found = Object.keys(i).map(k => i[k]).map(v => (v && typeof v === 'object' && v.output && typeof v.output === 'object') ? v.output : v).filter(v => v && typeof v === 'object' && (v.linkedin || v.email || v.user_id)); return found[0] || {}; })(); return !!(p.linkedin || p.email || p.user_id); })()
+  method: POST
+  url: "return scope.engineUrl + '/people/save'"
+  okOn: [400, 409]
+  body: >-
+    return Object.assign({}, (() => { const i = signal.input || {}; if (i.linkedin || i.email || i.user_id) return i; const found = Object.keys(i).map(k => i[k]).map(v => (v && typeof v === 'object' && v.output && typeof v.output === 'object') ? v.output : v).filter(v => v && typeof v === 'object' && (v.linkedin || v.email || v.user_id)); return found[0] || {}; })(), { org: scope.org })
+  transport: json
+  timeoutMs: 30000
+  error:
+    when: "return !!response.error"
+    message: "return String(response.error)"
+
 - name: people
+  when: >-
+    return (() => { const p = (() => { const i = signal.input || {}; if (i.linkedin || i.email || i.user_id) return i; const found = Object.keys(i).map(k => i[k]).map(v => (v && typeof v === 'object' && v.output && typeof v.output === 'object') ? v.output : v).filter(v => v && typeof v === 'object' && (v.linkedin || v.email || v.user_id)); return found[0] || {}; })(); return !(p.linkedin || p.email || p.user_id); })()
   method: GET
   url: >-
     return String(config.id || '').trim() || String(config.email || '').trim()

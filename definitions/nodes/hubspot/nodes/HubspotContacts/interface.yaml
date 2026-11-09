@@ -12,7 +12,7 @@ serviceConnectors:
   - name: mcpService
     serviceType: mcp
     isService: true
-    methods: [upsert_contact, add_note, associate_company]
+    methods: [upsert_contact, update_contact, add_note, associate_company]
     description: >-
       MCP tools for an agent: upsert_contact (create or update a contact by email),
       add_note (a note on a contact) and associate_company (link a contact to its company).

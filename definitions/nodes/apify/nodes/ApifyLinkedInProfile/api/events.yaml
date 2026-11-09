@@ -1,17 +1,20 @@
 # One row per output connector, in interface.yaml order.
 
+# An item that carries only `error` (a profile not found) is not a profile: it is left out, and
+# `found` is false when nothing else came back.
+
 - emit: profiles
   from: response
-  value: "return Array.isArray(response) ? response : []"
+  value: "return Array.isArray(response) ? response.filter(i => i && !i.error) : []"
 
 - emit: profile
   from: response
-  value: "return Array.isArray(response) && response.length ? response[0] : null"
+  value: "return (Array.isArray(response) ? response.filter(i => i && !i.error) : [])[0] || null"
 
 - emit: photo
   from: response
-  value: "return Array.isArray(response) && response.length && response[0] ? (response[0].photo || '') : ''"
+  value: "return ((Array.isArray(response) ? response.filter(i => i && !i.error) : [])[0] || {}).photo || ''"
 
 - emit: found
   from: response
-  value: "return Array.isArray(response) && response.length > 0"
+  value: "return Array.isArray(response) && response.filter(i => i && !i.error).length > 0"

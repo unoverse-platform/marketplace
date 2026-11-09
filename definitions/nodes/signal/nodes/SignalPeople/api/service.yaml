@@ -46,7 +46,9 @@ find_person:
 
 list_people:
   description: >-
-    The people Signal holds for this organisation, most recently updated first.
+    The people Signal holds for this organisation, green light first, then most recently
+    updated first, red last. One short row each, never a whole profile: find_person reads one
+    person in full.
   calls:
     - name: list
       method: GET
@@ -54,6 +56,7 @@ list_people:
         return scope.engineUrl + '/people?org=' + encodeURIComponent(scope.org)
           + (params.stage ? '&stage=' + encodeURIComponent(params.stage) : '')
           + (params.category ? '&category=' + encodeURIComponent(params.category) : '')
+          + (params.priority ? '&priority=' + encodeURIComponent(params.priority) : '')
           + (params.limit ? '&limit=' + encodeURIComponent(params.limit) : '')
       okOn: [400]
       transport: json
@@ -61,4 +64,4 @@ list_people:
   returns: >-
     return (calls.list || {}).error
       ? { ok: false, error: calls.list.error }
-      : { ok: true, people: (calls.list || {}).people || [] }
+      : { ok: true, people: ((calls.list || {}).people || []).map(p => ({ person_id: p.person_id, name: p.name, role: p.role, company: p.company, companyDomain: p.companyDomain, companyResearched: p.companyResearched, stage: p.stage, category: p.category, priority: p.priority, priority_at: p.priority_at, email: p.email, linkedin: p.linkedin, briefed: !!(p.understood && Object.keys(p.understood).length), updated_at: p.updated_at })) }

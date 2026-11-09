@@ -5,16 +5,12 @@ configSchema:
     model:
       type: string
       title: Model
-      description: Which Veo model to render with
+      description: Which Gemini model to render with
       enum:
-        - veo-3.1-generate-preview
-        - veo-3.1-fast-generate-preview
-        - veo-3.1-lite-generate-preview
+        - gemini-omni-1.1-flash
       enumNames:
-        - Veo 3.1, best quality
-        - Veo 3.1 Fast, quicker and cheaper
-        - Veo 3.1 Lite, fastest and cheapest
-      default: veo-3.1-generate-preview
+        - Gemini Omni 1.1 Flash
+      default: gemini-omni-1.1-flash
     prompt:
       type: string
       title: Motion Prompt
@@ -32,7 +28,7 @@ configSchema:
     lastFrameUrl:
       type: string
       title: Last Frame URL
-      description: The image the video ends on. Needs a first frame. Leave empty to let Veo decide.
+      description: The image the video ends on. Needs a first frame. Leave empty to let the model decide.
       default: ""
       "ui:field": template
     referenceImageUrls:
@@ -40,13 +36,13 @@ configSchema:
       title: Reference Image URLs
       description: >-
         Up to three images, one URL per line, of a character or product to keep looking the
-        same. Using any forces an 8 second video.
+        same.
       default: ""
       "ui:field": template
     durationSeconds:
       type: string
       title: Duration (seconds)
-      description: 1080p, 4k and reference images all need 8.
+      description: The length asked for in the prompt. The model aims for it.
       enum: ["4", "6", "8"]
       default: "8"
     aspectRatio:
@@ -57,7 +53,7 @@ configSchema:
     resolution:
       type: string
       title: Resolution
-      description: 720p is fastest; 1080p and 4k need 8 seconds.
+      description: 720p is the default; 1080p and 4k are upscaled.
       enum: [720p, 1080p, 4k]
       default: 720p
 "ui:order": [model, prompt, firstFrameUrl, lastFrameUrl, referenceImageUrls, durationSeconds, aspectRatio, resolution]

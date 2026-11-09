@@ -101,6 +101,9 @@ people:
               and link), how they decide, where they have spoken (title, kind, date, link), what is
               live at their company.
             properties:
+              measuredOn:
+                type: string
+                description: What their job is judged by, in one plain line, ending (our read) unless it rests on a quote.
               whatTheyCareAbout:
                 type: array
                 description: What they care about, each point with their exact words.
@@ -125,6 +128,16 @@ people:
                     kind: { type: string, description: A talk, a podcast, a panel, an interview. }
                     date: { type: string }
                     url: { type: string }
+              peersNow:
+                type: array
+                description: What people in their role at companies like theirs have launched or changed recently, with AI or for their customers.
+                items:
+                  type: object
+                  properties:
+                    company: { type: string }
+                    headline: { type: string, description: What they did, in plain words. }
+                    date: { type: string }
+                    url: { type: string }
               companyNow:
                 type: array
                 description: What is live at their company now.
@@ -141,6 +154,14 @@ people:
               reason, the quote it rests on, the part of the offer that answers it), the questions
               to ask, what to avoid.
             properties:
+              approach:
+                type: object
+                description: "Contact them or not, and how: the salesperson's first line, our read."
+                properties:
+                  contact: { type: string, description: "yes, or not now." }
+                  role: { type: string, description: "buyer (owns the budget and the decision) or way in (influences it, or runs the team that feels the problem)." }
+                  why: { type: string, description: One plain line on why, ending (our read). }
+                  decider: { type: string, description: The name and role of who likely owns the decision, when found; otherwise not found yet. Never a guessed name. }
               whyUs:
                 type: object
                 description: Why they would want what the organisation offers.
@@ -187,8 +208,8 @@ people:
             description: Their app account id.
     list_people:
       description: >-
-        The people Signal holds for this organisation, most recently updated first, optionally
-        only one stage or one segment.
+        The people Signal holds for this organisation, green light first (in the order marked),
+        then most recently updated first, red last; optionally only one stage, segment or light.
       input:
         type: object
         properties:
@@ -200,6 +221,13 @@ people:
             type: string
             enum: [customer, partner, procurement, not-now]
             description: Only people in this segment.
+          priority:
+            type: string
+            enum: [green, amber, red]
+            description: >-
+              Only people on this traffic light: green (work on them now), amber (soon) or red
+              (leave them alone). A person sets the light in Signal, never you; green comes first
+              in every list, red is never worked.
           limit:
             type: number
             description: How many, at most 200. Default 50.
@@ -282,9 +310,12 @@ goals:
             type: object
             description: What the goal holds, in these parts.
             properties:
+              title:
+                type: string
+                description: The goal's name in a few words, as a list shows it, such as "Introduce unoverse to Muhammad".
               outcome:
                 type: string
-                description: The conversation we want with them, in one line.
+                description: The goal's description, the conversation we want with them, in one line.
               why_now:
                 type: string
                 description: The real, current reason to reach them, from what you found.
@@ -349,9 +380,12 @@ goals:
             type: object
             description: Everything the goal now holds, in these parts. Replaces what it held.
             properties:
+              title:
+                type: string
+                description: The goal's name in a few words, as a list shows it, such as "Introduce unoverse to Muhammad".
               outcome:
                 type: string
-                description: The conversation we want with them, in one line.
+                description: The goal's description, the conversation we want with them, in one line.
               why_now:
                 type: string
                 description: The real, current reason to reach them, from what you found.

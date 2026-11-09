@@ -1,7 +1,10 @@
 inputs:
   - name: input
     type: object
-    description: Trigger to fire the node. Carries no data; the organisation is the run's own.
+    description: >-
+      A person to save, in save_person's shape (at least one of linkedin, email or user_id, and
+      whatever was found): they are saved, keep-and-update, and nothing is read. With no person on
+      it, a trigger to list or find. The organisation is the run's own.
     required: false
 
 outputs:
@@ -13,7 +16,10 @@ outputs:
     description: How many people came back
   - name: person
     type: object
-    description: "The one person asked for by id or email, as Signal holds them, or null when none was named or found"
+    description: "The one person asked for by id or email, or the one just saved, as Signal holds them; null when none was named or found"
+  - name: saved
+    type: object
+    description: "After a save: ok, created, person_id, or the reason it was not saved; null when nothing was given to save"
 
 credentials: []
 
